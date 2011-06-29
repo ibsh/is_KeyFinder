@@ -148,12 +148,7 @@ void DetailWindow::downSampled(){
 }
 
 void DetailWindow::saInitialise(){
-	sa = NULL;
-	if(prefs.getSpectrumAnalyser() == 'g'){
-		sa = new GoertzelAnalyser(ab->frameRate,prefs);
-	}else{
-		sa = new FftwAnalyser(ab->frameRate,prefs);
-	}
+	sa = SpectrumAnalyserFactory::getInstance()->getSpectrumAnalyser(ab->frameRate,prefs); // why the hell doesn't this work?
 }
 
 void DetailWindow::saInitialised(){
@@ -318,7 +313,6 @@ void DetailWindow::setChromagramColours(QImage& image, int which){
 }
 
 void DetailWindow::setKeyColours(QImage& image, int which){
-
 	if(which==0){
 		image.setColor(0,qRgb(127,255,0));
 		image.setColor(1,qRgb(63,127,0));
