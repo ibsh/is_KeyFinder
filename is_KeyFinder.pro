@@ -34,7 +34,8 @@ SOURCES += main.cpp\
     toneprofiles.cpp \
     spectrumanalyser.cpp \
     preferences.cpp \
-    spectrumanalyserfactory.cpp
+    spectrumanalyserfactory.cpp \
+    batchwindow.cpp
 
 HEADERS  += detailwindow.h \
     decoderlibsndfile.h \
@@ -61,9 +62,11 @@ HEADERS  += detailwindow.h \
     spectrumanalyser.h \
     preferences.h \
     monaural.h \
-    spectrumanalyserfactory.h
+    spectrumanalyserfactory.h \
+    batchwindow.h
 
-FORMS    += detailwindow.ui
+FORMS    += detailwindow.ui \
+    batchwindow.ui
 
 OTHER_FILES += \
     is_KeyFinder.pro.user

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>581</width>
-    <height>300</height>
+    <width>640</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="acceptDrops">
@@ -234,6 +234,18 @@
       </item>
       <item>
        <widget class="QPushButton" name="runButton">
+        <property name="minimumSize">
+         <size>
+          <width>120</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>120</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="text">
          <string>Run analysis</string>
         </property>
@@ -308,7 +320,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>581</width>
+     <width>640</width>
      <height>22</height>
     </rect>
    </property>

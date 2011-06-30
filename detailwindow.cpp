@@ -35,6 +35,18 @@ DetailWindow::DetailWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::De
 	connect(&haWatcher, SIGNAL(finished()), this, SLOT(haFinished()));
 }
 
+void DetailWindow::dragEnterEvent(QDragEnterEvent *e){
+	// accept only single, local files, and reject if there's already a file in the window
+	if(
+		 !fileLoaded
+		 && e->mimeData()->hasUrls()
+		 && e->mimeData()->urls().size() == 1
+		 && !e->mimeData()->urls().at(0).toLocalFile().isEmpty()
+	){
+		e->acceptProposedAction();
+	}
+}
+
 void DetailWindow::dropEvent(QDropEvent *e){
 	fileLoaded = true;
 	fileName = (std::string)e->mimeData()->urls().at(0).toLocalFile().toAscii();
@@ -227,22 +239,6 @@ void DetailWindow::haFinished(){
 	cleanUpAfterRun();
 }
 
-void DetailWindow::dragEnterEvent(QDragEnterEvent *e){
-	// accept only single, local files, and reject if there's already a file in the window
-	if(
-		 !fileLoaded
-		 && e->mimeData()->hasUrls()
-		 && e->mimeData()->urls().size() == 1
-		 && !e->mimeData()->urls().at(0).toLocalFile().isEmpty()
-	){
-		e->acceptProposedAction();
-	}
-}
-
-DetailWindow::~DetailWindow(){
-	delete ui;
-}
-
 void DetailWindow::setChromagramColours(QImage& image, int which){
 	if(which==0){
 		image.setColor(0,qRgb(0,1,3));
@@ -350,8 +346,17 @@ void DetailWindow::on_actionNew_Detail_Keyfinder_triggered(){
 	newWin->show();
 }
 
+void DetailWindow::on_actionNew_Batch_Keyfinder_triggered(){
+	BatchWindow* newWin = new BatchWindow(0);
+	newWin->show();
+}
+
 void DetailWindow::on_actionClose_Window_triggered(){
 	this->close();
+}
+
+DetailWindow::~DetailWindow(){
+	delete ui;
 }
 
 void DetailWindow::on_saCombo_currentIndexChanged(int index){

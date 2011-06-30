@@ -12,6 +12,8 @@
 #include <string>
 #include <vector>
 
+#include "batchwindow.h"
+
 #include "preferences.h"
 #include "fatalexception.h"
 #include "audiobuffer.h"
@@ -96,6 +98,7 @@ private slots:
 	void on_tpCombo_currentIndexChanged(int index);
 	void on_runButton_clicked();
 	void on_twCombo_currentIndexChanged(int index);
+	void on_actionNew_Batch_Keyfinder_triggered();
 };
 
 #endif // DETAILWINDOW_H

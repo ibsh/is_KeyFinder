@@ -4,19 +4,19 @@ using namespace std;
 
 Preferences::Preferences(){
 	// set defaults
-	temporalWindow = 'm';
-	spectrumAnalyser = 'f';
-	fftPostProcessor = 'i';
-	directSkWindow = 'n';
-	hopSize = 16384;
-	fftFrameSize = 65536;
-	goertzelMinK = 30;
-	octaves = 6;
-	bps = 1;
-	dFactor = 10;
-	toneProfile = 2; // Sha'ath profiles
-	stFreq = 27.5;
-	directSkStretch = 1.3;
+	temporalWindow = 'm';			// PARAMETERISED
+	spectrumAnalyser = 'f';		// PARAMETERISED
+	fftPostProcessor = 'i';		// PARAMETERISED
+	directSkWindow = 'n';			// PROBABLY FINAL
+	hopSize = 16384;					// PROBABLY FINAL
+	fftFrameSize = 65536;			// PROBABLY FINAL, unless accuracy goes up
+	goertzelMinK = 30;				// PROBABLY FINAL
+	octaves = 6;							// FINAL
+	bps = 1;									// This may have value at some point
+	dFactor = 10;							// PROBABLY FINAL
+	toneProfile = 2;					// PARAMETERISED
+	stFreq = 27.5;						// FINAL
+	directSkStretch = 1.3;		// Some experimentation to do, alongside normalisation
 	generateBinFreqs();
 }
 

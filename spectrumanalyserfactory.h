@@ -7,7 +7,6 @@
 #include "preferences.h"
 
 #include <vector>
-#include <iostream>
 
 // Singleton. It caches all SAs generated in a session to cut down on prep time.
 
