@@ -233,6 +233,30 @@
        </widget>
       </item>
       <item>
+       <widget class="QComboBox" name="chromaColourCombo">
+        <item>
+         <property name="text">
+          <string>Izo</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mono</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Pred</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Hack</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="runButton">
         <property name="minimumSize">
          <size>

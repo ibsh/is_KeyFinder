@@ -8,7 +8,7 @@ QT       += core gui
 
 TARGET = KeyFinder
 TEMPLATE = app
-ICON = KeyFinder.icns
+ICON = is_KeyFinder.icns
 
 
 SOURCES += main.cpp\
@@ -69,6 +69,6 @@ FORMS    += detailwindow.ui \
     batchwindow.ui
 
 OTHER_FILES += \
-    is_KeyFinder.pro.user
+		is_KeyFinder.pro.user
 
 LIBS += -lfftw3 -lsndfile -lavcodec -lavformat -lsamplerate

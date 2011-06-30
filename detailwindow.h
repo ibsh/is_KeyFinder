@@ -68,6 +68,8 @@ private:
 	SpectrumAnalyser* sa;
 	Chromagram* ch;
 	std::vector<int> keys;
+	QImage chromagramImage;
+	QImage keyImage;
 	//processing files
 	void go();															// begin steps
 	void cleanUpAfterRun();
@@ -99,6 +101,7 @@ private slots:
 	void on_runButton_clicked();
 	void on_twCombo_currentIndexChanged(int index);
 	void on_actionNew_Batch_Keyfinder_triggered();
+	void on_chromaColourCombo_currentIndexChanged(int index);
 };
 
-#endif // DETAILWINDOW_H
+#endif
