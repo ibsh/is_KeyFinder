@@ -1,23 +1,25 @@
 #include "chromagram.h"
 
-using std::cout;
-using std::fixed;
-using std::setprecision;
-using std::cerr;
-using std::endl;
-
 Chromagram::Chromagram(int h, int b){
 	hops = h;
 	bins = b;
 	chroma = std::vector<float>(hops*bins);
 }
 
-// this version is more lightweight, and seems to perform better (x22 vs 23). Only used if bps > 1.
+int largestOfThree(float a, float b, float c){
+	if(a>b && a>c) return 0;
+	if(b>a && b>c) return 1;
+	return 2;
+}
+
+
+// this version is more lightweight, and seems to perform better (x22 vs 23).
 // TODO write a variation of this that tunes adaptively for each bin.
-void Chromagram::decomposeToTwelveBpo(){
-	Preferences* prefs = new Preferences(); // FIX
-	int bpo = prefs->getBpo();
-	int oct = prefs->getOctaves();
+void Chromagram::decomposeToTwelveBpo(const Preferences& prefs){
+	int bpo = prefs.getBpo();
+	int oct = prefs.getOctaves();
+	if(bins == 12 * oct)
+		return;
 	int bps = (bpo/12); // bins per semitone
 	std::vector<float> oneSemitoneChroma(bps);
 	for(int h = 0; h < hops; h++)
@@ -25,24 +27,13 @@ void Chromagram::decomposeToTwelveBpo(){
 			for(int b = 0; b < bps; b++)
 				oneSemitoneChroma[b] += getMagnitude(h,(st*bps)+b);
 	// determine loudest tuning bin
-	int whichBin = -1;
-	float max = 0;
-	for(int b = 0; b < bps; b++){
-		if(oneSemitoneChroma[b] > max){
-			whichBin = b;
-			max = oneSemitoneChroma[b];
-		}
-	}
+	int whichBin = largestOfThree(oneSemitoneChroma[0],oneSemitoneChroma[1],oneSemitoneChroma[2]);
 	std::vector<float> twelveBpoChroma(hops*12*oct);
 	for(int h = 0; h < hops; h++){
 		for(int st = 0; st < 12*oct; st++){
 			float weighted = 0;
-			for(int b = 0; b < bps; b++){
-				if(b == whichBin)
-					weighted += (1.0 * getMagnitude(h,(st*bps)+b));
-				else
-					weighted += (0.3 * getMagnitude(h,(st*bps)+b));
-			}
+			for(int b = 0; b < bps; b++)
+				weighted += (getMagnitude(h,(st*bps)+b) * (b == whichBin ? 1.0 : 0.3));
 			twelveBpoChroma[(h*12*oct) + st] = weighted;
 		}
 	}
@@ -51,16 +42,16 @@ void Chromagram::decomposeToTwelveBpo(){
 }
 
 /*
-// this version is a lot more involved, and uses some weird approximation of Harte's method.
-// also still uses C-style allocation
-void Chromagram::decomposeToTwelveBpo(){
-	Preferences* prefs = Preferences::Instance();
-	int bpo = prefs->getBpo();
-	int oct = prefs->getOctaves();
+// this version is a lot more involved, and uses some approximation of Harte's method.
+void Chromagram::decomposeToTwelveBpo(const Preferences& prefs){
+	int bpo = prefs.getBpo();
+	int oct = prefs.getOctaves();
+	if(bins == 12 * oct)
+		return;
 	int bps = bpo/12;
 	// find peaks; anything that's higher energy than the mean for this hop and higher energy than its neighbours.
-	vector<vector<float> > peakLocations;
-	vector<vector<float> > peakMagnitudes;
+	std::vector<std::vector<float> > peakLocations;
+	std::vector<std::vector<float> > peakMagnitudes;
 	for(int hop = 0; hop < hops; hop++){
 		// find mean magnitude for this hop
 		float meanVal = 0;
@@ -69,7 +60,7 @@ void Chromagram::decomposeToTwelveBpo(){
 		}
 		meanVal /= bins;
 		// find peak bins
-		vector<int> peakBins;
+		std::vector<int> peakBins;
 		for(int bin = 1; bin < bins-1; bin++){
 			float binVal = getMagnitude(hop,bin);
 			// currently every peak over mean. Tried all peaks but accuracy dropped.
@@ -79,8 +70,8 @@ void Chromagram::decomposeToTwelveBpo(){
 			}
 		}
 		// apply quadratic interpolation to find a more precise peak position and magnitude.
-		vector<float> peakLocationsRow;
-		vector<float> peakMagnitudesRow;
+		std::vector<float> peakLocationsRow;
+		std::vector<float> peakMagnitudesRow;
 		for(int peak=0; peak<peakBins.size(); peak++){
 			float alpha = getMagnitude(hop,peakBins[peak] - 1);
 			float beta  = getMagnitude(hop,peakBins[peak]);
@@ -94,7 +85,7 @@ void Chromagram::decomposeToTwelveBpo(){
 		peakMagnitudes.push_back(peakMagnitudesRow);
 	}
 	// determine tuning distribution of peaks. Centre bin = concert tuning.
-	vector<float> peakTuningDistribution(bps*10);
+	std::vector<float> peakTuningDistribution(bps*10);
 	for(int hop = 0; hop < hops; hop++){
 		for(int peak = 0; peak < peakLocations[hop].size(); peak++){
 			float peakLocationMod = fmodf(peakLocations[hop][peak],(float)bps);
@@ -115,11 +106,11 @@ void Chromagram::decomposeToTwelveBpo(){
 	}
 	// now discard (zero out, for ease) any peaks that sit >= 0.2 semitones (6 bins for 3bps) away from the tuning peak.
 	// build a chromagram to hold the new data
-	float* twelveBpoChroma = (float*)malloc(hops*12*oct*sizeof(float)); //TODO error checking
+	std::vector<float> twelveBpoChroma(hops*12*oct);
 	for(int i=0; i<hops*12*oct; i++)
 		twelveBpoChroma[i] = 0.0;
 	// figure out which tuning bins to keep
-	vector<int> binsToKeep;
+	std::vector<int> binsToKeep;
 	for(int i=(1-(bps*2)); i<bps*2; i++)
 		binsToKeep.push_back((tuningPeak + i + (bps*10)) % (bps*10));
 	// and discard the others
@@ -140,17 +131,15 @@ void Chromagram::decomposeToTwelveBpo(){
 			}
 		}
 	}
-	free(chroma);
 	chroma = twelveBpoChroma;
 	bins = 12 * oct;
 }
 */
 
-void Chromagram::decomposeToOneOctave(){
-	Preferences* prefs = new Preferences(); // FIX
-	int oct = prefs->getOctaves();
-	if(bins > 12 * oct) // TODO this shouldn't be automatic
-		decomposeToTwelveBpo();
+void Chromagram::decomposeToOneOctave(const Preferences& prefs){
+	int oct = prefs.getOctaves();
+	if(bins > 12 * oct) // TODO this probably shouldn't be automatic
+		decomposeToTwelveBpo(prefs);
 	std::vector<float> oneOctaveChroma(hops*12);
 	for(int h = 0; h < hops; h++){
 		for(int b = 0; b < 12; b++){
@@ -166,38 +155,36 @@ void Chromagram::decomposeToOneOctave(){
 }
 
 void Chromagram::setMagnitude(int h, int b, float val){
-	if(h < 0 || h > hops) cerr << "setMagnitude hops (" << h << ") out of bounds" << endl;
-	if(b < 0 || b > bins) cerr << "setMagnitude bins (" << b << ") out of bounds" << endl;
+	if(h < 0 || h > hops){std::cerr << "setMagnitude hop " << h << " out of bounds" << std::endl; return;}
+	if(b < 0 || b > bins){std::cerr << "setMagnitude bin " << b << " out of bounds" << std::endl; return;}
 	chroma[(h * bins) + b] = val;
 }
 
 float Chromagram::getMagnitude(int h, int b) const{
-	if(h < 0 || h > hops){cerr << "getMagnitude hops (" << h << ") out of bounds" << endl; return 0;}
-	if(b < 0 || b > bins){cerr << "getMagnitude bins (" << b << ") out of bounds" << endl; return 0;}
+	if(h < 0 || h > hops){std::cerr << "getMagnitude hop " << h << " out of bounds" << std::endl; return 0;}
+	if(b < 0 || b > bins){std::cerr << "getMagnitude bin " << b << " out of bounds" << std::endl; return 0;}
 	return chroma[(h * bins) + b];
 }
 
 void Chromagram::outputBinsByHops() const{
-	int prec = 4; // TODO is this precision sensible?
-	cout << fixed;
+	std::cout << std::fixed;
 	for(int h = 0; h < hops; h++){
 		for(int b = 0; b < bins; b++){
 			float out = getMagnitude(h,b);
-			cout << setprecision(prec) << out << "\t";
+			std::cout << std::setprecision(4) << out << "\t";
 		}
-		cout << endl;
+		std::cout << std::endl;
 	}
 }
 
 void Chromagram::outputHopsByBins() const{
-	int prec = 4; // TODO is this precision sensible?
-	cout << fixed;
+	std::cout << std::fixed;
 	for(int b = 0; b < bins; b++){
 		for(int h = 0; h < hops; h++){
 			float out = getMagnitude(h,b);
-			cout << setprecision(prec) << out << "\t";
+			std::cout << std::setprecision(4) << out << "\t";
 		}
-		cout << endl;
+		std::cout << std::endl;
 	}
 }
 

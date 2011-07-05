@@ -2,14 +2,6 @@
 #include "ui_detailwindow.h"
 
 DetailWindow::DetailWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::DetailWindow){
-	// SETUP VISUALS
-	ui->setupUi(this);
-	ui->progressBar->setVisible(false);
-	chromagramImage = QImage(1,1,QImage::Format_Indexed8);
-	setChromagramColours(chromagramImage);
-	chromagramImage.setPixel(0,0,1);
-	ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
-	ui->segmentLabel->setPixmap(QPixmap::fromImage(chromagramImage));
 	keyNames = std::vector<QString>(0);
 	keyNames.push_back("A");		keyNames.push_back("Am");
 	keyNames.push_back("Bb");		keyNames.push_back("Bbm");
@@ -23,18 +15,62 @@ DetailWindow::DetailWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::De
 	keyNames.push_back("Gb");		keyNames.push_back("Gbm");
 	keyNames.push_back("G");		keyNames.push_back("Gm");
 	keyNames.push_back("Ab");		keyNames.push_back("Abm");
+	keyColours.push_back(qRgb(127,255,0));	keyColours.push_back(qRgb(63,127,0));
+	keyColours.push_back(qRgb(255,0,255));	keyColours.push_back(qRgb(127,0,127));
+	keyColours.push_back(qRgb(0,255,127));	keyColours.push_back(qRgb(0,127,63));
+	keyColours.push_back(qRgb(255,0,0));		keyColours.push_back(qRgb(127,0,0));
+	keyColours.push_back(qRgb(0,127,255));	keyColours.push_back(qRgb(0,63,127));
+	keyColours.push_back(qRgb(255,255,0));	keyColours.push_back(qRgb(127,127,0));
+	keyColours.push_back(qRgb(127,0,255));	keyColours.push_back(qRgb(63,0,127));
+	keyColours.push_back(qRgb(0,255,0));		keyColours.push_back(qRgb(0,127,0));
+	keyColours.push_back(qRgb(255,0,127));	keyColours.push_back(qRgb(127,0,63));
+	keyColours.push_back(qRgb(0,255,255));	keyColours.push_back(qRgb(0,127,127));
+	keyColours.push_back(qRgb(255,127,0));	keyColours.push_back(qRgb(127,63,0));
+	keyColours.push_back(qRgb(0,0,255));		keyColours.push_back(qRgb(0,0,127));
 	// SETUP KEYFINDER
 	fileLoaded = false;
 	ab = NULL;
 	sa = NULL;
 	ch = NULL;
-	// SETUP ASYNC SIGNALS/SLOTS (do it here so they don't repeat if a decode fails).
+	prefs.setSpectrumAnalyser('f'); // FFTW
+	prefs.setFftPostProcessor('i'); // my DirectSK
+	prefs.setTemporalWindow('b'); // Blackman slightly better accuracy than hamming
+	prefs.setDirectSkWindow('n'); // makes no big difference
+	prefs.setDirectSkStretch(1.0); // some experimentation still
+	prefs.setToneProfile(2); // 0 K, 1 T (no good), 2 mine.
+	prefs.setFftFrameSize(65536);
+	prefs.setHopSize(16384);
+	prefs.setBandsPerSemitone(1);
+	prefs.setDownsampleFactor(10);
+	// SETUP ASYNC SIGNALS/SLOTS (do it once here so they don't repeat if a decode fails).
 	connect(&decodeWatcher, SIGNAL(finished()), this, SLOT(decoded()));
 	connect(&monoWatcher, SIGNAL(finished()), this, SLOT(madeMono()));
 	connect(&dsWatcher, SIGNAL(finished()), this, SLOT(downSampled()));
 	connect(&saInitWatcher, SIGNAL(finished()), this, SLOT(saInitialised()));
 	connect(&saWatcher, SIGNAL(finished()), this, SLOT(saAnalysed()));
 	connect(&haWatcher, SIGNAL(finished()), this, SLOT(haFinished()));
+	// SETUP UI
+	QIcon icn;
+	icn.addFile("is_KeyFinder.icns");
+	this->setWindowIcon(icn);
+	ui->setupUi(this);
+	ui->progressBar->setVisible(false);
+	chromagramImage = QImage(1,1,QImage::Format_Indexed8);
+	setChromagramColours(chromagramImage);
+	chromagramImage.setPixel(0,0,1);
+	ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
+	ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
+	drawPianoKeys();
+	// key labels
+	QLabel* newLabel = new QLabel();
+	QPalette pal = newLabel->palette();
+	pal.setColor(backgroundRole(), Qt::black);
+	newLabel->setPalette(pal);
+	newLabel->setAutoFillBackground(true);
+	newLabel->setMinimumHeight(20);
+	newLabel->setMaximumHeight(30);
+	ui->horizontalLayout_keyLabels->addWidget(newLabel);
+	keyLabels.push_back(newLabel);
 }
 
 void DetailWindow::dragEnterEvent(QDragEnterEvent *e){
@@ -176,32 +212,40 @@ void DetailWindow::saInitialised(){
 
 void DetailWindow::saAnalyse(){
 	ch = sa->chromagram(ab);
+	ch->decomposeToTwelveBpo(prefs);
 }
 
 void DetailWindow::saAnalysed(){
-	// Paint 72-bin chroma to screen in 64 colours (plus black at index 1)
-	chromagramImage = QImage(ch->getHops(),72,QImage::Format_Indexed8);
+	// Paint 12-bpo chroma to screen in 64 colours (plus black at index 1)
+	int bins = prefs.getOctaves()*12;
+	int scale = 5; // don't draw individual pixels; draw blocks of scale*scale. Sharpens image.
+	chromagramImage = QImage(ch->getHops()*scale,bins*scale,QImage::Format_Indexed8);
 	setChromagramColours(chromagramImage,ui->chromaColourCombo->currentIndex());
 	// get max to normalise
-	float norm = -1;
+	float max = 0;
 	std::vector<std::vector<float> > chromaBuilder(ch->getHops(),std::vector<float>(ch->getBins()));
 	for(int h=0; h<ch->getHops(); h++){
 		for(int b=0; b<ch->getBins(); b++){
-			float comp = ch->getMagnitude(h,b);
-			chromaBuilder[h][b] = comp;
-			if(comp>norm) norm = comp;
+			float mag = ch->getMagnitude(h,b);
+			chromaBuilder[h][b] = mag;
+			if(mag>max) max = mag;
 		}
 	}
 	// set pixels
 	for(int h=0; h<ch->getHops(); h++){
 		for(int b=0; b<ch->getBins(); b++){
-			int pixVal =((chromaBuilder[h][b] / norm) * 64) + 1;
-			if(pixVal<1) pixVal = 1;
-			chromagramImage.setPixel(h, 71-b, pixVal);
+			int pixVal =((chromaBuilder[h][b] / max) * (chromagramImage.colorCount()-2)) + 1;
+			if(pixVal<1)
+				pixVal = 1;
+			for(int x=0; x<scale; x++)
+				for(int y=0; y<scale; y++)
+					chromagramImage.setPixel(h*scale+x, (bins-1-b)*scale+y, pixVal);
 		}
 	}
 	// show
 	ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
+	ui->chromagramLabel->setMinimumHeight(bins+2);
+	ui->chromagramLabel->setMinimumWidth(ch->getHops()+2);
 	say("Running harmonic analyses...");
 	ui->progressBar->setValue(6);
 	QFuture<void> future = QtConcurrent::run(this,&DetailWindow::harmonicAnalysis);
@@ -209,10 +253,10 @@ void DetailWindow::saAnalysed(){
 }
 
 void DetailWindow::harmonicAnalysis(){
-	ch->decomposeToOneOctave();
+	ch->decomposeToOneOctave(prefs);
 	HarteHCDF harto;
 	std::vector<int> changes = harto.hcdf(ch);
-	changes.push_back(ch->getHops()-1); // add sentinel to back end
+	changes.push_back(ch->getHops()); // add sentinel to back end
 	HarmonicClassifier hc(prefs.getToneProfile());
 	keys = std::vector<int>(0);
 	for(int i=0; i<changes.size()-1; i++){
@@ -231,15 +275,63 @@ void DetailWindow::harmonicAnalysis(){
 }
 
 void DetailWindow::haFinished(){
-	// Paint keychanges to screen
-	keyImage = QImage(ch->getHops(),1,QImage::Format_Indexed8);
-	setKeyColours(keyImage);
-	for(int h=0; h<keys.size(); h++){
-		keyImage.setPixel(h, 0, keys[h]);
+	// draw single octave chromagram
+	int scale = 5; // don't draw individual pixels; draw blocks of scale*scale. Sharpens image.
+	int bins = 12;
+	miniChromagramImage = QImage(ch->getHops()*scale,bins*scale,QImage::Format_Indexed8);
+	setChromagramColours(miniChromagramImage,ui->chromaColourCombo->currentIndex());
+	// get max to normalise
+	float max = 0;
+	std::vector<std::vector<float> > chromaBuilder(ch->getHops(),std::vector<float>(ch->getBins()));
+	for(int h=0; h<ch->getHops(); h++){
+		for(int b=0; b<ch->getBins(); b++){
+			float mag = ch->getMagnitude(h,b);
+			chromaBuilder[h][b] = mag;
+			if(mag>max) max = mag;
+		}
 	}
-	ui->segmentLabel->setPixmap(QPixmap::fromImage(keyImage));
+	// set pixels
+	for(int h=0; h<ch->getHops(); h++){
+		for(int b=0; b<ch->getBins(); b++){
+			int pixVal =((chromaBuilder[h][b] / max) * (miniChromagramImage.colorCount()-2)) + 1;
+			if(pixVal<1)
+				pixVal = 1;
+			for(int x=0; x<scale; x++)
+				for(int y=0; y<scale; y++)
+					miniChromagramImage.setPixel(h*scale+x, (bins-1-b)*scale+y, pixVal);
+		}
+	}
+	// show
+	ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
+	// Paint keychanges to screen
+	for(int i=keyLabels.size()-1; i>=0; i--){
+		delete keyLabels[i];
+		keyLabels.pop_back();
+	}
+	int lastChange = 0;
+	for(int h=0; h<keys.size(); h++){
+		if(h==keys.size()-1 || (h != 0 && keys[h] != keys[h-1])){
+			QLabel* newLabel = new QLabel(keyNames[keys[h-1]]);
+			newLabel->setAlignment(Qt::AlignCenter);
+			QPalette pal = newLabel->palette();
+			pal.setColor(backgroundRole(), keyColours[keys[h-1]]);
+			pal.setColor(foregroundRole(), Qt::white);
+			newLabel->setPalette(pal);
+			newLabel->setFrameStyle(1);
+			newLabel->setAutoFillBackground(true);
+			newLabel->setMinimumHeight(20);
+			newLabel->setMaximumHeight(30);
+			ui->horizontalLayout_keyLabels->addWidget(newLabel,h-lastChange);
+			keyLabels.push_back(newLabel);
+			lastChange = h;
+		}
+	}
 	// finale
-	say(QString::fromUtf8(fileName.substr(fileName.rfind("/")+1).c_str()) + " complete.");
+	QString shortName = QString::fromUtf8(fileName.substr(fileName.rfind("/")+1).c_str());
+	this->setWindowTitle("KeyFinder - Detailed Analysis - " + shortName);
+	say(shortName + " complete.");
+	delete ch;
+	ch = NULL;
 	cleanUpAfterRun();
 }
 
@@ -515,33 +607,29 @@ void DetailWindow::setChromagramColours(QImage& image, int which){
 	}
 }
 
-void DetailWindow::setKeyColours(QImage& image, int which){
-	if(which==0){
-		image.setColor(0,qRgb(127,255,0));
-		image.setColor(1,qRgb(63,127,0));
-		image.setColor(2,qRgb(255,0,255));
-		image.setColor(3,qRgb(127,0,127));
-		image.setColor(4,qRgb(0,255,127));
-		image.setColor(5,qRgb(0,127,63));
-		image.setColor(6,qRgb(255,0,0));
-		image.setColor(7,qRgb(127,0,0));
-		image.setColor(8,qRgb(0,127,255));
-		image.setColor(9,qRgb(0,63,127));
-		image.setColor(10,qRgb(255,255,0));
-		image.setColor(11,qRgb(127,127,0));
-		image.setColor(12,qRgb(127,0,255));
-		image.setColor(13,qRgb(63,0,127));
-		image.setColor(14,qRgb(0,255,0));
-		image.setColor(15,qRgb(0,127,0));
-		image.setColor(16,qRgb(255,0,127));
-		image.setColor(17,qRgb(127,0,63));
-		image.setColor(18,qRgb(0,255,255));
-		image.setColor(19,qRgb(0,127,127));
-		image.setColor(20,qRgb(255,127,0));
-		image.setColor(21,qRgb(127,63,0));
-		image.setColor(22,qRgb(0,0,255));
-		image.setColor(23,qRgb(0,0,127));
+void DetailWindow::drawPianoKeys(){
+	int scale = 10;
+	QImage pianoImage = QImage(1,prefs.getOctaves()*12*scale,QImage::Format_Indexed8);
+	QImage miniPianoImage = QImage(1,12*scale,QImage::Format_Indexed8);
+	pianoImage.setColor(0,qRgb(255,255,255));
+	miniPianoImage.setColor(0,qRgb(255,255,255));
+	pianoImage.setColor(1,qRgb(0,0,0));
+	miniPianoImage.setColor(1,qRgb(0,0,0));
+	pianoImage.setColor(2,qRgb(127,127,127));
+	miniPianoImage.setColor(2,qRgb(127,127,127));
+	QString octaveRev = "bwbwwbwbwwbw";
+	for(int o=0; o<prefs.getOctaves(); o++){
+		for(int s=0; s<12; s++){
+			for(int px=0; px<scale-1; px++){
+				pianoImage.setPixel(0,(o*12*scale)+(s*scale)+px,(octaveRev[s] == 'b' ? 1 : 0));
+				miniPianoImage.setPixel(0,(s*scale)+px,(octaveRev[s] == 'b' ? 1 : 0));
+			}
+			pianoImage.setPixel(0,(o*12*scale)+(s*scale)+scale-1,2);
+			miniPianoImage.setPixel(0,(s*scale)+scale-1,2);
+		}
 	}
+	ui->pianoKeysLabel->setPixmap(QPixmap::fromImage(pianoImage));
+	ui->miniPianoKeysLabel->setPixmap(QPixmap::fromImage(miniPianoImage));
 }
 
 void DetailWindow::say(const QString& s){
@@ -606,5 +694,7 @@ void DetailWindow::on_runButton_clicked(){
 
 void DetailWindow::on_chromaColourCombo_currentIndexChanged(int index){
 	setChromagramColours(chromagramImage,index);
+	setChromagramColours(miniChromagramImage,index);
 	ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
+	ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
 }

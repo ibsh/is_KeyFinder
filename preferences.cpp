@@ -1,20 +1,18 @@
 #include "preferences.h"
 
-using namespace std;
-
 Preferences::Preferences(){
 	// set defaults
-	temporalWindow = 'm';			// PARAMETERISED
-	spectrumAnalyser = 'f';		// PARAMETERISED
-	fftPostProcessor = 'i';		// PARAMETERISED
+	temporalWindow = 'm';			// param
+	spectrumAnalyser = 'f';		// param
+	fftPostProcessor = 'i';		// param
 	directSkWindow = 'n';			// PROBABLY FINAL
-	hopSize = 16384;					// PROBABLY FINAL
-	fftFrameSize = 65536;			// PROBABLY FINAL, unless accuracy goes up
+	hopSize = 16384;					// param
+	fftFrameSize = 65536;			// param
 	goertzelMinK = 30;				// PROBABLY FINAL
-	octaves = 6;							// FINAL
-	bps = 1;									// This may have value at some point
-	dFactor = 10;							// PROBABLY FINAL
-	toneProfile = 2;					// PARAMETERISED
+	octaves = 6;							// Haven't parameterised; Nyquist of ds10 gets in the way over 6 octaves.
+	bps = 1;									// param
+	dFactor = 10;							// param
+	toneProfile = 2;					// param
 	stFreq = 27.5;						// FINAL
 	directSkStretch = 1.3;		// Some experimentation to do, alongside normalisation
 	generateBinFreqs();
@@ -35,9 +33,40 @@ void Preferences::setTemporalWindow(char c){
 		temporalWindow = c;
 }
 
+void Preferences::setDirectSkWindow(char c){
+	if (c == 'm' || c == 'n' || c == 'b')
+		directSkWindow = c;
+}
+
+void Preferences::setHopSize(int n){
+	if(n > 0)
+		hopSize = n;
+}
+
+void Preferences::setFftFrameSize(int n){
+	if(n > 0)
+		fftFrameSize = n;
+}
+
+void Preferences::setBandsPerSemitone(int n){
+	if(n > 0 && n%2!=0){
+		bps = n;
+		generateBinFreqs();
+	}
+}
+
+void Preferences::setDownsampleFactor(int n){
+	if(n > 0)
+		dFactor = n;
+}
+
 void Preferences::setToneProfile(int n){
 	if(n >= 0 && n <= 2)
 		toneProfile = n;
+}
+
+void Preferences::setDirectSkStretch(float n){
+	directSkStretch = n;
 }
 
 char Preferences::getSpectrumAnalyser()const{return spectrumAnalyser;}
@@ -51,8 +80,12 @@ int Preferences::getOctaves()const{return octaves;}
 int Preferences::getBpo()const{return bps * 12;}
 int Preferences::getDFactor()const{return dFactor;}
 int Preferences::getToneProfile()const{return toneProfile;}
-float Preferences::getBinFreq(int n)const{return binFreqs[n];}
 float Preferences::getDirectSkStretch()const{return directSkStretch;}
+
+float Preferences::getBinFreq(int n)const{
+	if(n < 0 || n > octaves*12*bps){std::cerr << "Requested freq " << n << " out of bounds" << std::endl; return 0;}
+	return binFreqs[n];
+}
 
 /*
 void Preferences::printOptions(char* argv[])const{

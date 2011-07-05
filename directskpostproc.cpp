@@ -9,9 +9,8 @@ using std::setprecision;
 DirectSkPostProc::DirectSkPostProc(int frameRate, const Preferences& prefs) : FftPostProcessor(frameRate, prefs) {
 	pi = (4 * atan(1.0));
 	binOffsets = std::vector<int>(bins);
-	//norms = std::vector<float>(bins);
+	norms = std::vector<float>(bins);
 	mySpecKernel = std::vector<std::vector<float> >(bins,std::vector<float>(0));
-	// 2.8 with a varied window to closely model CQT. 1.0 with a Hann window to go very tight.
 	float qStretch = prefs.getDirectSkStretch();
 	float qFactor = (1.0/qStretch) * 1.0/(pow(2,(1.0 / prefs.getBpo()))-1);
 	for(int i=0; i<bins; i++){
@@ -23,15 +22,8 @@ DirectSkPostProc::DirectSkPostProc(int frameRate, const Preferences& prefs) : Ff
 			if((float)thisFftBin >= beginningOfWindow && (float)thisFftBin <= endOfWindow){
 				if(binOffsets[i] == 0)
 					binOffsets[i] = thisFftBin;
-				//float offset = centreOfWindow - (int)centreOfWindow;
 				float coefficient = specialWindow((float)thisFftBin-beginningOfWindow,widthOfWindow);
-				//if (coefficient != coefficient)
-					//cerr << "c " << centreOfWindow << " w " << widthOfWindow << "(" << beginningOfWindow << "-" << endOfWindow << ") (" << i << "," << thisFftBin << ") " << endl;
-				float normalise = 1.0; // TODO research then parameterise
-				normalise = pow((prefs.getBinFreq(i) / qFactor),1.0/4.5); // normalise by 4.5th root of bwidth
-				//normalise = prefs->getBinFreq(i) / qFactor; // normalise by bwidth
-				coefficient /= normalise;
-				//norms[i] += coefficient;
+				norms[i] += coefficient / prefs.getBinFreq(i); // interesting. This closely mirrors CQT, only cleaner.
 				mySpecKernel[i].push_back(coefficient);
 			}
 		}
@@ -47,8 +39,8 @@ std::vector<float> DirectSkPostProc::chromaVector(fftw_complex* fftResult)const{
 			float real = fftResult[binNum][0];
 			float imag = fftResult[binNum][1];
 			float magnitude = sqrt((real*real)+(imag*imag));
-			//sum += (magnitude * mySpecKernel[i][j]) / norms[i];
-			sum += magnitude * mySpecKernel[i][j];
+			sum += (magnitude * mySpecKernel[i][j]) / norms[i];
+			//sum += magnitude * mySpecKernel[i][j];
 		}
 		cv[i] = sum;
 	}

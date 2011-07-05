@@ -27,7 +27,7 @@ Chromagram* GoertzelAnalyser::chromagram(AudioBuffer* ab){
 		finished = true;
 		for(int j=0; j<bins; j++){
 			if(!goertzels[j]->samplesWanted()){ // this window complete, get output and reset
-				magnitudes[j].push_back(goertzels[j]->getRelativeMagnitude() * 10000);
+				magnitudes[j].push_back(goertzels[j]->getRelativeMagnitude());
 				if(i >= ab->audioSamples) //this was the last window for this Goertzel.
 					lastWindowDone[j] = true;
 				goertzels[j]->reset();
@@ -111,7 +111,7 @@ void GoertzelAnalyser::Goertzel::processSample(float sample){
 }
 
 float GoertzelAnalyser::Goertzel::getRelativeMagnitude() const{
-	return sqrt(Q1*Q1 + Q2*Q2 - Q1*Q2 * coeff) / ((N*k)/80); // TODO parameterise this tweak?
+	return sqrt(Q1*Q1 + Q2*Q2 - Q1*Q2 * coeff) / (N * k);
 }
 
 bool GoertzelAnalyser::Goertzel::samplesWanted() const{

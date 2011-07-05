@@ -15,8 +15,8 @@ public:
 	float getMagnitude(int,int) const;
 	int getHops() const;
 	int getBins() const;
-	void decomposeToOneOctave();
-	void decomposeToTwelveBpo();
+	void decomposeToOneOctave(const Preferences&);
+	void decomposeToTwelveBpo(const Preferences&);
 	void outputBinsByHops() const;
 	void outputHopsByBins() const;
 private:

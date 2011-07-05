@@ -18,7 +18,7 @@ public:
 private:
 	std::vector<std::vector<float> > mySpecKernel; // ragged 2d array; narrow for bass, wide for treble.
 	std::vector<int> binOffsets; // which fft bin to multiply by first coefficient.
-	//std::vector<float> norms;
+	std::vector<float> norms;
 	float specialWindow(float,float)const;
 	float pi;
 };

@@ -16,6 +16,9 @@
   <property name="windowTitle">
    <string>KeyFinder - Batch Analysis</string>
   </property>
+  <property name="locale">
+   <locale language="English" country="UnitedKingdom"/>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
@@ -33,12 +36,12 @@
       </property>
       <column>
        <property name="text">
-        <string>Audio File</string>
+        <string>Audio File Path</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>Key</string>
+        <string>Detected Key</string>
        </property>
       </column>
      </widget>

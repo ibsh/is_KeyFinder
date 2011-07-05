@@ -20,6 +20,16 @@ BatchWindow::BatchWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Batc
 	ab = NULL;
 	sa = NULL;
 	ch = NULL;
+	prefs.setSpectrumAnalyser('f'); // FFTW
+	prefs.setFftPostProcessor('i'); // my DirectSK
+	prefs.setTemporalWindow('b'); // slightly better accuracy; try some others
+	prefs.setDirectSkWindow('n'); // makes no big difference
+	prefs.setDirectSkStretch(1.0); // seems to peak here
+	prefs.setToneProfile(2); // 0 K, 1 T (no good), 2 mine.
+	prefs.setFftFrameSize(65536);
+	prefs.setHopSize(16384);
+	prefs.setBandsPerSemitone(1);
+	prefs.setDownsampleFactor(10);
 	// SETUP ASYNC SIGNALS/SLOTS
 	connect(&analysisWatcher, SIGNAL(finished()), this, SLOT(fileFinished()));
 	connect(&fileDropWatcher, SIGNAL(finished()), this, SLOT(fileDropFinished()));
@@ -149,7 +159,7 @@ void BatchWindow::analyseFile(int whichFile){
 	delete ab;
 	ab = NULL;
 	sa = NULL; // but we don't delete it; it lives on in the factory.
-	ch->decomposeToOneOctave();
+	ch->decomposeToOneOctave(prefs);
 	HarteHCDF harto;
 	std::vector<int> changes = harto.hcdf(ch);
 	changes.push_back(ch->getHops()-1);
@@ -197,4 +207,45 @@ void BatchWindow::cleanUpAfterRun(){
 	ui->progressBar->setValue(0);
 	ui->runBatchButton->setDisabled(false);
 	ui->tableWidget->resizeColumnsToContents();
+}
+
+void BatchWindow::on_tableWidget_itemSelectionChanged(){
+	/*
+		enabling copy to clipboard: this doesn't work exactly as expected;
+		it just copies from the top-left to the bottom-right selected cells.
+	*/
+	copyArray.clear();
+	int firstRow = INT_MAX;
+	int lastRow = INT_MIN;
+	int firstCol = INT_MAX;
+	int lastCol = INT_MIN;
+	foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()){
+		int chkRow = selectedIndex.row();
+		int chkCol = selectedIndex.column();
+		if(chkRow < firstRow)
+			firstRow = chkRow;
+		if(chkRow > lastRow)
+			lastRow = chkRow;
+		if(chkCol < firstCol)
+			firstCol = chkCol;
+		if(chkCol > lastCol)
+			lastCol = chkCol;
+	}
+	for(int r = firstRow; r <= lastRow; r++){
+		for(int c = firstCol; c <= lastCol; c++){
+			QTableWidgetItem* item = ui->tableWidget->item(r,c);
+			if(item != NULL)
+				copyArray.append(item->text());
+			copyArray.append("\t");
+		}
+		copyArray.append("\r\n");
+	}
+}
+
+void BatchWindow::keyPressEvent(QKeyEvent* event){
+	if(event->matches(QKeySequence::Copy)){
+		QMimeData* mimeData = new QMimeData();
+		mimeData->setData("text/plain",copyArray);
+		QApplication::clipboard()->setMimeData(mimeData);
+	}
 }

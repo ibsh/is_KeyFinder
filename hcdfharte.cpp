@@ -47,7 +47,7 @@ std::vector<int> HarteHCDF::hcdf(Chromagram* ch){
 		}
 	}
 	// gaussian
-	int gaussianSize = 19;
+	int gaussianSize = 19; // 19 standard
 	double gaussianSigma = 8.0;
 	std::vector<double> gaussian(gaussianSize);
 	for(int i=0; i<gaussianSize; i++){

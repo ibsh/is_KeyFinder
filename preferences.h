@@ -16,12 +16,17 @@ public:
 	void setSpectrumAnalyser(char);
 	void setFftPostProcessor(char);
 	void setTemporalWindow(char);
+	void setDirectSkWindow(char);
 	void setToneProfile(int);
+	void setHopSize(int);
+	void setFftFrameSize(int);
+	void setBandsPerSemitone(int);
+	void setDownsampleFactor(int);
+	void setDirectSkStretch(float);
 	// getters
 	char getSpectrumAnalyser() const;
 	char getFftPostProcessor() const;
 	char getTemporalWindow() const;
-	char getChromaOrientation() const;
 	char getDirectSkWindow() const;
 	int getHopSize() const;
 	int getFftFrameSize() const;

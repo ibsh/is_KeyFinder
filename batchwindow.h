@@ -6,6 +6,7 @@
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QUrl>
+#include <QClipboard>
 #include <QFuture>
 #include <QFutureWatcher>
 
@@ -55,6 +56,7 @@ private:
 	AudioBuffer* ab;
 	SpectrumAnalyser* sa;
 	Chromagram* ch;
+	QByteArray copyArray;
 	//processing files
 	int currentFile;
 	void go();
@@ -62,6 +64,7 @@ private:
 	void analyseFile(int);
 	void markBroken(int);
 	void filesDropped(QList<QUrl>);
+	void keyPressEvent(QKeyEvent*);
 	QFutureWatcher<void> analysisWatcher;
 	QFutureWatcher<void> fileDropWatcher;
 public slots:
@@ -72,6 +75,7 @@ private slots:
 	void on_actionNew_Batch_Keyfinder_triggered();
 	void on_actionClose_Window_triggered();
 	void on_runBatchButton_clicked();
+	void on_tableWidget_itemSelectionChanged();
 };
 
 #endif

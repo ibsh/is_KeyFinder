@@ -6,6 +6,8 @@
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QUrl>
+#include <QLabel>
+#include <QPainter>
 #include <QFuture>
 #include <QFutureWatcher>
 
@@ -59,17 +61,19 @@ private:
 	Ui::DetailWindow *ui;
 	// messy bits
 	void setChromagramColours(QImage&,int which = 0);
-	void setKeyColours(QImage&,int which = 0);
+	void drawPianoKeys();
 	std::string fileName;
 	bool fileLoaded;
 	std::vector<QString> keyNames;
+	std::vector<QColor> keyColours;
+	std::vector<QLabel*> keyLabels;
 	Preferences prefs;
 	AudioBuffer* ab;
 	SpectrumAnalyser* sa;
 	Chromagram* ch;
 	std::vector<int> keys;
 	QImage chromagramImage;
-	QImage keyImage;
+	QImage miniChromagramImage;
 	//processing files
 	void go();															// begin steps
 	void cleanUpAfterRun();

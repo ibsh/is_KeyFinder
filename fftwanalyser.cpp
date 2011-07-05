@@ -52,7 +52,10 @@ Chromagram* FftwAnalyser::chromagram(AudioBuffer* ab){
 		fftw_execute(fftPlan);
 		std::vector<float> cv = pp->chromaVector(fftResult);
 		for(int j=0; j<bins; j++){
-			ch->setMagnitude(i/hopSize,j,cv[j]);
+			if(cv[j]==cv[j]) // NaN check. Not sure why.
+				ch->setMagnitude(i/hopSize,j,cv[j]);
+			else
+				ch->setMagnitude(i/hopSize,j,0);
 		}
 	}
 	return ch;
