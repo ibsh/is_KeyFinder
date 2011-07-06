@@ -15,7 +15,7 @@
 class HarteHCDF{
 public:
 	HarteHCDF();
-	std::vector<int> hcdf(Chromagram*);
+	std::vector<int> hcdf(Chromagram*, const Preferences&);
 private:
 	double phi(int, int);
 	double pi;

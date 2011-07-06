@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     spectrumanalyser.cpp \
     preferences.cpp \
     spectrumanalyserfactory.cpp \
-    batchwindow.cpp
+    batchwindow.cpp \
+    visuals.cpp
 
 HEADERS  += detailwindow.h \
     decoderlibsndfile.h \
@@ -60,7 +61,8 @@ HEADERS  += detailwindow.h \
     preferences.h \
     monaural.h \
     spectrumanalyserfactory.h \
-    batchwindow.h
+    batchwindow.h \
+    visuals.h
 
 FORMS    += detailwindow.ui \
     batchwindow.ui

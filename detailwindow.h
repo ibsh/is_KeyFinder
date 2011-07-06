@@ -7,7 +7,6 @@
 #include <QDropEvent>
 #include <QUrl>
 #include <QLabel>
-#include <QPainter>
 #include <QFuture>
 #include <QFutureWatcher>
 
@@ -17,6 +16,7 @@
 #include "batchwindow.h"
 
 #include "preferences.h"
+#include "visuals.h"
 #include "fatalexception.h"
 #include "audiobuffer.h"
 #include "chromagram.h"
@@ -60,14 +60,12 @@ public:
 private:
 	Ui::DetailWindow *ui;
 	// messy bits
-	void setChromagramColours(QImage&,int which = 0);
 	void drawPianoKeys();
 	std::string fileName;
-	bool fileLoaded;
-	std::vector<QString> keyNames;
-	std::vector<QColor> keyColours;
+	bool allowDrops;
 	std::vector<QLabel*> keyLabels;
 	Preferences prefs;
+	Visuals* vis;
 	AudioBuffer* ab;
 	SpectrumAnalyser* sa;
 	Chromagram* ch;

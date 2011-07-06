@@ -11,10 +11,10 @@ HarmonicClassifier::~HarmonicClassifier(){
 	delete minor;
 }
 
-int HarmonicClassifier::classify(const std::vector<double>& chroma){
-	Preferences* prefs = new Preferences(); // FIX
+int HarmonicClassifier::classify(const std::vector<double>& chroma, const Preferences& prefs){
 	std::vector<double> scores(24);
-	for(int i=0; i<prefs->getBpo(); i++){ // for each pair of profiles
+	// note 12 magic number below. not ideal, but using prefs.getBpo breaks for > 1bps.
+	for(int i=0; i<12; i++){ // for each pair of profiles
 		double cosi = major->cosine(chroma,i); // major
 		scores[i*2] = cosi;
 		cosi = minor->cosine(chroma,i); // minor

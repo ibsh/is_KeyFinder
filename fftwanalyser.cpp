@@ -39,6 +39,7 @@ FftwAnalyser::~FftwAnalyser(){
 }
 
 Chromagram* FftwAnalyser::chromagram(AudioBuffer* ab){
+	QMutexLocker locker(&mutex); // Mutex this function
 	Chromagram* ch = new Chromagram((ab->audioSamples/hopSize) + 1,bins);
 	for(int i=0; i<ab->audioSamples; i += hopSize){
 		for(int j=0; j<fftFrameSize; j++) {

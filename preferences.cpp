@@ -1,20 +1,20 @@
 #include "preferences.h"
 
 Preferences::Preferences(){
-	// set defaults
-	temporalWindow = 'm';			// param
-	spectrumAnalyser = 'f';		// param
-	fftPostProcessor = 'i';		// param
-	directSkWindow = 'n';			// PROBABLY FINAL
-	hopSize = 16384;					// param
-	fftFrameSize = 65536;			// param
-	goertzelMinK = 30;				// PROBABLY FINAL
-	octaves = 6;							// Haven't parameterised; Nyquist of ds10 gets in the way over 6 octaves.
-	bps = 1;									// param
-	dFactor = 10;							// param
-	toneProfile = 2;					// param
-	stFreq = 27.5;						// FINAL
-	directSkStretch = 1.3;		// Some experimentation to do, alongside normalisation
+	// DEFAULT VALUES
+	temporalWindow = 'b'; // blackman
+	spectrumAnalyser = 'f'; // fftw
+	fftPostProcessor = 'i'; // my quick spectral kernel
+	directSkWindow = 'n'; // hann
+	hopSize = 16384;
+	fftFrameSize = 65536;
+	goertzelMinK = 30; // Haven't parameterised; Goertzel's not exactly a winner.
+	octaves = 6; // Haven't parameterised.
+	bps = 3; // not always the best idea but it's as good as 1 now.
+	dFactor = 10;
+	toneProfile = 2;
+	stFreq = 27.5; // Haven't parameterised.
+	directSkStretch = 1.0;
 	generateBinFreqs();
 }
 
@@ -83,7 +83,9 @@ int Preferences::getToneProfile()const{return toneProfile;}
 float Preferences::getDirectSkStretch()const{return directSkStretch;}
 
 float Preferences::getBinFreq(int n)const{
-	if(n < 0 || n > octaves*12*bps){std::cerr << "Requested freq " << n << " out of bounds" << std::endl; return 0;}
+	if(n==-1)
+		return binFreqs[octaves*12*bps-1];
+	if(n < 0 || n >= octaves*12*bps){std::cerr << "Requested freq " << n << " out of bounds" << std::endl; return 0;}
 	return binFreqs[n];
 }
 

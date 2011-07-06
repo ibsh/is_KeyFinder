@@ -25,6 +25,7 @@ SpectrumAnalyserFactory::~SpectrumAnalyserFactory(){
 }
 
 SpectrumAnalyser* SpectrumAnalyserFactory::getSpectrumAnalyser(int frameRate, const Preferences& prefs){
+	QMutexLocker locker(&mutex); // This function should be accessed by only one thread at a time
 	char chkType = prefs.getSpectrumAnalyser();
 	char chkFpp = prefs.getFftPostProcessor();
 	char chkWin = prefs.getTemporalWindow();

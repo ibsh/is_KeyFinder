@@ -16,7 +16,7 @@ public:
 	int getHops() const;
 	int getBins() const;
 	void decomposeToOneOctave(const Preferences&);
-	void decomposeToTwelveBpo(const Preferences&);
+	void decomposeToTwelveBpo(const Preferences&, int control = 2);
 	void outputBinsByHops() const;
 	void outputHopsByBins() const;
 private:

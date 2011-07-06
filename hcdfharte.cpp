@@ -25,10 +25,8 @@ double HarteHCDF::phi(int d, int l){
 	}
 }
 
-std::vector<int> HarteHCDF::hcdf(Chromagram* ch){
-	// TODO add validation or generalise; only works for ch = 12 bins.
-	Preferences* prefs = new Preferences(); // FIX
-	int bpo = prefs->getBpo();
+std::vector<int> HarteHCDF::hcdf(Chromagram* ch, const Preferences& prefs){
+	int bpo = 12; // note this function must always be applied after decomposition to 1 bps.
 	int hops = ch->getHops();
 	int dims = 6;
 	// build vector for movement in six dimensions

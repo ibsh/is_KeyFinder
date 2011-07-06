@@ -13,7 +13,7 @@ class HarmonicClassifier{
 public:
 	HarmonicClassifier(int);
 	~HarmonicClassifier();
-	int classify(const std::vector<double>&);
+	int classify(const std::vector<double>&, const Preferences&);
 private:
 	ToneProfile* major;
 	ToneProfile* minor;

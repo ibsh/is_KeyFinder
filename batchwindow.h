@@ -16,6 +16,7 @@
 #include "detailwindow.h"
 
 #include "preferences.h"
+#include "visuals.h"
 #include "fatalexception.h"
 #include "audiobuffer.h"
 #include "chromagram.h"
@@ -51,8 +52,8 @@ public:
 	void dropEvent(QDropEvent*);
 private:
 	Ui::BatchWindow *ui;
-	std::vector<QString> keyNames;
 	Preferences prefs;
+	Visuals* vis;
 	AudioBuffer* ab;
 	SpectrumAnalyser* sa;
 	Chromagram* ch;

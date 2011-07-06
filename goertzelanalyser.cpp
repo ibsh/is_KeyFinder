@@ -13,9 +13,10 @@ GoertzelAnalyser::~GoertzelAnalyser(){
 }
 
 Chromagram* GoertzelAnalyser::chromagram(AudioBuffer* ab){
+	QMutexLocker locker(&mutex); // Mutex this function
 	/*
 	New approach. Run every goertzel as many times as possible (zero padding during last run),
-	thereby getting magnitudes relating to windows of different lengths for each bin.
+	getting magnitudes relating to windows of different lengths for each bin.
 	Then take a normalised sum of the results and partial results that fall within a hop's
 	window and put that into the chromagram.
 	*/
@@ -59,7 +60,7 @@ Chromagram* GoertzelAnalyser::chromagram(AudioBuffer* ab){
 				else if(myLast > hopLast) // front part of this entry within this hop
 					hopMag += magnitudes[j][k]*((hopLast-myFirst+1)/(float)n);
 			}
-			// normalise by number of goertzel results in hopal
+			// normalise by number of goertzel results in hop
 			hopMag /= hopSize;
 			hopMag *= n;
 			ch->setMagnitude(i/hopSize,j,hopMag);

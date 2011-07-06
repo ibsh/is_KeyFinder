@@ -3,33 +3,11 @@
 
 BatchWindow::BatchWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::BatchWindow){
 	ui->setupUi(this);
-	keyNames = std::vector<QString>(0);
-	keyNames.push_back("A");		keyNames.push_back("Am");
-	keyNames.push_back("Bb");		keyNames.push_back("Bbm");
-	keyNames.push_back("B");		keyNames.push_back("Bm");
-	keyNames.push_back("C");		keyNames.push_back("Cm");
-	keyNames.push_back("Db");		keyNames.push_back("Dbm");
-	keyNames.push_back("D");		keyNames.push_back("Dm");
-	keyNames.push_back("Eb");		keyNames.push_back("Ebm");
-	keyNames.push_back("E");		keyNames.push_back("Em");
-	keyNames.push_back("F");		keyNames.push_back("Fm");
-	keyNames.push_back("Gb");		keyNames.push_back("Gbm");
-	keyNames.push_back("G");		keyNames.push_back("Gm");
-	keyNames.push_back("Ab");		keyNames.push_back("Abm");
 	// SETUP KEYFINDER
 	ab = NULL;
 	sa = NULL;
 	ch = NULL;
-	prefs.setSpectrumAnalyser('f'); // FFTW
-	prefs.setFftPostProcessor('i'); // my DirectSK
-	prefs.setTemporalWindow('b'); // slightly better accuracy; try some others
-	prefs.setDirectSkWindow('n'); // makes no big difference
-	prefs.setDirectSkStretch(1.0); // seems to peak here
-	prefs.setToneProfile(2); // 0 K, 1 T (no good), 2 mine.
-	prefs.setFftFrameSize(65536);
-	prefs.setHopSize(16384);
-	prefs.setBandsPerSemitone(1);
-	prefs.setDownsampleFactor(10);
+	vis = Visuals::getInstance();
 	// SETUP ASYNC SIGNALS/SLOTS
 	connect(&analysisWatcher, SIGNAL(finished()), this, SLOT(fileFinished()));
 	connect(&fileDropWatcher, SIGNAL(finished()), this, SLOT(fileDropFinished()));
@@ -102,6 +80,7 @@ void BatchWindow::on_runBatchButton_clicked(){
 void BatchWindow::go(){
 	if(currentFile==ui->tableWidget->rowCount()){
 		cleanUpAfterRun();
+		QApplication::beep();
 		return;
 	}else if(ui->tableWidget->item(currentFile,1) != NULL){
 		fileFinished();
@@ -138,7 +117,7 @@ void BatchWindow::analyseFile(int whichFile){
 	delete mono;
 	if(prefs.getDFactor() > 1){
 		Downsampler* ds = NULL;
-		if(prefs.getDFactor() == 10 && ab->frameRate == 44100){
+		if(prefs.getDFactor() == 10 && ab->frameRate == 44100 && prefs.getBinFreq(-1) < 2205.0){
 			ds = new IbDownsampler();
 		}else{
 			ds = new SecretRabbitDownsampler();
@@ -158,10 +137,11 @@ void BatchWindow::analyseFile(int whichFile){
 	ch = sa->chromagram(ab);
 	delete ab;
 	ab = NULL;
-	sa = NULL; // but we don't delete it; it lives on in the factory.
+	sa = NULL; // we don't delete sa; it lives on in the factory to be reused.
+	ch->decomposeToTwelveBpo(prefs);
 	ch->decomposeToOneOctave(prefs);
 	HarteHCDF harto;
-	std::vector<int> changes = harto.hcdf(ch);
+	std::vector<int> changes = harto.hcdf(ch,prefs);
 	changes.push_back(ch->getHops()-1);
 	HarmonicClassifier hc(prefs.getToneProfile());
 	std::vector<int> trackKeys(24);
@@ -172,7 +152,7 @@ void BatchWindow::analyseFile(int whichFile){
 				chroma[k] += ch->getMagnitude(j,k);
 			}
 		}
-		int key = hc.classify(chroma);
+		int key = hc.classify(chroma,prefs);
 		for(int j=changes[i]; j<changes[i+1]; j++){
 			trackKeys[key]++;
 		}
@@ -188,7 +168,7 @@ void BatchWindow::analyseFile(int whichFile){
 		}
 	}
 	ui->tableWidget->setItem(whichFile,1,new QTableWidgetItem());
-	ui->tableWidget->item(whichFile,1)->setText(keyNames[mostCommonKey]);
+	ui->tableWidget->item(whichFile,1)->setText(vis->keyNames[mostCommonKey]);
 }
 
 void BatchWindow::markBroken(int whichFile){
