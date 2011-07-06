@@ -20,10 +20,13 @@ DetailWindow::DetailWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::De
 	ui->progressBar->setVisible(false);
 	ui->runButton->setDisabled(true);
 	chromagramImage = QImage(1,1,QImage::Format_Indexed8);
+	miniChromagramImage = QImage(1,1,QImage::Format_Indexed8);
 	vis->setChromagramColours(chromagramImage,0);
+	vis->setChromagramColours(miniChromagramImage,0);
 	chromagramImage.setPixel(0,0,1);
+	miniChromagramImage.setPixel(0,0,1);
 	ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
-	ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
+	ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
 	drawPianoKeys();
 	// key labels
 	QLabel* newLabel = new QLabel();

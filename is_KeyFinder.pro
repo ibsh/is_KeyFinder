@@ -9,7 +9,7 @@ TEMPLATE = app
 TARGET = KeyFinder
 
 SOURCES += main.cpp\
-				detailwindow.cpp \
+		detailwindow.cpp \
     decoderlibsndfile.cpp \
     decoderlibav.cpp \
     constantqpostproc.cpp \
