@@ -9,11 +9,15 @@ BatchWindow::BatchWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Batc
 	ch = NULL;
 	vis = Visuals::getInstance();
 	// SETUP ASYNC SIGNALS/SLOTS
-	connect(&analysisWatcher, SIGNAL(finished()), this, SLOT(fileFinished()));
 	connect(&fileDropWatcher, SIGNAL(finished()), this, SLOT(fileDropFinished()));
+	connect(&analysisWatcher, SIGNAL(finished()), this, SLOT(fileFinished()));
 }
 
 BatchWindow::~BatchWindow(){
+	fileDropWatcher.cancel();
+	fileDropWatcher.waitForFinished();
+	analysisWatcher.cancel();
+	analysisWatcher.waitForFinished();
 	delete ui;
 }
 

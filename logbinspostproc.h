@@ -14,6 +14,7 @@ public:
 	virtual void printKernel()const;
 private:
 	std::vector<int> reqbins;
+	std::vector<float> norms;
 };
 
 #endif

@@ -8,8 +8,8 @@ Preferences::Preferences(){
 	directSkWindow = 'n'; // hann
 	hopSize = 16384;
 	fftFrameSize = 65536;
-	goertzelMinK = 30; // Haven't parameterised; Goertzel's not exactly a winner.
-	octaves = 6; // Haven't parameterised.
+	goertzelMinK = 60; // Haven't parameterised; Goertzel's not exactly a winner.
+	octaves = 6; // Haven't parameterised; 6 has given the best results.
 	bps = 3; // not always the best idea but it's as good as 1 now.
 	dFactor = 10;
 	toneProfile = 2;

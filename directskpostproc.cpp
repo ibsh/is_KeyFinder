@@ -40,7 +40,6 @@ std::vector<float> DirectSkPostProc::chromaVector(fftw_complex* fftResult)const{
 			float imag = fftResult[binNum][1];
 			float magnitude = sqrt((real*real)+(imag*imag));
 			sum += (magnitude * mySpecKernel[i][j]) / norms[i];
-			//sum += magnitude * mySpecKernel[i][j];
 		}
 		cv[i] = sum;
 	}

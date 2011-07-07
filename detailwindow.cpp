@@ -345,6 +345,18 @@ void DetailWindow::on_actionClose_Window_triggered(){
 }
 
 DetailWindow::~DetailWindow(){
+	decodeWatcher.cancel();
+	decodeWatcher.waitForFinished();
+	monoWatcher.cancel();
+	monoWatcher.waitForFinished();
+	dsWatcher.cancel();
+	dsWatcher.waitForFinished();
+	saInitWatcher.cancel();
+	saInitWatcher.waitForFinished();
+	saWatcher.cancel();
+	saWatcher.waitForFinished();
+	haWatcher.cancel();
+	haWatcher.waitForFinished();
 	delete ui;
 }
 

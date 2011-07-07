@@ -3,11 +3,13 @@
 #include "batchwindow.h"
 
 int main(int argc, char *argv[]){
-    QApplication a(argc, argv);
-		BatchWindow w;
-		// QIcon icn;
-		// icn.addFile("is_KeyFinder.icns");
-		// a.setWindowIcon(icn);
-		w.show();
-    return a.exec();
+	QCoreApplication::setOrganizationName("Ibrahim");
+	QCoreApplication::setApplicationName("KeyFinder");
+	QApplication a(argc, argv);
+	BatchWindow w;
+	// QIcon icn;
+	// icn.addFile("is_KeyFinder.icns");
+	// a.setWindowIcon(icn);
+	w.show();
+	return a.exec();
 }
