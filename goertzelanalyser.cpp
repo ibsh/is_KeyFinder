@@ -24,12 +24,12 @@ Chromagram* GoertzelAnalyser::chromagram(AudioBuffer* ab){
 	std::vector<bool> lastWindowDone(bins,false);
 	bool finished = false;
 	for(int i=0; !finished; i++){
-		float sample = (i < ab->audioSamples ? ab->buffer[i] : 0);
+		float sample = (i < ab->getSampleCount() ? ab->getSample(i) : 0);
 		finished = true;
 		for(int j=0; j<bins; j++){
 			if(!goertzels[j]->samplesWanted()){ // this window complete, get output and reset
 				magnitudes[j].push_back(goertzels[j]->getRelativeMagnitude());
-				if(i >= ab->audioSamples) //this was the last window for this Goertzel.
+				if(i >= ab->getSampleCount()) //this was the last window for this Goertzel.
 					lastWindowDone[j] = true;
 				goertzels[j]->reset();
 			}
@@ -39,8 +39,8 @@ Chromagram* GoertzelAnalyser::chromagram(AudioBuffer* ab){
 			}
 		}
 	}
-	Chromagram* ch = new Chromagram((ab->audioSamples/hopSize) + 1,bins);
-	for(int i=0; i < ab->audioSamples; i += hopSize){
+	Chromagram* ch = new Chromagram((ab->getSampleCount()/hopSize) + 1,bins);
+	for(int i=0; i < ab->getSampleCount(); i += hopSize){
 		int hopFirst = i;
 		int hopLast = i + hopSize - 1;
 		for(int j=0; j<magnitudes.size(); j++){

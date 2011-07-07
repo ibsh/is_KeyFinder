@@ -138,7 +138,7 @@ void DetailWindow::madeMono(){
 void DetailWindow::downSample(){
 	Downsampler* ds = NULL;
 	// discard downsampler no longer useable here. But it was crap anyway.
-	if(prefs.getDFactor() == 10 && ab->frameRate == 44100 && prefs.getBinFreq(-1) < 2205.0){
+	if(prefs.getDFactor() == 10 && ab->getFrameRate() == 44100 && prefs.getBinFreq(-1) < 2205.0){
 		ds = new IbDownsampler();
 	}else{
 		ds = new SecretRabbitDownsampler();
@@ -166,7 +166,7 @@ void DetailWindow::downSampled(){
 }
 
 void DetailWindow::saInitialise(){
-	sa = SpectrumAnalyserFactory::getInstance()->getSpectrumAnalyser(ab->frameRate,prefs);
+	sa = SpectrumAnalyserFactory::getInstance()->getSpectrumAnalyser(ab->getFrameRate(),prefs);
 }
 
 void DetailWindow::saInitialised(){

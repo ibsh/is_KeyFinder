@@ -14,7 +14,7 @@ public:
 	static Visuals* getInstance();
 	std::vector<QString> keyNames;
 	std::vector<QColor> keyColours;
-	void setChromagramColours(QImage&, int);
+	void setChromagramColours(QImage&, int) const;
 private:
 	Visuals();
 	static Visuals* inst;

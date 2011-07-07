@@ -84,10 +84,35 @@ float Preferences::getDirectSkStretch()const{return directSkStretch;}
 
 float Preferences::getBinFreq(int n)const{
 	if(n==-1)
-		return binFreqs[octaves*12*bps-1];
-	if(n < 0 || n >= octaves*12*bps){std::cerr << "Requested freq " << n << " out of bounds" << std::endl; return 0;}
+		return binFreqs[octaves*12*bps-1]; // special case, requesting last frequency
+	if(n < 0 || n >= octaves*12*bps){
+		std::cerr << "Requested freq " << n << " out of bounds" << std::endl;
+		return 0;
+	}
 	return binFreqs[n];
 }
+
+void Preferences::generateBinFreqs(){
+	int bpo = bps * 12;
+	binFreqs = std::vector<float>(octaves*bpo);
+	float freqRatio = pow(2,(1.0/bpo));
+	float octFreq = stFreq;
+	float binFreq;
+	int concertPitchBin = bps/2;
+	for(int i=0; i<octaves; i++){
+		binFreq = octFreq;
+		// tune down for bins before first concert pitch bin (if bps > 1)
+		for(int j=0; j<concertPitchBin; j++){
+			binFreqs[(i*bpo)+j] = binFreq / pow(freqRatio,(concertPitchBin-j));
+		}
+		for(int j=concertPitchBin; j<bpo; j++){
+			binFreqs[(i*bpo)+j] = binFreq;
+			binFreq *= freqRatio;
+		}
+		octFreq *= 2;
+	}
+}
+
 
 /*
 void Preferences::printOptions(char* argv[])const{
@@ -122,61 +147,4 @@ void Preferences::printOptions(char* argv[])const{
 	cerr << " -ks N	: Direct kernel QStretch (1.0)" << endl;
 	cerr << " -kw X	: Direct kernel window (Hann)" << endl;
 }
-
-void Preferences::procArgs(int argc, char* argv[]){
-	// load args
-	for(int k=1; k<argc-1; k++){
-		// chars
-		if(strcmp(argv[k],"-c")==0)
-			decoder = *argv[k+1];							// lose this; it can be automatic
-		if(strcmp(argv[k],"-d")==0)
-			downsampler = *argv[k+1];					// likewise
-		if(strcmp(argv[k],"-kw")==0)
-			directSkWindow = *argv[k+1];			// experiment but no need to parameterise once a winner's chosen
-		// ints
-		if(strcmp(argv[k],"-h")==0)
-			hopSize = atoi(argv[k+1]);				// No need.
-		if(strcmp(argv[k],"-f")==0)
-			fftFrameSize = atoi(argv[k+1]);		// Hopefully algo improvements will make this moot at 32768 or lower
-		if(strcmp(argv[k],"-k")==0)
-			goertzelMinK = atoi(argv[k+1]);		// No need.
-		if(strcmp(argv[k],"-o")==0)
-			octaves = atoi(argv[k+1]);				// No need.
-		if(strcmp(argv[k],"-b")==0){
-			int newBps = atoi(argv[k+1]);			// Haven't gotten this working properly yet, once I do it'll be on all the time.
-			if(newBps%2 == 1) bps = newBps;
-			else cerr << "ERROR: -b must be an odd number. Using default." << endl;
-		}
-		if(strcmp(argv[k],"-df")==0)
-			dFactor = atoi(argv[k+1]);				// No need.
-		// floats
-		if(strcmp(argv[k],"-s")==0)
-			stFreq = atof(argv[k+1]);					// No need.
-		if(strcmp(argv[k],"-ks")==0)
-			directSkStretch = atof(argv[k+1]);		// Experiments continue.
-	}
-	setBinFreqs();
-}
 */
-
-void Preferences::generateBinFreqs(){
-	int bpo = bps * 12;
-	binFreqs = std::vector<float>(octaves*bpo);
-	float freqRatio = pow(2,(1.0/bpo));
-	float octFreq = stFreq;
-	float binFreq;
-	int concertPitchBin = bps/2;
-	for(int i=0; i<octaves; i++){
-		binFreq = octFreq;
-		// tune down for bins before first concert pitch bin (if bps > 1)
-		for(int j=0; j<concertPitchBin; j++){
-			binFreqs[(i*bpo)+j] = binFreq / pow(freqRatio,(concertPitchBin-j));
-		}
-		for(int j=concertPitchBin; j<bpo; j++){
-			binFreqs[(i*bpo)+j] = binFreq;
-			binFreq *= freqRatio;
-		}
-		octFreq *= 2;
-	}
-}
-

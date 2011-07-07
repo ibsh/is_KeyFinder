@@ -28,20 +28,12 @@
 
 #include "downsampler.h"
 #include "downsamplerlibsrc.h"
-#include "downsamplerdiscard.h"
 #include "downsamplerib.h"
 
 #include "monaural.h"
 #include "basicmono.h"
 
 #include "spectrumanalyserfactory.h"
-//#include "spectrumanalyser.h"
-//#include "goertzelanalyser.h"
-//#include "fftwanalyser.h"
-//#include "fftpostprocessor.h"
-//#include "logbinspostproc.h"
-//#include "directskpostproc.h"
-//#include "constantqpostproc.h"
 
 #include "hcdfharte.h"
 #include "harmonicclassifier.h"
@@ -55,24 +47,25 @@ class DetailWindow : public QMainWindow{
 public:
 	explicit DetailWindow(QWidget *parent = 0);
 	~DetailWindow();
-	void dragEnterEvent(QDragEnterEvent*);
-	void dropEvent(QDropEvent*);
 private:
-	Ui::DetailWindow *ui;
-	// messy bits
-	void drawPianoKeys();
-	std::string fileName;
-	bool allowDrops;
-	std::vector<QLabel*> keyLabels;
-	Preferences prefs;
+	// UI
+	Ui::DetailWindow* ui;
 	Visuals* vis;
+	void drawPianoKeys();
+	std::vector<QLabel*> keyLabels;
+	QImage chromagramImage;
+	QImage miniChromagramImage;
+	// analysis
+	Preferences prefs;
 	AudioBuffer* ab;
 	SpectrumAnalyser* sa;
 	Chromagram* ch;
 	std::vector<int> keys;
-	QImage chromagramImage;
-	QImage miniChromagramImage;
 	//processing files
+	std::string fileName;
+	bool allowDrops;
+	void dragEnterEvent(QDragEnterEvent*);
+	void dropEvent(QDropEvent*);
 	void go();															// begin steps
 	void cleanUpAfterRun();
 	void decode();													// step 1
@@ -87,7 +80,7 @@ private:
 	QFutureWatcher<void> saWatcher;
 	void harmonicAnalysis();								// step 6
 	QFutureWatcher<void> haWatcher;
-public slots:
+private slots:
 	void decoded();													// step 1 complete
 	void madeMono();												// step 2 complete
 	void downSampled();											// step 3 complete
@@ -95,7 +88,6 @@ public slots:
 	void saAnalysed();											// step 5 complete
 	void haFinished();											// step 6 complete
 	void say(const QString&);
-private slots:
 	void on_actionNew_Detail_Keyfinder_triggered();
 	void on_actionClose_Window_triggered();
 	void on_saCombo_currentIndexChanged(int index);

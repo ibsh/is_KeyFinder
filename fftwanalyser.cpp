@@ -40,10 +40,10 @@ FftwAnalyser::~FftwAnalyser(){
 
 Chromagram* FftwAnalyser::chromagram(AudioBuffer* ab){
 	QMutexLocker locker(&mutex); // Mutex this function
-	Chromagram* ch = new Chromagram((ab->audioSamples/hopSize) + 1,bins);
-	for(int i=0; i<ab->audioSamples; i += hopSize){
+	Chromagram* ch = new Chromagram((ab->getSampleCount()/hopSize) + 1,bins);
+	for(int i=0; i<ab->getSampleCount(); i += hopSize){
 		for(int j=0; j<fftFrameSize; j++) {
-			if(i+j < ab->audioSamples){
+			if(i+j < ab->getSampleCount()){
 				fftInput[j][0] = ab->getSample(i+j) * window[j]; // real part, windowed
 			}else{
 				fftInput[j][0] = 0.0; // zero-pad if no PCM data remaining

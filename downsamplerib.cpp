@@ -21,11 +21,12 @@ AudioBuffer* IbDownsampler::downsample(AudioBuffer* inbuf, int factor) throw (Fa
 	if(factor == 1) return inbuf;
 	// prep output buffer
 	AudioBuffer* outbuf = new AudioBuffer();
-	outbuf->frameRate = inbuf->frameRate / factor;
-	int c = outbuf->audioChannels = inbuf->audioChannels;
-	int ns = inbuf->audioSamples / factor;
+	outbuf->setFrameRate(inbuf->getFrameRate() / factor);
+	outbuf->setChannels(inbuf->getChannels());
+	int c = inbuf->getChannels();
+	int ns = inbuf->getSampleCount() / factor;
 	while(ns%c != 0) ns++;
-	if(inbuf->audioSamples % factor > 0) ns += c;
+	if(inbuf->getSampleCount() % factor > 0) ns += c;
 	try{
 		outbuf->addSamples(ns);
 	}catch(FatalException){
@@ -65,7 +66,7 @@ AudioBuffer* IbDownsampler::downsample(AudioBuffer* inbuf, int factor) throw (Fa
 			q->n = 0;
 			q = q->r;
 		}
-		for(int j=i; j<inbuf->audioSamples; j+=c){ // for each frame
+		for(int j=i; j<inbuf->getSampleCount(); j+=c){ // for each frame
 			p = p->r; // shuffle old samples along delay buffer
 			p->l->n = inbuf->getSample(j) / gain; // load new sample into delay buffer
 			if((j % (factor * c)) < c){ // only do the maths for the useful samples

@@ -30,8 +30,8 @@ AudioBuffer* LibAvDecoder::decodeFile(char* filename) throw (FatalException){
 	if(avcodec_open(cCtx, codec) < 0) throw FatalException("Error opening codec");
 	// Prep buffer
 	AudioBuffer *ab = new AudioBuffer();
-	ab->frameRate = cCtx->sample_rate;
-	ab->audioChannels = cCtx->channels;
+	ab->setFrameRate(cCtx->sample_rate);
+	ab->setChannels(cCtx->channels);
 	// Decode stream
 	AVPacket avpkt;
 	av_init_packet(&avpkt);
@@ -60,11 +60,10 @@ int LibAvDecoder::decodePacket(AVCodecContext* cCtx, AVPacket* avpkt, AudioBuffe
 			return 1;
 		}else{
 			int samplesDecoded = outputBufferSize/sizeof(int16_t);
+			int oldSampleCount = ab->getSampleCount();
 			ab->addSamples(samplesDecoded);
 			for(int i=0; i<samplesDecoded; i++){
-				// TODO there must be a better way than an internal currentSample counter. Think.
-				ab->setSample(ab->currentSample,((float)samples[i] / 32768.0));
-				ab->currentSample++;
+				ab->setSample(oldSampleCount+i,((float)samples[i] / 32768.0));
 			}
 		}
 		if(bytesConsumed < avpkt->size){

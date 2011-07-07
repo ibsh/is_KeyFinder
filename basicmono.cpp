@@ -1,18 +1,18 @@
 #include "basicmono.h"
 
 AudioBuffer* basicMono::makeMono(AudioBuffer* inbuf) throw (FatalException){
-	int c = inbuf->audioChannels;
+	int c = inbuf->getChannels();
 	if(c == 1)
 		return inbuf;
 	AudioBuffer* outbuf = new AudioBuffer();
-	outbuf->frameRate = inbuf->frameRate;
-	outbuf->audioChannels = 1;
+	outbuf->setFrameRate(inbuf->getFrameRate());
+	outbuf->setChannels(1);
 	try{
-		outbuf->addSamples(inbuf->audioSamples / c);
+		outbuf->addSamples(inbuf->getSampleCount() / c);
 	}catch(FatalException){
 		throw;
 	}
-	for(int i = 0; i < inbuf->audioSamples; i += c){
+	for(int i = 0; i < inbuf->getSampleCount(); i += c){
 		float mono = 0.0;
 		for(int j = 0; j < c; j++)
 			mono += inbuf->getSample(i + j);

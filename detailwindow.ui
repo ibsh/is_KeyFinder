@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>645</width>
-    <height>316</height>
+    <width>800</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -28,7 +28,7 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_2" stretch="6,1,1,0,0">
+     <layout class="QVBoxLayout" name="verticalLayout_Main" stretch="6,1,1,0,0">
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_bigChromagram">
         <item>
@@ -182,11 +182,91 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_toolBox">
-        <property name="sizeConstraint">
-         <enum>QLayout::SetDefaultConstraint</enum>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <property name="topMargin">
+         <number>6</number>
         </property>
-        <item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="uiLabel_SA">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string> SPECTRUM ANALYSER</string>
+          </property>
+          <property name="textFormat">
+           <enum>Qt::PlainText</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="uiLabel_TW">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string> TEMPORAL WINDOW</string>
+          </property>
+          <property name="textFormat">
+           <enum>Qt::PlainText</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="uiLabel_TP">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string> TONE PROFILE</string>
+          </property>
+          <property name="textFormat">
+           <enum>Qt::PlainText</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="QLabel" name="uiLabel_CS">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string> COLOUR SCHEME</string>
+          </property>
+          <property name="textFormat">
+           <enum>Qt::PlainText</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
          <widget class="QComboBox" name="saCombo">
           <property name="currentIndex">
            <number>3</number>
@@ -213,7 +293,7 @@
           </item>
          </widget>
         </item>
-        <item>
+        <item row="1" column="1">
          <widget class="QComboBox" name="twCombo">
           <property name="currentIndex">
            <number>0</number>
@@ -235,7 +315,7 @@
           </item>
          </widget>
         </item>
-        <item>
+        <item row="1" column="2">
          <widget class="QComboBox" name="tpCombo">
           <property name="currentIndex">
            <number>2</number>
@@ -257,7 +337,7 @@
           </item>
          </widget>
         </item>
-        <item>
+        <item row="1" column="3">
          <widget class="QComboBox" name="chromaColourCombo">
           <item>
            <property name="text">
@@ -281,7 +361,7 @@
           </item>
          </widget>
         </item>
-        <item>
+        <item row="1" column="4">
          <widget class="QPushButton" name="runButton">
           <property name="minimumSize">
            <size>
@@ -304,6 +384,9 @@
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_status">
+        <property name="topMargin">
+         <number>6</number>
+        </property>
         <item>
          <widget class="QProgressBar" name="progressBar">
           <property name="sizePolicy">
@@ -371,7 +454,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>645</width>
+     <width>800</width>
      <height>22</height>
     </rect>
    </property>

@@ -28,7 +28,6 @@
 
 #include "downsampler.h"
 #include "downsamplerlibsrc.h"
-#include "downsamplerdiscard.h"
 #include "downsamplerib.h"
 
 #include "monaural.h"
@@ -48,17 +47,19 @@ class BatchWindow : public QMainWindow{
 public:
 	explicit BatchWindow(QWidget *parent = 0);
 	~BatchWindow();
-	void dragEnterEvent(QDragEnterEvent*);
-	void dropEvent(QDropEvent*);
 private:
-	Ui::BatchWindow *ui;
-	Preferences prefs;
+	// UI
+	Ui::BatchWindow* ui;
 	Visuals* vis;
+	QByteArray copyArray;
+	// analysis
+	Preferences prefs;
 	AudioBuffer* ab;
 	SpectrumAnalyser* sa;
 	Chromagram* ch;
-	QByteArray copyArray;
 	//processing files
+	void dragEnterEvent(QDragEnterEvent*);
+	void dropEvent(QDropEvent*);
 	int currentFile;
 	void go();
 	void cleanUpAfterRun();
@@ -68,10 +69,9 @@ private:
 	void keyPressEvent(QKeyEvent*);
 	QFutureWatcher<void> analysisWatcher;
 	QFutureWatcher<void> fileDropWatcher;
-public slots:
+private slots:
 	void fileFinished();
 	void fileDropFinished();
-private slots:
 	void on_actionNew_Detail_Keyfinder_triggered();
 	void on_actionNew_Batch_Keyfinder_triggered();
 	void on_actionClose_Window_triggered();

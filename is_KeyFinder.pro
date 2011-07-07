@@ -24,7 +24,6 @@ SOURCES += main.cpp\
     fatalexception.cpp \
     downsamplerlibsrc.cpp \
     downsamplerib.cpp \
-    downsamplerdiscard.cpp \
     directskpostproc.cpp \
     logbinspostproc.cpp \
     windowfunctions.cpp \
@@ -51,7 +50,6 @@ HEADERS  += detailwindow.h \
     fatalexception.h \
     downsamplerlibsrc.h \
     downsamplerib.h \
-    downsamplerdiscard.h \
     downsampler.h \
     directskpostproc.h \
     logbinspostproc.h \

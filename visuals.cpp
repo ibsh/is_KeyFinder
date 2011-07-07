@@ -36,7 +36,7 @@ Visuals::Visuals(){
 	keyColours.push_back(qRgb(127,127,255));	keyColours.push_back(qRgb(127,127,223));
 }
 
-void Visuals::setChromagramColours(QImage& image, int which){
+void Visuals::setChromagramColours(QImage& image, int which) const{
 	if(which==0){
 		// Izo colour scheme
 		image.setColor(1,qRgb(0,0,0));

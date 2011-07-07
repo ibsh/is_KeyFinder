@@ -121,7 +121,7 @@ void BatchWindow::analyseFile(int whichFile){
 	delete mono;
 	if(prefs.getDFactor() > 1){
 		Downsampler* ds = NULL;
-		if(prefs.getDFactor() == 10 && ab->frameRate == 44100 && prefs.getBinFreq(-1) < 2205.0){
+		if(prefs.getDFactor() == 10 && ab->getFrameRate() == 44100 && prefs.getBinFreq(-1) < 2205.0){
 			ds = new IbDownsampler();
 		}else{
 			ds = new SecretRabbitDownsampler();
@@ -137,7 +137,7 @@ void BatchWindow::analyseFile(int whichFile){
 			return;
 		}
 	}
-	sa = SpectrumAnalyserFactory::getInstance()->getSpectrumAnalyser(ab->frameRate,prefs);
+	sa = SpectrumAnalyserFactory::getInstance()->getSpectrumAnalyser(ab->getFrameRate(),prefs);
 	ch = sa->chromagram(ab);
 	delete ab;
 	ab = NULL;
