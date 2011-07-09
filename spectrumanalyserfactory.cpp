@@ -3,9 +3,8 @@
 SpectrumAnalyserFactory* SpectrumAnalyserFactory::inst = NULL;
 
 SpectrumAnalyserFactory* SpectrumAnalyserFactory::getInstance(){
-	if(inst == NULL){
+	if(inst == NULL)
 		inst = new SpectrumAnalyserFactory();
-	}
 	return inst;
 }
 
@@ -18,9 +17,8 @@ SpectrumAnalyserFactory::SpectrumAnalyserFactory(){
 }
 
 SpectrumAnalyserFactory::~SpectrumAnalyserFactory(){
-	for(int i=0; i<analysers.size(); i++){
+	for(int i=0; i<analysers.size(); i++)
 		delete analysers[i];
-	}
 	inst = NULL;
 }
 

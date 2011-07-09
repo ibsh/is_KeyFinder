@@ -6,37 +6,30 @@
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QUrl>
-#include <QClipboard>
 #include <QFuture>
 #include <QFutureWatcher>
+#include <QClipboard>
 
 #include <string>
 #include <vector>
 
-#include "detailwindow.h"
+#include "detailwindow.h" // need to be able to launch other window
 
 #include "preferences.h"
 #include "visuals.h"
-#include "fatalexception.h"
+#include "exception.h"
 #include "audiobuffer.h"
 #include "chromagram.h"
-#include "windowfunctions.h"
 
 #include "decoder.h"
-#include "decoderlibav.h"
-#include "decoderlibsndfile.h"
-
-#include "downsampler.h"
-#include "downsamplerlibsrc.h"
-#include "downsamplerib.h"
-
 #include "monaural.h"
-#include "basicmono.h"
-
+#include "downsampler.h"
 #include "spectrumanalyserfactory.h"
+#include "hcdf.h"
+#include "keyclassifier.h"
 
-#include "hcdfharte.h"
-#include "harmonicclassifier.h"
+#include "metadatareader.h"
+#include "metadatareaderlibav.h"
 
 namespace Ui {
 	class BatchWindow;

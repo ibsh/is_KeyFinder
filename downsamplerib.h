@@ -5,7 +5,7 @@
 
 class IbDownsampler : public Downsampler{
 public:
-		virtual AudioBuffer* downsample(AudioBuffer*,int) throw (FatalException);
+		virtual AudioBuffer* downsample(AudioBuffer*,int) throw (Exception);
 };
 
 #endif

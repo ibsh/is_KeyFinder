@@ -7,7 +7,7 @@ Preferences::Preferences(){
 	fftPostProcessor = 'i'; // my quick spectral kernel
 	directSkWindow = 'n'; // hann
 	hopSize = 16384;
-	fftFrameSize = 65536;
+	fftFrameSize = 65536; // this is large, obviously. But reducing it reduces accuracy.
 	goertzelMinK = 60; // Haven't parameterised; Goertzel's not exactly a winner.
 	octaves = 6; // Haven't parameterised; 6 has given the best results.
 	bps = 3; // not always the best idea but it's as good as 1 now.
@@ -15,6 +15,8 @@ Preferences::Preferences(){
 	toneProfile = 2;
 	stFreq = 27.5; // Haven't parameterised.
 	directSkStretch = 1.0;
+	hcdfGaussianSize = 35; // Haven't parameterised. Originally 19 but this gets fewer misses.
+	hcdfGaussianSigma = 8.0; // Haven't parameterised.
 	generateBinFreqs();
 }
 
@@ -80,6 +82,8 @@ int Preferences::getOctaves()const{return octaves;}
 int Preferences::getBpo()const{return bps * 12;}
 int Preferences::getDFactor()const{return dFactor;}
 int Preferences::getToneProfile()const{return toneProfile;}
+int Preferences::getHcdfGaussianSize()const{return hcdfGaussianSize;}
+float Preferences::getHcdfGaussianSigma()const{return hcdfGaussianSigma;}
 float Preferences::getDirectSkStretch()const{return directSkStretch;}
 
 float Preferences::getBinFreq(int n)const{

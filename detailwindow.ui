@@ -28,10 +28,10 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_Main" stretch="6,1,1,0,0">
+     <layout class="QVBoxLayout" name="verticalLayout_Main" stretch="0,0,0">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_bigChromagram">
-        <item>
+       <layout class="QGridLayout" name="gridLayout_Visualisation" rowstretch="6,1,1">
+        <item row="0" column="0">
          <widget class="QLabel" name="pianoKeysLabel">
           <property name="minimumSize">
            <size>
@@ -65,7 +65,7 @@
           </property>
          </widget>
         </item>
-        <item>
+        <item row="0" column="1">
          <widget class="QLabel" name="chromagramLabel">
           <property name="minimumSize">
            <size>
@@ -87,11 +87,7 @@
           </property>
          </widget>
         </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_miniChromagram">
-        <item>
+        <item row="1" column="0">
          <widget class="QLabel" name="miniPianoKeysLabel">
           <property name="minimumSize">
            <size>
@@ -125,7 +121,7 @@
           </property>
          </widget>
         </item>
-        <item>
+        <item row="1" column="1">
          <widget class="QLabel" name="miniChromagramLabel">
           <property name="minimumSize">
            <size>
@@ -147,26 +143,35 @@
           </property>
          </widget>
         </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_keyLabels">
-        <property name="spacing">
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QLabel" name="spacerLabel">
+        <item row="2" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_keyLabels">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+         </layout>
+        </item>
+        <item row="0" column="2" rowspan="2">
+         <widget class="QLabel" name="colourScaleLabel">
           <property name="minimumSize">
            <size>
-            <width>26</width>
-            <height>20</height>
+            <width>20</width>
+            <height>74</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>26</width>
-            <height>30</height>
+            <width>20</width>
+            <height>16777215</height>
            </size>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Box</enum>
+          </property>
+          <property name="lineWidth">
+           <number>1</number>
+          </property>
+          <property name="midLineWidth">
+           <number>0</number>
           </property>
           <property name="text">
            <string/>
@@ -182,12 +187,12 @@
        </layout>
       </item>
       <item>
-       <layout class="QGridLayout" name="gridLayout_2">
+       <layout class="QGridLayout" name="gridLayout_UI">
         <property name="topMargin">
          <number>6</number>
         </property>
         <item row="0" column="0">
-         <widget class="QLabel" name="uiLabel_SA">
+         <widget class="QLabel" name="spectrumAnalyserLabel">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -207,7 +212,7 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QLabel" name="uiLabel_TW">
+         <widget class="QLabel" name="temporalWindowLabel">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -227,7 +232,7 @@
          </widget>
         </item>
         <item row="0" column="2">
-         <widget class="QLabel" name="uiLabel_TP">
+         <widget class="QLabel" name="toneProfilesLabel">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -239,7 +244,7 @@
            </font>
           </property>
           <property name="text">
-           <string> TONE PROFILE</string>
+           <string> TONE PROFILES</string>
           </property>
           <property name="textFormat">
            <enum>Qt::PlainText</enum>
@@ -247,7 +252,7 @@
          </widget>
         </item>
         <item row="0" column="3">
-         <widget class="QLabel" name="uiLabel_CS">
+         <widget class="QLabel" name="chromaColourLabel">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -259,7 +264,7 @@
            </font>
           </property>
           <property name="text">
-           <string> COLOUR SCHEME</string>
+           <string> CHROMAGRAM COLOURS</string>
           </property>
           <property name="textFormat">
            <enum>Qt::PlainText</enum>
@@ -267,7 +272,7 @@
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QComboBox" name="saCombo">
+         <widget class="QComboBox" name="spectrumAnalyserCombo">
           <property name="currentIndex">
            <number>3</number>
           </property>
@@ -294,7 +299,7 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QComboBox" name="twCombo">
+         <widget class="QComboBox" name="temporalWindowCombo">
           <property name="currentIndex">
            <number>0</number>
           </property>
@@ -316,7 +321,7 @@
          </widget>
         </item>
         <item row="1" column="2">
-         <widget class="QComboBox" name="tpCombo">
+         <widget class="QComboBox" name="toneProfilesCombo">
           <property name="currentIndex">
            <number>2</number>
           </property>
@@ -471,7 +476,7 @@
   </widget>
   <action name="actionNew_Detail_Keyfinder">
    <property name="text">
-    <string>New Detail Keyfinder</string>
+    <string>New Detail Window</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -479,7 +484,7 @@
   </action>
   <action name="actionNew_Batch_Keyfinder">
    <property name="text">
-    <string>New Batch Keyfinder</string>
+    <string>New Batch Window</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+N</string>

@@ -35,6 +35,8 @@ public:
 	int getBpo() const;
 	int getDFactor() const;
 	int getToneProfile() const;
+	int getHcdfGaussianSize() const;
+	float getHcdfGaussianSigma() const;
 	float getBinFreq(int) const;
 	float getDirectSkStretch() const;
 private:
@@ -49,6 +51,8 @@ private:
 	int bps;
 	int dFactor;
 	int toneProfile;
+	int hcdfGaussianSize;
+	float hcdfGaussianSigma;
 	float stFreq;
 	float directSkStretch;
 	std::vector<float> binFreqs;

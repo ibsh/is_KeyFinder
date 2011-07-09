@@ -44,6 +44,11 @@
         <string>Detected Key</string>
        </property>
       </column>
+      <column>
+       <property name="text">
+        <string>Key Code</string>
+       </property>
+      </column>
      </widget>
     </item>
     <item>
@@ -100,7 +105,7 @@
   </widget>
   <action name="actionNew_Detail_Keyfinder">
    <property name="text">
-    <string>New Detail Keyfinder</string>
+    <string>New Detail Window</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -108,7 +113,7 @@
   </action>
   <action name="actionNew_Batch_Keyfinder">
    <property name="text">
-    <string>New Batch Keyfinder</string>
+    <string>New Batch Window</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+N</string>

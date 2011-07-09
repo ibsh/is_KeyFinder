@@ -1,17 +1,17 @@
-#include "harmonicclassifier.h"
+#include "keyclassifier.h"
 
-HarmonicClassifier::HarmonicClassifier(int whichProfile){
+KeyClassifier::KeyClassifier(int whichProfile){
 	// Profiles
 	major = new ToneProfile(whichProfile,true);
 	minor = new ToneProfile(whichProfile,false);
 }
 
-HarmonicClassifier::~HarmonicClassifier(){
+KeyClassifier::~KeyClassifier(){
 	delete major;
 	delete minor;
 }
 
-int HarmonicClassifier::classify(const std::vector<double>& chroma, const Preferences& prefs){
+int KeyClassifier::classify(const std::vector<double>& chroma, const Preferences& prefs){
 	std::vector<double> scores(24);
 	// note 12 magic number below. not ideal, but using prefs.getBpo breaks for > 1bps.
 	for(int i=0; i<12; i++){ // for each pair of profiles

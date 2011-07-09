@@ -51,18 +51,19 @@ void BatchWindow::dropEvent(QDropEvent *e){
 void BatchWindow::filesDropped(QList<QUrl> urls){
 	for(int i=0; i<urls.size(); i++){
 		bool addNew = true;
-		QString fileName = urls[i].toLocalFile();
+		QString filePath = urls[i].toLocalFile();
+		// check if file is already in the list
 		for(int j=0; j<ui->tableWidget->rowCount(); j++){
-			if(ui->tableWidget->item(j,0)->text() == fileName){
+			if(ui->tableWidget->item(j,0)->text() == filePath){
 				addNew = false;
 				break;
 			}
 		}
 		if(addNew){
-			int newRow = ui->tableWidget->rowCount(); // start at 0
+			int newRow = ui->tableWidget->rowCount();
 			ui->tableWidget->insertRow(newRow);
 			ui->tableWidget->setItem(newRow,0,new QTableWidgetItem());
-			ui->tableWidget->item(newRow,0)->setText(fileName);
+			ui->tableWidget->item(newRow,0)->setText(filePath);
 		}
 	}
 }
@@ -76,60 +77,51 @@ void BatchWindow::fileDropFinished(){
 void BatchWindow::on_runBatchButton_clicked(){
 	if(ui->tableWidget->rowCount()==0)
 		return;
-	ui->progressBar->setMaximum(ui->tableWidget->rowCount());
+	ui->runBatchButton->setDisabled(true);
 	currentFile = 0;
 	go();
 }
 
 void BatchWindow::go(){
-	if(currentFile==ui->tableWidget->rowCount()){
+	int fileCount = ui->tableWidget->rowCount();
+	if(currentFile == fileCount){
 		cleanUpAfterRun();
 		QApplication::beep();
 		return;
 	}else if(ui->tableWidget->item(currentFile,1) != NULL){
 		fileFinished();
 	}else{
+		ui->progressBar->setMaximum(fileCount); // do this in batch loop, in case more files have been added during job
 		ui->progressBar->setValue(currentFile);
-		ui->runBatchButton->setDisabled(true);
 		QFuture<void> future = QtConcurrent::run(this,&BatchWindow::analyseFile,currentFile);
 		analysisWatcher.setFuture(future);
 	}
 }
 
 void BatchWindow::analyseFile(int whichFile){
-	std::string fileName = (std::string)ui->tableWidget->item(whichFile,0)->text().toAscii();
-	AudioFileDecoder* dec = NULL;
-	std::string fileExt  = fileName.substr(fileName.rfind(".")+1);
-	// choose the default for this file extension
-	if(fileExt == "wav" || fileExt == "aif" || fileExt == "aiff" || fileExt == "flac"){
-		dec = new LibSndFileDecoder();
-	}else{
-		dec = new LibAvDecoder();
-	}
+	std::string filePath = (std::string)ui->tableWidget->item(whichFile,0)->text().toAscii();
+	AudioFileDecoder* dec = AudioFileDecoder::getDecoder(filePath);
 	try{
-		ab = dec->decodeFile((char*)fileName.c_str());
+		ab = dec->decodeFile((char*)filePath.c_str());
 		delete dec;
-	}catch(FatalException e){
+	}catch(const Exception& e){
+		std::cerr << e.getMessage() << std::endl;
 		delete ab;
 		delete dec;
 		ab = NULL;
 		markBroken(whichFile);
 		return;
 	}
-	Monaural* mono = new basicMono();
+	Monaural* mono = new Monaural();
 	ab = mono->makeMono(ab);
 	delete mono;
 	if(prefs.getDFactor() > 1){
-		Downsampler* ds = NULL;
-		if(prefs.getDFactor() == 10 && ab->getFrameRate() == 44100 && prefs.getBinFreq(-1) < 2205.0){
-			ds = new IbDownsampler();
-		}else{
-			ds = new SecretRabbitDownsampler();
-		}
+		Downsampler* ds = Downsampler::getDownsampler(prefs.getDFactor(),ab->getFrameRate(),prefs.getBinFreq(-1));
 		try{
 			ab = ds->downsample(ab,prefs.getDFactor());
 			delete ds;
-		}catch(FatalException e){
+		}catch(const Exception& e){
+			std::cerr << e.getMessage() << std::endl;
 			delete ab;
 			delete ds;
 			ab = NULL;
@@ -141,13 +133,13 @@ void BatchWindow::analyseFile(int whichFile){
 	ch = sa->chromagram(ab);
 	delete ab;
 	ab = NULL;
-	sa = NULL; // we don't delete sa; it lives on in the factory to be reused.
+	sa = NULL; // don't delete sa; it lives on in the factory for reuse.
 	ch->decomposeToTwelveBpo(prefs);
 	ch->decomposeToOneOctave(prefs);
-	HarteHCDF harto;
+	Hcdf harto;
 	std::vector<int> changes = harto.hcdf(ch,prefs);
 	changes.push_back(ch->getHops()-1);
-	HarmonicClassifier hc(prefs.getToneProfile());
+	KeyClassifier hc(prefs.getToneProfile());
 	std::vector<int> trackKeys(24);
 	for(int i=0; i<changes.size()-1; i++){
 		std::vector<double> chroma(12);
@@ -173,6 +165,8 @@ void BatchWindow::analyseFile(int whichFile){
 	}
 	ui->tableWidget->setItem(whichFile,1,new QTableWidgetItem());
 	ui->tableWidget->item(whichFile,1)->setText(vis->keyNames[mostCommonKey]);
+	ui->tableWidget->setItem(whichFile,2,new QTableWidgetItem());
+	ui->tableWidget->item(whichFile,2)->setText(vis->keyCodes[mostCommonKey]);
 }
 
 void BatchWindow::markBroken(int whichFile){

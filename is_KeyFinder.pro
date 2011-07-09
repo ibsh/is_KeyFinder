@@ -14,14 +14,12 @@ SOURCES += main.cpp\
     decoderlibav.cpp \
     constantqpostproc.cpp \
     chromagram.cpp \
-    basicmono.cpp \
     audiobuffer.cpp \
     hcdfharte.cpp \
     harmonicclassifier.cpp \
     goertzelanalyser.cpp \
     fftwanalyser.cpp \
     fftpostprocessor.cpp \
-    fatalexception.cpp \
     downsamplerlibsrc.cpp \
     downsamplerib.cpp \
     directskpostproc.cpp \
@@ -32,7 +30,12 @@ SOURCES += main.cpp\
     preferences.cpp \
     spectrumanalyserfactory.cpp \
     batchwindow.cpp \
-    visuals.cpp
+    visuals.cpp \
+    metadatareaderlibav.cpp \
+    exception.cpp \
+    monaural.cpp \
+    decoder.cpp \
+    downsampler.cpp
 
 HEADERS  += detailwindow.h \
     decoderlibsndfile.h \
@@ -40,14 +43,10 @@ HEADERS  += detailwindow.h \
     decoder.h \
     constantqpostproc.h \
     chromagram.h \
-    basicmono.h \
     audiobuffer.h \
-    hcdfharte.h \
-    harmonicclassifier.h \
     goertzelanalyser.h \
     fftwanalyser.h \
     fftpostprocessor.h \
-    fatalexception.h \
     downsamplerlibsrc.h \
     downsamplerib.h \
     downsampler.h \
@@ -60,7 +59,12 @@ HEADERS  += detailwindow.h \
     monaural.h \
     spectrumanalyserfactory.h \
     batchwindow.h \
-    visuals.h
+    visuals.h \
+    metadatareader.h \
+    metadatareaderlibav.h \
+    exception.h \
+    hcdf.h \
+    keyclassifier.h
 
 FORMS    += detailwindow.ui \
     batchwindow.ui
@@ -68,6 +72,6 @@ FORMS    += detailwindow.ui \
 OTHER_FILES += \
 		is_KeyFinder.pro.user
 
-LIBS += -lfftw3 -lsndfile -lavcodec -lavformat -lsamplerate
+LIBS += -lfftw3 -lsndfile -lavcodec -lavformat -lsamplerate -lavutil
 
 ICON = is_KeyFinder.icns

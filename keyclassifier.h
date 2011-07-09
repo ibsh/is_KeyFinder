@@ -1,5 +1,5 @@
-#ifndef HARMONICCLASSIFIER_H
-#define HARMONICCLASSIFIER_H
+#ifndef KEYCLASSIFIER_H
+#define KEYCLASSIFIER_H
 
 #include <iostream>
 #include <iomanip>
@@ -9,10 +9,10 @@
 #include "toneprofiles.h"
 #include "preferences.h"
 
-class HarmonicClassifier{
+class KeyClassifier{
 public:
-	HarmonicClassifier(int);
-	~HarmonicClassifier();
+	KeyClassifier(int);
+	~KeyClassifier();
 	int classify(const std::vector<double>&, const Preferences&);
 private:
 	ToneProfile* major;

@@ -1,12 +1,15 @@
 #ifndef AUDIOFILEDECODER_H
 #define AUDIOFILEDECODER_H
 
-#include "fatalexception.h"
+#include "exception.h"
 #include "audiobuffer.h"
+
+#include <string>
 
 class AudioFileDecoder{
 public:
-	virtual AudioBuffer* decodeFile(char*) throw (FatalException) = 0;
+	virtual AudioBuffer* decodeFile(char*) throw (Exception) = 0;
+	static AudioFileDecoder* getDecoder(const std::string&);
 };
 
 #endif

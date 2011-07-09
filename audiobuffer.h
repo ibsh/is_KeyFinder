@@ -1,7 +1,6 @@
 #ifndef AUDIOBUFFER_H
 #define AUDIOBUFFER_H
 
-#include "fatalexception.h"
 #include <iostream>
 #include <vector>
 
@@ -14,7 +13,7 @@ public:
 	void setFrameRate(int);
 	float getSample(int) const;
 	void setSample(int,float);
-	void addSamples(int) throw (FatalException);
+	void addSamples(int);
 	int getSampleCount() const;
 	std::vector<float> buffer; // I don't want this public really, but libsndfile and libavcodec need access to buffer.front()
 private:

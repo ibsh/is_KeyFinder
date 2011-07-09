@@ -17,7 +17,7 @@ public:
 	float n;
 };
 
-AudioBuffer* IbDownsampler::downsample(AudioBuffer* inbuf, int factor) throw (FatalException){
+AudioBuffer* IbDownsampler::downsample(AudioBuffer* inbuf, int factor) throw (Exception){
 	if(factor == 1) return inbuf;
 	// prep output buffer
 	AudioBuffer* outbuf = new AudioBuffer();
@@ -29,8 +29,8 @@ AudioBuffer* IbDownsampler::downsample(AudioBuffer* inbuf, int factor) throw (Fa
 	if(inbuf->getSampleCount() % factor > 0) ns += c;
 	try{
 		outbuf->addSamples(ns);
-	}catch(FatalException){
-		throw;
+	}catch(const Exception& e){
+		throw e;
 	}
 	// prep filter
 	int filterOrder = 40;

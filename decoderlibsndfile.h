@@ -5,7 +5,7 @@
 
 class LibSndFileDecoder : public AudioFileDecoder{
 public:
-	virtual AudioBuffer* decodeFile(char*) throw (FatalException);
+	virtual AudioBuffer* decodeFile(char*) throw (Exception);
 };
 
 #endif

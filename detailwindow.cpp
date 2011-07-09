@@ -8,6 +8,10 @@ DetailWindow::DetailWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::De
 	sa = NULL;
 	ch = NULL;
 	vis = Visuals::getInstance();
+	prefs.setSpectrumAnalyser('f');
+	prefs.setFftPostProcessor('i');
+	prefs.setTemporalWindow('b');
+	prefs.setToneProfile(2);
 	// SETUP ASYNC SIGNALS/SLOTS (do it once here so they don't repeat if a decode fails).
 	connect(&decodeWatcher, SIGNAL(finished()), this, SLOT(decoded()));
 	connect(&monoWatcher, SIGNAL(finished()), this, SLOT(madeMono()));
@@ -21,12 +25,18 @@ DetailWindow::DetailWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::De
 	ui->runButton->setDisabled(true);
 	chromagramImage = QImage(1,1,QImage::Format_Indexed8);
 	miniChromagramImage = QImage(1,1,QImage::Format_Indexed8);
+	colourScaleImage = QImage(1,65,QImage::Format_Indexed8);
 	vis->setChromagramColours(chromagramImage,0);
 	vis->setChromagramColours(miniChromagramImage,0);
+	vis->setChromagramColours(colourScaleImage,0);
 	chromagramImage.setPixel(0,0,1);
 	miniChromagramImage.setPixel(0,0,1);
+	for(int i=1; i<=65; i++)
+		colourScaleImage.setPixel(0,65-i,i);
 	ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
 	ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
+	ui->colourScaleLabel->setPixmap(QPixmap::fromImage(colourScaleImage));
+	ui->gridLayout_Visualisation->setRowStretch(0,prefs.getOctaves());
 	drawPianoKeys();
 	// key labels
 	QLabel* newLabel = new QLabel();
@@ -54,7 +64,7 @@ void DetailWindow::dragEnterEvent(QDragEnterEvent *e){
 
 void DetailWindow::dropEvent(QDropEvent *e){
 	allowDrops = false;
-	fileName = (std::string)e->mimeData()->urls().at(0).toLocalFile().toAscii();
+	filePath = (std::string)e->mimeData()->urls().at(0).toLocalFile().toAscii();
 	go();
 }
 
@@ -62,9 +72,9 @@ void DetailWindow::go(){
 	say("Decoding audio... ");
 	ui->progressBar->setValue(1);
 	ui->progressBar->setVisible(true);
-	ui->saCombo->setDisabled(true);
-	ui->twCombo->setDisabled(true);
-	ui->tpCombo->setDisabled(true);
+	ui->spectrumAnalyserCombo->setDisabled(true);
+	ui->temporalWindowCombo->setDisabled(true);
+	ui->toneProfilesCombo->setDisabled(true);
 	ui->chromaColourCombo->setDisabled(true);
 	ui->runButton->setDisabled(true);
 	// Asynchronous, threaded computation
@@ -76,27 +86,21 @@ void DetailWindow::go(){
 void DetailWindow::cleanUpAfterRun(){
 	ui->progressBar->setValue(0);
 	ui->progressBar->setVisible(false);
-	ui->saCombo->setDisabled(false);
-	ui->twCombo->setDisabled(false);
-	ui->tpCombo->setDisabled(false);
+	ui->spectrumAnalyserCombo->setDisabled(false);
+	ui->temporalWindowCombo->setDisabled(false);
+	ui->toneProfilesCombo->setDisabled(false);
 	ui->chromaColourCombo->setDisabled(false);
 	ui->runButton->setDisabled(false);
 	allowDrops = true;
 }
 
 void DetailWindow::decode(){
-	AudioFileDecoder* dec = NULL;
-	std::string fileExt  = fileName.substr(fileName.rfind(".")+1);
-	// choose the default for this file extension
-	if(fileExt == "wav" || fileExt == "aif" || fileExt == "aiff" || fileExt == "flac"){
-		dec = new LibSndFileDecoder();
-	}else{
-		dec = new LibAvDecoder();
-	}
+	AudioFileDecoder* dec = AudioFileDecoder::getDecoder(filePath);
 	try{
-		ab = dec->decodeFile((char*)fileName.c_str());
+		ab = dec->decodeFile((char*)filePath.c_str());
 		delete dec;
-	}catch(FatalException e){
+	}catch(const Exception& e){
+		std::cerr << e.getMessage() << std::endl;
 		delete ab;
 		delete dec;
 		ab = NULL;
@@ -116,7 +120,7 @@ void DetailWindow::decoded(){
 }
 
 void DetailWindow::makeMono(){
-	Monaural* mono = new basicMono();
+	Monaural* mono = new Monaural();
 	ab = mono->makeMono(ab);
 	delete mono;
 }
@@ -136,17 +140,12 @@ void DetailWindow::madeMono(){
 }
 
 void DetailWindow::downSample(){
-	Downsampler* ds = NULL;
-	// discard downsampler no longer useable here. But it was crap anyway.
-	if(prefs.getDFactor() == 10 && ab->getFrameRate() == 44100 && prefs.getBinFreq(-1) < 2205.0){
-		ds = new IbDownsampler();
-	}else{
-		ds = new SecretRabbitDownsampler();
-	}
+	Downsampler* ds = Downsampler::getDownsampler(prefs.getDFactor(),ab->getFrameRate(),prefs.getBinFreq(-1));
 	try{
 		ab = ds->downsample(ab,prefs.getDFactor());
 		delete ds;
-	}catch(FatalException e){
+	}catch(const Exception& e){
+		std::cerr << e.getMessage() << std::endl;
 		delete ab;
 		delete ds;
 		ab = NULL;
@@ -220,10 +219,10 @@ void DetailWindow::saAnalysed(){
 
 void DetailWindow::harmonicAnalysis(){
 	ch->decomposeToOneOctave(prefs);
-	HarteHCDF harto;
+	Hcdf harto;
 	std::vector<int> changes = harto.hcdf(ch,prefs);
 	changes.push_back(ch->getHops()); // add sentinel to back end
-	HarmonicClassifier hc(prefs.getToneProfile());
+	KeyClassifier hc(prefs.getToneProfile());
 	keys = std::vector<int>(0);
 	for(int i=0; i<changes.size()-1; i++){
 		std::vector<double> chroma(12);
@@ -269,7 +268,7 @@ void DetailWindow::haFinished(){
 	}
 	// show
 	ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
-	// Paint keychanges to screen
+	// Key labels
 	for(int i=keyLabels.size()-1; i>=0; i--){
 		delete keyLabels[i];
 		keyLabels.pop_back();
@@ -280,8 +279,7 @@ void DetailWindow::haFinished(){
 			QLabel* newLabel = new QLabel(vis->keyNames[keys[h-1]]);
 			newLabel->setAlignment(Qt::AlignCenter);
 			QPalette pal = newLabel->palette();
-			pal.setColor(backgroundRole(), vis->keyColours[keys[h-1]]);
-			//pal.setColor(foregroundRole(), Qt::white);
+			pal.setColor(backgroundRole(),vis->keyColours[keys[h-1]]);
 			newLabel->setPalette(pal);
 			newLabel->setFrameStyle(1);
 			newLabel->setAutoFillBackground(true);
@@ -293,7 +291,12 @@ void DetailWindow::haFinished(){
 		}
 	}
 	// finale
-	QString shortName = QString::fromUtf8(fileName.substr(fileName.rfind("/")+1).c_str());
+	MetadataReader* mdr = new LibAvMetadataReader((char*)filePath.c_str());
+	QString shortName;
+	shortName = QString::fromUtf8(mdr->getTitle().c_str());
+	if(shortName == ""){
+		shortName = QString::fromUtf8(filePath.substr(filePath.rfind("/")+1).c_str());
+	}
 	this->setWindowTitle("KeyFinder - Detailed Analysis - " + shortName);
 	say(shortName + " complete.");
 	delete ch;
@@ -360,7 +363,7 @@ DetailWindow::~DetailWindow(){
 	delete ui;
 }
 
-void DetailWindow::on_saCombo_currentIndexChanged(int index){
+void DetailWindow::on_spectrumAnalyserCombo_currentIndexChanged(int index){
 	if(index == 0){
 		prefs.setSpectrumAnalyser('g');
 	}
@@ -378,7 +381,7 @@ void DetailWindow::on_saCombo_currentIndexChanged(int index){
 	}
 }
 
-void DetailWindow::on_twCombo_currentIndexChanged(int index){
+void DetailWindow::on_temporalWindowCombo_currentIndexChanged(int index){
 	if(index == 0){
 		prefs.setTemporalWindow('b');
 	}
@@ -390,17 +393,19 @@ void DetailWindow::on_twCombo_currentIndexChanged(int index){
 	}
 }
 
-void DetailWindow::on_tpCombo_currentIndexChanged(int index){
+void DetailWindow::on_toneProfilesCombo_currentIndexChanged(int index){
 	prefs.setToneProfile(index);
 }
 
 void DetailWindow::on_runButton_clicked(){
-	if(fileName != "") go();
+	if(filePath != "") go();
 }
 
 void DetailWindow::on_chromaColourCombo_currentIndexChanged(int index){
 	vis->setChromagramColours(chromagramImage,index);
 	vis->setChromagramColours(miniChromagramImage,index);
+	vis->setChromagramColours(colourScaleImage,index);
 	ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
 	ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
+	ui->colourScaleLabel->setPixmap(QPixmap::fromImage(colourScaleImage));
 }

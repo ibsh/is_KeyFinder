@@ -6,37 +6,30 @@
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QUrl>
-#include <QLabel>
 #include <QFuture>
 #include <QFutureWatcher>
+#include <QLabel>
 
 #include <string>
 #include <vector>
 
-#include "batchwindow.h"
+#include "batchwindow.h" // need to be able to launch other window
 
 #include "preferences.h"
 #include "visuals.h"
-#include "fatalexception.h"
+#include "exception.h"
 #include "audiobuffer.h"
 #include "chromagram.h"
-#include "windowfunctions.h"
 
 #include "decoder.h"
-#include "decoderlibav.h"
-#include "decoderlibsndfile.h"
-
-#include "downsampler.h"
-#include "downsamplerlibsrc.h"
-#include "downsamplerib.h"
-
 #include "monaural.h"
-#include "basicmono.h"
-
+#include "downsampler.h"
 #include "spectrumanalyserfactory.h"
+#include "hcdf.h"
+#include "keyclassifier.h"
 
-#include "hcdfharte.h"
-#include "harmonicclassifier.h"
+#include "metadatareader.h"
+#include "metadatareaderlibav.h"
 
 namespace Ui {
 	class DetailWindow;
@@ -55,6 +48,7 @@ private:
 	std::vector<QLabel*> keyLabels;
 	QImage chromagramImage;
 	QImage miniChromagramImage;
+	QImage colourScaleImage;
 	// analysis
 	Preferences prefs;
 	AudioBuffer* ab;
@@ -62,7 +56,7 @@ private:
 	Chromagram* ch;
 	std::vector<int> keys;
 	//processing files
-	std::string fileName;
+	std::string filePath;
 	bool allowDrops;
 	void dragEnterEvent(QDragEnterEvent*);
 	void dropEvent(QDropEvent*);
@@ -89,13 +83,13 @@ private slots:
 	void haFinished();											// step 6 complete
 	void say(const QString&);
 	void on_actionNew_Detail_Keyfinder_triggered();
-	void on_actionClose_Window_triggered();
-	void on_saCombo_currentIndexChanged(int index);
-	void on_tpCombo_currentIndexChanged(int index);
-	void on_runButton_clicked();
-	void on_twCombo_currentIndexChanged(int index);
 	void on_actionNew_Batch_Keyfinder_triggered();
+	void on_actionClose_Window_triggered();
+	void on_spectrumAnalyserCombo_currentIndexChanged(int index);
+	void on_temporalWindowCombo_currentIndexChanged(int index);
+	void on_toneProfilesCombo_currentIndexChanged(int index);
 	void on_chromaColourCombo_currentIndexChanged(int index);
+	void on_runButton_clicked();
 };
 
 #endif

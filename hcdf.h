@@ -1,5 +1,5 @@
-#ifndef HDCFHARTE_H
-#define HDCFHARTE_H
+#ifndef HDCF_H
+#define HDCF_H
 
 #include <iostream>
 #include <iomanip>
@@ -12,9 +12,9 @@
 #include "chromagram.h"
 #include "preferences.h"
 
-class HarteHCDF{
+class Hcdf{
 public:
-	HarteHCDF();
+	Hcdf();
 	std::vector<int> hcdf(Chromagram*, const Preferences&);
 private:
 	double phi(int, int);

@@ -34,7 +34,7 @@ void AudioBuffer::setSample(int n,float x){
 		std::cerr << "Attempt to set out-of-bounds sample (" << n << "/" << samples << ")" << std::endl;
 }
 
-void AudioBuffer::addSamples(int newSamples) throw (FatalException){
+void AudioBuffer::addSamples(int newSamples){
 	//std::cerr << "Adding " << newSamples << " to " << audioSamples << " for " << audioSamples + newSamples << " total." << std::endl;
 	buffer.resize(samples + newSamples);
 	samples += newSamples;

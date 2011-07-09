@@ -1,10 +1,10 @@
-#include "hcdfharte.h"
+#include "hcdf.h"
 
-HarteHCDF::HarteHCDF(){
+Hcdf::Hcdf(){
 	pi = (4 * atan(1.0));
 }
 
-double HarteHCDF::phi(int d, int l){
+double Hcdf::phi(int d, int l){
 	int circle = d/2;
 	double result = l * pi;
 	double radius = 0.0;
@@ -25,8 +25,8 @@ double HarteHCDF::phi(int d, int l){
 	}
 }
 
-std::vector<int> HarteHCDF::hcdf(Chromagram* ch, const Preferences& prefs){
-	int bpo = 12; // note this function must always be applied after decomposition to 1 bps.
+std::vector<int> Hcdf::hcdf(Chromagram* ch, const Preferences& prefs){
+	int bpo = 12; // note this function must always be applied *after* decomposition to 1 bps.
 	int hops = ch->getHops();
 	int dims = 6;
 	// build vector for movement in six dimensions
@@ -45,8 +45,8 @@ std::vector<int> HarteHCDF::hcdf(Chromagram* ch, const Preferences& prefs){
 		}
 	}
 	// gaussian
-	int gaussianSize = 19; // 19 standard
-	double gaussianSigma = 8.0;
+	int gaussianSize = prefs.getHcdfGaussianSize();
+	double gaussianSigma = prefs.getHcdfGaussianSigma();
 	std::vector<double> gaussian(gaussianSize);
 	for(int i=0; i<gaussianSize; i++){
 		// maybe. This is the def from http://en.wikipedia.org/wiki/Gaussian_function
