@@ -1,13 +1,16 @@
-#ifndef METADATAREADER_H
-#define METADATAREADER_H
+#ifndef METADATA_H
+#define METADATA_H
 
 #include <iostream>
 #include <string>
 
-class MetadataReader{
+class Metadata{
 public:
-	virtual std::string getTitle() = 0;
-	virtual std::string getArtist() = 0;
+	static Metadata* getMetadata(char*);
+	virtual std::string getTitle() const = 0;
+	virtual std::string getArtist() const = 0;
+	virtual std::string getGrouping() const = 0;
+	virtual void setGrouping(char*) = 0;
 };
 
-#endif // METADATAREADER_H
+#endif // METADATA_H
