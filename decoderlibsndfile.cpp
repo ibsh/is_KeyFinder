@@ -7,7 +7,8 @@ AudioBuffer* LibSndFileDecoder::decodeFile(char* filename) throw (Exception){
 	// Open the sound file.
 	soundFileInfo.format = 0;
 	soundFile = sf_open(filename,SFM_READ,&soundFileInfo);
-	if (soundFile == NULL) throw Exception("Failed to open audio file");
+	if (soundFile == NULL)
+		throw Exception("Failed to open audio file");
 	AudioBuffer* ab = new AudioBuffer();
 	// Get soundFileInfo
 	ab->setFrameRate(soundFileInfo.samplerate);

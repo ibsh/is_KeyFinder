@@ -1,6 +1,6 @@
 #include "audiobuffer.h"
 
-AudioBuffer::AudioBuffer(): samples(0), channels(0), frameRate(0), buffer(0){}
+AudioBuffer::AudioBuffer():  buffer(0), channels(0), frameRate(0),  samples(0){}
 
 int AudioBuffer::getChannels() const{
 	return channels;

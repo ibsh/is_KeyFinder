@@ -13,7 +13,7 @@ class KeyClassifier{
 public:
 	KeyClassifier(int);
 	~KeyClassifier();
-	int classify(const std::vector<double>&, const Preferences&);
+	int classify(const std::vector<double>&);
 private:
 	ToneProfile* major;
 	ToneProfile* minor;

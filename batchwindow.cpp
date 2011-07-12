@@ -1,16 +1,25 @@
 #include "batchwindow.h"
 #include "ui_batchwindow.h"
 
+const int COL_PATH = 0;
+const int COL_TAG_ARTIST = 1;
+const int COL_TAG_TITLE = 2;
+const int COL_TAG_GROUPING = 3;
+const int COL_KEY = 4;
+const int COL_KEYCODE = 5;
+
 BatchWindow::BatchWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::BatchWindow){
-	ui->setupUi(this);
 	// SETUP KEYFINDER
 	ab = NULL;
 	sa = NULL;
 	ch = NULL;
-	vis = Visuals::getInstance();
 	// SETUP ASYNC SIGNALS/SLOTS
 	connect(&fileDropWatcher, SIGNAL(finished()), this, SLOT(fileDropFinished()));
 	connect(&analysisWatcher, SIGNAL(finished()), this, SLOT(fileFinished()));
+	// SETUP UI
+	ui->setupUi(this);
+	allowDrops = true;
+	vis = Visuals::getInstance();
 }
 
 BatchWindow::~BatchWindow(){
@@ -37,12 +46,13 @@ void BatchWindow::on_actionClose_Window_triggered(){
 
 void BatchWindow::dragEnterEvent(QDragEnterEvent *e){
 	// accept only local files
-	if(e->mimeData()->hasUrls()  && !e->mimeData()->urls().at(0).toLocalFile().isEmpty()){
+	if(allowDrops && e->mimeData()->hasUrls()  && !e->mimeData()->urls().at(0).toLocalFile().isEmpty()){
 		e->acceptProposedAction();
 	}
 }
 
 void BatchWindow::dropEvent(QDropEvent *e){
+	allowDrops = false;
 	ui->runBatchButton->setDisabled(true);
 	QFuture<void> future = QtConcurrent::run(this,&BatchWindow::filesDropped,e->mimeData()->urls());
 	fileDropWatcher.setFuture(future);
@@ -62,13 +72,30 @@ void BatchWindow::filesDropped(QList<QUrl> urls){
 		if(addNew){
 			int newRow = ui->tableWidget->rowCount();
 			ui->tableWidget->insertRow(newRow);
-			ui->tableWidget->setItem(newRow,0,new QTableWidgetItem());
-			ui->tableWidget->item(newRow,0)->setText(filePath);
+			ui->tableWidget->setItem(newRow,COL_PATH,new QTableWidgetItem());
+			ui->tableWidget->item(newRow,COL_PATH)->setText(filePath);
+			Metadata* md = Metadata::getMetadata(filePath.toAscii().data());
+			QString tag = QString::fromUtf8(md->getArtist().c_str());
+			if(tag != ""){
+				ui->tableWidget->setItem(newRow,COL_TAG_ARTIST,new QTableWidgetItem());
+				ui->tableWidget->item(newRow,COL_TAG_ARTIST)->setText(tag);
+			}
+			tag = QString::fromUtf8(md->getTitle().c_str());
+			if(tag != ""){
+				ui->tableWidget->setItem(newRow,COL_TAG_TITLE,new QTableWidgetItem());
+				ui->tableWidget->item(newRow,COL_TAG_TITLE)->setText(tag);
+			}
+			tag = QString::fromUtf8(md->getGrouping().c_str());
+			if(tag != ""){
+				ui->tableWidget->setItem(newRow,COL_TAG_GROUPING,new QTableWidgetItem());
+				ui->tableWidget->item(newRow,COL_TAG_GROUPING)->setText(tag);
+			}
 		}
 	}
 }
 
 void BatchWindow::fileDropFinished(){
+	allowDrops = true;
 	ui->runBatchButton->setDisabled(false);
 	ui->tableWidget->resizeColumnsToContents();
 	ui->tableWidget->resizeRowsToContents();
@@ -78,20 +105,20 @@ void BatchWindow::on_runBatchButton_clicked(){
 	if(ui->tableWidget->rowCount()==0)
 		return;
 	ui->runBatchButton->setDisabled(true);
+	allowDrops = false;
+	ui->progressBar->setMaximum(ui->tableWidget->rowCount());
 	currentFile = 0;
 	go();
 }
 
 void BatchWindow::go(){
-	int fileCount = ui->tableWidget->rowCount();
-	if(currentFile == fileCount){
+	if(currentFile == ui->tableWidget->rowCount()){
 		cleanUpAfterRun();
 		QApplication::beep();
 		return;
-	}else if(ui->tableWidget->item(currentFile,1) != NULL){
+	}else if(ui->tableWidget->item(currentFile,COL_KEY) != NULL){
 		fileFinished();
 	}else{
-		ui->progressBar->setMaximum(fileCount); // do this in batch loop, in case more files have been added during job
 		ui->progressBar->setValue(currentFile);
 		QFuture<void> future = QtConcurrent::run(this,&BatchWindow::analyseFile,currentFile);
 		analysisWatcher.setFuture(future);
@@ -99,13 +126,12 @@ void BatchWindow::go(){
 }
 
 void BatchWindow::analyseFile(int whichFile){
-	std::string filePath = (std::string)ui->tableWidget->item(whichFile,0)->text().toAscii();
+	std::string filePath = (std::string)ui->tableWidget->item(whichFile,COL_PATH)->text().toAscii();
 	AudioFileDecoder* dec = AudioFileDecoder::getDecoder(filePath);
 	try{
 		ab = dec->decodeFile((char*)filePath.c_str());
 		delete dec;
 	}catch(const Exception& e){
-		std::cerr << e.getMessage() << std::endl;
 		delete ab;
 		delete dec;
 		ab = NULL;
@@ -121,7 +147,6 @@ void BatchWindow::analyseFile(int whichFile){
 			ab = ds->downsample(ab,prefs.getDFactor());
 			delete ds;
 		}catch(const Exception& e){
-			std::cerr << e.getMessage() << std::endl;
 			delete ab;
 			delete ds;
 			ab = NULL;
@@ -148,7 +173,7 @@ void BatchWindow::analyseFile(int whichFile){
 				chroma[k] += ch->getMagnitude(j,k);
 			}
 		}
-		int key = hc.classify(chroma,prefs);
+		int key = hc.classify(chroma);
 		for(int j=changes[i]; j<changes[i+1]; j++){
 			trackKeys[key]++;
 		}
@@ -163,16 +188,16 @@ void BatchWindow::analyseFile(int whichFile){
 			mostCommonKey = i;
 		}
 	}
-	ui->tableWidget->setItem(whichFile,1,new QTableWidgetItem());
-	ui->tableWidget->item(whichFile,1)->setText(vis->keyNames[mostCommonKey]);
-	ui->tableWidget->setItem(whichFile,2,new QTableWidgetItem());
-	ui->tableWidget->item(whichFile,2)->setText(vis->keyCodes[mostCommonKey]);
+	ui->tableWidget->setItem(whichFile,COL_KEY,new QTableWidgetItem());
+	ui->tableWidget->item(whichFile,COL_KEY)->setText(vis->keyNames[mostCommonKey]);
+	ui->tableWidget->setItem(whichFile,COL_KEYCODE,new QTableWidgetItem());
+	ui->tableWidget->item(whichFile,COL_KEYCODE)->setText(vis->keyCodes[mostCommonKey]);
 }
 
 void BatchWindow::markBroken(int whichFile){
-	ui->tableWidget->setItem(whichFile,1,new QTableWidgetItem());
-	ui->tableWidget->item(whichFile,1)->setText("Failed");
-	ui->tableWidget->item(whichFile,0)->setTextColor(qRgb(255,0,0));
+	ui->tableWidget->setItem(whichFile,COL_KEY,new QTableWidgetItem());
+	ui->tableWidget->item(whichFile,COL_KEY)->setText("Failed");
+	ui->tableWidget->item(whichFile,COL_PATH)->setTextColor(qRgb(255,0,0));
 	ui->tableWidget->resizeColumnsToContents();
 }
 
@@ -182,6 +207,7 @@ void BatchWindow::fileFinished(){
 }
 
 void BatchWindow::cleanUpAfterRun(){
+	allowDrops = true;
 	ui->progressBar->setValue(0);
 	ui->runBatchButton->setDisabled(false);
 	ui->tableWidget->resizeColumnsToContents();
@@ -189,7 +215,7 @@ void BatchWindow::cleanUpAfterRun(){
 
 void BatchWindow::on_tableWidget_itemSelectionChanged(){
 	/*
-		enabling copy to clipboard: this doesn't work exactly as expected;
+		Enabling copy to clipboard. This doesn't work exactly as expected;
 		it just copies from the top-left to the bottom-right selected cells.
 	*/
 	copyArray.clear();
@@ -225,5 +251,8 @@ void BatchWindow::keyPressEvent(QKeyEvent* event){
 		QMimeData* mimeData = new QMimeData();
 		mimeData->setData("text/plain",copyArray);
 		QApplication::clipboard()->setMimeData(mimeData);
+	}else if(event->matches(QKeySequence::Refresh)){ // Refresh is a cheap way to intercept Cmd+R for "Run"
+		if(ui->runBatchButton->isEnabled())
+			ui->runBatchButton->click();
 	}
 }

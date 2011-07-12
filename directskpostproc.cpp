@@ -1,11 +1,5 @@
 #include "directskpostproc.h"
 
-using std::cout;
-using std::cerr;
-using std::endl;
-using std::fixed;
-using std::setprecision;
-
 DirectSkPostProc::DirectSkPostProc(int frameRate, const Preferences& prefs) : FftPostProcessor(frameRate, prefs) {
 	pi = (4 * atan(1.0));
 	binOffsets = std::vector<int>(bins);
@@ -52,20 +46,20 @@ float DirectSkPostProc::specialWindow(float n, float N)const{
 }
 
 void DirectSkPostProc::printKernel()const{
-	cout << fixed;
+	std::cout << std::fixed;
  	int verylastFftBin = binOffsets[bins-1] + mySpecKernel[bins-1].size() - 1;
 	for(int i=0; i<bins; i++){
 		for(int j=0; j<=verylastFftBin; j++){
 			if(j < binOffsets[i]){
-				cout << "0 ";
+				std::cout << "0 ";
 			}else if(j < binOffsets[i] + mySpecKernel[i].size()){
 				//float out = mySpecKernel[i][(j-binOffsets[i])] / norms[i];
 				float out = mySpecKernel[i][(j-binOffsets[i])];
-				cout << setprecision(3) << out << " ";
+				std::cout << std::setprecision(3) << out << " ";
 			}else{
-				cout << "0 ";
+				std::cout << "0 ";
 			}
 		}
-		cout << endl;
+		std::cout << std::endl;
 	}
 }

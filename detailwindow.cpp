@@ -3,11 +3,9 @@
 
 DetailWindow::DetailWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::DetailWindow){
 	// SETUP KEYFINDER
-	allowDrops = true;
 	ab = NULL;
 	sa = NULL;
 	ch = NULL;
-	vis = Visuals::getInstance();
 	prefs.setSpectrumAnalyser('f');
 	prefs.setFftPostProcessor('i');
 	prefs.setTemporalWindow('b');
@@ -16,11 +14,13 @@ DetailWindow::DetailWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::De
 	connect(&decodeWatcher, SIGNAL(finished()), this, SLOT(decoded()));
 	connect(&monoWatcher, SIGNAL(finished()), this, SLOT(madeMono()));
 	connect(&dsWatcher, SIGNAL(finished()), this, SLOT(downSampled()));
-	connect(&saInitWatcher, SIGNAL(finished()), this, SLOT(saInitialised()));
-	connect(&saWatcher, SIGNAL(finished()), this, SLOT(saAnalysed()));
+	connect(&saWatcher, SIGNAL(finished()), this, SLOT(spectrumAnalysisComplete()));
 	connect(&haWatcher, SIGNAL(finished()), this, SLOT(haFinished()));
 	// SETUP UI
 	ui->setupUi(this);
+	allowDrops = true;
+	vis = Visuals::getInstance();
+	ui->progressBar->setMaximum(5);
 	ui->progressBar->setVisible(false);
 	ui->runButton->setDisabled(true);
 	chromagramImage = QImage(1,1,QImage::Format_Indexed8);
@@ -80,7 +80,6 @@ void DetailWindow::go(){
 	// Asynchronous, threaded computation
 	QFuture<void> future = QtConcurrent::run(this,&DetailWindow::decode);
 	decodeWatcher.setFuture(future);
-	//say(QString::fromUtf8(whatever.c_str())); // conversion std::string -> QString
 }
 
 void DetailWindow::cleanUpAfterRun(){
@@ -100,7 +99,6 @@ void DetailWindow::decode(){
 		ab = dec->decodeFile((char*)filePath.c_str());
 		delete dec;
 	}catch(const Exception& e){
-		std::cerr << e.getMessage() << std::endl;
 		delete ab;
 		delete dec;
 		ab = NULL;
@@ -127,10 +125,10 @@ void DetailWindow::makeMono(){
 
 void DetailWindow::madeMono(){
 	if(prefs.getDFactor() < 2){
-		say("Made mono. Initialising spectrum analyser...");
+		say("Made mono. Running spectrum analysis...");
 		ui->progressBar->setValue(4);
-		QFuture<void> future = QtConcurrent::run(this,&DetailWindow::saInitialise);
-		saInitWatcher.setFuture(future);
+		QFuture<void> future = QtConcurrent::run(this,&DetailWindow::spectrumAnalysis);
+		saWatcher.setFuture(future);
 	}else{
 		say("Made mono. Downsampling... ");
 		ui->progressBar->setValue(3);
@@ -145,7 +143,6 @@ void DetailWindow::downSample(){
 		ab = ds->downsample(ab,prefs.getDFactor());
 		delete ds;
 	}catch(const Exception& e){
-		std::cerr << e.getMessage() << std::endl;
 		delete ab;
 		delete ds;
 		ab = NULL;
@@ -158,29 +155,19 @@ void DetailWindow::downSampled(){
 		cleanUpAfterRun();
 		return;
 	}
-	say("Downsampled. Initialising spectrum analyser...");
+	say("Downsampled. Running spectrum analysis...");
 	ui->progressBar->setValue(4);
-	QFuture<void> future = QtConcurrent::run(this,&DetailWindow::saInitialise);
-	saInitWatcher.setFuture(future);
-}
-
-void DetailWindow::saInitialise(){
-	sa = SpectrumAnalyserFactory::getInstance()->getSpectrumAnalyser(ab->getFrameRate(),prefs);
-}
-
-void DetailWindow::saInitialised(){
-	say("Running spectrum analysis...");
-	ui->progressBar->setValue(5);
-	QFuture<void> future = QtConcurrent::run(this,&DetailWindow::saAnalyse);
+	QFuture<void> future = QtConcurrent::run(this,&DetailWindow::spectrumAnalysis);
 	saWatcher.setFuture(future);
 }
 
-void DetailWindow::saAnalyse(){
+void DetailWindow::spectrumAnalysis(){
+	sa = SpectrumAnalyserFactory::getInstance()->getSpectrumAnalyser(ab->getFrameRate(),prefs);
 	ch = sa->chromagram(ab);
 	ch->decomposeToTwelveBpo(prefs);
 }
 
-void DetailWindow::saAnalysed(){
+void DetailWindow::spectrumAnalysisComplete(){
 	// Paint 12-bpo chroma to screen in 64 colours (plus black at index 1)
 	int bins = prefs.getOctaves()*12;
 	int scale = 5; // don't draw individual pixels; draw blocks of scale*scale. Sharpens image.
@@ -212,7 +199,7 @@ void DetailWindow::saAnalysed(){
 	ui->chromagramLabel->setMinimumHeight(bins+2);
 	ui->chromagramLabel->setMinimumWidth(ch->getHops()+2);
 	say("Running harmonic analyses...");
-	ui->progressBar->setValue(6);
+	ui->progressBar->setValue(5);
 	QFuture<void> future = QtConcurrent::run(this,&DetailWindow::harmonicAnalysis);
 	haWatcher.setFuture(future);
 }
@@ -231,7 +218,7 @@ void DetailWindow::harmonicAnalysis(){
 				chroma[k] += ch->getMagnitude(j,k);
 			}
 		}
-		int key = hc.classify(chroma,prefs);
+		int key = hc.classify(chroma);
 		for(int j=changes[i]; j<changes[i+1]; j++){
 			keys.push_back(key);
 		}
@@ -291,14 +278,14 @@ void DetailWindow::haFinished(){
 		}
 	}
 	// finale
-	MetadataReader* mdr = new LibAvMetadataReader((char*)filePath.c_str());
+	Metadata* md = Metadata::getMetadata((char*)filePath.c_str());
 	QString shortName;
-	shortName = QString::fromUtf8(mdr->getTitle().c_str());
+	shortName = QString::fromUtf8(md->getTitle().c_str());
 	if(shortName == ""){
 		shortName = QString::fromUtf8(filePath.substr(filePath.rfind("/")+1).c_str());
 	}
 	this->setWindowTitle("KeyFinder - Detailed Analysis - " + shortName);
-	say(shortName + " complete.");
+	say(shortName + " - analysis complete.");
 	delete ch;
 	ch = NULL;
 	cleanUpAfterRun();
@@ -354,8 +341,6 @@ DetailWindow::~DetailWindow(){
 	monoWatcher.waitForFinished();
 	dsWatcher.cancel();
 	dsWatcher.waitForFinished();
-	saInitWatcher.cancel();
-	saInitWatcher.waitForFinished();
 	saWatcher.cancel();
 	saWatcher.waitForFinished();
 	haWatcher.cancel();

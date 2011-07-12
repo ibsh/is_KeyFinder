@@ -1,11 +1,5 @@
 #include "constantqpostproc.h"
 
-using std::cout;
-using std::cerr;
-using std::endl;
-using std::fixed;
-using std::setprecision;
-
 ConstantQPostProc::ConstantQPostProc(int frameRate, const Preferences& prefs) : FftPostProcessor(frameRate, prefs) {
 	pi = (4 * atan(1.0));
 	sparseKernel = std::vector<std::vector<std::complex<float> > > (bins);
@@ -32,7 +26,7 @@ ConstantQPostProc::ConstantQPostProc(int frameRate, const Preferences& prefs) : 
 			tempKernel[j][1] = 0.0;
 		}
 		if(offsetI<0){
-			cerr << "Fatal error: minimum fftFrameSize for this downsample factor and starting frequency is " << lengthI+1 << endl;
+			std::cerr << "Fatal error: minimum fftFrameSize for this downsample factor and starting frequency is " << lengthI+1 << std::endl;
 			exit(1);
 		}
 		for(int j=0; j<lengthI; j++){
@@ -82,21 +76,21 @@ std::vector<float> ConstantQPostProc::chromaVector(fftw_complex* fftResult)const
 }
 
 void ConstantQPostProc::printKernel()const{
-	cout << fixed;
+	std::cout << std::fixed;
  	int verylastFftBin = binOffsets[bins-1] + sparseKernel[bins-1].size() - 1;
 	for(int i=0; i<bins; i++){
 		for(int j=0; j<=verylastFftBin; j++){
 			if(j < binOffsets[i]){
-				cout << "0 ";
+				std::cout << "0 ";
 			}else if(j < binOffsets[i] + sparseKernel[i].size()){
 				float real = sparseKernel[i][j-binOffsets[i]].real();
 				float imag = sparseKernel[i][j-binOffsets[i]].imag();
 				float magnitude = sqrt((real*real)+(imag*imag));
-				cout << setprecision(3) << magnitude << " ";
+				std::cout << std::setprecision(3) << magnitude << " ";
 			}else{
-				cout << "0 ";
+				std::cout << "0 ";
 			}
 		}
-		cout << endl;
+		std::cout << std::endl;
 	}
 }

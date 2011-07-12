@@ -1,11 +1,5 @@
 #include "logbinspostproc.h"
 
-using std::cout;
-using std::cerr;
-using std::endl;
-using std::fixed;
-using std::setprecision;
-
 LogBinsPostProc::LogBinsPostProc(int f, const Preferences& prefs) : FftPostProcessor(f, prefs) {
 	reqbins = std::vector<int>(bins);
 	norms = std::vector<float>(bins);
@@ -25,16 +19,16 @@ std::vector<float> LogBinsPostProc::chromaVector(fftw_complex* fftResult)const{
 }
 
 void LogBinsPostProc::printKernel()const{
-	cout << fixed;
+	std::cout << std::fixed;
  	int verylastFftBin = reqbins[bins-1];
 	for(int i=0; i<bins; i++){
 		for(int j=0; j<=verylastFftBin; j++){
 			if(j == reqbins[i]){
-				cout << "1 ";
+				std::cout << "1 ";
 			}else{
-				cout << "0 ";
+				std::cout << "0 ";
 			}
 		}
-		cout << endl;
+		std::cout << std::endl;
 	}
 }

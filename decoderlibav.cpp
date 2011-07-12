@@ -6,7 +6,7 @@ AudioBuffer* LibAvDecoder::decodeFile(char* filename) throw (Exception){
 	AVFormatContext *fCtx = NULL;
 	AVCodecContext *cCtx = NULL;
 	// Find audio stream
-	if(av_open_input_file(&fCtx, filename, NULL, 0, NULL) != 0)
+	if(avformat_open_input(&fCtx, filename, NULL, NULL) != 0)
 		throw Exception("Failed to open audio file");
 	if(av_find_stream_info(fCtx) < 0)
 		throw Exception("Failed to find stream information");

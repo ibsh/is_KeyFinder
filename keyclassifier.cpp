@@ -11,7 +11,7 @@ KeyClassifier::~KeyClassifier(){
 	delete minor;
 }
 
-int KeyClassifier::classify(const std::vector<double>& chroma, const Preferences& prefs){
+int KeyClassifier::classify(const std::vector<double>& chroma){
 	std::vector<double> scores(24);
 	// note 12 magic number below. not ideal, but using prefs.getBpo breaks for > 1bps.
 	for(int i=0; i<12; i++){ // for each pair of profiles

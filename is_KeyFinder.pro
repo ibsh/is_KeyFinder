@@ -16,7 +16,6 @@ SOURCES += main.cpp\
     chromagram.cpp \
     audiobuffer.cpp \
     hcdfharte.cpp \
-    harmonicclassifier.cpp \
     goertzelanalyser.cpp \
     fftwanalyser.cpp \
     fftpostprocessor.cpp \
@@ -31,11 +30,13 @@ SOURCES += main.cpp\
     spectrumanalyserfactory.cpp \
     batchwindow.cpp \
     visuals.cpp \
-    metadatareaderlibav.cpp \
     exception.cpp \
     monaural.cpp \
     decoder.cpp \
-    downsampler.cpp
+    downsampler.cpp \
+    keyclassifier.cpp \
+    metadatataglib.cpp \
+    metadata.cpp
 
 HEADERS  += detailwindow.h \
     decoderlibsndfile.h \
@@ -60,18 +61,20 @@ HEADERS  += detailwindow.h \
     spectrumanalyserfactory.h \
     batchwindow.h \
     visuals.h \
-    metadatareader.h \
-    metadatareaderlibav.h \
     exception.h \
     hcdf.h \
-    keyclassifier.h
+    keyclassifier.h \
+    metadata.h \
+    metadatataglib.h
 
-FORMS    += detailwindow.ui \
+FORMS += detailwindow.ui \
     batchwindow.ui
 
 OTHER_FILES += \
 		is_KeyFinder.pro.user
 
-LIBS += -lfftw3 -lsndfile -lavcodec -lavformat -lsamplerate -lavutil
+INCLUDEPATH += /usr/local/include/taglib
+
+LIBS += -lfftw3 -lsndfile -lavcodec -lavformat -lsamplerate -lavutil -ltag
 
 ICON = is_KeyFinder.icns

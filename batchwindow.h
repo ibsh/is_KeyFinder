@@ -28,8 +28,7 @@
 #include "hcdf.h"
 #include "keyclassifier.h"
 
-#include "metadatareader.h"
-#include "metadatareaderlibav.h"
+#include "metadata.h"
 
 namespace Ui {
 	class BatchWindow;
@@ -54,6 +53,7 @@ private:
 	void dragEnterEvent(QDragEnterEvent*);
 	void dropEvent(QDropEvent*);
 	int currentFile;
+	bool allowDrops;
 	void go();
 	void cleanUpAfterRun();
 	void analyseFile(int);

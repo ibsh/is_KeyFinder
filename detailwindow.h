@@ -27,9 +27,7 @@
 #include "spectrumanalyserfactory.h"
 #include "hcdf.h"
 #include "keyclassifier.h"
-
-#include "metadatareader.h"
-#include "metadatareaderlibav.h"
+#include "metadata.h"
 
 namespace Ui {
 	class DetailWindow;
@@ -61,26 +59,23 @@ private:
 	void dragEnterEvent(QDragEnterEvent*);
 	void dropEvent(QDropEvent*);
 	void go();															// begin steps
-	void cleanUpAfterRun();
 	void decode();													// step 1
 	QFutureWatcher<void> decodeWatcher;
 	void makeMono();												// step 2
 	QFutureWatcher<void> monoWatcher;
 	void downSample();											// step 3
 	QFutureWatcher<void> dsWatcher;
-	void saInitialise();										// step 4
-	QFutureWatcher<void> saInitWatcher;
-	void saAnalyse();												// step 5
+	void spectrumAnalysis();								// step 4
 	QFutureWatcher<void> saWatcher;
-	void harmonicAnalysis();								// step 6
+	void harmonicAnalysis();								// step 5
 	QFutureWatcher<void> haWatcher;
+	void cleanUpAfterRun();
 private slots:
 	void decoded();													// step 1 complete
 	void madeMono();												// step 2 complete
 	void downSampled();											// step 3 complete
-	void saInitialised();										// step 4 complete
-	void saAnalysed();											// step 5 complete
-	void haFinished();											// step 6 complete
+	void spectrumAnalysisComplete();				// step 4 complete
+	void haFinished();											// step 5 complete
 	void say(const QString&);
 	void on_actionNew_Detail_Keyfinder_triggered();
 	void on_actionNew_Batch_Keyfinder_triggered();

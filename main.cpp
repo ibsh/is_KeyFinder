@@ -5,6 +5,7 @@ Dependencies:
 	fftw (3.2.2)
 	libsndfile (1.0.24) // not strictly necessary, since libav can do the job just as well (though not as quietly)
 	libsamplerate (0.1.7)
+	taglib?
 
 Configure commands used to build them:
 	FFTW3 ./configure CC="gcc -arch i386 -arch x86_64" CXX="g++ -arch i386 -arch x86_64" CPP="gcc -E" CXXCPP="g++ -E"
