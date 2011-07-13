@@ -41,8 +41,8 @@ std::vector<float> DirectSkPostProc::chromaVector(fftw_complex* fftResult)const{
 }
 
 float DirectSkPostProc::specialWindow(float n, float N)const{
-	// special because it deals in floats and is one element longer than int window functions
-	return 0.5 * (1.0 - cos((2 * pi * n)/N)); // Hann window
+	// special because it deals in floats, and is one "element" longer than integer-indexed window functions
+	return 0.5 * (1.0 - cos((2 * pi * n)/N)); // Hann
 }
 
 void DirectSkPostProc::printKernel()const{
@@ -53,9 +53,8 @@ void DirectSkPostProc::printKernel()const{
 			if(j < binOffsets[i]){
 				std::cout << "0 ";
 			}else if(j < binOffsets[i] + mySpecKernel[i].size()){
-				//float out = mySpecKernel[i][(j-binOffsets[i])] / norms[i];
-				float out = mySpecKernel[i][(j-binOffsets[i])];
-				std::cout << std::setprecision(3) << out << " ";
+				float out = mySpecKernel[i][(j-binOffsets[i])] / norms[i];
+				std::cout << std::setprecision(6) << out << " ";
 			}else{
 				std::cout << "0 ";
 			}

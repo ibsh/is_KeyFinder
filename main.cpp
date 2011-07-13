@@ -5,7 +5,7 @@ Dependencies:
 	fftw (3.2.2)
 	libsndfile (1.0.24) // not strictly necessary, since libav can do the job just as well (though not as quietly)
 	libsamplerate (0.1.7)
-	taglib?
+	taglib (1.7, with some custom changes)
 
 Configure commands used to build them:
 	FFTW3 ./configure CC="gcc -arch i386 -arch x86_64" CXX="g++ -arch i386 -arch x86_64" CPP="gcc -E" CXXCPP="g++ -E"
@@ -13,6 +13,7 @@ Configure commands used to build them:
 	LIBSNDFILE ./configure CC="gcc -arch x86_64" CXX="g++ -arch x86_64" CPP="gcc -E" CXXCPP="g++ -E"
 	LIBAV ./configure --enable-shared --disable-network --disable-protocol=udp --disable-protocol=tcp --disable-protocol=rtp --arch=x86_64
 	LIBAV ./configure --arch=x86_64 --extra-cflags='-arch x86_64' --target-os=darwin --extra-ldflags='-arch x86_64' --enable-cross-compile --disable-ffmpeg --disable-ffplay --disable-ffserver --disable-doc --enable-shared --disable-network --disable-protocol=udp --disable-protocol=tcp --disable-protocol=rtp
+	TAGLIB cmake -DWITH_MP4=ON -DWITH_ASF=ON -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_RELEASE_TYPE=Release .
 
 */
 

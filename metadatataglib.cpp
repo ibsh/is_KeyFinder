@@ -1,16 +1,5 @@
 #include "metadatataglib.h"
 
-/*
-Available in TagLib without much effort:
-Album
-Artist
-Comment
-Genre
-Title
-Track
-Year
-*/
-
 TagLibMetadata::TagLibMetadata(char* fileName){
 	f = TagLib::FileRef(fileName);
 }
@@ -34,6 +23,8 @@ std::string TagLibMetadata::getGrouping() const{
 }
 
 void TagLibMetadata::setGrouping(char* c){
+	// Beware; setGrouping is not usually a member of the TagLib API;
+	// it only exists in my custom version of the v1.7 source.
 	f.tag()->setGrouping(c);
 	f.save();
 }

@@ -25,18 +25,24 @@ DetailWindow::DetailWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::De
 	ui->runButton->setDisabled(true);
 	chromagramImage = QImage(1,1,QImage::Format_Indexed8);
 	miniChromagramImage = QImage(1,1,QImage::Format_Indexed8);
+	harmonicChangeImage = QImage(1,1,QImage::Format_Indexed8);
 	colourScaleImage = QImage(1,65,QImage::Format_Indexed8);
 	vis->setChromagramColours(chromagramImage,0);
 	vis->setChromagramColours(miniChromagramImage,0);
+	vis->setChromagramColours(harmonicChangeImage,0);
 	vis->setChromagramColours(colourScaleImage,0);
 	chromagramImage.setPixel(0,0,1);
 	miniChromagramImage.setPixel(0,0,1);
+	harmonicChangeImage.setPixel(0,0,1);
 	for(int i=1; i<=65; i++)
 		colourScaleImage.setPixel(0,65-i,i);
 	ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
 	ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
+	ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
 	ui->colourScaleLabel->setPixmap(QPixmap::fromImage(colourScaleImage));
-	ui->gridLayout_Visualisation->setRowStretch(0,prefs.getOctaves());
+	ui->gridLayout_Visualisation->setRowStretch(0,prefs.getOctaves()*2);
+	ui->gridLayout_Visualisation->setRowStretch(1,2);
+	ui->gridLayout_Visualisation->setRowStretch(2,1);
 	drawPianoKeys();
 	// key labels
 	QLabel* newLabel = new QLabel();
@@ -100,8 +106,8 @@ void DetailWindow::decode(){
 		delete dec;
 	}catch(const Exception& e){
 		delete ab;
-		delete dec;
 		ab = NULL;
+		delete dec;
 	}
 }
 
@@ -144,8 +150,8 @@ void DetailWindow::downSample(){
 		delete ds;
 	}catch(const Exception& e){
 		delete ab;
-		delete ds;
 		ab = NULL;
+		delete ds;
 	}
 }
 
@@ -207,7 +213,8 @@ void DetailWindow::spectrumAnalysisComplete(){
 void DetailWindow::harmonicAnalysis(){
 	ch->decomposeToOneOctave(prefs);
 	Hcdf harto;
-	std::vector<int> changes = harto.hcdf(ch,prefs);
+	rateOfChange = harto.hcdf(ch,prefs);
+	std::vector<int> changes = harto.peaks(rateOfChange,prefs);
 	changes.push_back(ch->getHops()); // add sentinel to back end
 	KeyClassifier hc(prefs.getToneProfile());
 	keys = std::vector<int>(0);
@@ -255,6 +262,25 @@ void DetailWindow::haFinished(){
 	}
 	// show
 	ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
+	// draw rate of change
+	harmonicChangeImage = QImage(rateOfChange.size()*scale,100,QImage::Format_Indexed8);
+	vis->setChromagramColours(harmonicChangeImage,ui->chromaColourCombo->currentIndex());
+	// set pixels
+	for(int h=0; h<rateOfChange.size(); h++){
+		for(int v=0; v<100; v++){
+			int value = ((log10(rateOfChange[h])+2) / 2) * 100;
+			for(int x=0; x<scale; x++){
+				for(int y=0; y<100; y++){
+					if(100-y > value)
+						harmonicChangeImage.setPixel(h*scale+x, y, 1);
+					else
+						harmonicChangeImage.setPixel(h*scale+x, y, 50);
+				}
+			}
+		}
+	}
+	// show
+	ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
 	// Key labels
 	for(int i=keyLabels.size()-1; i>=0; i--){
 		delete keyLabels[i];
@@ -296,10 +322,10 @@ void DetailWindow::drawPianoKeys(){
 	QImage pianoImage = QImage(1,prefs.getOctaves()*12*scale,QImage::Format_Indexed8);
 	QImage miniPianoImage = QImage(1,12*scale,QImage::Format_Indexed8);
 	pianoImage.setColor(0,qRgb(255,255,255));
-	miniPianoImage.setColor(0,qRgb(255,255,255));
 	pianoImage.setColor(1,qRgb(0,0,0));
-	miniPianoImage.setColor(1,qRgb(0,0,0));
 	pianoImage.setColor(2,qRgb(127,127,127));
+	miniPianoImage.setColor(0,qRgb(255,255,255));
+	miniPianoImage.setColor(1,qRgb(0,0,0));
 	miniPianoImage.setColor(2,qRgb(127,127,127));
 	QString octaveRev = "bwbwwbwbwwbw";
 	for(int o=0; o<prefs.getOctaves(); o++){
@@ -351,16 +377,13 @@ DetailWindow::~DetailWindow(){
 void DetailWindow::on_spectrumAnalyserCombo_currentIndexChanged(int index){
 	if(index == 0){
 		prefs.setSpectrumAnalyser('g');
-	}
-	if(index == 1){
+	}else if(index == 1){
 		prefs.setSpectrumAnalyser('f');
 		prefs.setFftPostProcessor('l');
-	}
-	if(index == 2){
+	}else if(index == 2){
 		prefs.setSpectrumAnalyser('f');
 		prefs.setFftPostProcessor('c');
-	}
-	if(index == 3){
+	}else if(index == 3){
 		prefs.setSpectrumAnalyser('f');
 		prefs.setFftPostProcessor('i');
 	}
@@ -369,11 +392,9 @@ void DetailWindow::on_spectrumAnalyserCombo_currentIndexChanged(int index){
 void DetailWindow::on_temporalWindowCombo_currentIndexChanged(int index){
 	if(index == 0){
 		prefs.setTemporalWindow('b');
-	}
-	if(index == 1){
+	}else if(index == 1){
 		prefs.setTemporalWindow('m');
-	}
-	if(index == 2){
+	}else if(index == 2){
 		prefs.setTemporalWindow('n');
 	}
 }
@@ -389,8 +410,10 @@ void DetailWindow::on_runButton_clicked(){
 void DetailWindow::on_chromaColourCombo_currentIndexChanged(int index){
 	vis->setChromagramColours(chromagramImage,index);
 	vis->setChromagramColours(miniChromagramImage,index);
+	vis->setChromagramColours(harmonicChangeImage,index);
 	vis->setChromagramColours(colourScaleImage,index);
 	ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
 	ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
+	ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
 	ui->colourScaleLabel->setPixmap(QPixmap::fromImage(colourScaleImage));
 }

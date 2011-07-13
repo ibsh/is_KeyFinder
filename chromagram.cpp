@@ -119,7 +119,7 @@ void Chromagram::decomposeToTwelveBpo(const Preferences& prefs, int control){
 			for(int st = 0; st < 12*oct; st++){
 				float weighted = 0;
 				for(int b = 0; b < bps; b++)
-					weighted += (getMagnitude(h,(st*bps)+b) * (b == whichBin ? 1.0 : 0.3));
+					weighted += (getMagnitude(h,(st*bps)+b) * (b == whichBin ? 1.0 : prefs.getDetunedBandWeight()));
 				twelveBpoChroma[(h*12*oct) + st] = weighted;
 			}
 		}
@@ -147,7 +147,7 @@ void Chromagram::decomposeToTwelveBpo(const Preferences& prefs, int control){
 			for(int h = 0; h < hops; h++){
 				float weighted = 0;
 				for(int b = 0; b < bps; b++)
-					weighted += (getMagnitude(h,(st*bps)+b) * (b == whichBin ? 1.0 : 0.3));
+					weighted += (getMagnitude(h,(st*bps)+b) * (b == whichBin ? 1.0 : prefs.getDetunedBandWeight()));
 				twelveBpoChroma[(h*12*oct) + st] = weighted;
 			}
 		}

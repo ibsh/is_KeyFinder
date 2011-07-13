@@ -59,7 +59,6 @@ private:
 	void analyseFile(int);
 	void markBroken(int);
 	void filesDropped(QList<QUrl>);
-	void keyPressEvent(QKeyEvent*);
 	QFutureWatcher<void> analysisWatcher;
 	QFutureWatcher<void> fileDropWatcher;
 private slots:
@@ -69,7 +68,8 @@ private slots:
 	void on_actionNew_Batch_Keyfinder_triggered();
 	void on_actionClose_Window_triggered();
 	void on_runBatchButton_clicked();
-	void on_tableWidget_itemSelectionChanged();
+	void copySelectedFromTableWidget();
+	void writeDetectedToGrouping();
 };
 
 #endif

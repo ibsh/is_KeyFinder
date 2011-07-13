@@ -15,7 +15,6 @@ SOURCES += main.cpp\
     constantqpostproc.cpp \
     chromagram.cpp \
     audiobuffer.cpp \
-    hcdfharte.cpp \
     goertzelanalyser.cpp \
     fftwanalyser.cpp \
     fftpostprocessor.cpp \
@@ -36,7 +35,8 @@ SOURCES += main.cpp\
     downsampler.cpp \
     keyclassifier.cpp \
     metadatataglib.cpp \
-    metadata.cpp
+    metadata.cpp \
+    hcdf.cpp
 
 HEADERS  += detailwindow.h \
     decoderlibsndfile.h \

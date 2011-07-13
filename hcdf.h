@@ -15,7 +15,8 @@
 class Hcdf{
 public:
 	Hcdf();
-	std::vector<int> hcdf(Chromagram*, const Preferences&);
+	std::vector<double> hcdf(Chromagram*, const Preferences&);
+	std::vector<int> peaks(const std::vector<double>&, const Preferences&);
 private:
 	double phi(int, int);
 	double pi;

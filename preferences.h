@@ -16,7 +16,6 @@ public:
 	void setSpectrumAnalyser(char);
 	void setFftPostProcessor(char);
 	void setTemporalWindow(char);
-	void setDirectSkWindow(char);
 	void setToneProfile(int);
 	void setHopSize(int);
 	void setFftFrameSize(int);
@@ -27,7 +26,6 @@ public:
 	char getSpectrumAnalyser() const;
 	char getFftPostProcessor() const;
 	char getTemporalWindow() const;
-	char getDirectSkWindow() const;
 	int getHopSize() const;
 	int getFftFrameSize() const;
 	int getGoertzelMinK() const;
@@ -35,15 +33,16 @@ public:
 	int getBpo() const;
 	int getDFactor() const;
 	int getToneProfile() const;
+	int getHcdfPeakPickingNeighbours() const;
 	int getHcdfGaussianSize() const;
 	float getHcdfGaussianSigma() const;
 	float getBinFreq(int) const;
 	float getDirectSkStretch() const;
+	float getDetunedBandWeight() const;
 private:
 	char spectrumAnalyser;
 	char fftPostProcessor;
 	char temporalWindow;
-	char directSkWindow;
 	int hopSize;
 	int fftFrameSize;
 	int goertzelMinK;
@@ -51,10 +50,12 @@ private:
 	int bps;
 	int dFactor;
 	int toneProfile;
+	int hcdfPeakPickingNeighbours;
 	int hcdfGaussianSize;
 	float hcdfGaussianSigma;
 	float stFreq;
 	float directSkStretch;
+	float detunedBandWeight;
 	std::vector<float> binFreqs;
 	void generateBinFreqs();
 };

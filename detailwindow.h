@@ -46,12 +46,14 @@ private:
 	std::vector<QLabel*> keyLabels;
 	QImage chromagramImage;
 	QImage miniChromagramImage;
+	QImage harmonicChangeImage;
 	QImage colourScaleImage;
 	// analysis
 	Preferences prefs;
 	AudioBuffer* ab;
 	SpectrumAnalyser* sa;
 	Chromagram* ch;
+	std::vector<double> rateOfChange;
 	std::vector<int> keys;
 	//processing files
 	std::string filePath;

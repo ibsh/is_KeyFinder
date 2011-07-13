@@ -20,6 +20,14 @@ BatchWindow::BatchWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Batc
 	ui->setupUi(this);
 	allowDrops = true;
 	vis = Visuals::getInstance();
+	// SETUP TABLE WIDGET CONTEXT MENU
+	QAction* copyAction = new QAction(tr("Copy"),this);
+	copyAction->setShortcuts(QKeySequence::Copy);
+	connect(copyAction, SIGNAL(triggered()), this, SLOT(copySelectedFromTableWidget()));
+	ui->tableWidget->addAction(copyAction);
+	QAction* writeToGroupingAction = new QAction(tr("Write to tags"),this);
+	connect(writeToGroupingAction, SIGNAL(triggered()), this, SLOT(writeDetectedToGrouping()));
+	ui->tableWidget->addAction(writeToGroupingAction);
 }
 
 BatchWindow::~BatchWindow(){
@@ -64,7 +72,7 @@ void BatchWindow::filesDropped(QList<QUrl> urls){
 		QString filePath = urls[i].toLocalFile();
 		// check if file is already in the list
 		for(int j=0; j<ui->tableWidget->rowCount(); j++){
-			if(ui->tableWidget->item(j,0)->text() == filePath){
+			if(ui->tableWidget->item(j,COL_PATH)->text() == filePath){
 				addNew = false;
 				break;
 			}
@@ -105,6 +113,7 @@ void BatchWindow::on_runBatchButton_clicked(){
 	if(ui->tableWidget->rowCount()==0)
 		return;
 	ui->runBatchButton->setDisabled(true);
+	ui->tableWidget->setContextMenuPolicy(Qt::NoContextMenu); // so that no tags can be written while busy
 	allowDrops = false;
 	ui->progressBar->setMaximum(ui->tableWidget->rowCount());
 	currentFile = 0;
@@ -124,6 +133,20 @@ void BatchWindow::go(){
 		analysisWatcher.setFuture(future);
 	}
 }
+
+void BatchWindow::fileFinished(){
+	currentFile++;
+	go();
+}
+
+void BatchWindow::cleanUpAfterRun(){
+	allowDrops = true;
+	ui->progressBar->setValue(0);
+	ui->runBatchButton->setDisabled(false);
+	ui->tableWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
+	ui->tableWidget->resizeColumnsToContents();
+}
+
 
 void BatchWindow::analyseFile(int whichFile){
 	std::string filePath = (std::string)ui->tableWidget->item(whichFile,COL_PATH)->text().toAscii();
@@ -162,7 +185,7 @@ void BatchWindow::analyseFile(int whichFile){
 	ch->decomposeToTwelveBpo(prefs);
 	ch->decomposeToOneOctave(prefs);
 	Hcdf harto;
-	std::vector<int> changes = harto.hcdf(ch,prefs);
+	std::vector<int> changes = harto.peaks(harto.hcdf(ch,prefs),prefs);
 	changes.push_back(ch->getHops()-1);
 	KeyClassifier hc(prefs.getToneProfile());
 	std::vector<int> trackKeys(24);
@@ -201,19 +224,7 @@ void BatchWindow::markBroken(int whichFile){
 	ui->tableWidget->resizeColumnsToContents();
 }
 
-void BatchWindow::fileFinished(){
-	currentFile++;
-	go();
-}
-
-void BatchWindow::cleanUpAfterRun(){
-	allowDrops = true;
-	ui->progressBar->setValue(0);
-	ui->runBatchButton->setDisabled(false);
-	ui->tableWidget->resizeColumnsToContents();
-}
-
-void BatchWindow::on_tableWidget_itemSelectionChanged(){
+void BatchWindow::copySelectedFromTableWidget(){
 	/*
 		Enabling copy to clipboard. This doesn't work exactly as expected;
 		it just copies from the top-left to the bottom-right selected cells.
@@ -244,15 +255,34 @@ void BatchWindow::on_tableWidget_itemSelectionChanged(){
 		}
 		copyArray.append("\r\n");
 	}
+
+	QMimeData* mimeData = new QMimeData();
+	mimeData->setData("text/plain",copyArray);
+	QApplication::clipboard()->setMimeData(mimeData);
 }
 
-void BatchWindow::keyPressEvent(QKeyEvent* event){
-	if(event->matches(QKeySequence::Copy)){
-		QMimeData* mimeData = new QMimeData();
-		mimeData->setData("text/plain",copyArray);
-		QApplication::clipboard()->setMimeData(mimeData);
-	}else if(event->matches(QKeySequence::Refresh)){ // Refresh is a cheap way to intercept Cmd+R for "Run"
-		if(ui->runBatchButton->isEnabled())
-			ui->runBatchButton->click();
+void BatchWindow::writeDetectedToGrouping(){
+	int firstRow = INT_MAX;
+	int lastRow = INT_MIN;
+	int firstCol = INT_MAX;
+	int lastCol = INT_MIN;
+	foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()){
+		int chkRow = selectedIndex.row();
+		int chkCol = selectedIndex.column();
+		if(chkRow < firstRow)
+			firstRow = chkRow;
+		if(chkRow > lastRow)
+			lastRow = chkRow;
+		if(chkCol < firstCol)
+			firstCol = chkCol;
+		if(chkCol > lastCol)
+			lastCol = chkCol;
+	}
+	for(int r = firstRow; r <= lastRow; r++){
+		QTableWidgetItem* item = ui->tableWidget->item(r,COL_KEY); // only write if there's a detected key
+		if(item != NULL){
+			Metadata* md = Metadata::getMetadata(ui->tableWidget->item(r,COL_PATH)->text().toAscii().data());
+			md->setGrouping((ui->tableWidget->item(r,COL_KEYCODE)->text() + " " + ui->tableWidget->item(r,COL_KEY)->text()).toAscii().data());
+		}
 	}
 }

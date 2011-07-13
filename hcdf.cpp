@@ -25,23 +25,26 @@ double Hcdf::phi(int d, int l){
 	}
 }
 
-std::vector<int> Hcdf::hcdf(Chromagram* ch, const Preferences& prefs){
+std::vector<double> Hcdf::hcdf(Chromagram* ch, const Preferences& prefs){
 	int bpo = 12; // note this function must always be applied *after* decomposition to 1 bps.
 	int hops = ch->getHops();
 	int dims = 6;
 	// build vector for movement in six dimensions
 	std::vector<std::vector<double> > zeta(hops,std::vector<double>(dims));
 	for(int hop=0; hop<hops; hop++){
-		double taxicabNorm = 0;
+		double taxicabNorm = 0.0;
 		for(int bin=0; bin<bpo; bin++){
-			taxicabNorm += abs(ch->getMagnitude(hop,bin));
+			taxicabNorm += abs((double)ch->getMagnitude(hop,bin));
 		}
 		for(int d=0; d<dims; d++){
-			double sum = 0;
+			double sum = 0.0;
 			for(int bin=0; bin<bpo; bin++){
-				sum += (phi(d,bin) * ch->getMagnitude(hop,bin));
+				sum += (phi(d,bin) * (double)ch->getMagnitude(hop,bin));
 			}
-			zeta[hop][d] = sum / taxicabNorm;
+			double result = sum / taxicabNorm;
+			if(result != result || result < -1.0 || result > 1.0)
+				result = 0.0; // takes care of NaN and/or +/- infinity where track is close to silent.
+			zeta[hop][d] = result;
 		}
 	}
 	// gaussian
@@ -68,7 +71,7 @@ std::vector<int> Hcdf::hcdf(Chromagram* ch, const Preferences& prefs){
 			smoothed[hop][d] = conv;
 		}
 	}
-	// RATE OF CHANGE OF HCDF SIGNAL; looking at all hops except first and last, for the moment.
+	// RATE OF CHANGE OF HCDF SIGNAL; look at all hops except first and last.
 	std::vector<double> rateOfChange(hops);
 	for(int hop=1; hop<hops-1; hop++){
 		double xi = 0.0;
@@ -76,19 +79,24 @@ std::vector<int> Hcdf::hcdf(Chromagram* ch, const Preferences& prefs){
 			xi += pow((smoothed[hop+1][d] - smoothed[hop-1][d]),2);
 		}
 		xi = sqrt(xi);
-		if(xi==xi) // NaN check, underflow related I think?
-			rateOfChange[hop] = xi;
-		else
-			rateOfChange[hop] = 0;
+		rateOfChange[hop] = xi;
 	}
+	// fudge first and last
+	rateOfChange[0] = rateOfChange[1];
+	rateOfChange[hops-1] = rateOfChange[hops-2];
+	return rateOfChange;
+}
+
+std::vector<int> Hcdf::peaks(const std::vector<double>& rateOfChange, const Preferences& prefs){
 	// Pick peaks
-	std::vector<int> changes(1); // start vector with a 0 so first section can be classified simply
-	int neighbours = 4;
-	for(int hop=neighbours; hop<hops-neighbours; hop++){
+	std::vector<int> changes(1); // start vector with a 0 to enable first classification
+	int neighbours = prefs.getHcdfPeakPickingNeighbours();
+	for(int hop=0; hop<rateOfChange.size(); hop++){
 		bool peak = true;
 		for(int i=-neighbours; i<=neighbours; i++)
-			if(i != 0 && rateOfChange[hop+i] >= rateOfChange[hop])
-				peak = false; // there's a neighbour of higher value; this isn't a peak
+			if(i!=0 && hop+i >=0 && hop+i < rateOfChange.size()) // only test valid neighbours
+				if(rateOfChange[hop+i] >= rateOfChange[hop])
+					peak = false; // there's a neighbour of higher value; this isn't a peak
 		if(peak)
 			changes.push_back(hop);
 	}
