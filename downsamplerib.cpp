@@ -2,9 +2,11 @@
 
 /*
 Decent raised cosine filter, designed using A J Fisher's tool at http://www-users.cs.york.ac.uk/~fisher/mkfilter
-I need a filter that lowpasses under 1865 Hz (1760 plus a semitone, ceilinged), with the rolloff complete
+I usually need a filter that lowpasses under 1865 Hz (1760 plus a semitone, ceilinged), with the rolloff complete
 before the new Nyquist (2205 Hz for a 10x downsample).
 Those frequencies are 0.0423 and 0.05 of 44100, for the visualiser.
+
+Input to Fisher's tool: 44100, 1865, 0, 41, raised-cosine response, no compensation function. Leave the rest blank.
 
 IMPORTANT:
 The filter coefficients are all magic numbers, so this downsampler is only for 44100 fs, 10x ds.
@@ -63,7 +65,7 @@ AudioBuffer* IbDownsampler::downsample(AudioBuffer* inbuf, int factor) throw (Ex
 	for(int i=0; i<c; i++){ // for each channel (normally mono by this point but just in case)
 		q = p;
 		for(int k=0; k<=filterOrder; k++){ // clear delay buffer
-			q->n = 0;
+			q->n = 0.0;
 			q = q->r;
 		}
 		for(int j=i; j<inbuf->getSampleCount(); j+=c){ // for each frame

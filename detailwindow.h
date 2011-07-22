@@ -43,11 +43,14 @@ private:
 	Ui::DetailWindow* ui;
 	Visuals* vis;
 	void drawPianoKeys();
+	QImage imageFromChromagram(Chromagram*);
 	std::vector<QLabel*> keyLabels;
 	QImage chromagramImage;
 	QImage miniChromagramImage;
 	QImage harmonicChangeImage;
 	QImage colourScaleImage;
+	int chromaScaleV;
+	int chromaScaleH;
 	// analysis
 	Preferences prefs;
 	AudioBuffer* ab;

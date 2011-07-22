@@ -35,8 +35,10 @@ public:
 	int getToneProfile() const;
 	int getHcdfPeakPickingNeighbours() const;
 	int getHcdfGaussianSize() const;
+	int getTuningMethod() const;
 	float getHcdfGaussianSigma() const;
 	float getBinFreq(int) const;
+	float getLastFreq() const;
 	float getDirectSkStretch() const;
 	float getDetunedBandWeight() const;
 private:
@@ -52,6 +54,7 @@ private:
 	int toneProfile;
 	int hcdfPeakPickingNeighbours;
 	int hcdfGaussianSize;
+	int tuningMethod;
 	float hcdfGaussianSigma;
 	float stFreq;
 	float directSkStretch;

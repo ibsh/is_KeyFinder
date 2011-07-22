@@ -11,7 +11,7 @@ AudioBuffer* LibAvDecoder::decodeFile(char* filename) throw (Exception){
 	if(av_find_stream_info(fCtx) < 0)
 		throw Exception("Failed to find stream information");
 	int audioStream = -1;
-	for(int i=0; i<fCtx->nb_streams; i++){
+	for(int i=0; i<(signed)fCtx->nb_streams; i++){
 		if(fCtx->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO){
 			audioStream = i;
 			break;

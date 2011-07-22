@@ -8,6 +8,7 @@
 class WindowFunction{
 public:
 	WindowFunction();
+	static WindowFunction* getWindowFunction(char);
 	virtual float window(int,int) const = 0;
 protected:
 	float pi;

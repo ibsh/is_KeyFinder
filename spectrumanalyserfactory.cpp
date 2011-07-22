@@ -17,7 +17,7 @@ SpectrumAnalyserFactory::SpectrumAnalyserFactory(){
 }
 
 SpectrumAnalyserFactory::~SpectrumAnalyserFactory(){
-	for(int i=0; i<analysers.size(); i++)
+	for(int i=0; i<(signed)analysers.size(); i++)
 		delete analysers[i];
 	inst = NULL;
 }
@@ -27,7 +27,7 @@ SpectrumAnalyser* SpectrumAnalyserFactory::getSpectrumAnalyser(int frameRate, co
 	char chkType = prefs.getSpectrumAnalyser();
 	char chkFpp = prefs.getFftPostProcessor();
 	char chkWin = prefs.getTemporalWindow();
-	for(int i=0; i<analysers.size(); i++)
+	for(int i=0; i<(signed)analysers.size(); i++)
 		if(framerates[i] == frameRate 	&& types[i] == chkType && fpps[i] == chkFpp && windows[i] == chkWin)
 			return analysers[i];
 	framerates.push_back(frameRate);

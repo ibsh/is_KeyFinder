@@ -19,7 +19,7 @@ void AudioBuffer::setFrameRate(int n){
 }
 
 float AudioBuffer::getSample(int n) const{
-	if(n >= 0 && n < samples){
+	if(n < samples){
 		return buffer[n];
 	}else{
 		std::cerr << "Attempt to get out-of-bounds sample (" << n << "/" << samples << ")" << std::endl;
@@ -28,7 +28,7 @@ float AudioBuffer::getSample(int n) const{
 }
 
 void AudioBuffer::setSample(int n,float x){
-	if(n >= 0 && n < samples)
+	if(n < samples)
 		buffer[n] = x;
 	else
 		std::cerr << "Attempt to set out-of-bounds sample (" << n << "/" << samples << ")" << std::endl;

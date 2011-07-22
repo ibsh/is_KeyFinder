@@ -11,21 +11,13 @@ FftwAnalyser::FftwAnalyser(int f, const Preferences& prefs): SpectrumAnalyser(f,
 		pp = new DirectSkPostProc(frameRate, prefs);
 	}
 	//pp->printKernel();
-	//exit(1);
 	fftInput = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*fftFrameSize);
 	fftResult = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*fftFrameSize);
 	// plan 1-dimensional DFT
 	fftPlan = fftw_plan_dft_1d(fftFrameSize, fftInput, fftResult, FFTW_FORWARD, FFTW_ESTIMATE);
 	// prep temporal window function
-	WindowFunction* wf;
-	if(prefs.getTemporalWindow() == 'n'){
-		wf = new HannWindow();
-	}else if(prefs.getTemporalWindow() == 'b'){
-		wf = new BlackmanWindow();
-	}else{
-		wf = new HammingWindow();
-	}
-	window = std::vector<float>(fftFrameSize); // TODO check not null
+	WindowFunction* wf = WindowFunction::getWindowFunction(prefs.getTemporalWindow());
+	window = std::vector<float>(fftFrameSize);
 	for(int i=0; i<fftFrameSize; i++){
 		window[i] = wf->window(i,fftFrameSize);
 	}
@@ -42,22 +34,17 @@ Chromagram* FftwAnalyser::chromagram(AudioBuffer* ab){
 	QMutexLocker locker(&mutex); // Mutex this function
 	Chromagram* ch = new Chromagram((ab->getSampleCount()/hopSize) + 1,bins);
 	for(int i=0; i<ab->getSampleCount(); i += hopSize){
-		for(int j=0; j<fftFrameSize; j++) {
-			if(i+j < ab->getSampleCount()){
+		for(int j=0; j<fftFrameSize; j++){
+			if(i+j < ab->getSampleCount())
 				fftInput[j][0] = ab->getSample(i+j) * window[j]; // real part, windowed
-			}else{
+			else
 				fftInput[j][0] = 0.0; // zero-pad if no PCM data remaining
-			}
 			fftInput[j][1] = 0.0; // zero out imaginary part
 		}
 		fftw_execute(fftPlan);
 		std::vector<float> cv = pp->chromaVector(fftResult);
-		for(int j=0; j<bins; j++){
-			if(cv[j]==cv[j]) // NaN check. Not sure why.
-				ch->setMagnitude(i/hopSize,j,cv[j]);
-			else
-				ch->setMagnitude(i/hopSize,j,0);
-		}
+		for(int j=0; j<bins; j++)
+			ch->setMagnitude(i/hopSize,j,cv[j]);
 	}
 	return ch;
 }

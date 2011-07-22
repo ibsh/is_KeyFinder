@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>452</height>
+    <height>428</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -28,443 +28,439 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_Main" stretch="0,0,0">
-      <item>
-       <layout class="QGridLayout" name="gridLayout_Visualisation" rowstretch="12,2,1,0">
-        <item row="0" column="0">
-         <widget class="QLabel" name="pianoKeysLabel">
-          <property name="minimumSize">
-           <size>
-            <width>20</width>
-            <height>74</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>20</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::Box</enum>
-          </property>
-          <property name="lineWidth">
-           <number>1</number>
-          </property>
-          <property name="midLineWidth">
-           <number>0</number>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::PlainText</enum>
-          </property>
-          <property name="scaledContents">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="chromagramLabel">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>74</height>
-           </size>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::Box</enum>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::PlainText</enum>
-          </property>
-          <property name="scaledContents">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="miniPianoKeysLabel">
-          <property name="minimumSize">
-           <size>
-            <width>20</width>
-            <height>14</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>20</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::Box</enum>
-          </property>
-          <property name="lineWidth">
-           <number>1</number>
-          </property>
-          <property name="midLineWidth">
-           <number>0</number>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::PlainText</enum>
-          </property>
-          <property name="scaledContents">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="miniChromagramLabel">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>14</height>
-           </size>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::Box</enum>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::PlainText</enum>
-          </property>
-          <property name="scaledContents">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2" rowspan="2">
-         <widget class="QLabel" name="colourScaleLabel">
-          <property name="minimumSize">
-           <size>
-            <width>20</width>
-            <height>74</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>20</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::Box</enum>
-          </property>
-          <property name="lineWidth">
-           <number>1</number>
-          </property>
-          <property name="midLineWidth">
-           <number>0</number>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::PlainText</enum>
-          </property>
-          <property name="scaledContents">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <layout class="QHBoxLayout" name="horizontalLayout_keyLabels">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-         </layout>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLabel" name="harmonicChangeLabel">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>14</height>
-           </size>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::Box</enum>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::PlainText</enum>
-          </property>
-          <property name="scaledContents">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
+     <layout class="QGridLayout" name="gridLayout_Visualisation">
+      <item row="0" column="0">
+       <widget class="QLabel" name="pianoKeysLabel">
+        <property name="minimumSize">
+         <size>
+          <width>20</width>
+          <height>74</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>20</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="lineWidth">
+         <number>1</number>
+        </property>
+        <property name="midLineWidth">
+         <number>0</number>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::PlainText</enum>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="chromagramLabel">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>74</height>
+         </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::PlainText</enum>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="miniPianoKeysLabel">
+        <property name="minimumSize">
+         <size>
+          <width>20</width>
+          <height>14</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>20</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="lineWidth">
+         <number>1</number>
+        </property>
+        <property name="midLineWidth">
+         <number>0</number>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::PlainText</enum>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="miniChromagramLabel">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>14</height>
+         </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::PlainText</enum>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" rowspan="2">
+       <widget class="QLabel" name="colourScaleLabel">
+        <property name="minimumSize">
+         <size>
+          <width>20</width>
+          <height>74</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>20</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="lineWidth">
+         <number>1</number>
+        </property>
+        <property name="midLineWidth">
+         <number>0</number>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::PlainText</enum>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_keyLabels">
+        <property name="spacing">
+         <number>0</number>
+        </property>
        </layout>
       </item>
-      <item>
-       <layout class="QGridLayout" name="gridLayout_UI">
-        <property name="topMargin">
-         <number>6</number>
+      <item row="2" column="1">
+       <widget class="QLabel" name="harmonicChangeLabel">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>14</height>
+         </size>
         </property>
-        <item row="0" column="0">
-         <widget class="QLabel" name="spectrumAnalyserLabel">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string> SPECTRUM ANALYSER</string>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::PlainText</enum>
-          </property>
-         </widget>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::PlainText</enum>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QGridLayout" name="gridLayout_UI">
+      <property name="topMargin">
+       <number>6</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="spectrumAnalyserLabel">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string> SPECTRUM ANALYSER</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::PlainText</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="temporalWindowLabel">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string> TEMPORAL WINDOW</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::PlainText</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="toneProfilesLabel">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string> TONE PROFILES</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::PlainText</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QLabel" name="chromaColourLabel">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string> CHROMAGRAM COLOURS</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::PlainText</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QComboBox" name="spectrumAnalyserCombo">
+        <property name="currentIndex">
+         <number>3</number>
+        </property>
+        <item>
+         <property name="text">
+          <string>Goertzel</string>
+         </property>
         </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="temporalWindowLabel">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string> TEMPORAL WINDOW</string>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::PlainText</enum>
-          </property>
-         </widget>
+        <item>
+         <property name="text">
+          <string>FFT, single bins</string>
+         </property>
         </item>
-        <item row="0" column="2">
-         <widget class="QLabel" name="toneProfilesLabel">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string> TONE PROFILES</string>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::PlainText</enum>
-          </property>
-         </widget>
+        <item>
+         <property name="text">
+          <string>FFT, constant Q</string>
+         </property>
         </item>
-        <item row="0" column="3">
-         <widget class="QLabel" name="chromaColourLabel">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string> CHROMAGRAM COLOURS</string>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::PlainText</enum>
-          </property>
-         </widget>
+        <item>
+         <property name="text">
+          <string>FFT, quickSK</string>
+         </property>
         </item>
-        <item row="1" column="0">
-         <widget class="QComboBox" name="spectrumAnalyserCombo">
-          <property name="currentIndex">
-           <number>3</number>
-          </property>
-          <item>
-           <property name="text">
-            <string>Goertzel</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>FFT, single bins</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>FFT, constant Q</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>FFT, quickSK</string>
-           </property>
-          </item>
-         </widget>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="temporalWindowCombo">
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <item>
+         <property name="text">
+          <string>Blackman</string>
+         </property>
         </item>
-        <item row="1" column="1">
-         <widget class="QComboBox" name="temporalWindowCombo">
-          <property name="currentIndex">
-           <number>0</number>
-          </property>
-          <item>
-           <property name="text">
-            <string>Blackman</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Hamming</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Hann</string>
-           </property>
-          </item>
-         </widget>
+        <item>
+         <property name="text">
+          <string>Hamming</string>
+         </property>
         </item>
-        <item row="1" column="2">
-         <widget class="QComboBox" name="toneProfilesCombo">
-          <property name="currentIndex">
-           <number>2</number>
-          </property>
-          <item>
-           <property name="text">
-            <string>Krumhansl</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Temperley</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Sha'ath</string>
-           </property>
-          </item>
-         </widget>
+        <item>
+         <property name="text">
+          <string>Hann</string>
+         </property>
         </item>
-        <item row="1" column="3">
-         <widget class="QComboBox" name="chromaColourCombo">
-          <item>
-           <property name="text">
-            <string>Izo</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Mono</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Pred</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Hack</string>
-           </property>
-          </item>
-         </widget>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QComboBox" name="toneProfilesCombo">
+        <property name="currentIndex">
+         <number>2</number>
+        </property>
+        <item>
+         <property name="text">
+          <string>Krumhansl</string>
+         </property>
         </item>
-        <item row="1" column="4">
-         <widget class="QPushButton" name="runButton">
-          <property name="minimumSize">
-           <size>
-            <width>120</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>120</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Run analysis</string>
-          </property>
-         </widget>
+        <item>
+         <property name="text">
+          <string>Temperley</string>
+         </property>
         </item>
-       </layout>
+        <item>
+         <property name="text">
+          <string>Sha'ath</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QComboBox" name="chromaColourCombo">
+        <item>
+         <property name="text">
+          <string>Izo</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mono</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Pred</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Hack</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="4">
+       <widget class="QPushButton" name="runButton">
+        <property name="minimumSize">
+         <size>
+          <width>120</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>120</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Run analysis</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_status">
+      <property name="topMargin">
+       <number>6</number>
+      </property>
+      <item>
+       <widget class="QProgressBar" name="progressBar">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>100</width>
+          <height>20</height>
+         </size>
+        </property>
+       </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_status">
-        <property name="topMargin">
-         <number>6</number>
+       <widget class="QLabel" name="statusLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <item>
-         <widget class="QProgressBar" name="progressBar">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>20</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>100</width>
-            <height>20</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="statusLabel">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>20</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>20</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Drag an audio file onto the window</string>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::PlainText</enum>
-          </property>
-         </widget>
-        </item>
-       </layout>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Drag an audio file onto the window</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::PlainText</enum>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>

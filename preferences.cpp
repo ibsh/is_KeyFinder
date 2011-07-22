@@ -2,22 +2,23 @@
 
 Preferences::Preferences(){
 	// DEFAULT VALUES
-	temporalWindow = 'b';						// blackman
-	spectrumAnalyser = 'f';					// fftw
-	fftPostProcessor = 'i';					// my quick spectral kernel
-	hopSize = 16384;
-	fftFrameSize = 65536;						// this is large, obviously. But reducing it reduces accuracy.
-	goertzelMinK = 60;							// Haven't parameterised; Goertzel's not exactly a winner.
-	octaves = 6;										// Haven't parameterised; 6 has given the best results.
-	bps = 3;												// not always the best idea but it's as good as 1 now.
+	temporalWindow = 'b';							// DEFAULT b. Blackman
+	spectrumAnalyser = 'f';						// DEFAULT f. FFTW
+	fftPostProcessor = 'i';						// DEFAULT i. My quick spectral kernel
+	fftFrameSize = 65536;							// DEFAULT 65536. This is large, obviously. But reducing it reduces accuracy.
+	hopSize = fftFrameSize / 4;				// DEFAULT 1/4 of framesize.
+	goertzelMinK = 60;
+	octaves = 6;
+	bps = 3;													// DEFAULT 3. Not always the best idea but it's as accurate as 1 now.
 	dFactor = 10;
-	toneProfile = 2;
-	stFreq = 27.5;									// Haven't parameterised.
+	toneProfile = 2;									// DEFAULT 2
+	stFreq = 27.5;
 	directSkStretch = 1.0;
-	hcdfGaussianSize = 35;					// Haven't parameterised. Originally 19 but this gets fewer misses.
-	hcdfGaussianSigma = 8.0;				// Haven't parameterised.
-	hcdfPeakPickingNeighbours = 4; // Haven't parameterised.
-	detunedBandWeight = 0.5;				// Haven't parameterised.
+	hcdfGaussianSize = 35;						// DEFAULT 35. Originally 19 but this gets fewer misses.
+	hcdfGaussianSigma = 8.0;
+	hcdfPeakPickingNeighbours = 4;		// DEFAULT 4
+	tuningMethod = 2;									// DEFAULT 2
+	detunedBandWeight = 0.5;
 	generateBinFreqs();
 }
 
@@ -36,36 +37,34 @@ void Preferences::setTemporalWindow(char c){
 		temporalWindow = c;
 }
 
+void Preferences::setToneProfile(int n){
+	if(n >= 0 && n <= 2)
+		toneProfile = n;
+}
+
 void Preferences::setHopSize(int n){
-	if(n > 0)
-		hopSize = n;
+	hopSize = n;
 }
 
 void Preferences::setFftFrameSize(int n){
-	if(n > 0)
-		fftFrameSize = n;
+	fftFrameSize = n;
 }
 
 void Preferences::setBandsPerSemitone(int n){
-	if(n > 0 && n%2!=0){
+	if(n%2!=0){
 		bps = n;
 		generateBinFreqs();
 	}
 }
 
 void Preferences::setDownsampleFactor(int n){
-	if(n > 0)
-		dFactor = n;
-}
-
-void Preferences::setToneProfile(int n){
-	if(n >= 0 && n <= 2)
-		toneProfile = n;
+	dFactor = n;
 }
 
 void Preferences::setDirectSkStretch(float n){
 	directSkStretch = n;
 }
+
 
 char Preferences::getSpectrumAnalyser()const{return spectrumAnalyser;}
 char Preferences::getFftPostProcessor()const{return fftPostProcessor;}
@@ -77,6 +76,7 @@ int Preferences::getOctaves()const{return octaves;}
 int Preferences::getBpo()const{return bps * 12;}
 int Preferences::getDFactor()const{return dFactor;}
 int Preferences::getToneProfile()const{return toneProfile;}
+int Preferences::getTuningMethod()const{return tuningMethod;}
 int Preferences::getHcdfPeakPickingNeighbours()const{return hcdfPeakPickingNeighbours;}
 int Preferences::getHcdfGaussianSize()const{return hcdfGaussianSize;}
 float Preferences::getHcdfGaussianSigma()const{return hcdfGaussianSigma;}
@@ -84,13 +84,15 @@ float Preferences::getDirectSkStretch()const{return directSkStretch;}
 float Preferences::getDetunedBandWeight()const{return detunedBandWeight;}
 
 float Preferences::getBinFreq(int n)const{
-	if(n==-1)
-		return binFreqs[octaves*12*bps-1]; // special case, requesting last frequency
-	if(n < 0 || n >= octaves*12*bps){
+	if(n >= octaves*12*bps){
 		std::cerr << "Requested freq " << n << " out of bounds" << std::endl;
 		return 0;
 	}
 	return binFreqs[n];
+}
+
+float Preferences::getLastFreq() const{
+	return binFreqs[octaves*12*bps-1];
 }
 
 void Preferences::generateBinFreqs(){

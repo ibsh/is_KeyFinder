@@ -5,6 +5,18 @@ WindowFunction::WindowFunction(){
 	//pi = 3.14159265358979323846264338327950288419717;
 }
 
+WindowFunction* WindowFunction::getWindowFunction(char c){
+	if(c == 'n'){
+		return new HannWindow();
+	}else if(c == 'b'){
+		return new BlackmanWindow();
+	}else{
+		return new HammingWindow();
+	}
+}
+
+// subclasses
+
 float HannWindow::window(int n, int N)const{
 	return 0.5 * (1.0 - cos((2 * pi * n)/(N-1)));
 }

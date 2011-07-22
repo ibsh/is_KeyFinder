@@ -6,14 +6,13 @@ ConstantQPostProc::ConstantQPostProc(int frameRate, const Preferences& prefs) : 
 	float sparseThresh = 0.0054;
 	float qFactor = 1.0 / (pow(2,(1.0 / prefs.getBpo()))-1);
 	binOffsets = std::vector<int>(bins);
-	WindowFunction* w = new HammingWindow();
+	WindowFunction* w = WindowFunction::getWindowFunction('m'); // Hamming
 	fftw_complex* tempKernel = (fftw_complex*)fftw_malloc(fftFrameSize*sizeof(fftw_complex));
 	fftw_complex* specKernel = (fftw_complex*)fftw_malloc(fftFrameSize*sizeof(fftw_complex));
 	fftw_plan planCq = fftw_plan_dft_1d(fftFrameSize, tempKernel, specKernel, FFTW_FORWARD, FFTW_ESTIMATE);
 	// build
 	for(int i=bins-1; i>=0; i--){ // Why backwards? I don't know. But it screws up the kernel going forwards.
 		float freqI = prefs.getBinFreq(i);
-		// Careful. If you take the fftFrameSize low enough (2048?) this will segfault. Must be a mathematical fix for that.
 		int lengthI = ceil(qFactor * frameRate / freqI);
 		// Harte differs from Blankertz; calculates offsets so that temporal kernels are centred in their windows
 		int offsetI;
@@ -26,15 +25,15 @@ ConstantQPostProc::ConstantQPostProc(int frameRate, const Preferences& prefs) : 
 			tempKernel[j][1] = 0.0;
 		}
 		if(offsetI<0){
+			// get rid of this once parameters are finalised / safely parameterised.
 			std::cerr << "Fatal error: minimum fftFrameSize for this downsample factor and starting frequency is " << lengthI+1 << std::endl;
-			exit(1);
 		}
 		for(int j=0; j<lengthI; j++){
 			float winj = w->window(j,lengthI) / lengthI;
 			tempKernel[offsetI+j][0] = winj * cos((2*pi*j*qFactor)/lengthI); // real part
 			tempKernel[offsetI+j][1] = winj * sin((2*pi*j*qFactor)/lengthI); // imag part
 		}
-		// FFT
+		// FFT : should this be made a single 2D run rather than 72 1D runs?
 		fftw_execute(planCq);
 		std::vector<std::complex<float> > kernelRow;
 		for(int j=0; j<fftFrameSize; j++){
@@ -43,9 +42,9 @@ ConstantQPostProc::ConstantQPostProc(int frameRate, const Preferences& prefs) : 
 			float magnitude = sqrt((real*real)+(imag*imag));
 			if(magnitude > sparseThresh){
 				if(binOffsets[i] == 0) binOffsets[i] = j;
-				// apparently not.
-				//real /= fftFrameSize;
-				//imag /= fftFrameSize
+				// This is in the spec but it leads to arithmetic underflow without any advantage.
+				// real /= fftFrameSize;
+				// imag /= fftFrameSize;
 				imag *= -1.0; // complex conjugate
 				std::complex<float> kernelEntry(real,imag);
 				kernelRow.push_back(kernelEntry);
@@ -63,7 +62,7 @@ std::vector<float> ConstantQPostProc::chromaVector(fftw_complex* fftResult)const
 	std::vector<float> cv(bins);
 	for(int i=0; i<bins; i++){
 		float sum = 0.0;
-		for(int j=0; j<sparseKernel[i].size(); j++){
+		for(int j=0; j<(signed)sparseKernel[i].size(); j++){
 			int binNum = binOffsets[i]+j;
 			float real = fftResult[binNum][0] * sparseKernel[i][j].real();
 			float imag = fftResult[binNum][1] * sparseKernel[i][j].imag();
@@ -77,12 +76,12 @@ std::vector<float> ConstantQPostProc::chromaVector(fftw_complex* fftResult)const
 
 void ConstantQPostProc::printKernel()const{
 	std::cout << std::fixed;
- 	int verylastFftBin = binOffsets[bins-1] + sparseKernel[bins-1].size() - 1;
+	int verylastFftBin = binOffsets[bins-1] + sparseKernel[bins-1].size() - 1;
 	for(int i=0; i<bins; i++){
 		for(int j=0; j<=verylastFftBin; j++){
 			if(j < binOffsets[i]){
 				std::cout << "0 ";
-			}else if(j < binOffsets[i] + sparseKernel[i].size()){
+			}else if(j < binOffsets[i] + (signed)sparseKernel[i].size()){
 				float real = sparseKernel[i][j-binOffsets[i]].real();
 				float imag = sparseKernel[i][j-binOffsets[i]].imag();
 				float magnitude = sqrt((real*real)+(imag*imag));

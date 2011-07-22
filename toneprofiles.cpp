@@ -1,8 +1,6 @@
 #include "toneprofiles.h"
 
 ToneProfile::ToneProfile(int whichProfile = 0, bool majorScale = false){
-	// whichProfile determines whose profiles to use
-	// majorScale determines major or minor
 	double p[12];
 	if(whichProfile==1){ // Temperley profiles
 		if(majorScale){
@@ -24,21 +22,21 @@ ToneProfile::ToneProfile(int whichProfile = 0, bool majorScale = false){
 		}
 	}else if(whichProfile==2){ // Sha'ath profiles
 		if(majorScale){
-			p[0]=6.60; p[1]=2.00;
-			p[2]=3.50; p[3]=2.30;
-			p[4]=4.60;
-			p[5]=4.00; p[6]=2.50;
-			p[7]=5.20; p[8]=2.40;
-			p[9]=3.70; p[10]=2.30;
-			p[11]=3.40;
+			p[0]=6.6; p[1]=2.0;
+			p[2]=3.5; p[3]=2.3;
+			p[4]=4.6;
+			p[5]=4.0; p[6]=2.5;
+			p[7]=5.2; p[8]=2.4;
+			p[9]=3.7; p[10]=2.3;
+			p[11]=3.4;
 		}else{
-			p[0]=6.50; p[1]=2.70;
-			p[2]=3.50;
-			p[3]=5.40; p[4]=2.60;
-			p[5]=3.50; p[6]=2.50;
-			p[7]=5.20;
-			p[8]=4.00; p[9]=2.70;
-			p[10]=4.30; p[11]=3.20;
+			p[0]=6.5; p[1]=2.7;
+			p[2]=3.5;
+			p[3]=5.4; p[4]=2.6;
+			p[5]=3.5; p[6]=2.5;
+			p[7]=5.2;
+			p[8]=4.0; p[9]=2.7;
+			p[10]=4.3; p[11]=3.2;
 		}
 	}else{ // Krumhansl profiles
 		if(majorScale){
@@ -59,9 +57,6 @@ ToneProfile::ToneProfile(int whichProfile = 0, bool majorScale = false){
 			p[10]=3.34; p[11]=3.17;
 		}
 	}
-	for(int i=0; i<12; i++)
-		mean += p[i];
-	mean /= 12;
 	tonic = new Binode(p[0]);
 	Binode *q = tonic;
 	for(int i=1; i<12; i++){
@@ -86,38 +81,22 @@ void ToneProfile::free(){
 	}while(p!=tonic);
 }
 
-double ToneProfile::correlate(const std::vector<double>& input, const double& inputMean, const int& offset){
-	// input = array of 12 doubles relating to an octave starting at A natural
-	// inputMean = precalculated mean of input's values
-	// offset = which scale to test against; 0 = A, 1 = Bb, 2 = B, 3 = C etc
-	double sum1 = 0.0;
-	double sum2 = 0.0;
-	double sum3 = 0.0;
+/*
+	Determines cosine similarity between input vector and a particular scale.
+	input = array of 12 doubles relating to an octave starting at A natural
+	offset = which scale to test against; 0 = A, 1 = Bb, 2 = B, 3 = C etc
+*/
+double ToneProfile::cosine(const std::vector<double>& input, const int& offset) const{
+	// Rotate starting pointer left for offset. Each step shifts the position
+	// of the tonic one step further right of the starting pointer (or one semitone up).
 	Binode* p = tonic;
 	for(int i=0; i<offset; i++)
-		p = p->l; // going left. i.e. each step will be shifting the comparison of the tonic one semitone right (up)
-	for(int i=0; i<12; i++){ // for each note in whichProfile
-		sum1 += (p->n - mean) * (input[i] - inputMean);
-		sum2 += pow((p->n - mean),2);
-		sum3 += pow((input[i] - inputMean),2);
-		p = p->r;
-	}
-	if(sum3 > 0 && sum2 > 0) // divzero
-		return sum1 / sqrt(sum2 * sum3);
-	else
-		return 0;
-}
-
-double ToneProfile::cosine(const std::vector<double>& input, const int& offset){
-	// input = array of 12 doubles relating to an octave starting at A natural
-	// offset = which scale to test against; 0 = A, 1 = Bb, 2 = B, 3 = C etc
+		p = p->l;
+	// calculate cosine similarity between vector and offset circular list
 	double top = 0.0;
 	double bottomleft = 0.0;
 	double bottomright = 0.0;
-	Binode* p = tonic;
-	for(int i=0; i<offset; i++)
-		p = p->l; // going left. i.e. each step will be shifting the comparison of the tonic one semitone right (up)
-	for(int i=0; i<12; i++){ // for each note in whichProfile
+	for(int i=0; i<12; i++){
 		top += input[i] * p->n;
 		bottomleft += pow((p->n),2);
 		bottomright += pow((input[i]),2);

@@ -9,13 +9,11 @@ class ToneProfile{
 public:
 	ToneProfile(int,bool);
 	~ToneProfile();
-	double correlate(const std::vector<double>&,const double&, const int&);
-	double cosine(const std::vector<double>&, const int&);
+	double cosine(const std::vector<double>&, const int&) const;
 private:
 	void free();
 	class Binode;
 	Binode* tonic;
-	double mean;
 };
 
 class ToneProfile::Binode{

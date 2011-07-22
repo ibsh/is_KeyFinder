@@ -13,7 +13,6 @@ KeyClassifier::~KeyClassifier(){
 
 int KeyClassifier::classify(const std::vector<double>& chroma){
 	std::vector<double> scores(24);
-	// note 12 magic number below. not ideal, but using prefs.getBpo breaks for > 1bps.
 	for(int i=0; i<12; i++){ // for each pair of profiles
 		double cosi = major->cosine(chroma,i); // major
 		scores[i*2] = cosi;
@@ -21,9 +20,9 @@ int KeyClassifier::classify(const std::vector<double>& chroma){
 		scores[(i*2)+1] = cosi;
 	}
 	// find best match
-	int bestMatch = -1;
-	double bestScore = 0;
-	for(int i=0; i<24; i++){
+	int bestMatch = 0; // this does mean that absolute silence will be visually marked as A major. But it will be weighted zero.
+	double bestScore = scores[0];
+	for(int i=1; i<24; i++){
 		if(scores[i] > bestScore){
 			bestScore = scores[i];
 			bestMatch = i;

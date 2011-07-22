@@ -20,7 +20,7 @@ std::vector<float> LogBinsPostProc::chromaVector(fftw_complex* fftResult)const{
 
 void LogBinsPostProc::printKernel()const{
 	std::cout << std::fixed;
- 	int verylastFftBin = reqbins[bins-1];
+	int verylastFftBin = reqbins[bins-1];
 	for(int i=0; i<bins; i++){
 		for(int j=0; j<=verylastFftBin; j++){
 			if(j == reqbins[i]){

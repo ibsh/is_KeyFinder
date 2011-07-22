@@ -15,7 +15,7 @@ public:
 	std::vector<QString> keyNames;
 	std::vector<QString> keyCodes;
 	std::vector<QColor> keyColours;
-	void setChromagramColours(QImage&, int) const;
+	void setImageColours(QImage&, int) const;
 private:
 	Visuals();
 	static Visuals* inst;

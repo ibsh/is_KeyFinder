@@ -18,8 +18,8 @@ AudioBuffer* SecretRabbitDownsampler::downsample(AudioBuffer* inbuf, int factor)
 	srcData.output_frames = (long)(outbuf->getSampleCount() / outbuf->getChannels());
 	srcData.src_ratio = 1.0/factor;
 	// second parameter = converter type.
-	// 0-2 slow but they anti-alias roughly the same amount, based on a visual inspection.
-	// 3-4 super fast but the aliasing is worse than my DiscardDownsampler...
+	// 0-2 quite slow but they anti-alias roughly the same amount, based on a visual inspection.
+	// 3-4 super fast but the aliasing is worse than a simple discard. Don't use.
 	int result = src_simple(&srcData,2,inbuf->getChannels());
 	if(result != 0){
 		throw Exception("Error in sample rate conversion");

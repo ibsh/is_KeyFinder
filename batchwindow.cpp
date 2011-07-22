@@ -54,7 +54,7 @@ void BatchWindow::on_actionClose_Window_triggered(){
 
 void BatchWindow::dragEnterEvent(QDragEnterEvent *e){
 	// accept only local files
-	if(allowDrops && e->mimeData()->hasUrls()  && !e->mimeData()->urls().at(0).toLocalFile().isEmpty()){
+	if(allowDrops && e->mimeData()->hasUrls() && !e->mimeData()->urls().at(0).toLocalFile().isEmpty()){
 		e->acceptProposedAction();
 	}
 }
@@ -156,8 +156,8 @@ void BatchWindow::analyseFile(int whichFile){
 		delete dec;
 	}catch(const Exception& e){
 		delete ab;
-		delete dec;
 		ab = NULL;
+		delete dec;
 		markBroken(whichFile);
 		return;
 	}
@@ -165,14 +165,14 @@ void BatchWindow::analyseFile(int whichFile){
 	ab = mono->makeMono(ab);
 	delete mono;
 	if(prefs.getDFactor() > 1){
-		Downsampler* ds = Downsampler::getDownsampler(prefs.getDFactor(),ab->getFrameRate(),prefs.getBinFreq(-1));
+		Downsampler* ds = Downsampler::getDownsampler(prefs.getDFactor(),ab->getFrameRate(),prefs.getLastFreq());
 		try{
 			ab = ds->downsample(ab,prefs.getDFactor());
 			delete ds;
 		}catch(const Exception& e){
 			delete ab;
-			delete ds;
 			ab = NULL;
+			delete ds;
 			markBroken(whichFile);
 			return;
 		}
@@ -181,33 +181,35 @@ void BatchWindow::analyseFile(int whichFile){
 	ch = sa->chromagram(ab);
 	delete ab;
 	ab = NULL;
-	sa = NULL; // don't delete sa; it lives on in the factory for reuse.
+	sa = NULL; // don't actually delete the spectrum analyser; it lives on in the centralised factory for reuse.
 	ch->decomposeToTwelveBpo(prefs);
 	ch->decomposeToOneOctave(prefs);
+	// get energy level across track to weight segments
+	std::vector<float> loudness(ch->getHops());
+	for(int h=0; h<ch->getHops(); h++)
+		for(int b=0; b<ch->getBins(); b++)
+			loudness[h] += ch->getMagnitude(h,b);
 	Hcdf harto;
 	std::vector<int> changes = harto.peaks(harto.hcdf(ch,prefs),prefs);
 	changes.push_back(ch->getHops()-1);
 	KeyClassifier hc(prefs.getToneProfile());
-	std::vector<int> trackKeys(24);
-	for(int i=0; i<changes.size()-1; i++){
+	std::vector<float> trackKeys(24);
+	for(int i=0; i<(signed)changes.size()-1; i++){
 		std::vector<double> chroma(12);
-		for(int j=changes[i]; j<changes[i+1]; j++){
-			for(int k=0; k<ch->getBins(); k++){
+		for(int j=changes[i]; j<changes[i+1]; j++)
+			for(int k=0; k<ch->getBins(); k++)
 				chroma[k] += ch->getMagnitude(j,k);
-			}
-		}
 		int key = hc.classify(chroma);
-		for(int j=changes[i]; j<changes[i+1]; j++){
-			trackKeys[key]++;
-		}
+		for(int j=changes[i]; j<changes[i+1]; j++)
+			trackKeys[key] += loudness[j];
 	}
 	delete ch;
 	ch = NULL;
 	int mostCommonKey = -1;
-	int mostCommonKeyCount = 0;
-	for(int i=0; i<trackKeys.size(); i++){
-		if(trackKeys[i] > mostCommonKeyCount){
-			mostCommonKeyCount = trackKeys[i];
+	float mostCommonKeyMagnitude = 0.0;
+	for(int i=0; i<(signed)trackKeys.size(); i++){
+		if(trackKeys[i] > mostCommonKeyMagnitude){
+			mostCommonKeyMagnitude = trackKeys[i];
 			mostCommonKey = i;
 		}
 	}
@@ -220,8 +222,8 @@ void BatchWindow::analyseFile(int whichFile){
 void BatchWindow::markBroken(int whichFile){
 	ui->tableWidget->setItem(whichFile,COL_KEY,new QTableWidgetItem());
 	ui->tableWidget->item(whichFile,COL_KEY)->setText("Failed");
+	ui->tableWidget->item(whichFile,COL_KEY)->setTextColor(qRgb(255,0,0));
 	ui->tableWidget->item(whichFile,COL_PATH)->setTextColor(qRgb(255,0,0));
-	ui->tableWidget->resizeColumnsToContents();
 }
 
 void BatchWindow::copySelectedFromTableWidget(){
@@ -231,20 +233,16 @@ void BatchWindow::copySelectedFromTableWidget(){
 	*/
 	copyArray.clear();
 	int firstRow = INT_MAX;
-	int lastRow = INT_MIN;
+	int lastRow = 0;
 	int firstCol = INT_MAX;
-	int lastCol = INT_MIN;
+	int lastCol = 0;
 	foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()){
 		int chkRow = selectedIndex.row();
 		int chkCol = selectedIndex.column();
-		if(chkRow < firstRow)
-			firstRow = chkRow;
-		if(chkRow > lastRow)
-			lastRow = chkRow;
-		if(chkCol < firstCol)
-			firstCol = chkCol;
-		if(chkCol > lastCol)
-			lastCol = chkCol;
+		if(chkRow < firstRow) firstRow = chkRow;
+		if(chkRow > lastRow) lastRow = chkRow;
+		if(chkCol < firstCol) firstCol = chkCol;
+		if(chkCol > lastCol) lastCol = chkCol;
 	}
 	for(int r = firstRow; r <= lastRow; r++){
 		for(int c = firstCol; c <= lastCol; c++){
@@ -255,7 +253,6 @@ void BatchWindow::copySelectedFromTableWidget(){
 		}
 		copyArray.append("\r\n");
 	}
-
 	QMimeData* mimeData = new QMimeData();
 	mimeData->setData("text/plain",copyArray);
 	QApplication::clipboard()->setMimeData(mimeData);
@@ -263,20 +260,11 @@ void BatchWindow::copySelectedFromTableWidget(){
 
 void BatchWindow::writeDetectedToGrouping(){
 	int firstRow = INT_MAX;
-	int lastRow = INT_MIN;
-	int firstCol = INT_MAX;
-	int lastCol = INT_MIN;
+	int lastRow = 0;
 	foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()){
 		int chkRow = selectedIndex.row();
-		int chkCol = selectedIndex.column();
-		if(chkRow < firstRow)
-			firstRow = chkRow;
-		if(chkRow > lastRow)
-			lastRow = chkRow;
-		if(chkCol < firstCol)
-			firstCol = chkCol;
-		if(chkCol > lastCol)
-			lastCol = chkCol;
+		if(chkRow < firstRow) firstRow = chkRow;
+		if(chkRow > lastRow) lastRow = chkRow;
 	}
 	for(int r = firstRow; r <= lastRow; r++){
 		QTableWidgetItem* item = ui->tableWidget->item(r,COL_KEY); // only write if there's a detected key
@@ -285,4 +273,10 @@ void BatchWindow::writeDetectedToGrouping(){
 			md->setGrouping((ui->tableWidget->item(r,COL_KEYCODE)->text() + " " + ui->tableWidget->item(r,COL_KEY)->text()).toAscii().data());
 		}
 	}
+	QMessageBox msg;
+	QString msgText = "Tags written to ";
+	msgText += QString("%1").arg(lastRow-firstRow+1);
+	msgText += " files";
+	msg.setText(msgText);
+	msg.exec();
 }

@@ -28,7 +28,7 @@ Chromagram* GoertzelAnalyser::chromagram(AudioBuffer* ab){
 		finished = true;
 		for(int j=0; j<bins; j++){
 			if(!goertzels[j]->samplesWanted()){ // this window complete, get output and reset
-				magnitudes[j].push_back(goertzels[j]->getRelativeMagnitude());
+				magnitudes[j].push_back(goertzels[j]->getRelativeMagnitude() * 10000000.0); // avoid arithmetic underflow in HCDF
 				if(i >= ab->getSampleCount()) //this was the last window for this Goertzel.
 					lastWindowDone[j] = true;
 				goertzels[j]->reset();
@@ -43,10 +43,10 @@ Chromagram* GoertzelAnalyser::chromagram(AudioBuffer* ab){
 	for(int i=0; i < ab->getSampleCount(); i += hopSize){
 		int hopFirst = i;
 		int hopLast = i + hopSize - 1;
-		for(int j=0; j<magnitudes.size(); j++){
+		for(int j=0; j<(signed)magnitudes.size(); j++){
 			int n = goertzels[j]->getN();
 			float hopMag = 0.0;
-			for(int k=0; k<magnitudes[j].size(); k++){
+			for(int k=0; k<(signed)magnitudes[j].size(); k++){
 				int myFirst = k*n;
 				int myLast = (k+1)*n-1;
 				if(myFirst > hopLast) // this entry entirely after this hop, so we're done
@@ -72,14 +72,16 @@ Chromagram* GoertzelAnalyser::chromagram(AudioBuffer* ab){
 GoertzelAnalyser::Goertzel::Goertzel(float freq, int frameRate, int minK, char whichWindow){
 	float pi = (4 * atan(1.0));
 	k = minK;
-	float threshold = 0.2; // TODO parameterise
+	float threshold = 0.2;
 	while(true){
 		float dblN = k / (freq/frameRate);
 		float diff = (dblN - (int)dblN);
 		if(diff < threshold){
-			N = (int)dblN; break;
+			N = (int)dblN;
+			break;
 		}else if((1.0-diff) < threshold){
-			N = (int)dblN + 1; break;
+			N = (int)dblN + 1;
+			break;
 		}
 		k++;
 	}
@@ -88,14 +90,7 @@ GoertzelAnalyser::Goertzel::Goertzel(float freq, int frameRate, int minK, char w
 	cosine = cos(theta);
 	coeff = 2.0 * cosine;
 	frequency = freq;
-	WindowFunction* w;
-	if(whichWindow == 'n'){
-		w = new HannWindow();
-	}else if(whichWindow == 'b'){
-		w = new BlackmanWindow();
-	}else{
-		w = new HammingWindow();
-	}
+	WindowFunction* w = WindowFunction::getWindowFunction(whichWindow);
 	window = std::vector<float>(N);
 	for(int i=0; i<N; i++){
 		window[i] = w->window(i,N);

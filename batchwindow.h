@@ -9,6 +9,7 @@
 #include <QFuture>
 #include <QFutureWatcher>
 #include <QClipboard>
+#include <QMessageBox>
 
 #include <string>
 #include <vector>

@@ -4,7 +4,7 @@ Dependencies:
 	libav (0.7)
 	fftw (3.2.2)
 	libsndfile (1.0.24) // not strictly necessary, since libav can do the job just as well (though not as quietly)
-	libsamplerate (0.1.7)
+	libsamplerate (0.1.7) // would be nicer to adapt the filter design code, since it's faster and apparently better.
 	taglib (1.7, with some custom changes)
 
 Configure commands used to build them:
