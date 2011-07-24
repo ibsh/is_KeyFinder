@@ -10,8 +10,25 @@
 
 #include <vector>
 
-// Singleton. It holds all analysers generated in a session, to cut down on prep time.
+// Keeps a reference to a spectrum analyser with distinguishing information
+class SpectrumAnalyserWrapper{
+public:
+	SpectrumAnalyserWrapper(char,char,int,char,SpectrumAnalyser*);
+	~SpectrumAnalyserWrapper();
+	char getType() const;
+	char getFftPostProcessor() const;
+	int getFramerate() const;
+	char getTemporalWindow() const;
+	SpectrumAnalyser* getSpectrumAnalyser() const;
+private:
+	char type;
+	char fftpp;
+	int frate;
+	char window;
+	SpectrumAnalyser* sa;
+};
 
+// Singleton. It holds all analysers generated in a session, to cut down on prep time.
 class SpectrumAnalyserFactory{
 public:
 	SpectrumAnalyser* getSpectrumAnalyser(int, const Preferences&);
@@ -21,11 +38,7 @@ private:
 	mutable QMutex mutex; // used to make getSpectrumAnalyser thread-safe
 	SpectrumAnalyserFactory();
 	static SpectrumAnalyserFactory* inst;
-	std::vector<SpectrumAnalyser*> analysers;
-	std::vector<char> types;
-	std::vector<char> fpps;
-	std::vector<int> framerates;
-	std::vector<char> windows;
+	std::vector<SpectrumAnalyserWrapper*> analysers;
 };
 
 #endif // SPECTRUMANALYSERFACTORY_H

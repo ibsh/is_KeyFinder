@@ -1,5 +1,37 @@
 #include "spectrumanalyserfactory.h"
 
+SpectrumAnalyserWrapper::SpectrumAnalyserWrapper(char t, char p, int f, char w, SpectrumAnalyser* s){
+	type = t;
+	fftpp = p;
+	frate = f;
+	window = w;
+	sa = s;
+}
+
+SpectrumAnalyserWrapper::~SpectrumAnalyserWrapper(){
+	delete sa;
+}
+
+char SpectrumAnalyserWrapper::getType() const{
+	return type;
+}
+
+char SpectrumAnalyserWrapper::getFftPostProcessor() const{
+	return fftpp;
+}
+
+int SpectrumAnalyserWrapper::getFramerate() const{
+	return frate;
+}
+
+char SpectrumAnalyserWrapper::getTemporalWindow() const{
+	return window;
+}
+
+SpectrumAnalyser* SpectrumAnalyserWrapper::getSpectrumAnalyser() const{
+	return sa;
+}
+
 SpectrumAnalyserFactory* SpectrumAnalyserFactory::inst = NULL;
 
 SpectrumAnalyserFactory* SpectrumAnalyserFactory::getInstance(){
@@ -9,11 +41,7 @@ SpectrumAnalyserFactory* SpectrumAnalyserFactory::getInstance(){
 }
 
 SpectrumAnalyserFactory::SpectrumAnalyserFactory(){
-	analysers = std::vector<SpectrumAnalyser*>(0);
-	types = std::vector<char>(0);
-	fpps = std::vector<char>(0);
-	framerates = std::vector<int>(0);
-	windows = std::vector<char>(0);
+	analysers = std::vector<SpectrumAnalyserWrapper*>(0);
 }
 
 SpectrumAnalyserFactory::~SpectrumAnalyserFactory(){
@@ -28,15 +56,16 @@ SpectrumAnalyser* SpectrumAnalyserFactory::getSpectrumAnalyser(int frameRate, co
 	char chkFpp = prefs.getFftPostProcessor();
 	char chkWin = prefs.getTemporalWindow();
 	for(int i=0; i<(signed)analysers.size(); i++)
-		if(framerates[i] == frameRate 	&& types[i] == chkType && fpps[i] == chkFpp && windows[i] == chkWin)
-			return analysers[i];
-	framerates.push_back(frameRate);
-	types.push_back(chkType);
-	fpps.push_back(chkFpp);
-	windows.push_back(chkWin);
+		if(
+			 analysers[i]->getType() == chkType
+			 && analysers[i]->getFftPostProcessor() == chkFpp
+			 && analysers[i]->getFramerate() == frameRate
+			 && analysers[i]->getTemporalWindow() == chkWin
+		)
+			return analysers[i]->getSpectrumAnalyser();
 	if(chkType == 'g')
-		analysers.push_back(new GoertzelAnalyser(frameRate,prefs));
+		analysers.push_back(new SpectrumAnalyserWrapper(chkType, chkFpp, frameRate, chkWin, new GoertzelAnalyser(frameRate,prefs)));
 	else
-		analysers.push_back(new FftwAnalyser(frameRate,prefs));
-	return analysers[analysers.size()-1];
+		analysers.push_back(new SpectrumAnalyserWrapper(chkType, chkFpp, frameRate, chkWin, new FftwAnalyser(frameRate,prefs)));
+	return analysers[analysers.size()-1]->getSpectrumAnalyser();
 }
