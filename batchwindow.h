@@ -10,6 +10,7 @@
 #include <QFutureWatcher>
 #include <QClipboard>
 #include <QMessageBox>
+#include <QLabel>
 
 #include <string>
 #include <vector>
@@ -45,6 +46,7 @@ private:
 	Ui::BatchWindow* ui;
 	Visuals* vis;
 	QByteArray copyArray;
+	QLabel* initialHelp;
 	// analysis
 	Preferences prefs;
 	AudioBuffer* ab;

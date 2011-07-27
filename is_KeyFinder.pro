@@ -34,7 +34,6 @@ CONFIG(debug, debug|release){
 		detailwindow.cpp \
 		batchwindow.cpp \
 		visuals.cpp
-	FORMS += detailwindow.ui batchwindow.ui
 }
 
 SOURCES += \
@@ -88,7 +87,7 @@ HEADERS  += decoderlibsndfile.h \
     hcdf.h \
     keyclassifier.h \
     metadata.h \
-    metadatataglib.h \
+		metadatataglib.h
 
 OTHER_FILES += \
 		is_KeyFinder.pro.user
@@ -98,3 +97,6 @@ INCLUDEPATH += /usr/local/include/taglib
 LIBS += -lfftw3 -lsndfile -lavcodec -lavformat -lsamplerate -lavutil -ltag
 
 ICON = is_KeyFinder.icns
+
+FORMS += detailwindow.ui batchwindow.ui
+UI_DIR = ../is_KeyFinder-build-desktop/

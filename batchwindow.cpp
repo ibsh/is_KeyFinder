@@ -20,6 +20,22 @@ BatchWindow::BatchWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Batc
 	ui->setupUi(this);
 	allowDrops = true;
 	vis = Visuals::getInstance();
+	// HELP LABEL
+	initialHelp = new QLabel("Drag audio files here", ui->tableWidget);
+	QFont font;
+	font.setPointSize(20);
+	font.setBold(true);
+	QPalette palette = initialHelp->palette();
+	palette.setColor(initialHelp->foregroundRole(), Qt::gray);
+	initialHelp->setPalette(palette);
+	initialHelp->setFont(font);
+	initialHelp->setGeometry(
+			(676 - initialHelp->sizeHint().width()) / 2,
+			(312 - initialHelp->sizeHint().height()) / 2,
+			initialHelp->sizeHint().width(),
+			initialHelp->sizeHint().height()
+	);
+	initialHelp->show();
 	// SETUP TABLE WIDGET CONTEXT MENU
 	QAction* copyAction = new QAction(tr("Copy"),this);
 	copyAction->setShortcuts(QKeySequence::Copy);
@@ -78,6 +94,10 @@ void BatchWindow::filesDropped(QList<QUrl> urls){
 			}
 		}
 		if(addNew){
+			if(initialHelp != NULL){
+				delete initialHelp;
+				initialHelp = NULL;
+			}
 			int newRow = ui->tableWidget->rowCount();
 			ui->tableWidget->insertRow(newRow);
 			ui->tableWidget->setItem(newRow,COL_PATH,new QTableWidgetItem());

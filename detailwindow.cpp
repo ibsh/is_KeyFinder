@@ -61,6 +61,7 @@ DetailWindow::DetailWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::De
 	dummyLabel->setAutoFillBackground(true);
 	dummyLabel->setMinimumHeight(20);
 	dummyLabel->setMaximumHeight(30);
+	dummyLabel->setToolTip("This row shows the key(s) detected\nin the segments between peak\nharmonic changes.");
 	ui->horizontalLayout_keyLabels->addWidget(dummyLabel);
 	keyLabels.push_back(dummyLabel);
 }
@@ -250,6 +251,7 @@ void DetailWindow::haFinished(){
 			newLabel->setAutoFillBackground(true);
 			newLabel->setMinimumHeight(20);
 			newLabel->setMaximumHeight(30);
+			newLabel->setToolTip("This row shows the key(s) detected\nin the segments between peak\nharmonic changes.");
 			ui->horizontalLayout_keyLabels->addWidget(newLabel,h-lastChange);
 			keyLabels.push_back(newLabel);
 			lastChange = h;

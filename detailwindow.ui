@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>833</width>
     <height>428</height>
    </rect>
   </property>
@@ -71,6 +71,15 @@
           <height>74</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>This chromagram spans six octaves
+from A0 (bottom) to Ab6 (top). Each
+vertical block shows the level of
+energy present at the frequency of
+that musical note, while each
+horizontal block represents about
+4 seconds of the track.</string>
+        </property>
         <property name="frameShape">
          <enum>QFrame::Box</enum>
         </property>
@@ -127,6 +136,10 @@
           <height>14</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>This is the chromagram data
+decomposed to a single octave.</string>
+        </property>
         <property name="frameShape">
          <enum>QFrame::Box</enum>
         </property>
@@ -154,6 +167,12 @@
           <width>20</width>
           <height>16777215</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>This is the colour scale of the
+current chromagram. You can
+change the colour scheme
+using the dropdown below.</string>
         </property>
         <property name="frameShape">
          <enum>QFrame::Box</enum>
@@ -189,6 +208,14 @@
           <width>0</width>
           <height>14</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>This is the level of harmonic
+change detected in the
+chromagram over time. Peaks
+in this signal are assumed to
+be key changes for the key(s)
+below.</string>
         </property>
         <property name="frameShape">
          <enum>QFrame::Box</enum>
@@ -293,6 +320,12 @@
       </item>
       <item row="1" column="0">
        <widget class="QComboBox" name="spectrumAnalyserCombo">
+        <property name="toolTip">
+         <string>Choose the combination of
+spectrum analyser and post-
+processor you want to use on
+this track.</string>
+        </property>
         <property name="currentIndex">
          <number>3</number>
         </property>
@@ -320,6 +353,11 @@
       </item>
       <item row="1" column="1">
        <widget class="QComboBox" name="temporalWindowCombo">
+        <property name="toolTip">
+         <string>Choose the function you
+want the spectrum analyser
+to use for temporal windowing.</string>
+        </property>
         <property name="currentIndex">
          <number>0</number>
         </property>
@@ -342,6 +380,13 @@
       </item>
       <item row="1" column="2">
        <widget class="QComboBox" name="toneProfilesCombo">
+        <property name="toolTip">
+         <string>Choose the profiles you want
+to use for key correlation.
+Temperley is best for rock and
+classical, Sha'ath is best for EDM,
+Krumhansl is pretty good all round.</string>
+        </property>
         <property name="currentIndex">
          <number>2</number>
         </property>
@@ -364,6 +409,12 @@
       </item>
       <item row="1" column="3">
        <widget class="QComboBox" name="chromaColourCombo">
+        <property name="toolTip">
+         <string>Choose the colour scheme
+for the chromagram. Some
+provide higher contrast than
+others.</string>
+        </property>
         <item>
          <property name="text">
           <string>Izo</string>
@@ -471,7 +522,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>833</width>
      <height>22</height>
     </rect>
    </property>
