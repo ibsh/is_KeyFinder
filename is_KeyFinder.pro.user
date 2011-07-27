@@ -45,7 +45,7 @@
       <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
       <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">QtProjectManager.QMakeBuildStep</value>
       <value key="QtProjectManager.QMakeBuildStep.LinkQmlDebuggingLibrary" type="bool">false</value>
-      <value key="QtProjectManager.QMakeBuildStep.QMakeArguments" type="QString"></value>
+      <value key="QtProjectManager.QMakeBuildStep.QMakeArguments" type="QString">CONFIG+=debug</value>
       <value key="QtProjectManager.QMakeBuildStep.QMakeForced" type="bool">false</value>
      </valuemap>
      <valuemap key="ProjectExplorer.BuildStepList.Step.1" type="QVariantMap">

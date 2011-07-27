@@ -4,12 +4,40 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT += core
 TEMPLATE = app
-TARGET = KeyFinder
 
-SOURCES += main.cpp\
+CONFIG(debug, debug|release){
+	# DEBUG (UNIT TESTING) CONFIGURATION
+	QT -= gui
+	QT += testlib
+	TARGET = keyfinder_test
+	CONFIG += console
+	CONFIG -= app_bundle
+	HEADERS += unittest.h
+	SOURCES += \
+		test__main.cpp \
+		test_audiobuffer.cpp \
+		test_chromagram.cpp \
+		test_decoderlibav.cpp \
+		test_downsamplerib.cpp
+}else{
+	# RELEASE CONFIGURATION
+	QT += gui
+	TARGET = KeyFinder
+	HEADERS += \
+		detailwindow.h \
+		batchwindow.h \
+		visuals.h
+	SOURCES += \
+		main.cpp \
 		detailwindow.cpp \
+		batchwindow.cpp \
+		visuals.cpp
+	FORMS += detailwindow.ui batchwindow.ui
+}
+
+SOURCES += \
     decoderlibsndfile.cpp \
     decoderlibav.cpp \
     constantqpostproc.cpp \
@@ -27,8 +55,6 @@ SOURCES += main.cpp\
     spectrumanalyser.cpp \
     preferences.cpp \
     spectrumanalyserfactory.cpp \
-    batchwindow.cpp \
-    visuals.cpp \
     exception.cpp \
     monaural.cpp \
     decoder.cpp \
@@ -36,10 +62,9 @@ SOURCES += main.cpp\
     keyclassifier.cpp \
     metadatataglib.cpp \
     metadata.cpp \
-    hcdf.cpp
+		hcdf.cpp
 
-HEADERS  += detailwindow.h \
-    decoderlibsndfile.h \
+HEADERS  += decoderlibsndfile.h \
     decoderlibav.h \
     decoder.h \
     constantqpostproc.h \
@@ -59,16 +84,11 @@ HEADERS  += detailwindow.h \
     preferences.h \
     monaural.h \
     spectrumanalyserfactory.h \
-    batchwindow.h \
-    visuals.h \
     exception.h \
     hcdf.h \
     keyclassifier.h \
     metadata.h \
-    metadatataglib.h
-
-FORMS += detailwindow.ui \
-    batchwindow.ui
+    metadatataglib.h \
 
 OTHER_FILES += \
 		is_KeyFinder.pro.user
