@@ -90,6 +90,8 @@ private slots:
 	void on_toneProfilesCombo_currentIndexChanged(int index);
 	void on_chromaColourCombo_currentIndexChanged(int index);
 	void on_runButton_clicked();
+public slots:
+	void analyse(std::string);
 };
 
 #endif

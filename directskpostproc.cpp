@@ -46,10 +46,25 @@ std::vector<float> DirectSkPostProc::chromaVector(fftw_complex* fftResult)const{
 
 float DirectSkPostProc::kernelWindow(float n, float N)const{
 	// discretely sampled continuous function, but different to other window functions
-	return 0.5 * (1.0 - cos((2 * pi * n)/N)); // based on Hann
+	return 1.0 - cos((2 * pi * n)/N); // based on Hann; no need to halve since we normalise later
 }
 
 void DirectSkPostProc::printKernel()const{
+//	std::cout << std::fixed;
+//	std::cout << "mysk offset " << binOffsets[0] << " length " << mySpecKernel[0].size() << std::endl;
+//	for(int j=0; j<(signed)mySpecKernel[0].size(); j++){
+//		float out = mySpecKernel[0][j];
+//		std::cout << std::setprecision(3) << out << "\t";
+//	}
+//	std::cout << "offset " << binOffsets[11] << " length " << mySpecKernel[11].size() << std::endl;
+//	std::cout << std::endl;
+//	for(int j=0; j<(signed)mySpecKernel[11].size(); j++){
+//		float out = mySpecKernel[11][j];
+//		std::cout << std::setprecision(3) << out << "\t";
+//	}
+//	std::cout << std::endl;
+//	return;
+	// original fn
 	std::cout << std::fixed;
 	int verylastFftBin = binOffsets[bins-1] + mySpecKernel[bins-1].size() - 1;
 	for(int i=0; i<bins; i++){
@@ -57,7 +72,7 @@ void DirectSkPostProc::printKernel()const{
 			if(j < binOffsets[i]){
 				std::cout << "0 ";
 			}else if(j < binOffsets[i] + (signed)mySpecKernel[i].size()){
-				float out = mySpecKernel[i][(j-binOffsets[i])];
+				float out = mySpecKernel[i][j-binOffsets[i]];
 				std::cout << std::setprecision(3) << out << " ";
 			}else{
 				std::cout << "0 ";

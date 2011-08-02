@@ -72,11 +72,10 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>This chromagram spans six octaves
-from A0 (bottom) to Ab6 (top). Each
-vertical block shows the level of
-energy present at the frequency of
-that musical note, while each
+         <string>This chromagram spans six octaves.
+Each vertical block shows the level
+of energy present at the frequency
+of that musical note, while each
 horizontal block represents about
 4 seconds of the track.</string>
         </property>

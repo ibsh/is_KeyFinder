@@ -201,7 +201,7 @@ void DetailWindow::harmonicAnalysis(){
 	rateOfChange = harto.hcdf(ch,prefs);
 	std::vector<int> changes = harto.peaks(rateOfChange,prefs);
 	changes.push_back(ch->getHops()); // add sentinel
-	KeyClassifier hc(prefs.getToneProfile());
+	KeyClassifier hc(prefs);
 	keys = std::vector<int>(0);
 	for(int i=0; i<(signed)changes.size()-1; i++){
 		std::vector<double> chroma(12);
@@ -281,7 +281,11 @@ void DetailWindow::drawPianoKeys(){
 	miniPianoImage.setColor(0,qRgb(255,255,255));
 	miniPianoImage.setColor(1,qRgb(0,0,0));
 	miniPianoImage.setColor(2,qRgb(127,127,127));
-	QString octaveRev = "bwbwwbwbwwbw";
+	// reverse of octave for visual representation (ending at A; don't forget the offset)
+	std::string octaveRev = "bwbwwbwbwwbw";
+	int off = prefs.getOctaveOffset();
+	if(off > 0)
+		octaveRev = octaveRev.substr(12-off,off) + octaveRev.substr(0,12 - off);
 	for(int o=0; o<prefs.getOctaves(); o++){
 		for(int s=0; s<12; s++){
 			for(int px=0; px<scale-1; px++){
@@ -386,6 +390,12 @@ void DetailWindow::on_toneProfilesCombo_currentIndexChanged(int index){
 
 void DetailWindow::on_runButton_clicked(){
 	if(filePath != "") go();
+}
+
+void DetailWindow::analyse(std::string path){
+	// public slot to be called from batch window
+	filePath = path;
+	go();
 }
 
 void DetailWindow::on_chromaColourCombo_currentIndexChanged(int index){

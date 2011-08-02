@@ -31,6 +31,7 @@ public:
 	int getGoertzelMinK() const;
 	int getOctaves() const;
 	int getBpo() const;
+	int getOctaveOffset() const;
 	int getDFactor() const;
 	int getToneProfile() const;
 	int getHcdfPeakPickingNeighbours() const;
@@ -50,6 +51,7 @@ private:
 	int goertzelMinK;
 	int octaves;
 	int bps;
+	int octaveOffset;
 	int dFactor;
 	int toneProfile;
 	int hcdfPeakPickingNeighbours;

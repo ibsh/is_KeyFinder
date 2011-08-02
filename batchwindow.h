@@ -49,9 +49,6 @@ private:
 	QLabel* initialHelp;
 	// analysis
 	Preferences prefs;
-	AudioBuffer* ab;
-	SpectrumAnalyser* sa;
-	Chromagram* ch;
 	//processing files
 	void dragEnterEvent(QDragEnterEvent*);
 	void dropEvent(QDropEvent*);
@@ -61,7 +58,9 @@ private:
 	void cleanUpAfterRun();
 	void analyseFile(int);
 	void markBroken(int);
-	void filesDropped(QList<QUrl>);
+	void filesDropped(QList<QUrl>&);
+	void addNewRow(QString);
+	QStringList getDirectoryContents(QDir);
 	QFutureWatcher<void> analysisWatcher;
 	QFutureWatcher<void> fileDropWatcher;
 private slots:
@@ -73,6 +72,7 @@ private slots:
 	void on_runBatchButton_clicked();
 	void copySelectedFromTableWidget();
 	void writeDetectedToGrouping();
+	void runDetailedAnalysis();
 };
 
 #endif

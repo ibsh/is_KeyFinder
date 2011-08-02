@@ -10,10 +10,11 @@ Preferences::Preferences(){
 	goertzelMinK = 60;
 	octaves = 6;
 	bps = 3;													// DEFAULT 3. Not always the best idea but it's as accurate as 1 now.
+	octaveOffset = 0;									// DEFAULT 0. 3 gets an octave that starts at C, but accuracy drops a little.
 	dFactor = 10;
 	toneProfile = 2;									// DEFAULT 2
 	stFreq = 27.5;
-	directSkStretch = 1.0;
+	directSkStretch = 1.0;						// DEFAULT 1.0, 3.8 to closely model CQT.
 	hcdfGaussianSize = 35;						// DEFAULT 35. Originally 19 but this gets fewer misses.
 	hcdfGaussianSigma = 8.0;
 	hcdfPeakPickingNeighbours = 4;		// DEFAULT 4
@@ -74,6 +75,7 @@ int Preferences::getFftFrameSize()const{return fftFrameSize;}
 int Preferences::getGoertzelMinK()const{return goertzelMinK;}
 int Preferences::getOctaves()const{return octaves;}
 int Preferences::getBpo()const{return bps * 12;}
+int Preferences::getOctaveOffset()const{return octaveOffset;}
 int Preferences::getDFactor()const{return dFactor;}
 int Preferences::getToneProfile()const{return toneProfile;}
 int Preferences::getTuningMethod()const{return tuningMethod;}
@@ -92,7 +94,7 @@ float Preferences::getBinFreq(int n)const{
 }
 
 float Preferences::getLastFreq() const{
-	return binFreqs[octaves*12*bps-1];
+	return binFreqs[binFreqs.size()-1];
 }
 
 void Preferences::generateBinFreqs(){
@@ -104,10 +106,13 @@ void Preferences::generateBinFreqs(){
 	int concertPitchBin = bps/2;
 	for(int i=0; i<octaves; i++){
 		binFreq = octFreq;
+		// offset by specified number of semitones
+		for(int j=0; j<octaveOffset*bps; j++)
+			binFreq *= freqRatio;
 		// tune down for bins before first concert pitch bin (if bps > 1)
-		for(int j=0; j<concertPitchBin; j++){
+		for(int j=0; j<concertPitchBin; j++)
 			binFreqs[(i*bpo)+j] = binFreq / pow(freqRatio,(concertPitchBin-j));
-		}
+		// and tune all other bins
 		for(int j=concertPitchBin; j<bpo; j++){
 			binFreqs[(i*bpo)+j] = binFreq;
 			binFreq *= freqRatio;

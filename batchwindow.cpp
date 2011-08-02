@@ -9,10 +9,6 @@ const int COL_KEY = 4;
 const int COL_KEYCODE = 5;
 
 BatchWindow::BatchWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::BatchWindow){
-	// SETUP KEYFINDER
-	ab = NULL;
-	sa = NULL;
-	ch = NULL;
 	// SETUP ASYNC SIGNALS/SLOTS
 	connect(&fileDropWatcher, SIGNAL(finished()), this, SLOT(fileDropFinished()));
 	connect(&analysisWatcher, SIGNAL(finished()), this, SLOT(fileFinished()));
@@ -29,6 +25,7 @@ BatchWindow::BatchWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Batc
 	palette.setColor(initialHelp->foregroundRole(), Qt::gray);
 	initialHelp->setPalette(palette);
 	initialHelp->setFont(font);
+	// see if you can lose these magic numbers
 	initialHelp->setGeometry(
 			(676 - initialHelp->sizeHint().width()) / 2,
 			(312 - initialHelp->sizeHint().height()) / 2,
@@ -38,12 +35,17 @@ BatchWindow::BatchWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Batc
 	initialHelp->show();
 	// SETUP TABLE WIDGET CONTEXT MENU
 	QAction* copyAction = new QAction(tr("Copy"),this);
-	copyAction->setShortcuts(QKeySequence::Copy);
+	copyAction->setShortcut(QKeySequence::Copy);
 	connect(copyAction, SIGNAL(triggered()), this, SLOT(copySelectedFromTableWidget()));
 	ui->tableWidget->addAction(copyAction);
-	QAction* writeToGroupingAction = new QAction(tr("Write to tags"),this);
+	QAction* writeToGroupingAction = new QAction(tr("Write key to Grouping tag"),this);
+	writeToGroupingAction->setShortcut(QKeySequence("Ctrl+T"));
 	connect(writeToGroupingAction, SIGNAL(triggered()), this, SLOT(writeDetectedToGrouping()));
 	ui->tableWidget->addAction(writeToGroupingAction);
+	QAction* runDetailedAction = new QAction(tr("Run detailed analysis"),this);
+	runDetailedAction->setShortcut(QKeySequence("Ctrl+D"));
+	connect(runDetailedAction, SIGNAL(triggered()), this, SLOT(runDetailedAnalysis()));
+	ui->tableWidget->addAction(runDetailedAction);
 }
 
 BatchWindow::~BatchWindow(){
@@ -82,43 +84,66 @@ void BatchWindow::dropEvent(QDropEvent *e){
 	fileDropWatcher.setFuture(future);
 }
 
-void BatchWindow::filesDropped(QList<QUrl> urls){
+QStringList BatchWindow::getDirectoryContents(QDir dir){
+	// regex to exclude all hidden files and directory recursion
+	QStringList contents = dir.entryList().filter(QRegExp("[^.]"));
+	QStringList results;
+	for(int i = 0; i<(signed)contents.size(); i++){
+		if(QFileInfo(contents[i]).isDir())
+			results += getDirectoryContents(QDir(contents[i]));
+		else
+			results.push_back(dir.path() + "/" + contents[i]);
+	}
+	return results;
+}
+
+void BatchWindow::filesDropped(QList<QUrl>& urls){
 	for(int i=0; i<urls.size(); i++){
-		bool addNew = true;
 		QString filePath = urls[i].toLocalFile();
-		// check if file is already in the list
+		// check if url is a directory; if so, get contents rather than adding
+		if(QFileInfo(filePath).isDir()){
+			QStringList contents = getDirectoryContents(QDir(filePath));
+			for(int j=0; j<contents.size(); j++)
+				urls.push_back(QUrl(contents[j]));
+			continue;
+		}
+		// check if path is already in the list
+		bool isNew = true;
 		for(int j=0; j<ui->tableWidget->rowCount(); j++){
 			if(ui->tableWidget->item(j,COL_PATH)->text() == filePath){
-				addNew = false;
+				isNew = false;
 				break;
 			}
 		}
-		if(addNew){
-			if(initialHelp != NULL){
-				delete initialHelp;
-				initialHelp = NULL;
-			}
-			int newRow = ui->tableWidget->rowCount();
-			ui->tableWidget->insertRow(newRow);
-			ui->tableWidget->setItem(newRow,COL_PATH,new QTableWidgetItem());
-			ui->tableWidget->item(newRow,COL_PATH)->setText(filePath);
-			Metadata* md = Metadata::getMetadata(filePath.toAscii().data());
-			QString tag = QString::fromUtf8(md->getArtist().c_str());
-			if(tag != ""){
-				ui->tableWidget->setItem(newRow,COL_TAG_ARTIST,new QTableWidgetItem());
-				ui->tableWidget->item(newRow,COL_TAG_ARTIST)->setText(tag);
-			}
-			tag = QString::fromUtf8(md->getTitle().c_str());
-			if(tag != ""){
-				ui->tableWidget->setItem(newRow,COL_TAG_TITLE,new QTableWidgetItem());
-				ui->tableWidget->item(newRow,COL_TAG_TITLE)->setText(tag);
-			}
-			tag = QString::fromUtf8(md->getGrouping().c_str());
-			if(tag != ""){
-				ui->tableWidget->setItem(newRow,COL_TAG_GROUPING,new QTableWidgetItem());
-				ui->tableWidget->item(newRow,COL_TAG_GROUPING)->setText(tag);
-			}
-		}
+		if(isNew)
+			addNewRow(filePath);
+	}
+}
+
+void BatchWindow::addNewRow(QString filePath){
+	if(initialHelp != NULL){
+		delete initialHelp;
+		initialHelp = NULL;
+	}
+	int newRow = ui->tableWidget->rowCount();
+	ui->tableWidget->insertRow(newRow);
+	ui->tableWidget->setItem(newRow,COL_PATH,new QTableWidgetItem());
+	ui->tableWidget->item(newRow,COL_PATH)->setText(filePath);
+	Metadata* md = Metadata::getMetadata(filePath.toAscii().data());
+	QString tag = QString::fromUtf8(md->getArtist().c_str());
+	if(tag != ""){
+		ui->tableWidget->setItem(newRow,COL_TAG_ARTIST,new QTableWidgetItem());
+		ui->tableWidget->item(newRow,COL_TAG_ARTIST)->setText(tag);
+	}
+	tag = QString::fromUtf8(md->getTitle().c_str());
+	if(tag != ""){
+		ui->tableWidget->setItem(newRow,COL_TAG_TITLE,new QTableWidgetItem());
+		ui->tableWidget->item(newRow,COL_TAG_TITLE)->setText(tag);
+	}
+	tag = QString::fromUtf8(md->getGrouping().c_str());
+	if(tag != ""){
+		ui->tableWidget->setItem(newRow,COL_TAG_GROUPING,new QTableWidgetItem());
+		ui->tableWidget->item(newRow,COL_TAG_GROUPING)->setText(tag);
 	}
 }
 
@@ -167,20 +192,20 @@ void BatchWindow::cleanUpAfterRun(){
 	ui->tableWidget->resizeColumnsToContents();
 }
 
-
 void BatchWindow::analyseFile(int whichFile){
+	AudioBuffer* ab = NULL;
+	SpectrumAnalyser* sa = NULL;
+	Chromagram* ch = NULL;
 	std::string filePath = (std::string)ui->tableWidget->item(whichFile,COL_PATH)->text().toAscii();
 	AudioFileDecoder* dec = AudioFileDecoder::getDecoder(filePath);
 	try{
 		ab = dec->decodeFile((char*)filePath.c_str());
-		delete dec;
 	}catch(const Exception& e){
-		delete ab;
-		ab = NULL;
 		delete dec;
 		markBroken(whichFile);
 		return;
 	}
+	delete dec;
 	Monaural* mono = new Monaural();
 	ab = mono->makeMono(ab);
 	delete mono;
@@ -188,20 +213,18 @@ void BatchWindow::analyseFile(int whichFile){
 		Downsampler* ds = Downsampler::getDownsampler(prefs.getDFactor(),ab->getFrameRate(),prefs.getLastFreq());
 		try{
 			ab = ds->downsample(ab,prefs.getDFactor());
-			delete ds;
 		}catch(const Exception& e){
 			delete ab;
-			ab = NULL;
 			delete ds;
 			markBroken(whichFile);
 			return;
 		}
+		delete ds;
 	}
 	sa = SpectrumAnalyserFactory::getInstance()->getSpectrumAnalyser(ab->getFrameRate(),prefs);
 	ch = sa->chromagram(ab);
 	delete ab;
-	ab = NULL;
-	sa = NULL; // don't actually delete the spectrum analyser; it lives on in the centralised factory for reuse.
+	// note we don't delete the spectrum analyser; it stays in the centralised factory for reuse.
 	ch->decomposeToTwelveBpo(prefs);
 	ch->decomposeToOneOctave(prefs);
 	// get energy level across track to weight segments
@@ -212,7 +235,7 @@ void BatchWindow::analyseFile(int whichFile){
 	Hcdf harto;
 	std::vector<int> changes = harto.peaks(harto.hcdf(ch,prefs),prefs);
 	changes.push_back(ch->getHops()-1);
-	KeyClassifier hc(prefs.getToneProfile());
+	KeyClassifier hc(prefs);
 	std::vector<float> trackKeys(24);
 	for(int i=0; i<(signed)changes.size()-1; i++){
 		std::vector<double> chroma(12);
@@ -224,7 +247,6 @@ void BatchWindow::analyseFile(int whichFile){
 			trackKeys[key] += loudness[j];
 	}
 	delete ch;
-	ch = NULL;
 	int mostCommonKey = -1;
 	float mostCommonKeyMagnitude = 0.0;
 	for(int i=0; i<(signed)trackKeys.size(); i++){
@@ -247,10 +269,6 @@ void BatchWindow::markBroken(int whichFile){
 }
 
 void BatchWindow::copySelectedFromTableWidget(){
-	/*
-		Enabling copy to clipboard. This doesn't work exactly as expected;
-		it just copies from the top-left to the bottom-right selected cells.
-	*/
 	copyArray.clear();
 	int firstRow = INT_MAX;
 	int lastRow = 0;
@@ -267,7 +285,7 @@ void BatchWindow::copySelectedFromTableWidget(){
 	for(int r = firstRow; r <= lastRow; r++){
 		for(int c = firstCol; c <= lastCol; c++){
 			QTableWidgetItem* item = ui->tableWidget->item(r,c);
-			if(item != NULL)
+			if(item != NULL && item->isSelected())
 				copyArray.append(item->text());
 			copyArray.append("\t");
 		}
@@ -299,4 +317,24 @@ void BatchWindow::writeDetectedToGrouping(){
 	msgText += " files";
 	msg.setText(msgText);
 	msg.exec();
+}
+
+void BatchWindow::runDetailedAnalysis(){
+	int firstRow = INT_MAX;
+	int lastRow = 0;
+	foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()){
+		int chkRow = selectedIndex.row();
+		if(chkRow < firstRow) firstRow = chkRow;
+		if(chkRow > lastRow) lastRow = chkRow;
+	}
+	if(firstRow != lastRow){
+		QMessageBox msg;
+		QString msgText = "Please select only a single row for detailed analysis";
+		msg.setText(msgText);
+		msg.exec();
+		return;
+	}
+	DetailWindow* newWin = new DetailWindow(0);
+	newWin->show();
+	newWin->analyse(ui->tableWidget->item(firstRow,COL_PATH)->text().toAscii().data());
 }

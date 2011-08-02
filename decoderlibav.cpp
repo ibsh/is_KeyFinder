@@ -66,8 +66,7 @@ int LibAvDecoder::decodePacket(AVCodecContext* cCtx, AVPacket* avpkt, AudioBuffe
 			uint8_t* datacopy = avpkt->data;
 			avpkt->data = (uint8_t*)malloc(newLength);
 			memcpy(avpkt->data,datacopy + bytesConsumed,newLength);
-			free(datacopy); // was av_free(), but no symbol for that exists in the newer libav.
-			// I haven't found a codec which gets us into this conditional anyway.
+			av_free(datacopy);
 		}
 		avpkt->size -= bytesConsumed;
 	}

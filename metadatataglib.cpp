@@ -8,16 +8,22 @@ TagLibMetadata::~TagLibMetadata(){
 }
 
 std::string TagLibMetadata::getTitle() const{
+	if(f.isNull())
+		return "";
 	TagLib::String out = f.tag()->title();
 	return (std::string)out.toCString();
 }
 
 std::string TagLibMetadata::getArtist() const{
+	if(f.isNull())
+		return "";
 	TagLib::String out = f.tag()->artist();
 	return (std::string)out.toCString();
 }
 
 std::string TagLibMetadata::getGrouping() const{
+	if(f.isNull())
+		return "";
 	TagLib::String out = f.tag()->grouping();
 	return (std::string)out.toCString();
 }

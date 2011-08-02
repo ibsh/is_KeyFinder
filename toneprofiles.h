@@ -1,13 +1,15 @@
 #ifndef TONEPROFILES_H
 #define TONEPROFILES_H
 
+#include <preferences.h>
+
 #include <vector>
 #include <math.h>
 #include <stdlib.h>
 
 class ToneProfile{
 public:
-	ToneProfile(int,bool);
+	ToneProfile(int,bool,const Preferences&);
 	~ToneProfile();
 	double cosine(const std::vector<double>&, const int&) const;
 private:

@@ -11,7 +11,7 @@
 
 class KeyClassifier{
 public:
-	KeyClassifier(int);
+	KeyClassifier(const Preferences&);
 	~KeyClassifier();
 	int classify(const std::vector<double>&);
 private:

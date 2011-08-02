@@ -1,6 +1,6 @@
 #include "toneprofiles.h"
 
-ToneProfile::ToneProfile(int whichProfile = 0, bool majorScale = false){
+ToneProfile::ToneProfile(int whichProfile, bool majorScale, const Preferences& prefs){
 	double p[12];
 	if(whichProfile==1){ // Temperley profiles
 		if(majorScale){
@@ -66,6 +66,9 @@ ToneProfile::ToneProfile(int whichProfile = 0, bool majorScale = false){
 	}
 	q->r = tonic;
 	tonic->l = q;
+	// offset by number of semitones specified in preferences
+	for(int i=0; i<prefs.getOctaveOffset(); i++)
+		tonic = tonic->r;
 }
 
 ToneProfile::~ToneProfile(){

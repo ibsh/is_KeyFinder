@@ -1,9 +1,9 @@
 #include "keyclassifier.h"
 
-KeyClassifier::KeyClassifier(int whichProfile){
+KeyClassifier::KeyClassifier(const Preferences& prefs){
 	// Profiles
-	major = new ToneProfile(whichProfile,true);
-	minor = new ToneProfile(whichProfile,false);
+	major = new ToneProfile(prefs.getToneProfile(),true,prefs);
+	minor = new ToneProfile(prefs.getToneProfile(),false,prefs);
 }
 
 KeyClassifier::~KeyClassifier(){
