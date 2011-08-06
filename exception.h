@@ -3,9 +3,6 @@
 
 #include <iostream>
 
-class Exception{
-public:
-	Exception(const char*);
-};
+class Exception{ };
 
 #endif

@@ -54,7 +54,6 @@ SOURCES += \
     spectrumanalyser.cpp \
     preferences.cpp \
     spectrumanalyserfactory.cpp \
-    exception.cpp \
     monaural.cpp \
     decoder.cpp \
     downsampler.cpp \

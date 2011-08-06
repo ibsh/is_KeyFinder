@@ -1,6 +1,8 @@
 #ifndef AUDIOBUFFER_H
 #define AUDIOBUFFER_H
 
+#include <QtGlobal>
+
 #include <iostream>
 #include <vector>
 

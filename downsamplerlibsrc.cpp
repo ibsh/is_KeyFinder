@@ -22,7 +22,8 @@ AudioBuffer* SecretRabbitDownsampler::downsample(AudioBuffer* inbuf, int factor)
 	// 3-4 super fast but the aliasing is worse than a simple discard. Don't use.
 	int result = src_simple(&srcData,2,inbuf->getChannels());
 	if(result != 0){
-		throw Exception("Error in sample rate conversion");
+		qCritical("Error in LibSRC sample rate conversion");
+		throw Exception();
 	}
 	delete inbuf;
 	return outbuf;

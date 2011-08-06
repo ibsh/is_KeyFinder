@@ -1,15 +1,19 @@
 #include "decoderlibav.h"
 
-AudioBuffer* LibAvDecoder::decodeFile(char* filename) throw (Exception){
+AudioBuffer* LibAvDecoder::decodeFile(char* fileName) throw (Exception){
 	av_register_all();
 	AVCodec *codec = NULL;
 	AVFormatContext *fCtx = NULL;
 	AVCodecContext *cCtx = NULL;
 	// Find audio stream
-	if(avformat_open_input(&fCtx, filename, NULL, NULL) != 0)
-		throw Exception("Failed to open audio file");
-	if(av_find_stream_info(fCtx) < 0)
-		throw Exception("Failed to find stream information");
+	if(avformat_open_input(&fCtx, fileName, NULL, NULL) != 0){
+		qCritical("Failed to open audio file: %s", fileName);
+		throw Exception();
+	}
+	if(av_find_stream_info(fCtx) < 0){
+		qCritical("Failed to find stream information in file: %s", fileName);
+		throw Exception();
+	}
 	int audioStream = -1;
 	for(int i=0; i<(signed)fCtx->nb_streams; i++){
 		if(fCtx->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO){
@@ -17,15 +21,21 @@ AudioBuffer* LibAvDecoder::decodeFile(char* filename) throw (Exception){
 			break;
 		}
 	}
-	if(audioStream == -1)
-		throw Exception("Failed to find an audio stream");
+	if(audioStream == -1){
+		qCritical("Failed to find an audio stream in file: %s", fileName);
+		throw Exception();
+	}
 	// Determine stream codec
 	cCtx = fCtx->streams[audioStream]->codec;
 	codec = avcodec_find_decoder(cCtx->codec_id);
-	if(codec == NULL)
-		throw Exception("Audio stream has unsupported codec");
-	if(avcodec_open(cCtx, codec) < 0)
-		throw Exception("Error opening codec");
+	if(codec == NULL){
+		qCritical("Audio stream has unsupported codec in file: %s", fileName);
+		throw Exception();
+	}
+	if(avcodec_open(cCtx, codec) < 0){
+		qCritical("Error opening audio codec: %s", codec->long_name);
+		throw Exception();
+	}
 	// Prep buffer
 	AudioBuffer *ab = new AudioBuffer();
 	ab->setFrameRate(cCtx->sample_rate);
