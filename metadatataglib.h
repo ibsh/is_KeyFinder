@@ -5,21 +5,15 @@
 #include <tag.h>
 #include <taglib.h>
 #include <fileref.h>
+#include <apetag.h>
+#include <asftag.h>
 #include <id3v2tag.h>
 #include <id3v2frame.h>
 #include <id3v2header.h>
 #include <mpegfile.h>
 #include <mp4file.h>
 #include <flacfile.h>
-
-//#include "tag.h"
-//#include "tbytevectorlist.h"
-//#include "tfile.h"
-//#include "tmap.h"
-//#include "tstringlist.h"
-//#include "taglib_export.h"
-//#include "mp4atom.h"
-//#include "mp4item.h"
+#include <tfile.h>
 
 class TagLibMetadata : public Metadata{
 public:

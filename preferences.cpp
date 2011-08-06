@@ -11,7 +11,7 @@ Preferences::Preferences(){
 	octaves = 6;
 	bps = 3;													// DEFAULT 3. Not always the best idea but it's as accurate as 1 now.
 	octaveOffset = 0;									// DEFAULT 0. 3 gets an octave that starts at C, but accuracy drops a little.
-	dFactor = 10;
+	dFactor = 10;											// DEFAULT 10
 	toneProfile = 2;									// DEFAULT 2
 	stFreq = 27.5;
 	directSkStretch = 1.0;						// DEFAULT 1.0, 3.8 to closely model CQT.
