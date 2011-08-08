@@ -1,3 +1,24 @@
+/*************************************************************************
+
+	Copyright 2011 Ibrahim Sha'ath
+
+	This file is part of KeyFinder.
+
+	KeyFinder is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	KeyFinder is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with KeyFinder.  If not, see <http://www.gnu.org/licenses/>.
+
+*************************************************************************/
+
 #include "visuals.h"
 
 Visuals* Visuals::inst = NULL;
@@ -23,6 +44,7 @@ Visuals::Visuals(){
 	keyNames.push_back("Gb");		keyNames.push_back("Gbm");
 	keyNames.push_back("G");		keyNames.push_back("Gm");
 	keyNames.push_back("Ab");		keyNames.push_back("Abm");
+	keyNames.push_back(" "); // silence
 	// key codes from Camelot
 	keyCodes.push_back("11B");	keyCodes.push_back("8A");
 	keyCodes.push_back("6B");		keyCodes.push_back("3A");
@@ -36,6 +58,7 @@ Visuals::Visuals(){
 	keyCodes.push_back("2B");		keyCodes.push_back("11A");
 	keyCodes.push_back("9B");		keyCodes.push_back("6A");
 	keyCodes.push_back("4B");		keyCodes.push_back("1A");
+	keyCodes.push_back(" "); // silence
 	// key colours for display
 	keyColours.push_back(qRgb(223,255,127));	keyColours.push_back(qRgb(191,223,127));
 	keyColours.push_back(qRgb(255,127,255));	keyColours.push_back(qRgb(223,127,223));
@@ -49,6 +72,7 @@ Visuals::Visuals(){
 	keyColours.push_back(qRgb(127,255,255));	keyColours.push_back(qRgb(127,223,223));
 	keyColours.push_back(qRgb(255,223,127));	keyColours.push_back(qRgb(223,191,127));
 	keyColours.push_back(qRgb(127,127,255));	keyColours.push_back(qRgb(127,127,223));
+	keyColours.push_back(qRgb(127,127,127)); // silence
 }
 
 void Visuals::setImageColours(QImage& image, int which) const{

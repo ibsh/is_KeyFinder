@@ -19,16 +19,18 @@
 
 *************************************************************************/
 
-#ifndef DOWNSAMPLER_H
-#define DOWNSAMPLER_H
+#ifndef HCDFCOSINE_H
+#define HCDFCOSINE_H
 
-#include "exception.h"
-#include "audiobuffer.h"
+#include "hcdf.h"
 
-class Downsampler{
+class CosineHcdf : public Hcdf{
 public:
-	virtual AudioBuffer* downsample(AudioBuffer*,int) throw (Exception) = 0;
-	static Downsampler* getDownsampler(int,int,float);
+	CosineHcdf();
+	virtual std::vector<double> hcdf(Chromagram*, const Preferences&);
+	virtual std::vector<int> peaks(const std::vector<double>&, const Preferences&);
+private:
+	double pi;
 };
 
-#endif
+#endif // HCDFCOSINE_H

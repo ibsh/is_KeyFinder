@@ -1,3 +1,24 @@
+/*************************************************************************
+
+	Copyright 2011 Ibrahim Sha'ath
+
+	This file is part of KeyFinder.
+
+	KeyFinder is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	KeyFinder is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with KeyFinder.  If not, see <http://www.gnu.org/licenses/>.
+
+*************************************************************************/
+
 #include "decoderlibav.h"
 
 AudioBuffer* LibAvDecoder::decodeFile(char* fileName) throw (Exception){
@@ -45,8 +66,12 @@ AudioBuffer* LibAvDecoder::decodeFile(char* fileName) throw (Exception){
 	av_init_packet(&avpkt);
 	while(av_read_frame(fCtx, &avpkt) == 0){
 		if(avpkt.stream_index == audioStream)
-			if(decodePacket(cCtx, &avpkt, ab) != 0)
-				std::cerr << "Error while processing packet" << std::endl;
+			try{
+				if(decodePacket(cCtx, &avpkt, ab) != 0)
+					qWarning("LibAV: Error while processing packet");
+			}catch(Exception& e){
+				throw e;
+			}
 		av_free_packet(&avpkt);
 	}
 	avcodec_close(cCtx);
@@ -54,7 +79,7 @@ AudioBuffer* LibAvDecoder::decodeFile(char* fileName) throw (Exception){
 	return ab;
 }
 
-int LibAvDecoder::decodePacket(AVCodecContext* cCtx, AVPacket* avpkt, AudioBuffer* ab){
+int LibAvDecoder::decodePacket(AVCodecContext* cCtx, AVPacket* avpkt, AudioBuffer* ab) throw (Exception){
 	int16_t outputBuffer[AVCODEC_MAX_AUDIO_FRAME_SIZE];
 	int16_t *samples = (int16_t*)outputBuffer;
 	int outputBufferSize, bytesConsumed;
@@ -67,7 +92,11 @@ int LibAvDecoder::decodePacket(AVCodecContext* cCtx, AVPacket* avpkt, AudioBuffe
 		}else{
 			int newSamplesDecoded = outputBufferSize/sizeof(int16_t);
 			int oldSampleCount = ab->getSampleCount();
-			ab->addSamples(newSamplesDecoded);
+			try{
+				ab->addSamples(newSamplesDecoded);
+			}catch(Exception& e){
+				throw e;
+			}
 			for(int i=0; i<newSamplesDecoded; i++)
 				ab->setSample(oldSampleCount+i,(float)samples[i]); // can divide samples[i] by 32768 if you want unity values. Makes no difference.
 		}

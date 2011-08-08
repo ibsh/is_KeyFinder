@@ -19,16 +19,14 @@
 
 *************************************************************************/
 
-#ifndef DOWNSAMPLER_H
-#define DOWNSAMPLER_H
+#include "hcdfnone.h"
 
-#include "exception.h"
-#include "audiobuffer.h"
+std::vector<double> NoHcdf::hcdf(Chromagram* ch, const Preferences& prefs){
+	std::vector<double> NoChange(ch->getHops());
+	return NoChange;
+}
 
-class Downsampler{
-public:
-	virtual AudioBuffer* downsample(AudioBuffer*,int) throw (Exception) = 0;
-	static Downsampler* getDownsampler(int,int,float);
-};
-
-#endif
+std::vector<int> NoHcdf::peaks(const std::vector<double>& rateOfChange, const Preferences& prefs){
+	std::vector<int> noChanges(1);
+	return noChanges;
+}

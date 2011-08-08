@@ -19,16 +19,22 @@
 
 *************************************************************************/
 
-#ifndef DOWNSAMPLER_H
-#define DOWNSAMPLER_H
+#ifndef ABOUTDIALOG_H
+#define ABOUTDIALOG_H
 
-#include "exception.h"
-#include "audiobuffer.h"
+#include <QDialog>
 
-class Downsampler{
+namespace Ui {
+	class AboutDialog;
+}
+
+class AboutDialog : public QDialog{
+Q_OBJECT
 public:
-	virtual AudioBuffer* downsample(AudioBuffer*,int) throw (Exception) = 0;
-	static Downsampler* getDownsampler(int,int,float);
+	explicit AboutDialog(QWidget *parent = 0);
+	~AboutDialog();
+private:
+	Ui::AboutDialog *ui;
 };
 
-#endif
+#endif // ABOUTDIALOG_H

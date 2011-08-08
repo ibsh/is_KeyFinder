@@ -1,3 +1,24 @@
+/*************************************************************************
+
+	Copyright 2011 Ibrahim Sha'ath
+
+	This file is part of KeyFinder.
+
+	KeyFinder is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	KeyFinder is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with KeyFinder.  If not, see <http://www.gnu.org/licenses/>.
+
+*************************************************************************/
+
 #include "chromagram.h"
 
 Chromagram::Chromagram(int h, int b){
@@ -174,14 +195,26 @@ void Chromagram::decomposeToOneOctave(const Preferences& prefs){
 }
 
 void Chromagram::setMagnitude(int h, int b, float val){
-	if(h > hops){std::cerr << "setMagnitude hop " << h << " out of bounds" << std::endl; return;}
-	if(b > bins){std::cerr << "setMagnitude bin " << b << " out of bounds" << std::endl; return;}
+	if(h > hops){
+		qDebug("Attempt to set magnitude of out-of-bounds hop (%d/%d)",h,hops);
+		return;
+	}
+	if(b > bins){
+		qDebug("Attempt to set magnitude of out-of-bounds bin (%d/%d)",b,bins);
+		return;
+	}
 	chroma[(h * bins) + b] = val;
 }
 
 float Chromagram::getMagnitude(int h, int b) const{
-	if(h > hops){std::cerr << "getMagnitude hop " << h << " out of bounds" << std::endl; return -1.0;}
-	if(b > bins){std::cerr << "getMagnitude bin " << b << " out of bounds" << std::endl; return -1.0;}
+	if(h > hops){
+		qDebug("Attempt to get magnitude of out-of-bounds hop (%d/%d)",h,hops);
+		return 0;
+	}
+	if(b > bins){
+		qDebug("Attempt to get magnitude of out-of-bounds bin (%d/%d)",b,bins);
+		return 0;
+	}
 	return chroma[(h * bins) + b];
 }
 

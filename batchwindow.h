@@ -1,3 +1,24 @@
+/*************************************************************************
+
+	Copyright 2011 Ibrahim Sha'ath
+
+	This file is part of KeyFinder.
+
+	KeyFinder is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	KeyFinder is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with KeyFinder.  If not, see <http://www.gnu.org/licenses/>.
+
+*************************************************************************/
+
 #ifndef BATCHWINDOW_H
 #define BATCHWINDOW_H
 
@@ -15,7 +36,8 @@
 #include <string>
 #include <vector>
 
-#include "detailwindow.h" // need to be able to launch other window
+#include "detailwindow.h"
+#include "aboutdialog.h"
 
 #include "preferences.h"
 #include "visuals.h"
@@ -66,9 +88,6 @@ private:
 private slots:
 	void fileFinished();
 	void fileDropFinished();
-	void on_actionNew_Detail_Keyfinder_triggered();
-	void on_actionNew_Batch_Keyfinder_triggered();
-	void on_actionClose_Window_triggered();
 	void on_runBatchButton_clicked();
 	void copySelectedFromTableWidget();
 	void writeDetectedToGrouping();

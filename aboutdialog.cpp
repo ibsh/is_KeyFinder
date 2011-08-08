@@ -19,16 +19,14 @@
 
 *************************************************************************/
 
-#ifndef DOWNSAMPLER_H
-#define DOWNSAMPLER_H
+#include "aboutdialog.h"
+#include "ui_aboutdialog.h"
 
-#include "exception.h"
-#include "audiobuffer.h"
+AboutDialog::AboutDialog(QWidget *parent): QDialog(parent),ui(new Ui::AboutDialog){
+	ui->setupUi(this);
+	this->setWindowFlags(Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::CustomizeWindowHint);
+}
 
-class Downsampler{
-public:
-	virtual AudioBuffer* downsample(AudioBuffer*,int) throw (Exception) = 0;
-	static Downsampler* getDownsampler(int,int,float);
-};
-
-#endif
+AboutDialog::~AboutDialog(){
+	delete ui;
+}

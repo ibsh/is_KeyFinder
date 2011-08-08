@@ -1,3 +1,24 @@
+/*************************************************************************
+
+	Copyright 2011 Ibrahim Sha'ath
+
+	This file is part of KeyFinder.
+
+	KeyFinder is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	KeyFinder is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with KeyFinder.  If not, see <http://www.gnu.org/licenses/>.
+
+*************************************************************************/
+
 #include "detailwindow.h"
 #include "ui_detailwindow.h"
 
@@ -114,7 +135,7 @@ void DetailWindow::decode(){
 	try{
 		ab = dec->decodeFile((char*)filePath.c_str());
 		delete dec;
-	}catch(const Exception& e){
+	}catch(Exception){
 		delete ab;
 		ab = NULL;
 		delete dec;
@@ -158,7 +179,7 @@ void DetailWindow::downSample(){
 	try{
 		ab = ds->downsample(ab,prefs.getDFactor());
 		delete ds;
-	}catch(const Exception& e){
+	}catch(Exception){
 		delete ab;
 		ab = NULL;
 		delete ds;
@@ -197,9 +218,9 @@ void DetailWindow::spectrumAnalysisComplete(){
 
 void DetailWindow::harmonicAnalysis(){
 	ch->decomposeToOneOctave(prefs);
-	Hcdf harto;
-	rateOfChange = harto.hcdf(ch,prefs);
-	std::vector<int> changes = harto.peaks(rateOfChange,prefs);
+	Hcdf* hcdf = Hcdf::getHcdf(prefs);
+	rateOfChange = hcdf->hcdf(ch,prefs);
+	std::vector<int> changes = hcdf->peaks(rateOfChange,prefs);
 	changes.push_back(ch->getHops()); // add sentinel
 	KeyClassifier hc(prefs);
 	keys = std::vector<int>(0);
@@ -225,12 +246,10 @@ void DetailWindow::haFinished(){
 	vis->setImageColours(harmonicChangeImage,ui->chromaColourCombo->currentIndex());
 	// set pixels
 	for(int h=0; h<(signed)rateOfChange.size(); h++){
-		for(int v=0; v<rateOfChangePrecision; v++){
-			int value = ((log10(rateOfChange[h])+2) / 2) * rateOfChangePrecision;
-			for(int y=0; y<rateOfChangePrecision; y++)
-				for(int x=0; x<chromaScaleH; x++)
-					harmonicChangeImage.setPixel(h*chromaScaleH+x, y, (rateOfChangePrecision - y > value ? 0 : 50));
-		}
+		int value = rateOfChange[h] * rateOfChangePrecision;
+		for(int y=0; y<rateOfChangePrecision; y++)
+			for(int x=0; x<chromaScaleH; x++)
+				harmonicChangeImage.setPixel(h*chromaScaleH+x, y, (rateOfChangePrecision - y > value ? 0 : 50));
 	}
 	// show
 	ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
@@ -329,20 +348,6 @@ QImage DetailWindow::imageFromChromagram(Chromagram* ch){
 
 void DetailWindow::say(const QString& s){
 	ui->statusLabel->setText(s);
-}
-
-void DetailWindow::on_actionNew_Detail_Keyfinder_triggered(){
-	DetailWindow* newWin = new DetailWindow(0);
-	newWin->show();
-}
-
-void DetailWindow::on_actionNew_Batch_Keyfinder_triggered(){
-	BatchWindow* newWin = new BatchWindow(0);
-	newWin->show();
-}
-
-void DetailWindow::on_actionClose_Window_triggered(){
-	this->close();
 }
 
 DetailWindow::~DetailWindow(){

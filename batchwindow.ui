@@ -104,26 +104,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>700</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>File</string>
-    </property>
-    <addaction name="actionNew_Detail_Keyfinder"/>
-    <addaction name="actionNew_Batch_Keyfinder"/>
-    <addaction name="separator"/>
-    <addaction name="actionClose_Window"/>
-   </widget>
-   <addaction name="menuFile"/>
-  </widget>
   <action name="actionNew_Detail_Keyfinder">
    <property name="text">
     <string>New Detail Window</string>
@@ -146,6 +126,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="actionAbout_KeyFinder">
+   <property name="text">
+    <string>About KeyFinder</string>
    </property>
   </action>
  </widget>

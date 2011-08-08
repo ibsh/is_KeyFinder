@@ -1,3 +1,24 @@
+/*************************************************************************
+
+	Copyright 2011 Ibrahim Sha'ath
+
+	This file is part of KeyFinder.
+
+	KeyFinder is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	KeyFinder is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with KeyFinder.  If not, see <http://www.gnu.org/licenses/>.
+
+*************************************************************************/
+
 #include "constantqpostproc.h"
 
 ConstantQPostProc::ConstantQPostProc(int frameRate, const Preferences& prefs) : FftPostProcessor(frameRate, prefs) {
@@ -25,8 +46,7 @@ ConstantQPostProc::ConstantQPostProc(int frameRate, const Preferences& prefs) : 
 			tempKernel[j][1] = 0.0;
 		}
 		if(offsetI<0){
-			// get rid of this once parameters are finalised / safely parameterised.
-			std::cerr << "Fatal error: minimum fftFrameSize for this downsample factor and starting frequency is " << lengthI+1 << std::endl;
+			qFatal("Fatal parameter mismatch in CQT construction. FFT frame size %d below implicit minimum %d.", fftFrameSize, lengthI+1);
 		}
 		for(int j=0; j<lengthI; j++){
 			float winj = w->window(j,lengthI) / lengthI;

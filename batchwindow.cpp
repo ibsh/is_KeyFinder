@@ -1,3 +1,24 @@
+/*************************************************************************
+
+	Copyright 2011 Ibrahim Sha'ath
+
+	This file is part of KeyFinder.
+
+	KeyFinder is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	KeyFinder is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with KeyFinder.  If not, see <http://www.gnu.org/licenses/>.
+
+*************************************************************************/
+
 #include "batchwindow.h"
 #include "ui_batchwindow.h"
 
@@ -54,20 +75,6 @@ BatchWindow::~BatchWindow(){
 	analysisWatcher.cancel();
 	analysisWatcher.waitForFinished();
 	delete ui;
-}
-
-void BatchWindow::on_actionNew_Detail_Keyfinder_triggered(){
-	DetailWindow* newWin = new DetailWindow(0);
-	newWin->show();
-}
-
-void BatchWindow::on_actionNew_Batch_Keyfinder_triggered(){
-	BatchWindow* newWin = new BatchWindow(0);
-	newWin->show();
-}
-
-void BatchWindow::on_actionClose_Window_triggered(){
-	this->close();
 }
 
 void BatchWindow::dragEnterEvent(QDragEnterEvent *e){
@@ -200,7 +207,7 @@ void BatchWindow::analyseFile(int whichFile){
 	AudioFileDecoder* dec = AudioFileDecoder::getDecoder(filePath);
 	try{
 		ab = dec->decodeFile((char*)filePath.c_str());
-	}catch(const Exception& e){
+	}catch(Exception){
 		delete dec;
 		markBroken(whichFile);
 		return;
@@ -213,7 +220,7 @@ void BatchWindow::analyseFile(int whichFile){
 		Downsampler* ds = Downsampler::getDownsampler(prefs.getDFactor(),ab->getFrameRate(),prefs.getLastFreq());
 		try{
 			ab = ds->downsample(ab,prefs.getDFactor());
-		}catch(const Exception& e){
+		}catch(Exception){
 			delete ab;
 			delete ds;
 			markBroken(whichFile);
@@ -232,8 +239,14 @@ void BatchWindow::analyseFile(int whichFile){
 	for(int h=0; h<ch->getHops(); h++)
 		for(int b=0; b<ch->getBins(); b++)
 			loudness[h] += ch->getMagnitude(h,b);
-	Hcdf harto;
-	std::vector<int> changes = harto.peaks(harto.hcdf(ch,prefs),prefs);
+	Hcdf* hcdf = Hcdf::getHcdf(prefs);
+	std::vector<int> changes = hcdf->peaks(hcdf->hcdf(ch,prefs),prefs);
+
+	// batch output of keychange locations for Beatles experiment
+	//for(int i=1; i<changes.size(); i++) // don't want the leading zero
+	//	std::cout << filePath.substr(53) << "\t" << std::fixed << std::setprecision(2) << changes[i]*(prefs.getHopSize()/(44100.0/prefs.getDFactor())) << std::endl;
+	// end experiment output
+
 	changes.push_back(ch->getHops()-1);
 	KeyClassifier hc(prefs);
 	std::vector<float> trackKeys(24);
@@ -243,8 +256,9 @@ void BatchWindow::analyseFile(int whichFile){
 			for(int k=0; k<ch->getBins(); k++)
 				chroma[k] += ch->getMagnitude(j,k);
 		int key = hc.classify(chroma);
-		for(int j=changes[i]; j<changes[i+1]; j++)
-			trackKeys[key] += loudness[j];
+		if(key < 24) // ignore parts that were classified as silent
+			for(int j=changes[i]; j<changes[i+1]; j++)
+				trackKeys[key] += loudness[j];
 	}
 	delete ch;
 	int mostCommonKey = -1;
@@ -306,7 +320,7 @@ void BatchWindow::writeDetectedToGrouping(){
 	}
 	for(int r = firstRow; r <= lastRow; r++){
 		QTableWidgetItem* item = ui->tableWidget->item(r,COL_KEY); // only write if there's a detected key
-		if(item != NULL){
+		if(item != NULL && item->text() != "Failed"){
 			Metadata* md = Metadata::getMetadata(ui->tableWidget->item(r,COL_PATH)->text().toAscii().data());
 			md->setGrouping((ui->tableWidget->item(r,COL_KEYCODE)->text() + " " + ui->tableWidget->item(r,COL_KEY)->text()).toAscii().data());
 		}

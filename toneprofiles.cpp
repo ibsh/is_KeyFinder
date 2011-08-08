@@ -1,8 +1,36 @@
+/*************************************************************************
+
+	Copyright 2011 Ibrahim Sha'ath
+
+	This file is part of KeyFinder.
+
+	KeyFinder is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	KeyFinder is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with KeyFinder.  If not, see <http://www.gnu.org/licenses/>.
+
+*************************************************************************/
+
 #include "toneprofiles.h"
 
 ToneProfile::ToneProfile(int whichProfile, bool majorScale, const Preferences& prefs){
 	double p[12];
-	if(whichProfile==1){ // Temperley profiles
+	if(whichProfile == -1){ // Silence profile
+		p[0]=0; p[1]=0;
+		p[2]=0; p[3]=0;
+		p[4]=0; p[5]=0;
+		p[6]=0; p[7]=0;
+		p[8]=0; p[9]=0;
+		p[10]=0; p[11]=0;
+	}else if(whichProfile == 1){ // Temperley profiles
 		if(majorScale){
 			p[0]=5.0; p[1]=2.0;
 			p[2]=3.5; p[3]=2.0;
@@ -20,7 +48,7 @@ ToneProfile::ToneProfile(int whichProfile, bool majorScale, const Preferences& p
 			p[8]=3.5; p[9]=2.0;
 			p[10]=1.5; p[11]=4.0;
 		}
-	}else if(whichProfile==2){ // Sha'ath profiles
+	}else if(whichProfile == 2){ // Sha'ath profiles
 		if(majorScale){
 			p[0]=6.6; p[1]=2.0;
 			p[2]=3.5; p[3]=2.3;

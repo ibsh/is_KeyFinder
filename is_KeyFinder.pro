@@ -1,8 +1,20 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2011-06-18T10:18:36
-#
-#-------------------------------------------------
+# Copyright 2011 Ibrahim Sha'ath
+
+# This file is part of KeyFinder.
+
+# KeyFinder is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# KeyFinder is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with KeyFinder.  If not, see <http://www.gnu.org/licenses/>.
+
 
 QT += core
 TEMPLATE = app
@@ -20,7 +32,10 @@ CONFIG(debug, debug|release){
 		test_audiobuffer.cpp \
 		test_chromagram.cpp \
 		test_decoderlibav.cpp \
-		test_downsamplerib.cpp
+		test_downsamplerib.cpp \
+		test_downsamplerlibsrc.cpp \
+		test_directskpostproc.cpp \
+		test_constantqpostproc.cpp
 }else{
 	# RELEASE CONFIGURATION
 	QT += gui
@@ -28,12 +43,18 @@ CONFIG(debug, debug|release){
 	HEADERS += \
 		detailwindow.h \
 		batchwindow.h \
+		aboutdialog.h \
 		visuals.h
 	SOURCES += \
 		main.cpp \
 		detailwindow.cpp \
 		batchwindow.cpp \
+		aboutdialog.cpp \
 		visuals.cpp
+	FORMS += \
+		detailwindow.ui \
+		batchwindow.ui \
+		aboutdialog.ui
 }
 
 SOURCES += \
@@ -60,7 +81,11 @@ SOURCES += \
     keyclassifier.cpp \
     metadatataglib.cpp \
     metadata.cpp \
-		hcdf.cpp
+		hcdf.cpp \
+    hcdfharte.cpp \
+    hcdfcosine.cpp \
+		hcdfnone.cpp \
+    mainmenuhandler.cpp
 
 HEADERS  += decoderlibsndfile.h \
     decoderlibav.h \
@@ -86,16 +111,19 @@ HEADERS  += decoderlibsndfile.h \
     hcdf.h \
     keyclassifier.h \
     metadata.h \
-		metadatataglib.h
+		metadatataglib.h \
+    hcdfharte.h \
+    hcdfcosine.h \
+		hcdfnone.h \
+    mainmenuhandler.h
 
 OTHER_FILES += \
 		is_KeyFinder.pro.user
 
 INCLUDEPATH += /usr/local/include/taglib
 
-LIBS += -lfftw3 -lsndfile -lavcodec -lavformat -lsamplerate -lavutil -ltag
+LIBS += -lfftw3 -lsndfile -lavcodec -lavformat -lsamplerate -ltag -lavutil
 
 ICON = is_KeyFinder.icns
 
-FORMS += detailwindow.ui batchwindow.ui
 UI_DIR = ../is_KeyFinder-build-desktop/

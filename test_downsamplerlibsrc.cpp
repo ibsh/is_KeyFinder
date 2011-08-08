@@ -24,21 +24,21 @@
 #include "unittest.h"
 
 #include "decoderlibav.h"
-#include "downsamplerib.h"
+#include "downsamplerlibsrc.h"
 #include "exception.h"
 
-class IbDownsampler_Test : public QObject{
+class SecretRabbitDownsampler_Test : public QObject{
 	Q_OBJECT
 public:
-	IbDownsampler_Test();
+	SecretRabbitDownsampler_Test();
 private Q_SLOTS:
 	void testDownsample();
 };
-DECLARE_TEST(IbDownsampler_Test)
+DECLARE_TEST(SecretRabbitDownsampler_Test)
 
-IbDownsampler_Test::IbDownsampler_Test(){}
+SecretRabbitDownsampler_Test::SecretRabbitDownsampler_Test(){}
 
-void IbDownsampler_Test::testDownsample(){
+void SecretRabbitDownsampler_Test::testDownsample(){
 	LibAvDecoder* dec = new LibAvDecoder;
 	AudioBuffer* ab = NULL;
 	try{
@@ -51,7 +51,7 @@ void IbDownsampler_Test::testDownsample(){
 		441-sine.wav contains 1 monophonic second of unity-magnitude sine wave at 441Hz,
 		so we can downsample by a factor of 10 and then test the waveform.
 	*/
-	IbDownsampler* ds = new IbDownsampler();
+	SecretRabbitDownsampler* ds = new SecretRabbitDownsampler();
 	ab = ds->downsample(ab,10);
 	QVERIFY(ab->getFrameRate() == 4410);
 	QVERIFY(ab->getSampleCount() == 4410);
@@ -65,6 +65,5 @@ void IbDownsampler_Test::testDownsample(){
 	delete ab;
 }
 
-#include "test_downsamplerib.moc"
-
+#include "test_downsamplerlibsrc.moc"
 

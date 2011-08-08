@@ -19,16 +19,25 @@
 
 *************************************************************************/
 
-#ifndef DOWNSAMPLER_H
-#define DOWNSAMPLER_H
+#include "mainmenuhandler.h"
 
-#include "exception.h"
-#include "audiobuffer.h"
+MainMenuHandler::MainMenuHandler(QObject *parent) : QObject(parent){}
 
-class Downsampler{
-public:
-	virtual AudioBuffer* downsample(AudioBuffer*,int) throw (Exception) = 0;
-	static Downsampler* getDownsampler(int,int,float);
-};
+void MainMenuHandler::about(){
+	AboutDialog* about = new AboutDialog(0);
+	about->show();
+}
 
-#endif
+void MainMenuHandler::new_Batch_Window(){
+	BatchWindow* newWin = new BatchWindow(0);
+	newWin->show();
+}
+
+void MainMenuHandler::new_Detail_Window(){
+	DetailWindow* newWin = new DetailWindow(0);
+	newWin->show();
+}
+
+void MainMenuHandler::close_Window(){
+	QApplication::activeWindow()->close();
+}

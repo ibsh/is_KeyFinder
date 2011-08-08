@@ -1,3 +1,24 @@
+/*************************************************************************
+
+	Copyright 2011 Ibrahim Sha'ath
+
+	This file is part of KeyFinder.
+
+	KeyFinder is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	KeyFinder is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with KeyFinder.  If not, see <http://www.gnu.org/licenses/>.
+
+*************************************************************************/
+
 /*
 
 Dependencies:
@@ -18,17 +39,29 @@ Configure commands used to build them:
 */
 
 #include <QtGui/QApplication>
+#include <QMenuBar>
+#include <QKeySequence>
 #include "detailwindow.h"
 #include "batchwindow.h"
+#include "mainmenuhandler.h"
 
 int main(int argc, char *argv[]){
 	QCoreApplication::setOrganizationName("Ibrahim");
 	QCoreApplication::setApplicationName("KeyFinder");
 	QApplication a(argc, argv);
+
+	QMenuBar* menuBar = new QMenuBar(0);
+	MainMenuHandler* menuHandler = new MainMenuHandler(0);
+
+	QMenu* menuFile = menuBar->addMenu("File");
+	QAction* actionNew_Detail_Keyfinder = menuFile->addAction("New Detail Window",menuHandler,SLOT(new_Detail_Window()),QKeySequence("Ctrl+N"));
+	QAction* actionNew_Batch_Keyfinder = menuFile->addAction("New Batch Window",menuHandler,SLOT(new_Batch_Window()),QKeySequence("Ctrl+Shift+N"));
+	menuFile->addSeparator();
+	QAction* actionClose_Window = menuFile->addAction("Close Window",menuHandler,SLOT(close_Window()),QKeySequence("Ctrl+W"));
+	QMenu* menuHelp = menuBar->addMenu("Help");
+	QAction* actionAbout = menuHelp->addAction("About",menuHandler,SLOT(about()));
+
 	BatchWindow w;
-	// QIcon icn;
-	// icn.addFile("is_KeyFinder.icns");
-	// a.setWindowIcon(icn);
 	w.show();
 	return a.exec();
 }
