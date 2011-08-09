@@ -127,3 +127,6 @@ LIBS += -lfftw3 -lsndfile -lavcodec -lavformat -lsamplerate -ltag -lavutil
 ICON = is_KeyFinder.icns
 
 UI_DIR = ../is_KeyFinder-build-desktop/
+
+RESOURCES += \
+    resources.qrc

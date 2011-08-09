@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/KeyFinder/images">
+        <file>icon-128.png</file>
+    </qresource>
+</RCC>
