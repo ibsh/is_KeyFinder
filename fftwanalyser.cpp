@@ -26,8 +26,6 @@ FftwAnalyser::FftwAnalyser(int f, const Preferences& prefs): SpectrumAnalyser(f,
 	fftFrameSize = prefs.getFftFrameSize();
 	if(prefs.getFftPostProcessor() == 'c'){
 		pp = new ConstantQPostProc(frameRate, prefs);
-	}else if(prefs.getFftPostProcessor() == 'l'){
-		pp = new LogBinsPostProc(frameRate, prefs);
 	}else{
 		pp = new DirectSkPostProc(frameRate, prefs);
 	}
@@ -66,35 +64,7 @@ Chromagram* FftwAnalyser::chromagram(AudioBuffer* ab){
 			fftInput[j][1] = 0.0; // zero out imaginary part
 		}
 		fftw_execute(fftPlan);
-
-		// Printing output during writeup
-//		QFile fftfile("/Users/ibrahimshaath/Desktop/fftout.txt");
-//		fftfile.open(QIODevice::Append | QIODevice::Text);
-//		QTextStream fftout(&fftfile);
-//		fftout.setRealNumberPrecision(3);
-//		fftout.setRealNumberNotation(QTextStream::FixedNotation);
-//		for(int j=0; j<fftFrameSize/2; j++){
-//			fftout << sqrt((fftResult[j][0]*fftResult[j][0])+(fftResult[j][1]*fftResult[j][1])) << "\t";
-//		}
-//		fftout << "\n";
-//		fftfile.close();
-		// End of print
-
 		std::vector<float> cv = pp->chromaVector(fftResult);
-
-		// Printing CQT output during writeup
-//		QFile cqtfile("/Users/ibrahimshaath/Desktop/cqtout.txt");
-//		cqtfile.open(QIODevice::Append | QIODevice::Text);
-//		QTextStream cqtout(&cqtfile);
-//		cqtout.setRealNumberPrecision(3);
-//		cqtout.setRealNumberNotation(QTextStream::FixedNotation);
-//		for(int j=0; j<cv.size(); j++){
-//			cqtout << cv[j] << "\t";
-//		}
-//		cqtout << "\n";
-//		cqtfile.close();
-		// End of print
-
 		for(int j=0; j<bins; j++)
 			ch->setMagnitude(i/hopSize,j,cv[j]);
 	}

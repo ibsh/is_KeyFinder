@@ -527,61 +527,68 @@
       <attribute name="title">
        <string>Classification</string>
       </attribute>
-      <layout class="QFormLayout" name="formLayout_5">
-       <item row="0" column="0">
-        <widget class="QLabel" name="lbl_toneProfile">
-         <property name="text">
-          <string>Tone Profiles</string>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <layout class="QFormLayout" name="formLayout_5">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::FieldsStayAtSizeHint</enum>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="lbl_toneProfile">
+           <property name="text">
+            <string>Tone Profiles</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="toneProfile">
+           <property name="currentIndex">
+            <number>2</number>
+           </property>
+           <item>
+            <property name="text">
+             <string>Krumhansl</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Temperley</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Sha'ath</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Custom</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="toneProfile">
-         <property name="currentIndex">
-          <number>2</number>
-         </property>
-         <item>
-          <property name="text">
-           <string>Krumhansl</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Temperley</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Sha'ath</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Custom</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="1" column="0">
+       <item>
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>Custom profile major</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
+       <item>
         <layout class="QGridLayout" name="customMajor">
-         <item row="0" column="0">
-          <widget class="QLabel" name="lbl_maj0">
-           <property name="text">
-            <string>P1</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
+         <property name="topMargin">
+          <number>6</number>
+         </property>
+         <item row="0" column="1">
           <widget class="QDoubleSpinBox" name="maj0">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -594,17 +601,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QLabel" name="lbl_maj1">
-           <property name="text">
-            <string>m2</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
+         <item row="0" column="3">
           <widget class="QDoubleSpinBox" name="maj1">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -617,7 +614,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="2">
+         <item row="0" column="5">
           <widget class="QDoubleSpinBox" name="maj2">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -630,17 +627,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="2">
-          <widget class="QLabel" name="lbl_maj2">
-           <property name="text">
-            <string>M2</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="3">
+         <item row="0" column="7">
           <widget class="QDoubleSpinBox" name="maj3">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -653,7 +640,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="4">
+         <item row="0" column="9">
           <widget class="QDoubleSpinBox" name="maj4">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -666,7 +653,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="5">
+         <item row="0" column="11">
           <widget class="QDoubleSpinBox" name="maj5">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -679,97 +666,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="3">
-          <widget class="QLabel" name="lbl_maj3">
-           <property name="text">
-            <string>m3</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="4">
-          <widget class="QLabel" name="lbl_maj4">
-           <property name="text">
-            <string>M3</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="5">
-          <widget class="QLabel" name="lbl_maj5">
-           <property name="text">
-            <string>P4</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="lbl_maj6">
-           <property name="text">
-            <string>TT</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLabel" name="lbl_maj7">
-           <property name="text">
-            <string>P5</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="2">
-          <widget class="QLabel" name="lbl_maj8">
-           <property name="text">
-            <string>m6</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="3">
-          <widget class="QLabel" name="lbl_maj9">
-           <property name="text">
-            <string>M6</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="4">
-          <widget class="QLabel" name="lbl_maj10">
-           <property name="text">
-            <string>m7</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="5">
-          <widget class="QLabel" name="lbl_maj11">
-           <property name="text">
-            <string>M7</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
+         <item row="1" column="1">
           <widget class="QDoubleSpinBox" name="maj6">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -782,7 +679,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="1" column="3">
           <widget class="QDoubleSpinBox" name="maj7">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -795,7 +692,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="2">
+         <item row="1" column="5">
           <widget class="QDoubleSpinBox" name="maj8">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -808,7 +705,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="3">
+         <item row="1" column="7">
           <widget class="QDoubleSpinBox" name="maj9">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -821,7 +718,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="4">
+         <item row="1" column="9">
           <widget class="QDoubleSpinBox" name="maj10">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -834,7 +731,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="5">
+         <item row="1" column="11">
           <widget class="QDoubleSpinBox" name="maj11">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -847,12 +744,15 @@
            </property>
           </widget>
          </item>
-        </layout>
-       </item>
-       <item row="2" column="1">
-        <layout class="QGridLayout" name="gridLayout_3">
          <item row="0" column="0">
-          <widget class="QLabel" name="lbl_min0">
+          <widget class="QLabel" name="lbl_maj0">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
            <property name="text">
             <string>P1</string>
            </property>
@@ -861,7 +761,215 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="lbl_maj1">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>m2</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="4">
+          <widget class="QLabel" name="lbl_maj2">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>M2</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="6">
+          <widget class="QLabel" name="lbl_maj3">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>m3</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="8">
+          <widget class="QLabel" name="lbl_maj4">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>M3</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="10">
+          <widget class="QLabel" name="lbl_maj5">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>P4</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="10">
+          <widget class="QLabel" name="lbl_maj11">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>M7</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="8">
+          <widget class="QLabel" name="lbl_maj10">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>m7</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="6">
+          <widget class="QLabel" name="lbl_maj9">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>M6</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="4">
+          <widget class="QLabel" name="lbl_maj8">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>m6</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QLabel" name="lbl_maj7">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>P5</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
          <item row="1" column="0">
+          <widget class="QLabel" name="lbl_maj6">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>TT</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="Line" name="line_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Custom profile minor</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <property name="topMargin">
+          <number>6</number>
+         </property>
+         <item row="0" column="1">
           <widget class="QDoubleSpinBox" name="min0">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -874,17 +982,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QLabel" name="lbl_min1">
-           <property name="text">
-            <string>m2</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
+         <item row="0" column="3">
           <widget class="QDoubleSpinBox" name="min1">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -897,7 +995,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="2">
+         <item row="0" column="5">
           <widget class="QDoubleSpinBox" name="min2">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -910,17 +1008,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="2">
-          <widget class="QLabel" name="lbl_min2">
-           <property name="text">
-            <string>M2</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="3">
+         <item row="0" column="7">
           <widget class="QDoubleSpinBox" name="min3">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -933,7 +1021,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="4">
+         <item row="0" column="9">
           <widget class="QDoubleSpinBox" name="min4">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -946,7 +1034,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="5">
+         <item row="0" column="11">
           <widget class="QDoubleSpinBox" name="min5">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -959,97 +1047,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="3">
-          <widget class="QLabel" name="lbl_min3">
-           <property name="text">
-            <string>m3</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="4">
-          <widget class="QLabel" name="lbl_min4">
-           <property name="text">
-            <string>M3</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="5">
-          <widget class="QLabel" name="lbl_min5">
-           <property name="text">
-            <string>P4</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="lbl_min6">
-           <property name="text">
-            <string>TT</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLabel" name="lbl_min7">
-           <property name="text">
-            <string>P5</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="2">
-          <widget class="QLabel" name="lbl_min8">
-           <property name="text">
-            <string>m6</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="3">
-          <widget class="QLabel" name="lbl_min9">
-           <property name="text">
-            <string>M6</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="4">
-          <widget class="QLabel" name="lbl_min10">
-           <property name="text">
-            <string>m7</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="5">
-          <widget class="QLabel" name="lbl_min11">
-           <property name="text">
-            <string>M7</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
+         <item row="1" column="1">
           <widget class="QDoubleSpinBox" name="min6">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -1062,7 +1060,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="1" column="3">
           <widget class="QDoubleSpinBox" name="min7">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -1075,7 +1073,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="2">
+         <item row="1" column="5">
           <widget class="QDoubleSpinBox" name="min8">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -1088,7 +1086,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="3">
+         <item row="1" column="7">
           <widget class="QDoubleSpinBox" name="min9">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -1101,7 +1099,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="4">
+         <item row="1" column="9">
           <widget class="QDoubleSpinBox" name="min10">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -1114,7 +1112,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="5">
+         <item row="1" column="11">
           <widget class="QDoubleSpinBox" name="min11">
            <property name="maximum">
             <double>9.990000000000000</double>
@@ -1127,14 +1125,211 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="lbl_min0">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>P1</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="lbl_min1">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>m2</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="4">
+          <widget class="QLabel" name="lbl_min2">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>M2</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="6">
+          <widget class="QLabel" name="lbl_min3">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>m3</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="8">
+          <widget class="QLabel" name="lbl_min4">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>M3</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="10">
+          <widget class="QLabel" name="lbl_min5">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>P4</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="10">
+          <widget class="QLabel" name="lbl_min11">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>M7</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="8">
+          <widget class="QLabel" name="lbl_min10">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>m7</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="6">
+          <widget class="QLabel" name="lbl_min9">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>M6</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="4">
+          <widget class="QLabel" name="lbl_min8">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>m6</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QLabel" name="lbl_min7">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>P5</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="lbl_min6">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>TT</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
         </layout>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_4">
-         <property name="text">
-          <string>Custom profile minor</string>
-         </property>
-        </widget>
        </item>
       </layout>
      </widget>
@@ -1145,7 +1340,7 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Changes will take effect at next analysis job</string>
+        <string>Saved changes will take effect at next analysis job</string>
        </property>
       </widget>
      </item>

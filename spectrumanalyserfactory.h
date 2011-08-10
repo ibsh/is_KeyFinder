@@ -34,18 +34,14 @@
 // Keeps a reference to a spectrum analyser with distinguishing information
 class SpectrumAnalyserWrapper{
 public:
-	SpectrumAnalyserWrapper(char,char,int,char,SpectrumAnalyser*);
+	SpectrumAnalyserWrapper(int,SpectrumAnalyser*);
 	~SpectrumAnalyserWrapper();
-	char getType() const;
-	char getFftPostProcessor() const;
-	int getFramerate() const;
-	char getTemporalWindow() const;
 	SpectrumAnalyser* getSpectrumAnalyser() const;
+	Preferences chkPrefs() const;
+	int chkFrameRate() const;
 private:
-	char type;
-	char fftpp;
 	int frate;
-	char window;
+	Preferences prefs;
 	SpectrumAnalyser* sa;
 };
 

@@ -72,7 +72,6 @@ SOURCES += \
     downsamplerlibsrc.cpp \
     downsamplerib.cpp \
     directskpostproc.cpp \
-    logbinspostproc.cpp \
     windowfunctions.cpp \
     toneprofiles.cpp \
     spectrumanalyser.cpp \
@@ -103,7 +102,6 @@ HEADERS  += decoderlibsndfile.h \
     downsamplerib.h \
     downsampler.h \
     directskpostproc.h \
-    logbinspostproc.h \
     windowfunctions.h \
     toneprofiles.h \
     spectrumanalyser.h \

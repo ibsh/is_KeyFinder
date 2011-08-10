@@ -24,7 +24,6 @@
 
 #include "spectrumanalyser.h"
 #include "fftpostprocessor.h"
-#include "logbinspostproc.h"
 #include "constantqpostproc.h"
 #include "directskpostproc.h"
 #include "windowfunctions.h"
