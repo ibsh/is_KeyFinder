@@ -36,11 +36,8 @@
 class Preferences{
 public:
 	Preferences();
-	// setters
-	void setSpectrumAnalyser(char);
+	// setters, used in unit tests
 	void setFftPostProcessor(char);
-	void setTemporalWindow(char);
-	void setToneProfile(int);
 	void setBandsPerSemitone(int);
 	void setDownsampleFactor(int);
 	// getters

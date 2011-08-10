@@ -1163,6 +1163,13 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="cancelButton">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="savePrefsButton">
        <property name="text">
         <string>Save Preferences</string>

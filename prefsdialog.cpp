@@ -29,9 +29,14 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 	// initialise Preferences object to ensure QSettings is written
 	Preferences prefsObj;
 
+	// these strings store the chars relating to each index of their dropdowns
+	temporalWindowComboIndex = "bmn";
+	spectrumAnalyerComboIndex = "fg";
+	fftPostProcessorComboIndex = "ci";
+	hcdfComboIndex = "nhc";
+
 	// set preferences from QSettings
 	QSettings settings;
-	settings.beginGroup("algorithm");
 
 	settings.beginGroup("analysisFrequencies");
 	ui->stFreq->setCurrentIndex(log2(settings.value("startingFrequencyA").toFloat()/27.5));
@@ -41,27 +46,9 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 	settings.endGroup();
 
 	settings.beginGroup("spectralAnalysis");
-
-	char tw = settings.value("temporalWindow").toChar().toAscii();
-	if(tw == 'm')
-		ui->temporalWindow->setCurrentIndex(1);
-	else if(tw == 'n')
-		ui->temporalWindow->setCurrentIndex(2);
-	else
-		ui->temporalWindow->setCurrentIndex(0);
-
-	char sa = settings.value("spectrumAnalyser").toChar().toAscii();
-	if(sa == 'g')
-		ui->spectrumAnalyser->setCurrentIndex(1);
-	else
-		ui->spectrumAnalyser->setCurrentIndex(0);
-
-	char fp = settings.value("fftPostProcessor").toChar().toAscii();
-	if(fp == 'c')
-		ui->fftPostProcessor->setCurrentIndex(0);
-	else
-		ui->fftPostProcessor->setCurrentIndex(1);
-
+	ui->temporalWindow->setCurrentIndex(temporalWindowComboIndex.indexOf(settings.value("temporalWindow").toChar()));
+	ui->spectrumAnalyser->setCurrentIndex(spectrumAnalyerComboIndex.indexOf(settings.value("spectrumAnalyser").toChar()));
+	ui->fftPostProcessor->setCurrentIndex(fftPostProcessorComboIndex.indexOf(settings.value("fftPostProcessor").toChar()));
 	ui->fftFrameSize->setCurrentIndex(log2(settings.value("fftFrameSize").toInt()/4096));
 	ui->hopSize->setCurrentIndex(log2(settings.value("hopSize").toInt()/1024));
 	ui->directSkStretch->setValue(settings.value("directSkStretch").toFloat());
@@ -78,14 +65,7 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 	settings.endGroup();
 
 	settings.beginGroup("harmonicChangeDetectionFunction");
-	char hc = settings.value("hcdf").toChar().toAscii();
-	if(hc == 'h')
-		ui->hcdf->setCurrentIndex(1);
-	else if(hc == 'c')
-		ui->hcdf->setCurrentIndex(2);
-	else
-		ui->hcdf->setCurrentIndex(0);
-
+	ui->hcdf->setCurrentIndex(hcdfComboIndex.indexOf(settings.value("hcdf").toChar()));
 	ui->hcdfGaussianSize->setValue(settings.value("hcdfGaussianSize").toInt());
 	ui->hcdfGaussianSigma->setValue(settings.value("hcdfGaussianSigma").toFloat());
 	ui->hcdfPeakPickingNeighbours->setValue(settings.value("hcdfPeakPickingNeighbours").toInt());
@@ -93,8 +73,6 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 
 	settings.beginGroup("keyClassification");
 	ui->toneProfile ->setCurrentIndex(settings.value("toneProfile").toInt());
-	settings.endGroup();
-
 	settings.endGroup();
 
 	settings.beginGroup("customToneProfile");
@@ -141,8 +119,6 @@ void PrefsDialog::on_savePrefsButton_clicked(){
 	// SAVE TO QSETTINGS
 	QSettings settings;
 
-	settings.beginGroup("algorithm");
-
 	settings.beginGroup("analysisFrequencies");
 	settings.setValue("startingFrequencyA",pow(2,ui->stFreq->currentIndex())*27.5);
 	settings.setValue("numOctaves",ui->octaves->value());
@@ -151,12 +127,9 @@ void PrefsDialog::on_savePrefsButton_clicked(){
 	settings.endGroup();
 
 	settings.beginGroup("spectralAnalysis");
-	char* win = "bmn";
-	settings.setValue("temporalWindow",win[ui->temporalWindow->currentIndex()]);
-	char* sa = "fg";
-	settings.setValue("spectrumAnalyser",sa[ui->spectrumAnalyser->currentIndex()]);
-	char* fp = "ci";
-	settings.setValue("fftPostProcessor",fp[ui->fftPostProcessor->currentIndex()]);
+	settings.setValue("temporalWindow",temporalWindowComboIndex[ui->temporalWindow->currentIndex()].toAscii());
+	settings.setValue("spectrumAnalyser",spectrumAnalyerComboIndex[ui->spectrumAnalyser->currentIndex()].toAscii());
+	settings.setValue("fftPostProcessor",fftPostProcessorComboIndex[ui->fftPostProcessor->currentIndex()].toAscii());
 	settings.setValue("fftFrameSize",pow(2,ui->fftFrameSize->currentIndex())*4096);
 	settings.setValue("hopSize",pow(2,ui->hopSize->currentIndex())*1024);
 	settings.setValue("directSkStretch",ui->directSkStretch->value());
@@ -173,8 +146,7 @@ void PrefsDialog::on_savePrefsButton_clicked(){
 	settings.endGroup();
 
 	settings.beginGroup("harmonicChangeDetectionFunction");
-	char* hc = "nhc";
-	settings.setValue("hcdf",hc[ui->hcdf->currentIndex()]);
+	settings.setValue("hcdf",hcdfComboIndex[ui->hcdf->currentIndex()].toAscii());
 	settings.setValue("hcdfGaussianSize",ui->hcdfGaussianSize->value());
 	settings.setValue("hcdfGaussianSigma",ui->hcdfGaussianSigma->value());
 	settings.setValue("hcdfPeakPickingNeighbours",ui->hcdfPeakPickingNeighbours->value());
@@ -182,8 +154,6 @@ void PrefsDialog::on_savePrefsButton_clicked(){
 
 	settings.beginGroup("keyClassification");
 	settings.setValue("toneProfile",ui->toneProfile->currentIndex());
-	settings.endGroup();
-
 	settings.endGroup();
 
 	settings.beginGroup("customToneProfile");
@@ -214,6 +184,10 @@ void PrefsDialog::on_savePrefsButton_clicked(){
 	settings.endGroup();
 
 	// CLOSE
+	this->close();
+}
+
+void PrefsDialog::on_cancelButton_clicked(){
 	this->close();
 }
 

@@ -23,6 +23,7 @@
 #define PREFSDIALOG_H
 
 #include <QDialog>
+#include <QString>
 #include <QSettings>
 
 #include "preferences.h"
@@ -43,8 +44,13 @@ private:
 	void tuningEnabled();
 	void hcdfEnabled();
 	void customProfileEnabled();
+	QString temporalWindowComboIndex;
+	QString spectrumAnalyerComboIndex;
+	QString fftPostProcessorComboIndex;
+	QString hcdfComboIndex;
 private slots:
 	void on_savePrefsButton_clicked();
+	void on_cancelButton_clicked();
 	void on_spectrumAnalyser_currentIndexChanged(int index);
 	void on_fftPostProcessor_currentIndexChanged(int index);
 	void on_bps_valueChanged(int arg1);

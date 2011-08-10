@@ -24,7 +24,6 @@
 Preferences::Preferences(){
 
 	QSettings settings;
-	settings.beginGroup("algorithm");
 
 	// ======================= Musical frequencies ===============================
 
@@ -239,8 +238,6 @@ Preferences::Preferences(){
 
 	settings.endGroup();
 
-	settings.endGroup(); // algorithm
-
 	// ========================= Custom Tone Profile ==============================
 
 	settings.beginGroup("customToneProfile");
@@ -273,8 +270,8 @@ Preferences::Preferences(){
 		customToneProfile.push_back(settings.value("min11").toFloat());
 	}else{
 		float defaultValues[24] = {
-			8.78, 5.00, 6.97, 5.34, 7.43, 6.32, 5.42, 8.43, 4.97, 6.95, 5.76, 6.79,
-			8.78, 5.34, 6.52, 6.79, 5.31, 6.43, 5.43, 8.10, 6.02, 5.58, 7.28, 5.71
+			1,0,1,0,1,1,0,1,0,1,0,1,
+			1,0,1,1,0,1,0,1,1,0,1,0
 		};
 		customToneProfile = std::vector<float>(defaultValues, defaultValues+23);
 		settings.setValue("maj0",customToneProfile[0]);
@@ -312,26 +309,11 @@ Preferences::Preferences(){
 
 }
 
-// All these mutators currently only change session variables and not saved settings.
-
-void Preferences::setSpectrumAnalyser(char ch){
-	if (ch == 'f' || ch == 'g')
-		spectrumAnalyser = ch;
-}
+// These mutators are only used by unit tests at present
 
 void Preferences::setFftPostProcessor(char ch){
 	if (ch == 'i' || ch == 'c' || ch == 'l')
 		fftPostProcessor = ch;
-}
-
-void Preferences::setTemporalWindow(char ch){
-	if (ch == 'm' || ch == 'n' || ch == 'b')
-		temporalWindow = ch;
-}
-
-void Preferences::setToneProfile(int n){
-	if(n >= 0 && n <= 2)
-		toneProfile = n;
 }
 
 void Preferences::setBandsPerSemitone(int n){
