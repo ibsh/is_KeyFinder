@@ -104,9 +104,6 @@ private slots:
 	void spectrumAnalysisComplete();				// step 4 complete
 	void haFinished();											// step 5 complete
 	void say(const QString&);
-	void on_spectrumAnalyserCombo_currentIndexChanged(int index);
-	void on_temporalWindowCombo_currentIndexChanged(int index);
-	void on_toneProfilesCombo_currentIndexChanged(int index);
 	void on_chromaColourCombo_currentIndexChanged(int index);
 	void on_runButton_clicked();
 public slots:

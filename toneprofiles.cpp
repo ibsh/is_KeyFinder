@@ -66,6 +66,15 @@ ToneProfile::ToneProfile(int whichProfile, bool majorScale, const Preferences& p
 			p[8]=4.0; p[9]=2.7;
 			p[10]=4.3; p[11]=3.2;
 		}
+	}else if(whichProfile == 3){ // Custom profiles
+		std::vector<float> ctp = prefs.getCustomToneProfile();
+		if(majorScale){
+			for(int i=0; i<12; i++)
+				p[i] = ctp[i];
+		}else{
+			for(int i=0; i<12; i++)
+				p[i] = ctp[i+12];
+		}
 	}else{ // Krumhansl profiles
 		if(majorScale){
 			p[0]=6.35; p[1]=2.23;

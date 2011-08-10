@@ -248,14 +248,14 @@ void BatchWindow::analyseFile(int whichFile){
 	// end experiment output
 
 	changes.push_back(ch->getHops()-1);
-	KeyClassifier hc(prefs);
+	KeyClassifier kc(prefs);
 	std::vector<float> trackKeys(24);
 	for(int i=0; i<(signed)changes.size()-1; i++){
 		std::vector<double> chroma(12);
 		for(int j=changes[i]; j<changes[i+1]; j++)
 			for(int k=0; k<ch->getBins(); k++)
 				chroma[k] += ch->getMagnitude(j,k);
-		int key = hc.classify(chroma);
+		int key = kc.classify(chroma);
 		if(key < 24) // ignore parts that were classified as silent
 			for(int j=changes[i]; j<changes[i+1]; j++)
 				trackKeys[key] += loudness[j];

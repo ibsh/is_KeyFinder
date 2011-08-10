@@ -28,6 +28,7 @@
 #include "batchwindow.h"
 #include "detailwindow.h"
 #include "aboutdialog.h"
+#include "prefsdialog.h"
 
 class MainMenuHandler : public QObject{
 Q_OBJECT
@@ -35,6 +36,7 @@ public:
 	explicit MainMenuHandler(QObject *parent = 0);
 public slots:
 	void about();
+	void preferences();
 	void new_Batch_Window();
 	void new_Detail_Window();
 	void close_Window();

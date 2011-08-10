@@ -19,30 +19,39 @@
 
 *************************************************************************/
 
-#include "mainmenuhandler.h"
+#ifndef PREFSDIALOG_H
+#define PREFSDIALOG_H
 
-MainMenuHandler::MainMenuHandler(QObject *parent) : QObject(parent){}
+#include <QDialog>
+#include <QSettings>
 
-void MainMenuHandler::about(){
-	AboutDialog* about = new AboutDialog(0);
-	about->show();
+#include "preferences.h"
+
+namespace Ui {
+	class PrefsDialog;
 }
 
-void MainMenuHandler::preferences(){
-	PrefsDialog* prefs = new PrefsDialog(0);
-	prefs->show();
-}
+class PrefsDialog : public QDialog{
+Q_OBJECT
+public:
+	explicit PrefsDialog(QWidget *parent = 0);
+	~PrefsDialog();
+private:
+	void fftEnabled();
+	void goertzelEnabled();
+	void directSkEnabled();
+	void tuningEnabled();
+	void hcdfEnabled();
+	void customProfileEnabled();
+private slots:
+	void on_savePrefsButton_clicked();
+	void on_spectrumAnalyser_currentIndexChanged(int index);
+	void on_fftPostProcessor_currentIndexChanged(int index);
+	void on_bps_valueChanged(int arg1);
+	void on_hcdf_currentIndexChanged(int index);
+	void on_toneProfile_currentIndexChanged(int index);
+private:
+	Ui::PrefsDialog *ui;
+};
 
-void MainMenuHandler::new_Batch_Window(){
-	BatchWindow* newWin = new BatchWindow(0);
-	newWin->show();
-}
-
-void MainMenuHandler::new_Detail_Window(){
-	DetailWindow* newWin = new DetailWindow(0);
-	newWin->show();
-}
-
-void MainMenuHandler::close_Window(){
-	QApplication::activeWindow()->close();
-}
+#endif // PREFSDIALOG_H

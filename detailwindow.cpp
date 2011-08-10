@@ -47,10 +47,7 @@ DetailWindow::DetailWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::De
 	ui->gridLayout_Visualisation->setRowStretch(ROW_BIGCHROMA,prefs.getOctaves()*2);
 	ui->gridLayout_Visualisation->setRowStretch(ROW_MINICHROMA,2);
 	ui->gridLayout_Visualisation->setRowStretch(ROW_RATEOFCHANGE,1);
-	// DEFAULTS FOR PARAMETER DROPDOWNS
-	ui->spectrumAnalyserCombo->setCurrentIndex(3);	// 3 = mySK
-	ui->temporalWindowCombo->setCurrentIndex(0);		// 0 = Blackman
-	ui->toneProfilesCombo->setCurrentIndex(2);			// 2 = mine
+	// DEFAULT FOR PARAMETER DROPDOWN
 	ui->chromaColourCombo->setCurrentIndex(3);			// 3 = Hack
 	// VISUALISATION IMAGES
 	chromaScaleV = 5;
@@ -109,9 +106,6 @@ void DetailWindow::go(){
 	say("Decoding audio... ");
 	ui->progressBar->setValue(1);
 	ui->progressBar->setVisible(true);
-	ui->spectrumAnalyserCombo->setDisabled(true);
-	ui->temporalWindowCombo->setDisabled(true);
-	ui->toneProfilesCombo->setDisabled(true);
 	ui->chromaColourCombo->setDisabled(true);
 	ui->runButton->setDisabled(true);
 	// Begin asynchronous process
@@ -122,9 +116,6 @@ void DetailWindow::go(){
 void DetailWindow::cleanUpAfterRun(){
 	ui->progressBar->setValue(0);
 	ui->progressBar->setVisible(false);
-	ui->spectrumAnalyserCombo->setDisabled(false);
-	ui->temporalWindowCombo->setDisabled(false);
-	ui->toneProfilesCombo->setDisabled(false);
 	ui->chromaColourCombo->setDisabled(false);
 	ui->runButton->setDisabled(false);
 	allowDrops = true;
@@ -362,35 +353,6 @@ DetailWindow::~DetailWindow(){
 	haWatcher.cancel();
 	haWatcher.waitForFinished();
 	delete ui;
-}
-
-void DetailWindow::on_spectrumAnalyserCombo_currentIndexChanged(int index){
-	if(index == 0){
-		prefs.setSpectrumAnalyser('g');
-	}else if(index == 1){
-		prefs.setSpectrumAnalyser('f');
-		prefs.setFftPostProcessor('l');
-	}else if(index == 2){
-		prefs.setSpectrumAnalyser('f');
-		prefs.setFftPostProcessor('c');
-	}else if(index == 3){
-		prefs.setSpectrumAnalyser('f');
-		prefs.setFftPostProcessor('i');
-	}
-}
-
-void DetailWindow::on_temporalWindowCombo_currentIndexChanged(int index){
-	if(index == 0){
-		prefs.setTemporalWindow('b');
-	}else if(index == 1){
-		prefs.setTemporalWindow('m');
-	}else if(index == 2){
-		prefs.setTemporalWindow('n');
-	}
-}
-
-void DetailWindow::on_toneProfilesCombo_currentIndexChanged(int index){
-	prefs.setToneProfile(index);
 }
 
 void DetailWindow::on_runButton_clicked(){

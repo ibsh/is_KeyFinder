@@ -233,74 +233,23 @@ below.</string>
      </layout>
     </item>
     <item>
-     <layout class="QGridLayout" name="gridLayout_UI">
-      <property name="topMargin">
-       <number>6</number>
+     <layout class="QGridLayout" name="gridLayout_UI" columnstretch="1,0,0">
+      <property name="leftMargin">
+       <number>10</number>
       </property>
-      <item row="0" column="0">
-       <widget class="QLabel" name="spectrumAnalyserLabel">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>11</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string> SPECTRUM ANALYSER</string>
-        </property>
-        <property name="textFormat">
-         <enum>Qt::PlainText</enum>
-        </property>
-       </widget>
-      </item>
+      <property name="topMargin">
+       <number>10</number>
+      </property>
       <item row="0" column="1">
-       <widget class="QLabel" name="temporalWindowLabel">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>11</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string> TEMPORAL WINDOW</string>
-        </property>
-        <property name="textFormat">
-         <enum>Qt::PlainText</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QLabel" name="toneProfilesLabel">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>11</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string> TONE PROFILES</string>
-        </property>
-        <property name="textFormat">
-         <enum>Qt::PlainText</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="3">
        <widget class="QLabel" name="chromaColourLabel">
         <property name="enabled">
          <bool>false</bool>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>20</height>
+         </size>
         </property>
         <property name="font">
          <font>
@@ -315,99 +264,19 @@ below.</string>
         <property name="textFormat">
          <enum>Qt::PlainText</enum>
         </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QComboBox" name="spectrumAnalyserCombo">
-        <property name="toolTip">
-         <string>Choose the combination of
-spectrum analyser and post-
-processor you want to use on
-this track.</string>
+        <property name="alignment">
+         <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
         </property>
-        <property name="currentIndex">
-         <number>3</number>
-        </property>
-        <item>
-         <property name="text">
-          <string>Goertzel</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>FFT, single bins</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>FFT, constant Q</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>FFT, quickSK</string>
-         </property>
-        </item>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QComboBox" name="temporalWindowCombo">
-        <property name="toolTip">
-         <string>Choose the function you
-want the spectrum analyser
-to use for temporal windowing.</string>
-        </property>
-        <property name="currentIndex">
-         <number>0</number>
-        </property>
-        <item>
-         <property name="text">
-          <string>Blackman</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Hamming</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Hann</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <widget class="QComboBox" name="toneProfilesCombo">
-        <property name="toolTip">
-         <string>Choose the profiles you want
-to use for key correlation.
-Temperley is best for rock and
-classical, Sha'ath is best for EDM,
-Krumhansl is pretty good all round.</string>
-        </property>
-        <property name="currentIndex">
-         <number>2</number>
-        </property>
-        <item>
-         <property name="text">
-          <string>Krumhansl</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Temperley</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Sha'ath</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item row="1" column="3">
        <widget class="QComboBox" name="chromaColourCombo">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="toolTip">
          <string>Choose the colour scheme
 for the chromagram. Some
@@ -436,7 +305,7 @@ others.</string>
         </item>
        </widget>
       </item>
-      <item row="1" column="4">
+      <item row="1" column="2">
        <widget class="QPushButton" name="runButton">
         <property name="minimumSize">
          <size>
@@ -455,39 +324,10 @@ others.</string>
         </property>
        </widget>
       </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_status">
-      <property name="topMargin">
-       <number>6</number>
-      </property>
-      <item>
-       <widget class="QProgressBar" name="progressBar">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>20</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>20</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item>
+      <item row="1" column="0">
        <widget class="QLabel" name="statusLabel">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -512,39 +352,13 @@ others.</string>
         </property>
        </widget>
       </item>
+      <item row="0" column="0">
+       <widget class="QProgressBar" name="progressBar"/>
+      </item>
      </layout>
     </item>
    </layout>
   </widget>
-  <action name="actionNew_Detail_Keyfinder">
-   <property name="text">
-    <string>New Detail Window</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+N</string>
-   </property>
-  </action>
-  <action name="actionNew_Batch_Keyfinder">
-   <property name="text">
-    <string>New Batch Window</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+N</string>
-   </property>
-  </action>
-  <action name="actionClose_Window">
-   <property name="text">
-    <string>Close Window</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+W</string>
-   </property>
-  </action>
-  <action name="actionAbout_KeyFinder">
-   <property name="text">
-    <string>About KeyFinder</string>
-   </property>
-  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

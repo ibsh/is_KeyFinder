@@ -22,55 +22,316 @@
 #include "preferences.h"
 
 Preferences::Preferences(){
-	// DEFAULT VALUES
-	temporalWindow = 'b';							// DEFAULT b. Blackman
-	spectrumAnalyser = 'f';						// DEFAULT f. FFTW
-	fftPostProcessor = 'i';						// DEFAULT i. My quick spectral kernel
-	fftFrameSize = 65536;							// DEFAULT 65536. This is large, obviously. But reducing it reduces accuracy.
-	hopSize = fftFrameSize / 4;				// DEFAULT 1/4 of framesize.
-	goertzelMinK = 60;
-	octaves = 6;
-	bps = 1;													// DEFAULT 1. 3 only decreases accuracy, all other things being equal.
-	octaveOffset = 0;									// DEFAULT 0. 3 gets an octave that starts at C, but accuracy drops a little.
-	dFactor = 10;											// DEFAULT 10
-	toneProfile = 2;									// DEFAULT 2
-	stFreq = 27.5;
-	directSkStretch = 1.0;						// DEFAULT 1.0, 3.8 to closely model CQT.
-	hcdf = 'n';												// DEFAULT h. Harte
-	hcdfGaussianSize = 35;						// DEFAULT 35
-	hcdfGaussianSigma = 8.0;
-	hcdfPeakPickingNeighbours = 4;		// DEFAULT 4
-	tuningMethod = 2;									// DEFAULT 2
-	detunedBandWeight = 0.5;
+
+	QSettings settings;
+	settings.beginGroup("algorithm");
+
+	// ======================= Musical frequencies ===============================
+
+	settings.beginGroup("analysisFrequencies");
+
+	if(settings.contains("startingFrequencyA")){
+		stFreq = settings.value("startingFrequencyA").toFloat();
+	}else{
+		float defaultVal = 27.5;
+		settings.setValue("startingFrequencyA",defaultVal);
+		stFreq = defaultVal;
+		qDebug("Wrote default startingFrequencyA (%f)",stFreq);
+	}
+
+	if(settings.contains("numOctaves")){
+		octaves = settings.value("numOctaves").toInt();
+	}else{
+		int defaultVal = 6;
+		settings.setValue("numOctaves",defaultVal);
+		octaves = defaultVal;
+		qDebug("Wrote default numOctaves (%d)",octaves);
+	}
+
+	// 3 gets an octave that starts at C, but accuracy drops a little.
+
+	if(settings.contains("octaveBeginOffset")){
+		octaveOffset = settings.value("octaveBeginOffset").toInt();
+	}else{
+		int defaultVal = 0;
+		settings.setValue("octaveBeginOffset",defaultVal);
+		octaveOffset = defaultVal;
+		qDebug("Wrote default octaveBeginOffset (%d)",octaveOffset);
+	}
+
+	// 3 bps has only reduced accuracy, all other things being equal. default 1.
+
+	if(settings.contains("bandsPerSemitone")){
+		bps = settings.value("bandsPerSemitone").toInt();
+	}else{
+		int defaultVal = 1;
+		settings.setValue("bandsPerSemitone",defaultVal);
+		bps = defaultVal;
+		qDebug("Wrote default bandsPerSemitone (%d)",bps);
+	}
+
+	settings.endGroup();
+
+	// ======================== Spectral analysis ================================
+
+	settings.beginGroup("spectralAnalysis");
+
+	if(settings.contains("temporalWindow")){
+		temporalWindow = settings.value("temporalWindow").toChar().toAscii();
+	}else{
+		char defaultVal = 'b';
+		settings.setValue("temporalWindow",defaultVal);
+		temporalWindow = defaultVal;
+		qDebug("Wrote default temporalWindow (%c)",temporalWindow);
+	}
+
+	if(settings.contains("spectrumAnalyser")){
+		spectrumAnalyser = settings.value("spectrumAnalyser").toChar().toAscii();
+	}else{
+		char defaultVal = 'f';
+		settings.setValue("spectrumAnalyser",defaultVal);
+		spectrumAnalyser = defaultVal;
+		qDebug("Wrote default spectrumAnalyser (%c)",spectrumAnalyser);
+	}
+
+	if(settings.contains("fftPostProcessor")){
+		fftPostProcessor = settings.value("fftPostProcessor").toChar().toAscii();
+	}else{
+		char defaultVal = 'i';
+		settings.setValue("fftPostProcessor",defaultVal);
+		fftPostProcessor = defaultVal;
+		qDebug("Wrote default fftPostProcessor (%c)",fftPostProcessor);
+	}
+
+	int defFrameSize = 65536;
+	if(settings.contains("fftFrameSize")){
+		fftFrameSize = settings.value("fftFrameSize").toInt();
+	}else{
+		settings.setValue("fftFrameSize",defFrameSize);
+		fftFrameSize = defFrameSize;
+		qDebug("Wrote default fftFrameSize (%d)",fftFrameSize);
+	}
+
+	int defHopSize = defFrameSize / 4;
+	if(settings.contains("hopSize")){
+		hopSize = settings.value("hopSize").toInt();
+	}else{
+		settings.setValue("hopSize",defHopSize);
+		hopSize = defHopSize;
+		qDebug("Wrote default hopSize (%d)",hopSize);
+	}
+
+	// 3.8 closely models the CQT, 1.0 is much tighter and apparently more accurate.
+
+	if(settings.contains("directSkStretch")){
+		directSkStretch = settings.value("directSkStretch").toFloat();
+	}else{
+		float defaultVal = 1.0;
+		settings.setValue("directSkStretch",defaultVal);
+		directSkStretch = defaultVal;
+		qDebug("Wrote default directSkStretch (%f)",directSkStretch);
+	}
+
+	if(settings.contains("goertzelMinK")){
+		goertzelMinK = settings.value("goertzelMinK").toInt();
+	}else{
+		int defaultVal = 60;
+		settings.setValue("goertzelMinK",defaultVal);
+		goertzelMinK = defaultVal;
+		qDebug("Wrote default goertzelMinK (%d)",goertzelMinK);
+	}
+
+	settings.endGroup();
+
+	// ========================== Downsampling ===================================
+
+	settings.beginGroup("downsampling");
+
+	if(settings.contains("dFactor")){
+		dFactor = settings.value("dFactor").toInt();
+	}else{
+		int defaultVal = 10;
+		settings.setValue("dFactor",defaultVal);
+		dFactor = defaultVal;
+		qDebug("Wrote default dFactor (%d)",dFactor);
+	}
+
+	settings.endGroup();
+
+	// ============================= Tuning ======================================
+
+	settings.beginGroup("tuning");
+
+	if(settings.contains("tuningMethod")){
+		tuningMethod = settings.value("tuningMethod").toInt();
+	}else{
+		int defaultVal = 2;
+		settings.setValue("tuningMethod",defaultVal);
+		tuningMethod = defaultVal;
+		qDebug("Wrote default tuningMethod (%d)",tuningMethod);
+	}
+
+	if(settings.contains("detunedBandWeight")){
+		detunedBandWeight = settings.value("detunedBandWeight").toFloat();
+	}else{
+		float defaultVal = 0.5;
+		settings.setValue("detunedBandWeight",defaultVal);
+		detunedBandWeight = defaultVal;
+		qDebug("Wrote default detunedBandWeight (%f)",detunedBandWeight);
+	}
+
+	settings.endGroup();
+
+	// ================ Harmonic Change Detection Function =======================
+
+	settings.beginGroup("harmonicChangeDetectionFunction");
+
+	if(settings.contains("hcdf")){
+		hcdf = settings.value("hcdf").toChar().toAscii();
+	}else{
+		char defaultVal = 'n';
+		settings.setValue("hcdf",defaultVal);
+		hcdf = defaultVal;
+		qDebug("Wrote default hcdf (%c)",hcdf);
+	}
+
+	if(settings.contains("hcdfGaussianSize")){
+		hcdfGaussianSize = settings.value("hcdfGaussianSize").toInt();
+	}else{
+		int defaultVal = 35;
+		settings.setValue("hcdfGaussianSize",defaultVal);
+		hcdfGaussianSize = defaultVal;
+		qDebug("Wrote default hcdfGaussianSize (%d)",hcdfGaussianSize);
+	}
+
+	if(settings.contains("hcdfGaussianSigma")){
+		hcdfGaussianSigma = settings.value("hcdfGaussianSigma").toFloat();
+	}else{
+		float defaultVal = 8.0;
+		settings.setValue("hcdfGaussianSigma",defaultVal);
+		hcdfGaussianSigma = defaultVal;
+		qDebug("Wrote default hcdfGaussianSigma (%f)",hcdfGaussianSigma);
+	}
+
+	if(settings.contains("hcdfPeakPickingNeighbours")){
+		hcdfPeakPickingNeighbours = settings.value("hcdfPeakPickingNeighbours").toInt();
+	}else{
+		int defaultVal = 4;
+		settings.setValue("hcdfPeakPickingNeighbours",defaultVal);
+		hcdfPeakPickingNeighbours = defaultVal;
+		qDebug("Wrote default hcdfPeakPickingNeighbours (%d)",hcdfPeakPickingNeighbours);
+	}
+
+	settings.endGroup();
+
+	// ========================= Key classification ==============================
+
+	settings.beginGroup("keyClassification");
+
+	if(settings.contains("toneProfile")){
+		toneProfile = settings.value("toneProfile").toInt();
+	}else{
+		int defaultVal = 2;
+		settings.setValue("toneProfile",defaultVal);
+		toneProfile = defaultVal;
+		qDebug("Wrote default toneProfile (%d)",toneProfile);
+	}
+
+	settings.endGroup();
+
+	settings.endGroup(); // algorithm
+
+	// ========================= Custom Tone Profile ==============================
+
+	settings.beginGroup("customToneProfile");
+
+	if(settings.contains("maj0")){
+		customToneProfile = std::vector<float>(0);
+		customToneProfile.push_back(settings.value("maj0").toFloat());
+		customToneProfile.push_back(settings.value("maj1").toFloat());
+		customToneProfile.push_back(settings.value("maj2").toFloat());
+		customToneProfile.push_back(settings.value("maj3").toFloat());
+		customToneProfile.push_back(settings.value("maj4").toFloat());
+		customToneProfile.push_back(settings.value("maj5").toFloat());
+		customToneProfile.push_back(settings.value("maj6").toFloat());
+		customToneProfile.push_back(settings.value("maj7").toFloat());
+		customToneProfile.push_back(settings.value("maj8").toFloat());
+		customToneProfile.push_back(settings.value("maj9").toFloat());
+		customToneProfile.push_back(settings.value("maj10").toFloat());
+		customToneProfile.push_back(settings.value("maj11").toFloat());
+		customToneProfile.push_back(settings.value("min0").toFloat());
+		customToneProfile.push_back(settings.value("min1").toFloat());
+		customToneProfile.push_back(settings.value("min2").toFloat());
+		customToneProfile.push_back(settings.value("min3").toFloat());
+		customToneProfile.push_back(settings.value("min4").toFloat());
+		customToneProfile.push_back(settings.value("min5").toFloat());
+		customToneProfile.push_back(settings.value("min6").toFloat());
+		customToneProfile.push_back(settings.value("min7").toFloat());
+		customToneProfile.push_back(settings.value("min8").toFloat());
+		customToneProfile.push_back(settings.value("min9").toFloat());
+		customToneProfile.push_back(settings.value("min10").toFloat());
+		customToneProfile.push_back(settings.value("min11").toFloat());
+	}else{
+		float defaultValues[24] = {
+			8.78, 5.00, 6.97, 5.34, 7.43, 6.32, 5.42, 8.43, 4.97, 6.95, 5.76, 6.79,
+			8.78, 5.34, 6.52, 6.79, 5.31, 6.43, 5.43, 8.10, 6.02, 5.58, 7.28, 5.71
+		};
+		customToneProfile = std::vector<float>(defaultValues, defaultValues+23);
+		settings.setValue("maj0",customToneProfile[0]);
+		settings.setValue("maj1",customToneProfile[1]);
+		settings.setValue("maj2",customToneProfile[2]);
+		settings.setValue("maj3",customToneProfile[3]);
+		settings.setValue("maj4",customToneProfile[4]);
+		settings.setValue("maj5",customToneProfile[5]);
+		settings.setValue("maj6",customToneProfile[6]);
+		settings.setValue("maj7",customToneProfile[7]);
+		settings.setValue("maj8",customToneProfile[8]);
+		settings.setValue("maj9",customToneProfile[9]);
+		settings.setValue("maj10",customToneProfile[10]);
+		settings.setValue("maj11",customToneProfile[11]);
+		settings.setValue("min0",customToneProfile[12]);
+		settings.setValue("min1",customToneProfile[13]);
+		settings.setValue("min2",customToneProfile[14]);
+		settings.setValue("min3",customToneProfile[15]);
+		settings.setValue("min4",customToneProfile[16]);
+		settings.setValue("min5",customToneProfile[17]);
+		settings.setValue("min6",customToneProfile[18]);
+		settings.setValue("min7",customToneProfile[19]);
+		settings.setValue("min8",customToneProfile[20]);
+		settings.setValue("min9",customToneProfile[21]);
+		settings.setValue("min10",customToneProfile[22]);
+		settings.setValue("min11",customToneProfile[23]);
+		qDebug("Wrote default customToneProfile (%d)",toneProfile);
+	}
+
+	settings.endGroup();
+
+	// ================================ End ======================================
+
 	generateBinFreqs();
+
 }
 
-void Preferences::setSpectrumAnalyser(char c){
-	if (c == 'f' || c == 'g')
-		spectrumAnalyser = c;
+// All these mutators currently only change session variables and not saved settings.
+
+void Preferences::setSpectrumAnalyser(char ch){
+	if (ch == 'f' || ch == 'g')
+		spectrumAnalyser = ch;
 }
 
-void Preferences::setFftPostProcessor(char c){
-	if (c == 'i' || c == 'c' || c == 'l')
-		fftPostProcessor = c;
+void Preferences::setFftPostProcessor(char ch){
+	if (ch == 'i' || ch == 'c' || ch == 'l')
+		fftPostProcessor = ch;
 }
 
-void Preferences::setTemporalWindow(char c){
-	if (c == 'm' || c == 'n' || c == 'b')
-		temporalWindow = c;
+void Preferences::setTemporalWindow(char ch){
+	if (ch == 'm' || ch == 'n' || ch == 'b')
+		temporalWindow = ch;
 }
 
 void Preferences::setToneProfile(int n){
 	if(n >= 0 && n <= 2)
 		toneProfile = n;
-}
-
-void Preferences::setHopSize(int n){
-	hopSize = n;
-}
-
-void Preferences::setFftFrameSize(int n){
-	fftFrameSize = n;
 }
 
 void Preferences::setBandsPerSemitone(int n){
@@ -83,11 +344,6 @@ void Preferences::setBandsPerSemitone(int n){
 void Preferences::setDownsampleFactor(int n){
 	dFactor = n;
 }
-
-void Preferences::setDirectSkStretch(float n){
-	directSkStretch = n;
-}
-
 
 char Preferences::getSpectrumAnalyser()const{return spectrumAnalyser;}
 char Preferences::getFftPostProcessor()const{return fftPostProcessor;}
@@ -120,6 +376,10 @@ float Preferences::getLastFreq() const{
 	return binFreqs[binFreqs.size()-1];
 }
 
+std::vector<float> Preferences::getCustomToneProfile() const{
+	return customToneProfile;
+}
+
 void Preferences::generateBinFreqs(){
 	int bpo = bps * 12;
 	binFreqs = std::vector<float>(octaves*bpo);
@@ -143,39 +403,3 @@ void Preferences::generateBinFreqs(){
 		octFreq *= 2;
 	}
 }
-
-
-/*
-void Preferences::printOptions(char* argv[])const{
-	std::cout << std::endl << "Usage: " << argv[0] << " [options] infile" << std::endl;
-	std::cout << "where options are:" << std::endl;
-	std::cout << "Force a particular decoder:" << std::endl;
-	std::cout << " -c s	: libsndfile (Default for WAV, AIFF, FLAC)" << std::endl;
-	std::cout << " -c a	: libavcodec (Default for all other file types)" << std::endl;
-	std::cout << "Force a particular downsampler:" << std::endl;
-	std::cout << " -d i	: Decimator with hardcoded coefficients (Default for 44100Hz, df 10)" << std::endl;
-	std::cout << " -d s	: libsamplerate (Default for all other samplerates and factors)" << std::endl;
-	std::cout << " -d d	: Sample discarder (aliases badly)" << std::endl;
-	std::cout << "Choice of temporal window function:" << std::endl;
-	std::cout << " -w m	: Hamming (Default)" << std::endl;
-	std::cout << " -w n	: Hann" << std::endl;
-	std::cout << " -w b	: Blackman" << std::endl;
-	std::cout << "Choice of transform algorithm:" << std::endl;
-	std::cout << " -t f	: FFTW (Default)" << std::endl;
-	std::cout << " -t g	: Goertzel" << std::endl;
-	std::cout << "Choice of FFT post-processor:" << std::endl;
-	std::cout << " -p i	: Direct kernel (Default)" << std::endl;
-	std::cout << " -p c	: Constant Q" << std::endl;
-	std::cout << " -p l	: Individual logarithmically-spaced bins" << std::endl;
-	std::cout << "Configuration options (defaults in parens):" << std::endl;
-	std::cout << " -h N	: Hop size (16384)" << std::endl;
-	std::cout << " -f N	: FFT frame size (32768)" << std::endl;
-	std::cout << " -k N	: Goertzel minimum k (20)" << std::endl;
-	std::cout << " -s N	: Starting frequency in Hz (27.5)" << std::endl;
-	std::cout << " -o N	: Octaves (6)" << std::endl;
-	std::cout << " -b N	: Bands per semitone (1)" << std::endl;
-	std::cout << " -df N	: Downsample factor (10)" << std::endl;
-	std::cout << " -ks N	: Direct kernel QStretch (1.0)" << std::endl;
-	std::cout << " -kw X	: Direct kernel window (Hann)" << std::endl;
-}
-*/

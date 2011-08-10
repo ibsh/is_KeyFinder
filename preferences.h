@@ -23,6 +23,7 @@
 #define PREFERENCES_H
 
 #include <QtGlobal>
+#include <QSettings>
 
 #include <math.h>
 #include <iostream>
@@ -40,11 +41,8 @@ public:
 	void setFftPostProcessor(char);
 	void setTemporalWindow(char);
 	void setToneProfile(int);
-	void setHopSize(int);
-	void setFftFrameSize(int);
 	void setBandsPerSemitone(int);
 	void setDownsampleFactor(int);
-	void setDirectSkStretch(float);
 	// getters
 	char getSpectrumAnalyser() const;
 	char getFftPostProcessor() const;
@@ -66,6 +64,7 @@ public:
 	float getLastFreq() const;
 	float getDirectSkStretch() const;
 	float getDetunedBandWeight() const;
+	std::vector<float> getCustomToneProfile() const;
 private:
 	char spectrumAnalyser;
 	char fftPostProcessor;
@@ -86,6 +85,7 @@ private:
 	float stFreq;
 	float directSkStretch;
 	float detunedBandWeight;
+	std::vector<float> customToneProfile;
 	std::vector<float> binFreqs;
 	void generateBinFreqs();
 };

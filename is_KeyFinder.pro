@@ -44,17 +44,20 @@ CONFIG(debug, debug|release){
 		detailwindow.h \
 		batchwindow.h \
 		aboutdialog.h \
-		visuals.h
+		visuals.h \
+		prefsdialog.h
 	SOURCES += \
 		main.cpp \
 		detailwindow.cpp \
 		batchwindow.cpp \
 		aboutdialog.cpp \
-		visuals.cpp
+		visuals.cpp \
+		prefsdialog.cpp
 	FORMS += \
 		detailwindow.ui \
 		batchwindow.ui \
-		aboutdialog.ui
+		aboutdialog.ui \
+		prefsdialog.ui
 }
 
 SOURCES += \
@@ -85,7 +88,7 @@ SOURCES += \
     hcdfharte.cpp \
     hcdfcosine.cpp \
 		hcdfnone.cpp \
-    mainmenuhandler.cpp
+		mainmenuhandler.cpp
 
 HEADERS  += decoderlibsndfile.h \
     decoderlibav.h \
@@ -115,7 +118,7 @@ HEADERS  += decoderlibsndfile.h \
     hcdfharte.h \
     hcdfcosine.h \
 		hcdfnone.h \
-    mainmenuhandler.h
+		mainmenuhandler.h
 
 OTHER_FILES += \
 		is_KeyFinder.pro.user

@@ -46,8 +46,10 @@ Configure commands used to build them:
 #include "mainmenuhandler.h"
 
 int main(int argc, char *argv[]){
-	QCoreApplication::setOrganizationName("Ibrahim");
+	QCoreApplication::setOrganizationName("Ibrahim Sha'ath");
+	QCoreApplication::setOrganizationDomain("ibrahimshaath.com");
 	QCoreApplication::setApplicationName("KeyFinder");
+
 	QApplication a(argc, argv);
 
 	QMenuBar* menuBar = new QMenuBar(0);
@@ -58,8 +60,9 @@ int main(int argc, char *argv[]){
 	QAction* actionNew_Batch_Keyfinder = menuFile->addAction("New Batch Window",menuHandler,SLOT(new_Batch_Window()),QKeySequence("Ctrl+Shift+N"));
 	menuFile->addSeparator();
 	QAction* actionClose_Window = menuFile->addAction("Close Window",menuHandler,SLOT(close_Window()),QKeySequence("Ctrl+W"));
-	QMenu* menuHelp = menuBar->addMenu("Help");
-	QAction* actionAbout = menuHelp->addAction("About",menuHandler,SLOT(about()));
+	// These actions won't be appended to the File menu, Qt intercepts them and puts them in the Mac-native places
+	QAction* actionAbout = menuFile->addAction("About",menuHandler,SLOT(about()));
+	QAction* actionPreferences = menuFile->addAction("Preferences",menuHandler,SLOT(preferences()));
 
 	BatchWindow w;
 	w.show();
