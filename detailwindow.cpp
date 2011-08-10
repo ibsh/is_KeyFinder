@@ -103,6 +103,12 @@ void DetailWindow::dropEvent(QDropEvent *e){
 }
 
 void DetailWindow::go(){
+	// get latest preferences and redraw, just in case they've changed since the last run.
+	prefs = Preferences();
+	ui->gridLayout_Visualisation->setRowStretch(ROW_BIGCHROMA,prefs.getOctaves()*2);
+	chromaScaleH = 5*(prefs.getHopSize()/16384.0)*(prefs.getDFactor()/10.0);
+	drawPianoKeys();
+	// now proceed
 	say("Decoding audio... ");
 	ui->progressBar->setValue(1);
 	ui->progressBar->setVisible(true);

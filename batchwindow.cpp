@@ -162,6 +162,8 @@ void BatchWindow::fileDropFinished(){
 }
 
 void BatchWindow::on_runBatchButton_clicked(){
+	// get a new preferences object in case they've changed since the last run.
+	prefs = Preferences();
 	if(ui->tableWidget->rowCount()==0)
 		return;
 	ui->runBatchButton->setDisabled(true);

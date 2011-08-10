@@ -1145,7 +1145,7 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Changes will only be applied to new windows</string>
+        <string>Changes will take effect at next analysis job</string>
        </property>
       </widget>
      </item>
