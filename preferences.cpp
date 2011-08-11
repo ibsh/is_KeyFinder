@@ -279,6 +279,69 @@ Preferences::Preferences(){
 
 }
 
+Preferences& Preferences::operator=(const Preferences& that){
+	if(this != &that){
+		spectrumAnalyser = that.spectrumAnalyser;
+		fftPostProcessor = that.fftPostProcessor;
+		temporalWindow = that.temporalWindow;
+		hcdf = that.hcdf;
+		hopSize = that.hopSize;
+		fftFrameSize = that.fftFrameSize;
+		goertzelMinK = that.goertzelMinK;
+		octaves = that.octaves;
+		bps = that.bps;
+		octaveOffset = that.octaveOffset;
+		dFactor = that.dFactor;
+		toneProfile = that.toneProfile;
+		hcdfPeakPickingNeighbours = that.hcdfPeakPickingNeighbours;
+		hcdfGaussianSize = that.hcdfGaussianSize;
+		tuningMethod = that.tuningMethod;
+		hcdfGaussianSigma = that.hcdfGaussianSigma;
+		stFreq = that.stFreq;
+		directSkStretch = that.directSkStretch;
+		detunedBandWeight = that.detunedBandWeight;
+		customToneProfile = that.customToneProfile;
+		generateBinFreqs();
+	}
+	return *this;
+}
+
+
+bool Preferences::operator ==(const Preferences& that) const{
+	// not quite as simple as all elements being equal
+	// in fact, the equality of some elements isn't important
+	if(temporalWindow != that.temporalWindow)
+		return false;
+	if(bps != that.bps)
+		return false;
+	if(stFreq != that.stFreq)
+		return false;
+	if(octaves != that.octaves)
+		return false;
+	if(octaveOffset != that.octaveOffset)
+		return false;
+	if(spectrumAnalyser != that.spectrumAnalyser)
+		return false;
+	else{
+		if(spectrumAnalyser == 'f'){
+			if(fftFrameSize != that.fftFrameSize)
+				return false;
+			if(fftPostProcessor != that.fftPostProcessor)
+				return false;
+			else{
+				if(fftPostProcessor == 'i'){
+					if(directSkStretch != that.directSkStretch)
+						return false;
+				}
+			}
+		}else{
+			if(goertzelMinK != that.goertzelMinK)
+			 return false;
+		}
+	}
+	return true;
+}
+
 // These mutators are only used by unit tests at present
 
 void Preferences::setFftPostProcessor(char ch){

@@ -36,6 +36,8 @@
 class Preferences{
 public:
 	Preferences();
+	Preferences& operator=(const Preferences&);
+	bool operator==(const Preferences&) const;
 	// setters, used in unit tests
 	void setFftPostProcessor(char);
 	void setBandsPerSemitone(int);

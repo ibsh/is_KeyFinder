@@ -60,13 +60,15 @@ void ConstantQPostProc_Test::testTransform(){
 		audio-sine-chord.wav contains an A minor seventh chord starting at A440,
 		so we test that those four notes are roughly equal in energy, and that the
 		other notes are below some threshold.
+		OBSERVE THE MUCH LARGER THRESHOLDS NECESSARY HERE VERSUS DIRECT SK.
 	*/
 	int notes[] = {48,51,55,58}; // A4, C5, E5, G5.
 	// normalise
 	float norm = ch->getMagnitude(0,notes[0]);
-	for(int i=0; i<ch->getBins(); i++)
+	for(int i=0; i<ch->getBins(); i++){
 		if(i != 48)
 			ch->setMagnitude(0,i,ch->getMagnitude(0,i) / norm);
+	}
 	ch->setMagnitude(0,48,1.0);
 	// test all bins
 	for(int i=0; i<ch->getBins(); i++){
@@ -74,17 +76,21 @@ void ConstantQPostProc_Test::testTransform(){
 		for(int j=0; j<4; j++){
 			if(i == notes[j]){
 				QVERIFY(ch->getMagnitude(0,i) > 0.99);
-				QVERIFY(ch->getMagnitude(0,i) < 1.01);
+				QVERIFY(ch->getMagnitude(0,i) < 1.5);
+				tested = true;
+				break;
+			}else if(i+1 == notes[j] || i-1 == notes[j]){
+				// This variation is necessary for CQT because it's not as precise as DSK at standard Q.
+				QVERIFY(ch->getMagnitude(0,i) < 0.7);
 				tested = true;
 				break;
 			}
 		}
 		if(!tested){
-			QVERIFY(ch->getMagnitude(0,i) < 0.0001);
+			QVERIFY(ch->getMagnitude(0,i) < 0.1);
 		}
 	}
 	delete ch;
 }
 
 #include "test_constantqpostproc.moc"
-

@@ -71,21 +71,6 @@ float DirectSkPostProc::kernelWindow(float n, float N)const{
 }
 
 void DirectSkPostProc::printKernel()const{
-//	std::cout << std::fixed;
-//	std::cout << "mysk offset " << binOffsets[0] << " length " << mySpecKernel[0].size() << std::endl;
-//	for(int j=0; j<(signed)mySpecKernel[0].size(); j++){
-//		float out = mySpecKernel[0][j];
-//		std::cout << std::setprecision(3) << out << "\t";
-//	}
-//	std::cout << "offset " << binOffsets[11] << " length " << mySpecKernel[11].size() << std::endl;
-//	std::cout << std::endl;
-//	for(int j=0; j<(signed)mySpecKernel[11].size(); j++){
-//		float out = mySpecKernel[11][j];
-//		std::cout << std::setprecision(3) << out << "\t";
-//	}
-//	std::cout << std::endl;
-//	return;
-	// original fn
 	std::cout << std::fixed;
 	int verylastFftBin = binOffsets[bins-1] + mySpecKernel[bins-1].size() - 1;
 	for(int i=0; i<bins; i++){

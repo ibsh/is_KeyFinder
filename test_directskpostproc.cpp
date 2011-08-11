@@ -87,6 +87,3 @@ void DirectSkPostProc_Test::testTransform(){
 }
 
 #include "test_directskpostproc.moc"
-
-
-

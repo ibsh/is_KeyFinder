@@ -34,7 +34,7 @@
 // Keeps a reference to a spectrum analyser with distinguishing information
 class SpectrumAnalyserWrapper{
 public:
-	SpectrumAnalyserWrapper(int,SpectrumAnalyser*);
+	SpectrumAnalyserWrapper(int,const Preferences&,SpectrumAnalyser*);
 	~SpectrumAnalyserWrapper();
 	SpectrumAnalyser* getSpectrumAnalyser() const;
 	Preferences chkPrefs() const;

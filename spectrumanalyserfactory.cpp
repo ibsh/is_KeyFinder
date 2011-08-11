@@ -21,10 +21,10 @@
 
 #include "spectrumanalyserfactory.h"
 
-SpectrumAnalyserWrapper::SpectrumAnalyserWrapper(int f, SpectrumAnalyser* s){
+SpectrumAnalyserWrapper::SpectrumAnalyserWrapper(int f, const Preferences& p, SpectrumAnalyser* s){
 	frate = f;
 	sa = s;
-	prefs = Preferences();
+	prefs = p;
 }
 
 SpectrumAnalyserWrapper::~SpectrumAnalyserWrapper(){
@@ -64,41 +64,13 @@ SpectrumAnalyserFactory::~SpectrumAnalyserFactory(){
 SpectrumAnalyser* SpectrumAnalyserFactory::getSpectrumAnalyser(int frameRate, const Preferences& prefs){
 	QMutexLocker locker(&mutex); // This function should be accessed by only one thread at a time
 	for(int i=0; i<(signed)analysers.size(); i++){
-		bool foundMatch = false;
-		if(analysers[i]->chkFrameRate() == frameRate
-			 && analysers[i]->chkPrefs().getTemporalWindow() == prefs.getTemporalWindow()
-			 && analysers[i]->chkPrefs().getBpo() == prefs.getBpo()
-			 && analysers[i]->chkPrefs().getBinFreq(0) == prefs.getBinFreq(0)
-			 && analysers[i]->chkPrefs().getOctaves() == prefs.getOctaves()
-			 && analysers[i]->chkPrefs().getOctaveOffset() == prefs.getOctaveOffset()
-		){
-			if(analysers[i]->chkPrefs().getSpectrumAnalyser() == 'f'
-				 && prefs.getSpectrumAnalyser() == 'f'
-				 && analysers[i]->chkPrefs().getFftFrameSize() == prefs.getFftFrameSize()){
-				// FFTW
-				if(analysers[i]->chkPrefs().getFftPostProcessor() == 'i'
-					 && prefs.getFftPostProcessor() == 'i'
-					 && analysers[i]->chkPrefs().getDirectSkStretch() == prefs.getDirectSkStretch()){
-					// DirectSK
-					foundMatch = true;
-				}else if(analysers[i]->chkPrefs().getFftPostProcessor() == prefs.getFftPostProcessor()){
-					// CQT
-					foundMatch = true;
-				}
-			}else if(analysers[i]->chkPrefs().getSpectrumAnalyser() == 'g'
-				 && prefs.getSpectrumAnalyser() == 'g'
-				 && analysers[i]->chkPrefs().getGoertzelMinK() == prefs.getGoertzelMinK()){
-				// Goertzel
-				foundMatch = true;
-			}
-		}
-		if(foundMatch){
+		if(analysers[i]->chkFrameRate() == frameRate && analysers[i]->chkPrefs() == prefs)
 			return analysers[i]->getSpectrumAnalyser();
-		}
 	}
+	// no match found, build a new spectrum analyser
 	if(prefs.getSpectrumAnalyser() == 'g')
-		analysers.push_back(new SpectrumAnalyserWrapper(frameRate, new GoertzelAnalyser(frameRate,prefs)));
+		analysers.push_back(new SpectrumAnalyserWrapper(frameRate, prefs, new GoertzelAnalyser(frameRate,prefs)));
 	else
-		analysers.push_back(new SpectrumAnalyserWrapper(frameRate, new FftwAnalyser(frameRate,prefs)));
+		analysers.push_back(new SpectrumAnalyserWrapper(frameRate, prefs, new FftwAnalyser(frameRate,prefs)));
 	return analysers[analysers.size()-1]->getSpectrumAnalyser();
 }

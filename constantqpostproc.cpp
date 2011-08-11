@@ -95,25 +95,6 @@ std::vector<float> ConstantQPostProc::chromaVector(fftw_complex* fftResult)const
 }
 
 void ConstantQPostProc::printKernel()const{
-//	std::cout << std::fixed;
-//	std::cout << "cqt offset " << binOffsets[0] << " length " << sparseKernel[0].size() << std::endl;
-//	for(int j=0; j<(signed)sparseKernel[0].size(); j++){
-//		float real = sparseKernel[0][j].real();
-//		float imag = sparseKernel[0][j].imag();
-//		float out = sqrt((real*real)+(imag*imag));
-//		std::cout << std::setprecision(3) << out << "\t";
-//	}
-//	std::cout << std::endl;
-//	std::cout << "offset " << binOffsets[11] << " length " << sparseKernel[11].size() << std::endl;
-//	for(int j=0; j<(signed)sparseKernel[11].size(); j++){
-//		float real = sparseKernel[11][j].real();
-//		float imag = sparseKernel[11][j].imag();
-//		float out = sqrt((real*real)+(imag*imag));
-//		std::cout << std::setprecision(3) << out << "\t";
-//	}
-//	std::cout << std::endl;
-//	return;
-	// original fn
 	std::cout << std::fixed;
 	int verylastFftBin = binOffsets[bins-1] + sparseKernel[bins-1].size() - 1;
 	for(int i=0; i<bins; i++){
