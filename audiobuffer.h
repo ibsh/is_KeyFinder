@@ -40,7 +40,7 @@ public:
 	void setSample(int,float);
 	void addSamples(int) throw (Exception);
 	int getSampleCount() const;
-	std::vector<float> buffer; // I don't want this public really, but libsndfile and libavcodec need access to buffer.front()
+	std::vector<float> buffer; // I don't want this public really, but libavcodec needs access to buffer.front()
 private:
 	int channels;
 	int frameRate;

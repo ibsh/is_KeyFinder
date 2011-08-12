@@ -63,7 +63,6 @@ CONFIG(debug, debug|release){
 }
 
 SOURCES += \
-    decoderlibsndfile.cpp \
     decoderlibav.cpp \
     constantqpostproc.cpp \
     chromagram.cpp \
@@ -90,7 +89,7 @@ SOURCES += \
     hcdfcosine.cpp \
 		hcdfnone.cpp
 
-HEADERS  += decoderlibsndfile.h \
+HEADERS  += \
     decoderlibav.h \
     decoder.h \
     constantqpostproc.h \
