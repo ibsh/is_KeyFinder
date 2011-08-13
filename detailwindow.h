@@ -61,18 +61,6 @@ public:
 	explicit DetailWindow(QWidget *parent = 0);
 	~DetailWindow();
 private:
-	// UI
-	Ui::DetailWindow* ui;
-	Visuals* vis;
-	void drawPianoKeys();
-	QImage imageFromChromagram(Chromagram*);
-	std::vector<QLabel*> keyLabels;
-	QImage chromagramImage;
-	QImage miniChromagramImage;
-	QImage harmonicChangeImage;
-	QImage colourScaleImage;
-	int chromaScaleV;
-	int chromaScaleH;
 	// analysis
 	Preferences prefs;
 	AudioBuffer* ab;
@@ -80,12 +68,12 @@ private:
 	Chromagram* ch;
 	std::vector<double> rateOfChange;
 	std::vector<int> keys;
-	//processing files
+	// processing files
 	std::string filePath;
 	bool allowDrops;
 	void dragEnterEvent(QDragEnterEvent*);
 	void dropEvent(QDropEvent*);
-	void go();															// begin steps
+	void processCurrentFile();
 	void decode();													// step 1
 	QFutureWatcher<void> decodeWatcher;
 	void makeMono();												// step 2
@@ -97,6 +85,23 @@ private:
 	void harmonicAnalysis();								// step 5
 	QFutureWatcher<void> haWatcher;
 	void cleanUpAfterRun();
+	// UI
+	Ui::DetailWindow* ui;
+	Visuals* vis;
+	std::vector<QLabel*> keyLabels;
+	QImage chromagramImage;
+	QImage miniChromagramImage;
+	QImage harmonicChangeImage;
+	QImage colourScaleImage;
+	int chromaScaleV;
+	int chromaScaleH;
+	QImage imageFromChromagram(Chromagram*);
+	void layoutScaling();
+	void blankVisualisations();
+	void deleteKeyLabels();
+	void blankKeyLabel();
+	void drawPianoKeys();
+	void drawColourScale();
 private slots:
 	void decoded();													// step 1 complete
 	void madeMono();												// step 2 complete

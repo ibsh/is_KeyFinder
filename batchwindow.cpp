@@ -171,10 +171,10 @@ void BatchWindow::on_runBatchButton_clicked(){
 	allowDrops = false;
 	ui->progressBar->setMaximum(ui->tableWidget->rowCount());
 	currentFile = 0;
-	go();
+	processCurrentFile();
 }
 
-void BatchWindow::go(){
+void BatchWindow::processCurrentFile(){
 	if(currentFile == ui->tableWidget->rowCount()){
 		cleanUpAfterRun();
 		QApplication::beep();
@@ -190,7 +190,7 @@ void BatchWindow::go(){
 
 void BatchWindow::fileFinished(){
 	currentFile++;
-	go();
+	processCurrentFile();
 }
 
 void BatchWindow::cleanUpAfterRun(){

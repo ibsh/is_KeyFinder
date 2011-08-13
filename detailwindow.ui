@@ -283,6 +283,9 @@ for the chromagram. Some
 provide higher contrast than
 others.</string>
         </property>
+        <property name="currentIndex">
+         <number>3</number>
+        </property>
         <item>
          <property name="text">
           <string>Izo</string>

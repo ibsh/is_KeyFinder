@@ -26,12 +26,19 @@ const int ROW_BIGCHROMA = 0;
 const int ROW_MINICHROMA = 1;
 const int ROW_RATEOFCHANGE = 2;
 
+const int PROGRESS_DONE = 0;
+const int PROGRESS_DECODE = 1;
+const int PROGRESS_MONO = 2;
+const int PROGRESS_DOWNSAMPLE = 3;
+const int PROGRESS_SPECTRUMANALYSIS = 4;
+const int PROGRESS_HARMONICANALYSIS = 5;
+
 DetailWindow::DetailWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::DetailWindow){
 	// SETUP KEYFINDER
 	ab = NULL;
 	sa = NULL;
 	ch = NULL;
-	// SETUP ASYNC SIGNALS/SLOTS (do it once here so they don't repeat if a decode fails).
+	// SETUP ASYNC SIGNALS/SLOTS
 	connect(&decodeWatcher, SIGNAL(finished()), this, SLOT(decoded()));
 	connect(&monoWatcher, SIGNAL(finished()), this, SLOT(madeMono()));
 	connect(&dsWatcher, SIGNAL(finished()), this, SLOT(downSampled()));
@@ -41,47 +48,15 @@ DetailWindow::DetailWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::De
 	ui->setupUi(this);
 	allowDrops = true;
 	vis = Visuals::getInstance();
-	ui->progressBar->setMaximum(5);
+	ui->progressBar->setMaximum(PROGRESS_HARMONICANALYSIS);
 	ui->progressBar->setVisible(false);
 	ui->runButton->setDisabled(true);
-	ui->gridLayout_Visualisation->setRowStretch(ROW_BIGCHROMA,prefs.getOctaves()*2);
-	ui->gridLayout_Visualisation->setRowStretch(ROW_MINICHROMA,2);
-	ui->gridLayout_Visualisation->setRowStretch(ROW_RATEOFCHANGE,1);
-	// DEFAULT FOR PARAMETER DROPDOWN
-	ui->chromaColourCombo->setCurrentIndex(3);			// 3 = Hack
-	// VISUALISATION IMAGES
-	chromaScaleV = 5;
-	chromaScaleH = 5*(prefs.getHopSize()/16384.0)*(prefs.getDFactor()/10.0);
-	if(chromaScaleH < 1) chromaScaleH = 1;
-	chromagramImage = QImage(1,1,QImage::Format_Indexed8);
-	miniChromagramImage = QImage(1,1,QImage::Format_Indexed8);
-	harmonicChangeImage = QImage(1,1,QImage::Format_Indexed8);
-	colourScaleImage = QImage(1,65,QImage::Format_Indexed8);
-	vis->setImageColours(chromagramImage,ui->chromaColourCombo->currentIndex());
-	vis->setImageColours(miniChromagramImage,ui->chromaColourCombo->currentIndex());
-	vis->setImageColours(harmonicChangeImage,ui->chromaColourCombo->currentIndex());
-	vis->setImageColours(colourScaleImage,ui->chromaColourCombo->currentIndex());
-	chromagramImage.setPixel(0,0,0);
-	miniChromagramImage.setPixel(0,0,0);
-	harmonicChangeImage.setPixel(0,0,0);
-	for(int i=0; i<=64; i++)
-		colourScaleImage.setPixel(0,64-i,i);
-	ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
-	ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
-	ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
-	ui->colourScaleLabel->setPixmap(QPixmap::fromImage(colourScaleImage));
+	layoutScaling();
+	// VISUALISATIONS
+	drawColourScale();
 	drawPianoKeys();
-	// DUMMY KEY LABEL
-	QLabel* dummyLabel = new QLabel();
-	QPalette pal = dummyLabel->palette();
-	pal.setColor(backgroundRole(), Qt::black);
-	dummyLabel->setPalette(pal);
-	dummyLabel->setAutoFillBackground(true);
-	dummyLabel->setMinimumHeight(20);
-	dummyLabel->setMaximumHeight(30);
-	dummyLabel->setToolTip("This row shows the key(s) detected\nin the segments between peak\nharmonic changes.");
-	ui->horizontalLayout_keyLabels->addWidget(dummyLabel);
-	keyLabels.push_back(dummyLabel);
+	blankVisualisations();
+	blankKeyLabel();
 }
 
 void DetailWindow::dragEnterEvent(QDragEnterEvent *e){
@@ -99,19 +74,19 @@ void DetailWindow::dragEnterEvent(QDragEnterEvent *e){
 void DetailWindow::dropEvent(QDropEvent *e){
 	allowDrops = false;
 	filePath = (std::string)e->mimeData()->urls().at(0).toLocalFile().toAscii();
-	go();
+	processCurrentFile();
 }
 
-void DetailWindow::go(){
+void DetailWindow::processCurrentFile(){
 	// get latest preferences and redraw variable UI elements, just in case they've changed since the last run.
 	prefs = Preferences();
-	ui->gridLayout_Visualisation->setRowStretch(ROW_BIGCHROMA,prefs.getOctaves()*2);
-	chromaScaleH = 5*(prefs.getHopSize()/16384.0)*(prefs.getDFactor()/10.0);
-	if(chromaScaleH < 1) chromaScaleH = 1;
+	layoutScaling();
 	drawPianoKeys();
+	blankVisualisations();
+	blankKeyLabel();
 	// now proceed
 	say("Decoding audio... ");
-	ui->progressBar->setValue(1);
+	ui->progressBar->setValue(PROGRESS_DECODE);
 	ui->progressBar->setVisible(true);
 	ui->chromaColourCombo->setDisabled(true);
 	ui->runButton->setDisabled(true);
@@ -121,7 +96,7 @@ void DetailWindow::go(){
 }
 
 void DetailWindow::cleanUpAfterRun(){
-	ui->progressBar->setValue(0);
+	ui->progressBar->setValue(PROGRESS_DONE);
 	ui->progressBar->setVisible(false);
 	ui->chromaColourCombo->setDisabled(false);
 	ui->runButton->setDisabled(false);
@@ -147,7 +122,7 @@ void DetailWindow::decoded(){
 		return;
 	}
 	say("Decoded, making mono...");
-	ui->progressBar->setValue(2);
+	ui->progressBar->setValue(PROGRESS_MONO);
 	QFuture<void> future = QtConcurrent::run(this,&DetailWindow::makeMono);
 	monoWatcher.setFuture(future);
 }
@@ -161,12 +136,12 @@ void DetailWindow::makeMono(){
 void DetailWindow::madeMono(){
 	if(prefs.getDFactor() < 2){
 		say("Made mono. Running spectrum analysis...");
-		ui->progressBar->setValue(4);
+		ui->progressBar->setValue(PROGRESS_SPECTRUMANALYSIS);
 		QFuture<void> future = QtConcurrent::run(this,&DetailWindow::spectrumAnalysis);
 		saWatcher.setFuture(future);
 	}else{
 		say("Made mono. Downsampling... ");
-		ui->progressBar->setValue(3);
+		ui->progressBar->setValue(PROGRESS_DOWNSAMPLE);
 		QFuture<void> future = QtConcurrent::run(this,&DetailWindow::downSample);
 		dsWatcher.setFuture(future);
 	}
@@ -191,7 +166,7 @@ void DetailWindow::downSampled(){
 		return;
 	}
 	say("Downsampled. Running spectrum analysis...");
-	ui->progressBar->setValue(4);
+	ui->progressBar->setValue(PROGRESS_SPECTRUMANALYSIS);
 	QFuture<void> future = QtConcurrent::run(this,&DetailWindow::spectrumAnalysis);
 	saWatcher.setFuture(future);
 }
@@ -209,7 +184,7 @@ void DetailWindow::spectrumAnalysisComplete(){
 	ui->chromagramLabel->setMinimumHeight(ch->getBins()+2);
 	ui->chromagramLabel->setMinimumWidth(ch->getHops()+2);
 	say("Running harmonic analyses...");
-	ui->progressBar->setValue(5);
+	ui->progressBar->setValue(PROGRESS_HARMONICANALYSIS);
 	QFuture<void> future = QtConcurrent::run(this,&DetailWindow::harmonicAnalysis);
 	haWatcher.setFuture(future);
 }
@@ -252,10 +227,7 @@ void DetailWindow::haFinished(){
 	// show
 	ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
 	// Key labels
-	for(int i=keyLabels.size()-1; i>=0; i--){
-		delete keyLabels[i];
-		keyLabels.pop_back();
-	}
+	deleteKeyLabels();
 	int lastChange = 0;
 	for(int h=1; h<(signed)keys.size(); h++){ // don't test the first hop
 		if(h==(signed)keys.size()-1 || (keys[h] != keys[h-1])){ // at the end, and at changes
@@ -286,35 +258,6 @@ void DetailWindow::haFinished(){
 	delete ch;
 	ch = NULL;
 	cleanUpAfterRun();
-}
-
-void DetailWindow::drawPianoKeys(){
-	int scale = 10;
-	QImage pianoImage = QImage(1,prefs.getOctaves()*12*scale,QImage::Format_Indexed8);
-	QImage miniPianoImage = QImage(1,12*scale,QImage::Format_Indexed8);
-	pianoImage.setColor(0,qRgb(255,255,255));	// white key
-	pianoImage.setColor(1,qRgb(0,0,0));				// black key
-	pianoImage.setColor(2,qRgb(127,127,127));	// boundary colour
-	miniPianoImage.setColor(0,qRgb(255,255,255));
-	miniPianoImage.setColor(1,qRgb(0,0,0));
-	miniPianoImage.setColor(2,qRgb(127,127,127));
-	// reverse of octave for visual representation (ending at A; don't forget the offset)
-	std::string octaveRev = "bwbwwbwbwwbw";
-	int off = prefs.getOctaveOffset();
-	if(off > 0)
-		octaveRev = octaveRev.substr(12-off,off) + octaveRev.substr(0,12 - off);
-	for(int o=0; o<prefs.getOctaves(); o++){
-		for(int s=0; s<12; s++){
-			for(int px=0; px<scale-1; px++){
-				pianoImage.setPixel(0,(o*12*scale)+(s*scale)+px,(octaveRev[s] == 'b' ? 1 : 0));
-				miniPianoImage.setPixel(0,(s*scale)+px,(octaveRev[s] == 'b' ? 1 : 0));
-			}
-			pianoImage.setPixel(0,(o*12*scale)+(s*scale)+scale-1,2);
-			miniPianoImage.setPixel(0,(s*scale)+scale-1,2);
-		}
-	}
-	ui->pianoKeysLabel->setPixmap(QPixmap::fromImage(pianoImage));
-	ui->miniPianoKeysLabel->setPixmap(QPixmap::fromImage(miniPianoImage));
 }
 
 QImage DetailWindow::imageFromChromagram(Chromagram* ch){
@@ -363,13 +306,13 @@ DetailWindow::~DetailWindow(){
 }
 
 void DetailWindow::on_runButton_clicked(){
-	if(filePath != "") go();
+	if(filePath != "") processCurrentFile();
 }
 
 void DetailWindow::analyse(std::string path){
 	// public slot to be called from batch window
 	filePath = path;
-	go();
+	processCurrentFile();
 }
 
 void DetailWindow::on_chromaColourCombo_currentIndexChanged(int index){
@@ -381,4 +324,86 @@ void DetailWindow::on_chromaColourCombo_currentIndexChanged(int index){
 	ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
 	ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
 	ui->colourScaleLabel->setPixmap(QPixmap::fromImage(colourScaleImage));
+}
+
+void DetailWindow::layoutScaling(){
+	ui->gridLayout_Visualisation->setRowStretch(ROW_BIGCHROMA,prefs.getOctaves()*2);
+	ui->gridLayout_Visualisation->setRowStretch(ROW_MINICHROMA,2);
+	ui->gridLayout_Visualisation->setRowStretch(ROW_RATEOFCHANGE,1);
+	chromaScaleV = 10;
+	chromaScaleH = 10*(prefs.getHopSize()/16384.0)*(prefs.getDFactor()/10.0);
+	if(chromaScaleH < 1) chromaScaleH = 1;
+}
+
+void DetailWindow::drawColourScale(){
+	colourScaleImage = QImage(1,65,QImage::Format_Indexed8);
+	vis->setImageColours(colourScaleImage,ui->chromaColourCombo->currentIndex());
+	for(int i=0; i<=64; i++)
+		colourScaleImage.setPixel(0,64-i,i);
+	ui->colourScaleLabel->setPixmap(QPixmap::fromImage(colourScaleImage));
+}
+
+void DetailWindow::blankVisualisations(){
+	chromagramImage = QImage(1,1,QImage::Format_Indexed8);
+	miniChromagramImage = QImage(1,1,QImage::Format_Indexed8);
+	harmonicChangeImage = QImage(1,1,QImage::Format_Indexed8);
+	vis->setImageColours(chromagramImage,ui->chromaColourCombo->currentIndex());
+	vis->setImageColours(miniChromagramImage,ui->chromaColourCombo->currentIndex());
+	vis->setImageColours(harmonicChangeImage,ui->chromaColourCombo->currentIndex());
+	chromagramImage.setPixel(0,0,0);
+	miniChromagramImage.setPixel(0,0,0);
+	harmonicChangeImage.setPixel(0,0,0);
+	ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
+	ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
+	ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
+}
+
+void DetailWindow::deleteKeyLabels(){
+	for(int i=keyLabels.size()-1; i>=0; i--){
+		delete keyLabels[i];
+		keyLabels.pop_back();
+	}
+}
+
+void DetailWindow::blankKeyLabel(){
+	deleteKeyLabels();
+	QLabel* dummyLabel = new QLabel();
+	QPalette pal = dummyLabel->palette();
+	pal.setColor(backgroundRole(), Qt::black);
+	dummyLabel->setPalette(pal);
+	dummyLabel->setAutoFillBackground(true);
+	dummyLabel->setMinimumHeight(20);
+	dummyLabel->setMaximumHeight(30);
+	dummyLabel->setToolTip("This row shows the key(s) detected\nin the segments between peak\nharmonic changes.");
+	ui->horizontalLayout_keyLabels->addWidget(dummyLabel);
+	keyLabels.push_back(dummyLabel);
+}
+
+void DetailWindow::drawPianoKeys(){
+	int scale = 10;
+	QImage pianoImage = QImage(1,prefs.getOctaves()*12*scale,QImage::Format_Indexed8);
+	QImage miniPianoImage = QImage(1,12*scale,QImage::Format_Indexed8);
+	pianoImage.setColor(0,qRgb(255,255,255));	// white key
+	pianoImage.setColor(1,qRgb(0,0,0));				// black key
+	pianoImage.setColor(2,qRgb(127,127,127));	// boundary colour
+	miniPianoImage.setColor(0,qRgb(255,255,255));
+	miniPianoImage.setColor(1,qRgb(0,0,0));
+	miniPianoImage.setColor(2,qRgb(127,127,127));
+	// reverse of octave for visual representation (ending at A; don't forget the offset)
+	std::string octaveRev = "bwbwwbwbwwbw";
+	int off = prefs.getOctaveOffset();
+	if(off > 0)
+		octaveRev = octaveRev.substr(12-off,off) + octaveRev.substr(0,12 - off);
+	for(int o=0; o<prefs.getOctaves(); o++){
+		for(int s=0; s<12; s++){
+			for(int px=0; px<scale-1; px++){
+				pianoImage.setPixel(0,(o*12*scale)+(s*scale)+px,(octaveRev[s] == 'b' ? 1 : 0));
+				miniPianoImage.setPixel(0,(s*scale)+px,(octaveRev[s] == 'b' ? 1 : 0));
+			}
+			pianoImage.setPixel(0,(o*12*scale)+(s*scale)+scale-1,2);
+			miniPianoImage.setPixel(0,(s*scale)+scale-1,2);
+		}
+	}
+	ui->pianoKeysLabel->setPixmap(QPixmap::fromImage(pianoImage));
+	ui->miniPianoKeysLabel->setPixmap(QPixmap::fromImage(miniPianoImage));
 }

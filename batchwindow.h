@@ -76,7 +76,7 @@ private:
 	void dropEvent(QDropEvent*);
 	int currentFile;
 	bool allowDrops;
-	void go();
+	void processCurrentFile();
 	void cleanUpAfterRun();
 	void analyseFile(int);
 	void markBroken(int);
