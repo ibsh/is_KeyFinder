@@ -31,7 +31,7 @@
 
 class Chromagram{
 public:
-	Chromagram(int,int);
+	Chromagram(int h = 0,int b = 0);
 	void setMagnitude(int,int,float);
 	float getMagnitude(int,int) const;
 	int getHops() const;

@@ -30,9 +30,8 @@ const int COL_KEY = 4;
 const int COL_KEYCODE = 5;
 
 BatchWindow::BatchWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::BatchWindow){
-	// SETUP ASYNC SIGNALS/SLOTS
+	// ASYNC
 	connect(&fileDropWatcher, SIGNAL(finished()), this, SLOT(fileDropFinished()));
-	connect(&analysisWatcher, SIGNAL(finished()), this, SLOT(fileFinished()));
 	// SETUP UI
 	ui->setupUi(this);
 	allowDrops = true;
@@ -70,10 +69,6 @@ BatchWindow::BatchWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Batc
 }
 
 BatchWindow::~BatchWindow(){
-	fileDropWatcher.cancel();
-	fileDropWatcher.waitForFinished();
-	analysisWatcher.cancel();
-	analysisWatcher.waitForFinished();
 	delete ui;
 }
 
@@ -180,17 +175,17 @@ void BatchWindow::processCurrentFile(){
 		QApplication::beep();
 		return;
 	}else if(ui->tableWidget->item(currentFile,COL_KEY) != NULL){
-		fileFinished();
+		// don't reprocess files
+		currentFile++;
+		processCurrentFile();
 	}else{
 		ui->progressBar->setValue(currentFile);
-		QFuture<void> future = QtConcurrent::run(this,&BatchWindow::analyseFile,currentFile);
-		analysisWatcher.setFuture(future);
+		// now proceed
+		modelThread = new KeyFinderWorkerThread(ui->tableWidget->item(currentFile,COL_PATH)->text(),prefs);
+		connect(modelThread,SIGNAL(failed(QString)),this,SLOT(fileFailed()),Qt::QueuedConnection);
+		connect(modelThread,SIGNAL(producedGlobalKeyEstimate(int)),this,SLOT(fileFinished(int)),Qt::QueuedConnection);
+		modelThread->start();
 	}
-}
-
-void BatchWindow::fileFinished(){
-	currentFile++;
-	processCurrentFile();
 }
 
 void BatchWindow::cleanUpAfterRun(){
@@ -201,87 +196,22 @@ void BatchWindow::cleanUpAfterRun(){
 	ui->tableWidget->resizeColumnsToContents();
 }
 
-void BatchWindow::analyseFile(int whichFile){
-	AudioBuffer* ab = NULL;
-	SpectrumAnalyser* sa = NULL;
-	Chromagram* ch = NULL;
-	std::string filePath = (std::string)ui->tableWidget->item(whichFile,COL_PATH)->text().toAscii();
-	AudioFileDecoder* dec = AudioFileDecoder::getDecoder(filePath);
-	try{
-		ab = dec->decodeFile((char*)filePath.c_str());
-	}catch(Exception){
-		delete dec;
-		markBroken(whichFile);
-		return;
-	}
-	delete dec;
-	Monaural* mono = new Monaural();
-	ab = mono->makeMono(ab);
-	delete mono;
-	if(prefs.getDFactor() > 1){
-		Downsampler* ds = Downsampler::getDownsampler(prefs.getDFactor(),ab->getFrameRate(),prefs.getLastFreq());
-		try{
-			ab = ds->downsample(ab,prefs.getDFactor());
-		}catch(Exception){
-			delete ab;
-			delete ds;
-			markBroken(whichFile);
-			return;
-		}
-		delete ds;
-	}
-	sa = SpectrumAnalyserFactory::getInstance()->getSpectrumAnalyser(ab->getFrameRate(),prefs);
-	ch = sa->chromagram(ab);
-	delete ab;
-	// note we don't delete the spectrum analyser; it stays in the centralised factory for reuse.
-	ch->decomposeToTwelveBpo(prefs);
-	ch->decomposeToOneOctave(prefs);
-	// get energy level across track to weight segments
-	std::vector<float> loudness(ch->getHops());
-	for(int h=0; h<ch->getHops(); h++)
-		for(int b=0; b<ch->getBins(); b++)
-			loudness[h] += ch->getMagnitude(h,b);
-	Hcdf* hcdf = Hcdf::getHcdf(prefs);
-	std::vector<int> changes = hcdf->peaks(hcdf->hcdf(ch,prefs),prefs);
-
-	// batch output of keychange locations for Beatles experiment
-	//for(int i=1; i<changes.size(); i++) // don't want the leading zero
-	//	std::cout << filePath.substr(53) << "\t" << std::fixed << std::setprecision(2) << changes[i]*(prefs.getHopSize()/(44100.0/prefs.getDFactor())) << std::endl;
-	// end experiment output
-
-	changes.push_back(ch->getHops()-1);
-	KeyClassifier kc(prefs);
-	std::vector<float> trackKeys(24);
-	for(int i=0; i<(signed)changes.size()-1; i++){
-		std::vector<double> chroma(12);
-		for(int j=changes[i]; j<changes[i+1]; j++)
-			for(int k=0; k<ch->getBins(); k++)
-				chroma[k] += ch->getMagnitude(j,k);
-		int key = kc.classify(chroma);
-		if(key < 24) // ignore parts that were classified as silent
-			for(int j=changes[i]; j<changes[i+1]; j++)
-				trackKeys[key] += loudness[j];
-	}
-	delete ch;
-	int mostCommonKey = -1;
-	float mostCommonKeyMagnitude = 0.0;
-	for(int i=0; i<(signed)trackKeys.size(); i++){
-		if(trackKeys[i] > mostCommonKeyMagnitude){
-			mostCommonKeyMagnitude = trackKeys[i];
-			mostCommonKey = i;
-		}
-	}
-	ui->tableWidget->setItem(whichFile,COL_KEY,new QTableWidgetItem());
-	ui->tableWidget->item(whichFile,COL_KEY)->setText(vis->keyNames[mostCommonKey]);
-	ui->tableWidget->setItem(whichFile,COL_KEYCODE,new QTableWidgetItem());
-	ui->tableWidget->item(whichFile,COL_KEYCODE)->setText(vis->keyCodes[mostCommonKey]);
+void BatchWindow::fileFinished(int key){
+	ui->tableWidget->setItem(currentFile,COL_KEY,new QTableWidgetItem());
+	ui->tableWidget->item(currentFile,COL_KEY)->setText(vis->keyNames[key]);
+	ui->tableWidget->setItem(currentFile,COL_KEYCODE,new QTableWidgetItem());
+	ui->tableWidget->item(currentFile,COL_KEYCODE)->setText(vis->keyCodes[key]);
+	currentFile++;
+	processCurrentFile();
 }
 
-void BatchWindow::markBroken(int whichFile){
-	ui->tableWidget->setItem(whichFile,COL_KEY,new QTableWidgetItem());
-	ui->tableWidget->item(whichFile,COL_KEY)->setText("Failed");
-	ui->tableWidget->item(whichFile,COL_KEY)->setTextColor(qRgb(255,0,0));
-	ui->tableWidget->item(whichFile,COL_PATH)->setTextColor(qRgb(255,0,0));
+void BatchWindow::fileFailed(){
+	ui->tableWidget->setItem(currentFile,COL_KEY,new QTableWidgetItem());
+	ui->tableWidget->item(currentFile,COL_KEY)->setText("Failed");
+	ui->tableWidget->item(currentFile,COL_KEY)->setTextColor(qRgb(255,0,0));
+	ui->tableWidget->item(currentFile,COL_PATH)->setTextColor(qRgb(255,0,0));
+	currentFile++;
+	processCurrentFile();
 }
 
 void BatchWindow::copySelectedFromTableWidget(){
@@ -350,7 +280,6 @@ void BatchWindow::runDetailedAnalysis(){
 		msg.exec();
 		return;
 	}
-	DetailWindow* newWin = new DetailWindow(0);
+	DetailWindow* newWin = new DetailWindow(0,ui->tableWidget->item(firstRow,COL_PATH)->text());
 	newWin->show();
-	newWin->analyse(ui->tableWidget->item(firstRow,COL_PATH)->text().toAscii().data());
 }

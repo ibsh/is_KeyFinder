@@ -87,7 +87,8 @@ SOURCES += \
 		hcdf.cpp \
     hcdfharte.cpp \
     hcdfcosine.cpp \
-		hcdfnone.cpp
+		hcdfnone.cpp \
+    keyfinderworkerthread.cpp
 
 HEADERS  += \
     decoderlibav.h \
@@ -115,7 +116,8 @@ HEADERS  += \
 		metadatataglib.h \
     hcdfharte.h \
     hcdfcosine.h \
-		hcdfnone.h
+		hcdfnone.h \
+    keyfinderworkerthread.h
 
 OTHER_FILES += \
 		is_KeyFinder.pro.user

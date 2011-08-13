@@ -24,32 +24,20 @@
 
 #include <QtCore>
 #include <QMainWindow>
+#include <QThread>
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QUrl>
-#include <QFuture>
-#include <QFutureWatcher>
 #include <QLabel>
 
 #include <string>
 #include <vector>
 
-#include "batchwindow.h"
-#include "aboutdialog.h"
-
 #include "preferences.h"
-#include "visuals.h"
-#include "exception.h"
-#include "audiobuffer.h"
+#include "keyfinderworkerthread.h"
 #include "chromagram.h"
+#include "visuals.h"
 
-#include "decoder.h"
-#include "monaural.h"
-#include "downsampler.h"
-#include "spectrumanalyserfactory.h"
-#include "hcdf.h"
-#include "keyclassifier.h"
-#include "metadata.h"
 
 namespace Ui {
 	class DetailWindow;
@@ -58,32 +46,16 @@ namespace Ui {
 class DetailWindow : public QMainWindow{
 	Q_OBJECT
 public:
-	explicit DetailWindow(QWidget *parent = 0);
+	explicit DetailWindow(QWidget *parent = 0, QString path = "");
 	~DetailWindow();
 private:
-	// analysis
 	Preferences prefs;
-	AudioBuffer* ab;
-	SpectrumAnalyser* sa;
-	Chromagram* ch;
-	std::vector<double> rateOfChange;
-	std::vector<int> keys;
-	// processing files
-	std::string filePath;
+	QString filePath;
+	KeyFinderWorkerThread* modelThread;
 	bool allowDrops;
 	void dragEnterEvent(QDragEnterEvent*);
 	void dropEvent(QDropEvent*);
 	void processCurrentFile();
-	void decode();													// step 1
-	QFutureWatcher<void> decodeWatcher;
-	void makeMono();												// step 2
-	QFutureWatcher<void> monoWatcher;
-	void downSample();											// step 3
-	QFutureWatcher<void> dsWatcher;
-	void spectrumAnalysis();								// step 4
-	QFutureWatcher<void> saWatcher;
-	void harmonicAnalysis();								// step 5
-	QFutureWatcher<void> haWatcher;
 	void cleanUpAfterRun();
 	// UI
 	Ui::DetailWindow* ui;
@@ -95,24 +67,28 @@ private:
 	QImage colourScaleImage;
 	int chromaScaleV;
 	int chromaScaleH;
-	QImage imageFromChromagram(Chromagram*);
+	QImage imageFromChromagram(const Chromagram*);
+private slots:
+	// interaction with model thread
+	void criticalError(const QString&);
+	void decoded();
+	void madeMono();
+	void downsampled();
+	void receiveFullChromagram(const Chromagram&);
+	void receiveOneOctaveChromagram(const Chromagram&);
+	void receiveHarmonicChangeSignal(const std::vector<double>&);
+	void receiveKeyEstimates(const std::vector<int>&);
+	void receiveGlobalKeyEstimate(int);
+	// UI
+	void say(const QString&);
+	void on_chromaColourCombo_currentIndexChanged(int index);
+	void on_runButton_clicked();
 	void layoutScaling();
 	void blankVisualisations();
 	void deleteKeyLabels();
 	void blankKeyLabel();
 	void drawPianoKeys();
 	void drawColourScale();
-private slots:
-	void decoded();													// step 1 complete
-	void madeMono();												// step 2 complete
-	void downSampled();											// step 3 complete
-	void spectrumAnalysisComplete();				// step 4 complete
-	void haFinished();											// step 5 complete
-	void say(const QString&);
-	void on_chromaColourCombo_currentIndexChanged(int index);
-	void on_runButton_clicked();
-public slots:
-	void analyse(std::string);
 };
 
 #endif

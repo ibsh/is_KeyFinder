@@ -27,36 +27,33 @@ const int ROW_MINICHROMA = 1;
 const int ROW_RATEOFCHANGE = 2;
 
 const int PROGRESS_DONE = 0;
-const int PROGRESS_DECODE = 1;
-const int PROGRESS_MONO = 2;
-const int PROGRESS_DOWNSAMPLE = 3;
-const int PROGRESS_SPECTRUMANALYSIS = 4;
-const int PROGRESS_HARMONICANALYSIS = 5;
+const int PROGRESS_START = 1;
+const int PROGRESS_DECODED = 2;
+const int PROGRESS_MADEMONO = 3;
+const int PROGRESS_DOWNSAMPLED = 4;
+const int PROGRESS_DONESPECTRUMANALYSIS = 5;
+const int PROGRESS_DONEHARMONICANALYSIS = 6;
 
-DetailWindow::DetailWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::DetailWindow){
-	// SETUP KEYFINDER
-	ab = NULL;
-	sa = NULL;
-	ch = NULL;
-	// SETUP ASYNC SIGNALS/SLOTS
-	connect(&decodeWatcher, SIGNAL(finished()), this, SLOT(decoded()));
-	connect(&monoWatcher, SIGNAL(finished()), this, SLOT(madeMono()));
-	connect(&dsWatcher, SIGNAL(finished()), this, SLOT(downSampled()));
-	connect(&saWatcher, SIGNAL(finished()), this, SLOT(spectrumAnalysisComplete()));
-	connect(&haWatcher, SIGNAL(finished()), this, SLOT(haFinished()));
-	// SETUP UI
+DetailWindow::DetailWindow(QWidget *parent, QString path) : QMainWindow(parent), ui(new Ui::DetailWindow){
 	ui->setupUi(this);
 	allowDrops = true;
 	vis = Visuals::getInstance();
-	ui->progressBar->setMaximum(PROGRESS_HARMONICANALYSIS);
+	ui->progressBar->setMaximum(PROGRESS_DONEHARMONICANALYSIS);
 	ui->progressBar->setVisible(false);
 	ui->runButton->setDisabled(true);
 	layoutScaling();
-	// VISUALISATIONS
 	drawColourScale();
 	drawPianoKeys();
 	blankVisualisations();
 	blankKeyLabel();
+	if(path != ""){
+		filePath = path;
+		processCurrentFile();
+	}
+}
+
+DetailWindow::~DetailWindow(){
+	delete ui;
 }
 
 void DetailWindow::dragEnterEvent(QDragEnterEvent *e){
@@ -73,160 +70,89 @@ void DetailWindow::dragEnterEvent(QDragEnterEvent *e){
 
 void DetailWindow::dropEvent(QDropEvent *e){
 	allowDrops = false;
-	filePath = (std::string)e->mimeData()->urls().at(0).toLocalFile().toAscii();
+	filePath = e->mimeData()->urls().at(0).toLocalFile();
 	processCurrentFile();
 }
 
 void DetailWindow::processCurrentFile(){
 	// get latest preferences and redraw variable UI elements, just in case they've changed since the last run.
+	int chkOctaves = prefs.getOctaves();
+	int chkOffset = prefs.getOctaveOffset();
 	prefs = Preferences();
-	layoutScaling();
-	drawPianoKeys();
-	blankVisualisations();
-	blankKeyLabel();
-	// now proceed
+	if(chkOctaves != prefs.getOctaves() || chkOffset != prefs.getOctaveOffset()){
+		layoutScaling();
+		drawPianoKeys();
+	}
+	// visuals
 	say("Decoding audio... ");
-	ui->progressBar->setValue(PROGRESS_DECODE);
+	//blankVisualisations();
+	//blankKeyLabel();
+	ui->progressBar->setValue(PROGRESS_START);
 	ui->progressBar->setVisible(true);
 	ui->chromaColourCombo->setDisabled(true);
 	ui->runButton->setDisabled(true);
-	// Begin asynchronous process
-	QFuture<void> future = QtConcurrent::run(this,&DetailWindow::decode);
-	decodeWatcher.setFuture(future);
+	// and proceed
+	modelThread = new KeyFinderWorkerThread(filePath,prefs);
+	connect(modelThread,SIGNAL(failed(QString)),this,SLOT(criticalError(QString)));
+	connect(modelThread,SIGNAL(decoded()),this,SLOT(decoded()));
+	connect(modelThread,SIGNAL(madeMono()),this,SLOT(madeMono()));
+	connect(modelThread,SIGNAL(downsampled()),this,SLOT(downsampled()));
+	connect(modelThread,SIGNAL(producedFullChromagram(Chromagram)),this,SLOT(receiveFullChromagram(Chromagram)));
+	connect(modelThread,SIGNAL(producedOneOctaveChromagram(Chromagram)),this,SLOT(receiveOneOctaveChromagram(Chromagram)));
+	connect(modelThread,SIGNAL(producedHarmonicChangeSignal(std::vector<double>)),this,SLOT(receiveHarmonicChangeSignal(std::vector<double>)));
+	connect(modelThread,SIGNAL(producedKeyEstimates(std::vector<int>)),this,SLOT(receiveKeyEstimates(std::vector<int>)));
+	connect(modelThread,SIGNAL(producedGlobalKeyEstimate(int)),this,SLOT(receiveGlobalKeyEstimate(int)));
+	modelThread->start();
 }
 
-void DetailWindow::cleanUpAfterRun(){
-	ui->progressBar->setValue(PROGRESS_DONE);
-	ui->progressBar->setVisible(false);
-	ui->chromaColourCombo->setDisabled(false);
-	ui->runButton->setDisabled(false);
-	allowDrops = true;
-}
-
-void DetailWindow::decode(){
-	AudioFileDecoder* dec = AudioFileDecoder::getDecoder(filePath);
-	try{
-		ab = dec->decodeFile((char*)filePath.c_str());
-		delete dec;
-	}catch(Exception){
-		delete ab;
-		ab = NULL;
-		delete dec;
-	}
+void DetailWindow::criticalError(const QString& s){
+	say(s);
+	cleanUpAfterRun();
 }
 
 void DetailWindow::decoded(){
-	if(ab==NULL){
-		say("Decode failed. Try another file.");
-		cleanUpAfterRun();
-		return;
-	}
-	say("Decoded, making mono...");
-	ui->progressBar->setValue(PROGRESS_MONO);
-	QFuture<void> future = QtConcurrent::run(this,&DetailWindow::makeMono);
-	monoWatcher.setFuture(future);
-}
-
-void DetailWindow::makeMono(){
-	Monaural* mono = new Monaural();
-	ab = mono->makeMono(ab);
-	delete mono;
+	say("Decoded...");
+	ui->progressBar->setValue(PROGRESS_DECODED);
 }
 
 void DetailWindow::madeMono(){
-	if(prefs.getDFactor() < 2){
-		say("Made mono. Running spectrum analysis...");
-		ui->progressBar->setValue(PROGRESS_SPECTRUMANALYSIS);
-		QFuture<void> future = QtConcurrent::run(this,&DetailWindow::spectrumAnalysis);
-		saWatcher.setFuture(future);
-	}else{
-		say("Made mono. Downsampling... ");
-		ui->progressBar->setValue(PROGRESS_DOWNSAMPLE);
-		QFuture<void> future = QtConcurrent::run(this,&DetailWindow::downSample);
-		dsWatcher.setFuture(future);
-	}
+	say("Made mono...");
+	ui->progressBar->setValue(PROGRESS_MADEMONO);
 }
 
-void DetailWindow::downSample(){
-	Downsampler* ds = Downsampler::getDownsampler(prefs.getDFactor(),ab->getFrameRate(),prefs.getLastFreq());
-	try{
-		ab = ds->downsample(ab,prefs.getDFactor());
-		delete ds;
-	}catch(Exception){
-		delete ab;
-		ab = NULL;
-		delete ds;
-	}
+void DetailWindow::downsampled(){
+	say("Downsampled...");
+	ui->progressBar->setValue(PROGRESS_DOWNSAMPLED);
 }
 
-void DetailWindow::downSampled(){
-	if(ab==NULL){
-		say("Downsample failed. Try again.");
-		cleanUpAfterRun();
-		return;
-	}
-	say("Downsampled. Running spectrum analysis...");
-	ui->progressBar->setValue(PROGRESS_SPECTRUMANALYSIS);
-	QFuture<void> future = QtConcurrent::run(this,&DetailWindow::spectrumAnalysis);
-	saWatcher.setFuture(future);
-}
-
-void DetailWindow::spectrumAnalysis(){
-	sa = SpectrumAnalyserFactory::getInstance()->getSpectrumAnalyser(ab->getFrameRate(),prefs);
-	ch = sa->chromagram(ab);
-	ch->decomposeToTwelveBpo(prefs);
-}
-
-void DetailWindow::spectrumAnalysisComplete(){
-	// paint full chromagram
-	chromagramImage = imageFromChromagram(ch);
+void DetailWindow::receiveFullChromagram(const Chromagram& ch){
+	chromagramImage = imageFromChromagram(&ch);
 	ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
-	ui->chromagramLabel->setMinimumHeight(ch->getBins()+2);
-	ui->chromagramLabel->setMinimumWidth(ch->getHops()+2);
-	say("Running harmonic analyses...");
-	ui->progressBar->setValue(PROGRESS_HARMONICANALYSIS);
-	QFuture<void> future = QtConcurrent::run(this,&DetailWindow::harmonicAnalysis);
-	haWatcher.setFuture(future);
+	ui->chromagramLabel->setMinimumHeight(ch.getBins()+2);
+	ui->chromagramLabel->setMinimumWidth(ch.getHops()+2);
 }
 
-void DetailWindow::harmonicAnalysis(){
-	ch->decomposeToOneOctave(prefs);
-	Hcdf* hcdf = Hcdf::getHcdf(prefs);
-	rateOfChange = hcdf->hcdf(ch,prefs);
-	std::vector<int> changes = hcdf->peaks(rateOfChange,prefs);
-	changes.push_back(ch->getHops()); // add sentinel
-	KeyClassifier hc(prefs);
-	keys = std::vector<int>(0);
-	for(int i=0; i<(signed)changes.size()-1; i++){
-		std::vector<double> chroma(12);
-		for(int j=changes[i]; j<changes[i+1]; j++)
-			for(int k=0; k<ch->getBins(); k++)
-				chroma[k] += ch->getMagnitude(j,k);
-		int key = hc.classify(chroma);
-		for(int j=changes[i]; j<changes[i+1]; j++)
-			keys.push_back(key);
-	}
-	keys.push_back(keys[keys.size()-1]); // put last key on again to match length of track
-}
-
-void DetailWindow::haFinished(){
-	// paint single octave chromagram
-	miniChromagramImage = imageFromChromagram(ch);
+void DetailWindow::receiveOneOctaveChromagram(const Chromagram& ch){
+	miniChromagramImage = imageFromChromagram(&ch);
 	ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
-	// paint rate of change
+	say("Spectrum analysis done...");
+	ui->progressBar->setValue(PROGRESS_DONESPECTRUMANALYSIS);
+}
+
+void DetailWindow::receiveHarmonicChangeSignal(const std::vector<double>& rateOfChange){
 	int rateOfChangePrecision = 100;
 	harmonicChangeImage = QImage(rateOfChange.size()*chromaScaleH,rateOfChangePrecision,QImage::Format_Indexed8);
 	vis->setImageColours(harmonicChangeImage,ui->chromaColourCombo->currentIndex());
-	// set pixels
 	for(int h=0; h<(signed)rateOfChange.size(); h++){
 		int value = rateOfChange[h] * rateOfChangePrecision;
 		for(int y=0; y<rateOfChangePrecision; y++)
 			for(int x=0; x<chromaScaleH; x++)
 				harmonicChangeImage.setPixel(h*chromaScaleH+x, y, (rateOfChangePrecision - y > value ? 0 : 50));
 	}
-	// show
 	ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
-	// Key labels
+}
+
+void DetailWindow::receiveKeyEstimates(const std::vector<int>& keys){
 	deleteKeyLabels();
 	int lastChange = 0;
 	for(int h=1; h<(signed)keys.size(); h++){ // don't test the first hop
@@ -246,21 +172,28 @@ void DetailWindow::haFinished(){
 			lastChange = h;
 		}
 	}
-	// text
-	Metadata* md = Metadata::getMetadata((char*)filePath.c_str());
-	QString shortName;
-	shortName = QString::fromUtf8(md->getTitle().c_str());
+}
+
+void DetailWindow::receiveGlobalKeyEstimate(int key){
+	Metadata* md = Metadata::getMetadata((char*)filePath.toAscii().data());
+	QString shortName = QString::fromUtf8(md->getTitle().c_str());
 	if(shortName == ""){
-		shortName = QString::fromUtf8(filePath.substr(filePath.rfind("/")+1).c_str());
+		shortName = filePath.right(filePath.length() - filePath.lastIndexOf("/") - 1);
 	}
 	this->setWindowTitle("KeyFinder - Detailed Analysis - " + shortName);
-	say(shortName + " - analysis complete.");
-	delete ch;
-	ch = NULL;
+	say(shortName + " : key estimate " + vis->keyNames[key]);
 	cleanUpAfterRun();
 }
 
-QImage DetailWindow::imageFromChromagram(Chromagram* ch){
+void DetailWindow::cleanUpAfterRun(){
+	ui->progressBar->setValue(PROGRESS_DONE);
+	ui->progressBar->setVisible(false);
+	ui->chromaColourCombo->setDisabled(false);
+	ui->runButton->setDisabled(false);
+	allowDrops = true;
+}
+
+QImage DetailWindow::imageFromChromagram(const Chromagram* ch){
 	// 64 colours (plus black at index 0)
 	// don't draw individual pixels; draw blocks of chromaScaleV*chromaScaleH. Sharpens image.
 	QImage img = QImage(ch->getHops()*chromaScaleH,ch->getBins()*chromaScaleV,QImage::Format_Indexed8);
@@ -291,28 +224,8 @@ void DetailWindow::say(const QString& s){
 	ui->statusLabel->setText(s);
 }
 
-DetailWindow::~DetailWindow(){
-	decodeWatcher.cancel();
-	decodeWatcher.waitForFinished();
-	monoWatcher.cancel();
-	monoWatcher.waitForFinished();
-	dsWatcher.cancel();
-	dsWatcher.waitForFinished();
-	saWatcher.cancel();
-	saWatcher.waitForFinished();
-	haWatcher.cancel();
-	haWatcher.waitForFinished();
-	delete ui;
-}
-
 void DetailWindow::on_runButton_clicked(){
 	if(filePath != "") processCurrentFile();
-}
-
-void DetailWindow::analyse(std::string path){
-	// public slot to be called from batch window
-	filePath = path;
-	processCurrentFile();
 }
 
 void DetailWindow::on_chromaColourCombo_currentIndexChanged(int index){
@@ -330,8 +243,8 @@ void DetailWindow::layoutScaling(){
 	ui->gridLayout_Visualisation->setRowStretch(ROW_BIGCHROMA,prefs.getOctaves()*2);
 	ui->gridLayout_Visualisation->setRowStretch(ROW_MINICHROMA,2);
 	ui->gridLayout_Visualisation->setRowStretch(ROW_RATEOFCHANGE,1);
-	chromaScaleV = 10;
-	chromaScaleH = 10*(prefs.getHopSize()/16384.0)*(prefs.getDFactor()/10.0);
+	chromaScaleV = 5;
+	chromaScaleH = 5*(prefs.getHopSize()/16384.0)*(prefs.getDFactor()/10.0);
 	if(chromaScaleH < 1) chromaScaleH = 1;
 }
 

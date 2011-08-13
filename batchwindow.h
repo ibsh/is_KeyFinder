@@ -24,6 +24,7 @@
 
 #include <QtCore>
 #include <QMainWindow>
+#include <QThread>
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QUrl>
@@ -37,20 +38,9 @@
 #include <vector>
 
 #include "detailwindow.h"
-#include "aboutdialog.h"
-
 #include "preferences.h"
 #include "visuals.h"
-#include "exception.h"
-#include "audiobuffer.h"
-#include "chromagram.h"
-
-#include "decoder.h"
-#include "monaural.h"
-#include "downsampler.h"
-#include "spectrumanalyserfactory.h"
-#include "hcdf.h"
-#include "keyclassifier.h"
+#include "keyfinderworkerthread.h"
 
 #include "metadata.h"
 
@@ -64,29 +54,28 @@ public:
 	explicit BatchWindow(QWidget *parent = 0);
 	~BatchWindow();
 private:
+	// analysis
+	Preferences prefs;
+	KeyFinderWorkerThread* modelThread;
+	//processing files
+	void dragEnterEvent(QDragEnterEvent*);
+	void dropEvent(QDropEvent*);
+	QFutureWatcher<void> fileDropWatcher;
+	QStringList getDirectoryContents(QDir);
+	void filesDropped(QList<QUrl>&);
+	void addNewRow(QString);
+	bool allowDrops;
+	int currentFile;
+	void processCurrentFile();
+	void cleanUpAfterRun();
 	// UI
 	Ui::BatchWindow* ui;
 	Visuals* vis;
 	QByteArray copyArray;
 	QLabel* initialHelp;
-	// analysis
-	Preferences prefs;
-	//processing files
-	void dragEnterEvent(QDragEnterEvent*);
-	void dropEvent(QDropEvent*);
-	int currentFile;
-	bool allowDrops;
-	void processCurrentFile();
-	void cleanUpAfterRun();
-	void analyseFile(int);
-	void markBroken(int);
-	void filesDropped(QList<QUrl>&);
-	void addNewRow(QString);
-	QStringList getDirectoryContents(QDir);
-	QFutureWatcher<void> analysisWatcher;
-	QFutureWatcher<void> fileDropWatcher;
 private slots:
-	void fileFinished();
+	void fileFailed();
+	void fileFinished(int);
 	void fileDropFinished();
 	void on_runBatchButton_clicked();
 	void copySelectedFromTableWidget();
