@@ -42,6 +42,7 @@ private:
 	void goertzelEnabled();
 	void directSkEnabled();
 	void tuningEnabled();
+	void binAdaptiveTuningEnabled();
 	void hcdfEnabled();
 	void customProfileEnabled();
 	QString temporalWindowComboIndex;
@@ -56,6 +57,7 @@ private slots:
 	void on_bps_valueChanged(int arg1);
 	void on_hcdf_currentIndexChanged(int index);
 	void on_toneProfile_currentIndexChanged(int index);
+	void on_tuningMethod_currentIndexChanged(int index);
 private:
 	Ui::PrefsDialog *ui;
 };

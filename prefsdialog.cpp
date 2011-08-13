@@ -26,7 +26,7 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 	ui->setupUi(this);
 	this->setWindowFlags(Qt::WindowTitleHint | Qt::CustomizeWindowHint);
 
-	// initialise Preferences object to ensure QSettings is written
+	// initialise Preferences object to ensure initial QSettings is written
 	Preferences prefsObj;
 
 	// these strings store the chars relating to each index of their dropdowns
@@ -107,6 +107,7 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 	goertzelEnabled();
 	directSkEnabled();
 	tuningEnabled();
+	binAdaptiveTuningEnabled();
 	hcdfEnabled();
 	customProfileEnabled();
 }
@@ -210,6 +211,10 @@ void PrefsDialog::tuningEnabled(){
 	ui->tab2Tuning->setEnabled(ui->bps->value() > 1);
 }
 
+void PrefsDialog::binAdaptiveTuningEnabled(){
+	ui->detunedBandWeight->setEnabled(ui->tuningMethod->currentIndex() == 1);
+}
+
 void PrefsDialog::hcdfEnabled(){
 	bool e = (ui->hcdf->currentIndex() != 0);
 	ui->hcdfGaussianSigma->setEnabled(e);
@@ -256,6 +261,11 @@ void PrefsDialog::on_fftPostProcessor_currentIndexChanged(int index){
 
 void PrefsDialog::on_bps_valueChanged(int arg1){
 	tuningEnabled();
+	binAdaptiveTuningEnabled();
+}
+
+void PrefsDialog::on_tuningMethod_currentIndexChanged(int index){
+	binAdaptiveTuningEnabled();
 }
 
 void PrefsDialog::on_hcdf_currentIndexChanged(int index){

@@ -38,12 +38,14 @@ public:
 	int getBins() const;
 	void decomposeToOneOctave(const Preferences&);
 	void decomposeToTwelveBpo(const Preferences&);
-	void outputBinsByHops() const;
-	void outputHopsByBins() const;
+	void printBinsByHops() const;
+	void printHopsByBins() const;
 private:
 	int hops;
 	int bins;
-	std::vector<float> chroma;
+	std::vector<std::vector<float> > chroma;
+	void tuningHarte(const Preferences&);
+	void tuningBinAdaptive(const Preferences&);
 };
 
 #endif

@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>606</width>
+    <width>613</width>
     <height>383</height>
    </rect>
   </property>
@@ -377,21 +377,16 @@
        <item row="0" column="1">
         <widget class="QComboBox" name="tuningMethod">
          <property name="currentIndex">
-          <number>2</number>
+          <number>0</number>
          </property>
          <item>
           <property name="text">
-           <string>0</string>
+           <string>Harte</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>1</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>2</string>
+           <string>Bin-adaptive</string>
           </property>
          </item>
         </widget>

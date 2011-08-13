@@ -145,7 +145,7 @@ Preferences::Preferences(){
 	if(settings.contains("tuningMethod")){
 		tuningMethod = settings.value("tuningMethod").toInt();
 	}else{
-		int defaultVal = 2;
+		int defaultVal = 0;
 		settings.setValue("tuningMethod",defaultVal);
 		tuningMethod = defaultVal;
 		qDebug("Wrote default tuningMethod (%d)",tuningMethod);
@@ -307,7 +307,7 @@ Preferences& Preferences::operator=(const Preferences& that){
 }
 
 
-bool Preferences::operator ==(const Preferences& that) const{
+bool Preferences::operator==(const Preferences& that) const{
 	// not quite as simple as all elements being equal
 	// in fact, the equality of some elements isn't important
 	if(temporalWindow != that.temporalWindow)
