@@ -32,6 +32,7 @@ const int COL_KEYCODE = 5;
 BatchWindow::BatchWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::BatchWindow){
 	// ASYNC
 	connect(&fileDropWatcher, SIGNAL(finished()), this, SLOT(fileDropFinished()));
+	modelThread = NULL;
 	// SETUP UI
 	ui->setupUi(this);
 	allowDrops = true;
@@ -69,6 +70,12 @@ BatchWindow::BatchWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Batc
 }
 
 BatchWindow::~BatchWindow(){
+	fileDropWatcher.cancel();
+	fileDropWatcher.waitForFinished();
+	if(modelThread!=NULL && modelThread->isRunning()){
+		modelThread->quit();
+		modelThread->wait();
+	}
 	delete ui;
 }
 
@@ -131,6 +138,9 @@ void BatchWindow::addNewRow(QString filePath){
 	ui->tableWidget->insertRow(newRow);
 	ui->tableWidget->setItem(newRow,COL_PATH,new QTableWidgetItem());
 	ui->tableWidget->item(newRow,COL_PATH)->setText(filePath);
+
+
+	// This has begun causing bizarre crashes, apparently failing after exactly 245 iterations (?)
 	Metadata* md = Metadata::getMetadata(filePath.toAscii().data());
 	QString tag = QString::fromUtf8(md->getArtist().c_str());
 	if(tag != ""){
@@ -147,10 +157,13 @@ void BatchWindow::addNewRow(QString filePath){
 		ui->tableWidget->setItem(newRow,COL_TAG_GROUPING,new QTableWidgetItem());
 		ui->tableWidget->item(newRow,COL_TAG_GROUPING)->setText(tag);
 	}
+	delete md;
+
 }
 
 void BatchWindow::fileDropFinished(){
 	allowDrops = true;
+	this->setWindowTitle("KeyFinder - Batch Analysis - " + QString::number(ui->tableWidget->rowCount()) + " files");
 	ui->runBatchButton->setDisabled(false);
 	ui->tableWidget->resizeColumnsToContents();
 	ui->tableWidget->resizeRowsToContents();
@@ -181,14 +194,17 @@ void BatchWindow::processCurrentFile(){
 	}else{
 		ui->progressBar->setValue(currentFile);
 		// now proceed
-		modelThread = new KeyFinderWorkerThread(ui->tableWidget->item(currentFile,COL_PATH)->text(),prefs);
-		connect(modelThread,SIGNAL(failed(QString)),this,SLOT(fileFailed()),Qt::QueuedConnection);
-		connect(modelThread,SIGNAL(producedGlobalKeyEstimate(int)),this,SLOT(fileFinished(int)),Qt::QueuedConnection);
+		modelThread = new KeyFinderWorkerThread(0);
+		modelThread->setParams(ui->tableWidget->item(currentFile,COL_PATH)->text(),prefs);
+		connect(modelThread,SIGNAL(failed(QString)),this,SLOT(fileFailed()));
+		connect(modelThread,SIGNAL(producedGlobalKeyEstimate(int)),this,SLOT(fileFinished(int)));
 		modelThread->start();
 	}
 }
 
 void BatchWindow::cleanUpAfterRun(){
+	delete modelThread;
+	modelThread = NULL;
 	allowDrops = true;
 	ui->progressBar->setValue(0);
 	ui->runBatchButton->setDisabled(false);

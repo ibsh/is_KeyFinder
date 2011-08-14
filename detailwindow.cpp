@@ -36,6 +36,7 @@ const int PROGRESS_DONEHARMONICANALYSIS = 6;
 
 DetailWindow::DetailWindow(QWidget *parent, QString path) : QMainWindow(parent), ui(new Ui::DetailWindow){
 	ui->setupUi(this);
+	modelThread = NULL;
 	allowDrops = true;
 	vis = Visuals::getInstance();
 	ui->progressBar->setMaximum(PROGRESS_DONEHARMONICANALYSIS);
@@ -53,6 +54,10 @@ DetailWindow::DetailWindow(QWidget *parent, QString path) : QMainWindow(parent),
 }
 
 DetailWindow::~DetailWindow(){
+	if(modelThread!=NULL && modelThread->isRunning()){
+		modelThread->quit();
+		modelThread->wait();
+	}
 	delete ui;
 }
 
@@ -75,7 +80,7 @@ void DetailWindow::dropEvent(QDropEvent *e){
 }
 
 void DetailWindow::processCurrentFile(){
-	// get latest preferences and redraw variable UI elements, just in case they've changed since the last run.
+	// get latest preferences and redraw variable UI elements if they've changed since the last run.
 	int chkOctaves = prefs.getOctaves();
 	int chkOffset = prefs.getOctaveOffset();
 	prefs = Preferences();
@@ -92,7 +97,8 @@ void DetailWindow::processCurrentFile(){
 	ui->chromaColourCombo->setDisabled(true);
 	ui->runButton->setDisabled(true);
 	// and proceed
-	modelThread = new KeyFinderWorkerThread(filePath,prefs);
+	modelThread = new KeyFinderWorkerThread(0);
+	modelThread->setParams(filePath,prefs);
 	connect(modelThread,SIGNAL(failed(QString)),this,SLOT(criticalError(QString)));
 	connect(modelThread,SIGNAL(decoded()),this,SLOT(decoded()));
 	connect(modelThread,SIGNAL(madeMono()),this,SLOT(madeMono()));
@@ -177,6 +183,7 @@ void DetailWindow::receiveKeyEstimates(const std::vector<int>& keys){
 void DetailWindow::receiveGlobalKeyEstimate(int key){
 	Metadata* md = Metadata::getMetadata((char*)filePath.toAscii().data());
 	QString shortName = QString::fromUtf8(md->getTitle().c_str());
+	delete md;
 	if(shortName == ""){
 		shortName = filePath.right(filePath.length() - filePath.lastIndexOf("/") - 1);
 	}
@@ -186,6 +193,8 @@ void DetailWindow::receiveGlobalKeyEstimate(int key){
 }
 
 void DetailWindow::cleanUpAfterRun(){
+	delete modelThread;
+	modelThread = NULL;
 	ui->progressBar->setValue(PROGRESS_DONE);
 	ui->progressBar->setVisible(false);
 	ui->chromaColourCombo->setDisabled(false);

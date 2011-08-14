@@ -39,7 +39,6 @@
 class TagLibMetadata : public Metadata{
 public:
 	TagLibMetadata(char*);
-	~TagLibMetadata();
 	virtual std::string getTitle() const;
 	virtual std::string getArtist() const;
 	virtual std::string getGrouping() const;

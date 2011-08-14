@@ -25,9 +25,6 @@ TagLibMetadata::TagLibMetadata(char* fileName){
 	f = TagLib::FileRef(fileName);
 }
 
-TagLibMetadata::~TagLibMetadata(){
-}
-
 std::string TagLibMetadata::getTitle() const{
 	if(f.isNull())
 		return "";

@@ -5,16 +5,25 @@ Q_DECLARE_METATYPE(Chromagram)
 Q_DECLARE_METATYPE(std::vector<double>)
 Q_DECLARE_METATYPE(std::vector<int>)
 
-KeyFinderWorkerThread::KeyFinderWorkerThread(const QString& f, const Preferences& p){
-	prefs = p;
-	filePath = f;
-	// final registration of metatypes; not sure this is the best place for this
+KeyFinderWorkerThread::KeyFinderWorkerThread(QObject *parent) : QThread(parent){
+	// registration of metatypes; not sure this is the best place for this
 	qRegisterMetaType<Chromagram>("Chromagram");
 	qRegisterMetaType<std::vector<double> >("std::vector<double>");
 	qRegisterMetaType<std::vector<int> >("std::vector<int>");
+	haveParams = false;
+}
+
+void KeyFinderWorkerThread::setParams(const QString& f, const Preferences& p){
+	filePath = f;
+	prefs = p;
+	haveParams = true;
 }
 
 void KeyFinderWorkerThread::run(){
+	if(!haveParams){
+		emit failed("No parameters.");
+		return;
+	}
 	// initialise buffer and decode file into it
 	AudioBuffer* ab = NULL;
 	AudioFileDecoder* dec = AudioFileDecoder::getDecoder(filePath.toAscii().data());

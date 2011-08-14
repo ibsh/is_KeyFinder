@@ -1,0 +1,8 @@
+KeyFinder is a tool for estimating the musical key of digital recordings, to
+aid DJs in harmonic mixing. It's intended as Mac software but could probably
+be ported to Windows and Linux without too much trouble.
+
+It was my final project submission during an MSc in Computer Science at
+Birkbeck, University of London. My project report, which documents its
+algorithms in detail, is available along with a binary download at
+www.ibrahimshaath.co.uk/keyfinder

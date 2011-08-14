@@ -21,7 +21,8 @@
 class KeyFinderWorkerThread : public QThread{
 Q_OBJECT
 public:
-	KeyFinderWorkerThread(const QString&, const Preferences&);
+	KeyFinderWorkerThread(QObject *parent);
+	void setParams(const QString&, const Preferences&);
 protected:
 	void run();
 signals:
@@ -37,6 +38,7 @@ signals:
 private:
 	Preferences prefs;
 	QString filePath;
+	bool haveParams;
 };
 
 #endif // KEYFINDERMODEL_H

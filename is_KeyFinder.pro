@@ -120,7 +120,8 @@ HEADERS  += \
     keyfinderworkerthread.h
 
 OTHER_FILES += \
-		is_KeyFinder.pro.user
+		is_KeyFinder.pro.user \
+    README
 
 INCLUDEPATH += /usr/local/include/taglib
 

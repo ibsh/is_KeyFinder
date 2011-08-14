@@ -41,7 +41,6 @@
 #include "preferences.h"
 #include "visuals.h"
 #include "keyfinderworkerthread.h"
-
 #include "metadata.h"
 
 namespace Ui {

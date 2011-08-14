@@ -36,6 +36,7 @@
 #include "preferences.h"
 #include "keyfinderworkerthread.h"
 #include "chromagram.h"
+#include "metadata.h"
 #include "visuals.h"
 
 
