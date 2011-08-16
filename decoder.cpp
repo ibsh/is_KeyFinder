@@ -23,6 +23,6 @@
 
 #include "decoderlibav.h"
 
-AudioFileDecoder* AudioFileDecoder::getDecoder(const std::string& filePath){
+AudioFileDecoder* AudioFileDecoder::getDecoder(const std::string& /*filePath*/){
 	return new LibAvDecoder();
 }

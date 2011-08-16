@@ -24,8 +24,8 @@
 Dependencies:
 	libav (0.7)
 	fftw (3.2.2)
-	libsamplerate (0.1.7) // would be nicer to adapt the filter design code, since it's faster and apparently better.
-	taglib (1.7, with some custom changes)
+	libsamplerate (0.1.7)
+	taglib (1.7)
 
 Configure commands used to build them:
 	FFTW3 ./configure CC="gcc -arch i386 -arch x86_64" CXX="g++ -arch i386 -arch x86_64" CPP="gcc -E" CXXCPP="g++ -E"
@@ -47,7 +47,7 @@ Configure commands used to build them:
 
 void SimpleLoggingHandler(QtMsgType type, const char *msg) {
 	std::ofstream logfile;
-	logfile.open(QDir::homePath().toAscii() + "/KeyFinder.log",std::ios::app);
+	logfile.open(QDir::homePath().toAscii() + "/Library/Logs/KeyFinder.log",std::ios::app);
 	switch (type) {
 	case QtDebugMsg:
 		logfile << QTime::currentTime().toString().toAscii().data() << " Debug: " << msg << "\n";
@@ -78,13 +78,13 @@ int main(int argc, char *argv[]){
 	MainMenuHandler* menuHandler = new MainMenuHandler(0);
 
 	QMenu* menuFile = menuBar->addMenu("File");
-	QAction* actionNew_Detail_Keyfinder = menuFile->addAction("New Detail Window",menuHandler,SLOT(new_Detail_Window()),QKeySequence("Ctrl+N"));
-	QAction* actionNew_Batch_Keyfinder = menuFile->addAction("New Batch Window",menuHandler,SLOT(new_Batch_Window()),QKeySequence("Ctrl+Shift+N"));
+	menuFile->addAction("New Detail Window",menuHandler,SLOT(new_Detail_Window()),QKeySequence("Ctrl+N"));
+	menuFile->addAction("New Batch Window",menuHandler,SLOT(new_Batch_Window()),QKeySequence("Ctrl+Shift+N"));
 	menuFile->addSeparator();
-	QAction* actionClose_Window = menuFile->addAction("Close Window",menuHandler,SLOT(close_Window()),QKeySequence("Ctrl+W"));
+	menuFile->addAction("Close Window",menuHandler,SLOT(close_Window()),QKeySequence("Ctrl+W"));
 	// These actions won't be appended to the File menu, Qt intercepts them and puts them in the Mac-native places
-	QAction* actionAbout = menuFile->addAction("About",menuHandler,SLOT(about()));
-	QAction* actionPreferences = menuFile->addAction("Preferences",menuHandler,SLOT(preferences()));
+	menuFile->addAction("About",menuHandler,SLOT(about()));
+	menuFile->addAction("Preferences",menuHandler,SLOT(preferences()));
 
 	BatchWindow w;
 	w.show();

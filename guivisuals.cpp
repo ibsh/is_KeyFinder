@@ -31,24 +31,24 @@ Visuals* Visuals::getInstance(){
 }
 
 QString Visuals::getKeyName(int n){
-	if(n<0 || n>keyNames.size()){
-		qDebug("Attempt to get name of out-of-bounds key (%d/%d)",n,keyNames.size());
+	if(n<0 || n>(signed)keyNames.size()){
+		qDebug("Attempt to get name of out-of-bounds key (%d/%d)",n,(int)keyNames.size());
 		return "";
 	}
 	return keyNames[n];
 }
 
 QString Visuals::getKeyCode(int n){
-	if(n<0 || n>keyCodes.size()){
-		qDebug("Attempt to get code of out-of-bounds key (%d/%d)",n,keyCodes.size());
+	if(n<0 || n>(signed)keyCodes.size()){
+		qDebug("Attempt to get code of out-of-bounds key (%d/%d)",n,(int)keyCodes.size());
 		return "";
 	}
 	return keyCodes[n];
 }
 
 QColor Visuals::getKeyColour(int n){
-	if(n<0 || n>keyColours.size()){
-		qDebug("Attempt to get colour of out-of-bounds key (%d/%d)",n,keyColours.size());
+	if(n<0 || n>(signed)keyColours.size()){
+		qDebug("Attempt to get colour of out-of-bounds key (%d/%d)",n,(int)keyColours.size());
 		return qRgb(0,0,0);
 	}
 	return keyColours[n];

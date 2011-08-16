@@ -21,12 +21,12 @@
 
 #include "hcdfnone.h"
 
-std::vector<double> NoHcdf::hcdf(Chromagram* ch, const Preferences& prefs){
+std::vector<double> NoHcdf::hcdf(Chromagram* ch, const Preferences& /*prefs*/){
 	std::vector<double> NoChange(ch->getHops());
 	return NoChange;
 }
 
-std::vector<int> NoHcdf::peaks(const std::vector<double>& rateOfChange, const Preferences& prefs){
+std::vector<int> NoHcdf::peaks(const std::vector<double>& /*rateOfChange*/, const Preferences& /*prefs*/){
 	std::vector<int> noChanges(1);
 	return noChanges;
 }

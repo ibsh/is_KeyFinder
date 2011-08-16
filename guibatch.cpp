@@ -202,7 +202,7 @@ void BatchWindow::processCurrentFile(){
 		currentFile++;
 		processCurrentFile();
 	}else{
-		qDebug("Batch processing " + ui->tableWidget->item(currentFile,COL_PATH)->text().toAscii());
+		qDebug("Batch processing %s",ui->tableWidget->item(currentFile,COL_PATH)->text().toAscii().data());
 		ui->progressBar->setValue(currentFile);
 		// now proceed
 		modelThread = new KeyFinderWorkerThread(0);

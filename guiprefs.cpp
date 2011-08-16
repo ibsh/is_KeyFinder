@@ -250,28 +250,28 @@ void PrefsDialog::customProfileEnabled(){
 	ui->min11->setEnabled(e);
 }
 
-void PrefsDialog::on_spectrumAnalyser_currentIndexChanged(int index){
+void PrefsDialog::on_spectrumAnalyser_currentIndexChanged(int /*index*/){
 	fftEnabled();
 	goertzelEnabled();
 }
 
-void PrefsDialog::on_fftPostProcessor_currentIndexChanged(int index){
+void PrefsDialog::on_fftPostProcessor_currentIndexChanged(int /*index*/){
 	directSkEnabled();
 }
 
-void PrefsDialog::on_bps_valueChanged(int arg1){
+void PrefsDialog::on_bps_valueChanged(int /*arg1*/){
 	tuningEnabled();
 	binAdaptiveTuningEnabled();
 }
 
-void PrefsDialog::on_tuningMethod_currentIndexChanged(int index){
+void PrefsDialog::on_tuningMethod_currentIndexChanged(int /*index*/){
 	binAdaptiveTuningEnabled();
 }
 
-void PrefsDialog::on_hcdf_currentIndexChanged(int index){
+void PrefsDialog::on_hcdf_currentIndexChanged(int /*index*/){
 	hcdfEnabled();
 }
 
-void PrefsDialog::on_toneProfile_currentIndexChanged(int index){
+void PrefsDialog::on_toneProfile_currentIndexChanged(int /*index*/){
 	customProfileEnabled();
 }
