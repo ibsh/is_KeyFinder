@@ -42,7 +42,7 @@ public:
 	virtual AudioBuffer* decodeFile(char*) throw (Exception);
 private:
 	int decodePacket(AVCodecContext*, AVPacket*, AudioBuffer*) throw (Exception);
-	static int libAv_mutexManager(void**,enum AVLockOp);
+	static int libAv_mutexManager(void**, enum AVLockOp);
 	static bool concurrencyRegistered;
 };
 

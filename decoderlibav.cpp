@@ -32,6 +32,7 @@ LibAvDecoder::LibAvDecoder(){
 			qCritical("Failed to register LibAV concurrency manager");
 			throw Exception();
 		}
+		concurrencyRegistered = true;
 	}
 }
 

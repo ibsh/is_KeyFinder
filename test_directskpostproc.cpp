@@ -24,8 +24,8 @@
 #include "unittest.h"
 
 #include "decoderlibav.h"
-#include "fftwanalyser.h"
-#include "directskpostproc.h"
+#include "spectrumanalyserfftw.h"
+#include "fftppdirectsk.h"
 #include "chromagram.h"
 
 class DirectSkPostProc_Test : public QObject{

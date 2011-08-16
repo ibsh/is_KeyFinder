@@ -19,28 +19,27 @@
 
 *************************************************************************/
 
-#ifndef FFTWANALYSER_H
-#define FFTWANALYSER_H
+#ifndef MAINMENUHANDLER_H
+#define MAINMENUHANDLER_H
 
-#include "spectrumanalyser.h"
-#include "fftpostprocessor.h"
-#include "constantqpostproc.h"
-#include "directskpostproc.h"
-#include "windowfunctions.h"
-#include <fftw3.h>
+#include <QtGui>
+#include <QObject>
 
-class FftwAnalyser : public SpectrumAnalyser{
+#include "guibatch.h"
+#include "guidetail.h"
+#include "guiabout.h"
+#include "guiprefs.h"
+
+class MainMenuHandler : public QObject{
+Q_OBJECT
 public:
-	FftwAnalyser(int, const Preferences&);
-	~FftwAnalyser();
-	virtual Chromagram* chromagram(AudioBuffer*);
-private:
-	int fftFrameSize;
-	FftPostProcessor* pp;
-	fftw_complex* fftInput;
-	fftw_complex* fftResult;
-	fftw_plan fftPlan;
-	std::vector<float> window;
+	explicit MainMenuHandler(QObject *parent = 0);
+public slots:
+	void about();
+	void preferences();
+	void new_Batch_Window();
+	void new_Detail_Window();
+	void close_Window();
 };
 
-#endif
+#endif // MAINMENUHANDLER_H

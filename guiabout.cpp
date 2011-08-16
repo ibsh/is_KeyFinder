@@ -19,28 +19,14 @@
 
 *************************************************************************/
 
-#ifndef CONSTANTQPOSTPROC_H
-#define CONSTANTQPOSTPROC_H
+#include "guiabout.h"
+#include "ui_aboutdialog.h"
 
-#include "fftpostprocessor.h"
-#include "preferences.h"
-#include "windowfunctions.h"
-#include <iostream>
-#include <iomanip>
-#include <stdlib.h>
-#include <fftw3.h>
-#include <vector>
-#include <complex>
+AboutDialog::AboutDialog(QWidget *parent): QDialog(parent),ui(new Ui::AboutDialog){
+	ui->setupUi(this);
+	this->setWindowFlags(Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::CustomizeWindowHint);
+}
 
-class ConstantQPostProc : public FftPostProcessor{
-public:
-	ConstantQPostProc(int, const Preferences&);
-	virtual std::vector<float> chromaVector(fftw_complex*)const;
-	virtual void printKernel()const;
-private:
-	std::vector<std::vector<std::complex<float> > > sparseKernel;
-	std::vector<int> binOffsets;
-	float pi;
-};
-
-#endif
+AboutDialog::~AboutDialog(){
+	delete ui;
+}

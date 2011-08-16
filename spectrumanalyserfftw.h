@@ -19,28 +19,28 @@
 
 *************************************************************************/
 
-#ifndef DIRECTSKPOSTPROC_H
-#define DIRECTSKPOSTPROC_H
+#ifndef FFTWANALYSER_H
+#define FFTWANALYSER_H
 
-#include "fftpostprocessor.h"
-#include "preferences.h"
+#include "spectrumanalyser.h"
+#include "fftpp.h"
+#include "fftppconstantq.h"
+#include "fftppdirectsk.h"
 #include "windowfunctions.h"
-#include <math.h>
-#include <iomanip>
-#include <stdlib.h>
-#include <vector>
+#include <fftw3.h>
 
-
-class DirectSkPostProc : public FftPostProcessor{
+class FftwAnalyser : public SpectrumAnalyser{
 public:
-	DirectSkPostProc(int, const Preferences&);
-	virtual std::vector<float> chromaVector(fftw_complex*)const;
-	virtual void printKernel()const;
+	FftwAnalyser(int, const Preferences&);
+	~FftwAnalyser();
+	virtual Chromagram* chromagram(AudioBuffer*);
 private:
-	std::vector<std::vector<float> > mySpecKernel; // ragged 2D array; narrow for bass, wide for treble.
-	std::vector<int> binOffsets; // which fft bin to multiply by first coefficient.
-	float kernelWindow(float,float)const;
-	float pi;
+	int fftFrameSize;
+	FftPostProcessor* pp;
+	fftw_complex* fftInput;
+	fftw_complex* fftResult;
+	fftw_plan fftPlan;
+	std::vector<float> window;
 };
 
 #endif

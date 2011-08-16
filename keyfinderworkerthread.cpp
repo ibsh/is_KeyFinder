@@ -114,7 +114,7 @@ void KeyFinderWorkerThread::run(){
 	emit producedKeyEstimates(keys);
 
 	// get global key
-	int mostCommonKey = -1;
+	int mostCommonKey = 24;
 	float mostCommonKeyWeight = 0.0;
 	for(int i=0; i<(signed)keyWeights.size(); i++){
 		if(keyWeights[i] > mostCommonKeyWeight){

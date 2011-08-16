@@ -19,7 +19,7 @@
 
 *************************************************************************/
 
-#include "visuals.h"
+#include "guivisuals.h"
 
 Visuals* Visuals::inst = NULL;
 
@@ -28,6 +28,30 @@ Visuals* Visuals::getInstance(){
 		inst = new Visuals();
 	}
 	return inst;
+}
+
+QString Visuals::getKeyName(int n){
+	if(n<0 || n>keyNames.size()){
+		qDebug("Attempt to get name of out-of-bounds key (%d/%d)",n,keyNames.size());
+		return "";
+	}
+	return keyNames[n];
+}
+
+QString Visuals::getKeyCode(int n){
+	if(n<0 || n>keyCodes.size()){
+		qDebug("Attempt to get code of out-of-bounds key (%d/%d)",n,keyCodes.size());
+		return "";
+	}
+	return keyCodes[n];
+}
+
+QColor Visuals::getKeyColour(int n){
+	if(n<0 || n>keyColours.size()){
+		qDebug("Attempt to get colour of out-of-bounds key (%d/%d)",n,keyColours.size());
+		return qRgb(0,0,0);
+	}
+	return keyColours[n];
 }
 
 Visuals::Visuals(){
@@ -44,7 +68,7 @@ Visuals::Visuals(){
 	keyNames.push_back("Gb");		keyNames.push_back("Gbm");
 	keyNames.push_back("G");		keyNames.push_back("Gm");
 	keyNames.push_back("Ab");		keyNames.push_back("Abm");
-	keyNames.push_back(" "); // silence
+	keyNames.push_back(""); // silence
 	// key codes from Camelot
 	keyCodes.push_back("11B");	keyCodes.push_back("8A");
 	keyCodes.push_back("6B");		keyCodes.push_back("3A");
@@ -58,7 +82,7 @@ Visuals::Visuals(){
 	keyCodes.push_back("2B");		keyCodes.push_back("11A");
 	keyCodes.push_back("9B");		keyCodes.push_back("6A");
 	keyCodes.push_back("4B");		keyCodes.push_back("1A");
-	keyCodes.push_back(" "); // silence
+	keyCodes.push_back("..."); // silence
 	// key colours for display
 	keyColours.push_back(qRgb(223,255,127));	keyColours.push_back(qRgb(191,223,127));
 	keyColours.push_back(qRgb(255,127,255));	keyColours.push_back(qRgb(223,127,223));
@@ -277,7 +301,7 @@ void Visuals::setImageColours(QImage& image, int which) const{
 		image.setColor(62,qRgb(132,0,0));
 		image.setColor(63,qRgb(128,0,0));
 		image.setColor(64,qRgb(125,0,0));
-	}else if(which==3){
+	}else{
 		// Hack colour scheme
 		image.setColor(0,qRgb(0,0,0));
 		image.setColor(1,qRgb(0,4,0));

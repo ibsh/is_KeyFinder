@@ -19,8 +19,8 @@
 
 *************************************************************************/
 
-#ifndef BATCHWINDOW_H
-#define BATCHWINDOW_H
+#ifndef DETAILWINDOW_H
+#define DETAILWINDOW_H
 
 #include <QtCore>
 #include <QMainWindow>
@@ -28,58 +28,68 @@
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QUrl>
-#include <QFuture>
-#include <QFutureWatcher>
-#include <QClipboard>
-#include <QMessageBox>
 #include <QLabel>
 
 #include <string>
 #include <vector>
 
-#include "detailwindow.h"
 #include "preferences.h"
-#include "visuals.h"
 #include "keyfinderworkerthread.h"
-#include "metadata.h"
+#include "chromagram.h"
+#include "metadatataglib.h"
+#include "guivisuals.h"
+
 
 namespace Ui {
-	class BatchWindow;
+	class DetailWindow;
 }
 
-class BatchWindow : public QMainWindow{
+class DetailWindow : public QMainWindow{
 	Q_OBJECT
 public:
-	explicit BatchWindow(QWidget *parent = 0);
-	~BatchWindow();
+	explicit DetailWindow(QWidget *parent = 0, QString path = "");
+	~DetailWindow();
 private:
-	// analysis
 	Preferences prefs;
+	QString filePath;
 	KeyFinderWorkerThread* modelThread;
-	//processing files
+	bool allowDrops;
 	void dragEnterEvent(QDragEnterEvent*);
 	void dropEvent(QDropEvent*);
-	QFutureWatcher<void> fileDropWatcher;
-	QStringList getDirectoryContents(QDir);
-	void filesDropped(QList<QUrl>&);
-	void addNewRow(QString);
-	bool allowDrops;
-	int currentFile;
 	void processCurrentFile();
 	void cleanUpAfterRun();
 	// UI
-	Ui::BatchWindow* ui;
+	Ui::DetailWindow* ui;
 	Visuals* vis;
-	QByteArray copyArray;
-	QLabel* initialHelp;
+	std::vector<QLabel*> keyLabels;
+	QImage chromagramImage;
+	QImage miniChromagramImage;
+	QImage harmonicChangeImage;
+	QImage colourScaleImage;
+	int chromaScaleV;
+	int chromaScaleH;
+	QImage imageFromChromagram(const Chromagram*);
 private slots:
-	void fileFailed();
-	void fileFinished(int);
-	void fileDropFinished();
-	void on_runBatchButton_clicked();
-	void copySelectedFromTableWidget();
-	void writeDetectedToGrouping();
-	void runDetailedAnalysis();
+	// interaction with model thread
+	void criticalError(const QString&);
+	void decoded();
+	void madeMono();
+	void downsampled();
+	void receiveFullChromagram(const Chromagram&);
+	void receiveOneOctaveChromagram(const Chromagram&);
+	void receiveHarmonicChangeSignal(const std::vector<double>&);
+	void receiveKeyEstimates(const std::vector<int>&);
+	void receiveGlobalKeyEstimate(int);
+	// UI
+	void say(const QString&);
+	void on_chromaColourCombo_currentIndexChanged(int index);
+	void on_runButton_clicked();
+	void layoutScaling();
+	void blankVisualisations();
+	void deleteKeyLabels();
+	void blankKeyLabel();
+	void drawPianoKeys();
+	void drawColourScale();
 };
 
 #endif

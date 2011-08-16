@@ -19,10 +19,30 @@
 
 *************************************************************************/
 
-#include "fftpostprocessor.h"
+#ifndef VISUALS_H
+#define VISUALS_H
 
-FftPostProcessor::FftPostProcessor(int f, const Preferences& prefs){
-	frameRate = f;
-	bins = prefs.getOctaves() * prefs.getBpo();
-	fftFrameSize = prefs.getFftFrameSize();
-}
+#include <QString>
+#include <QImage>
+#include <QColor>
+
+#include <vector>
+
+// Singleton. Holds the string names of the keys, and the colours associated with various things
+
+class Visuals{
+public:
+	static Visuals* getInstance();
+	void setImageColours(QImage&, int) const;
+	QString getKeyName(int);
+	QString getKeyCode(int);
+	QColor getKeyColour(int);
+private:
+	Visuals();
+	static Visuals* inst;
+	std::vector<QString> keyNames;
+	std::vector<QString> keyCodes;
+	std::vector<QColor> keyColours;
+};
+
+#endif // VISUALS_H

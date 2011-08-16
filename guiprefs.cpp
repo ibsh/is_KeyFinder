@@ -19,7 +19,7 @@
 
 *************************************************************************/
 
-#include "prefsdialog.h"
+#include "guiprefs.h"
 #include "ui_prefsdialog.h"
 
 PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialog){

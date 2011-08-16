@@ -19,7 +19,7 @@
 
 *************************************************************************/
 
-#include "constantqpostproc.h"
+#include "fftppconstantq.h"
 
 ConstantQPostProc::ConstantQPostProc(int frameRate, const Preferences& prefs) : FftPostProcessor(frameRate, prefs) {
 	pi = (4 * atan(1.0));

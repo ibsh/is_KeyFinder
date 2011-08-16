@@ -19,7 +19,7 @@
 
 *************************************************************************/
 
-#include "detailwindow.h"
+#include "guidetail.h"
 #include "ui_detailwindow.h"
 
 const int ROW_BIGCHROMA = 0;
@@ -163,10 +163,10 @@ void DetailWindow::receiveKeyEstimates(const std::vector<int>& keys){
 	int lastChange = 0;
 	for(int h=1; h<(signed)keys.size(); h++){ // don't test the first hop
 		if(h==(signed)keys.size()-1 || (keys[h] != keys[h-1])){ // at the end, and at changes
-			QLabel* newLabel = new QLabel(vis->keyNames[keys[h-1]]);
+			QLabel* newLabel = new QLabel(vis->getKeyName(keys[h-1]));
 			newLabel->setAlignment(Qt::AlignCenter);
 			QPalette pal = newLabel->palette();
-			pal.setColor(backgroundRole(),vis->keyColours[keys[h-1]]);
+			pal.setColor(backgroundRole(),vis->getKeyColour(keys[h-1]));
 			newLabel->setPalette(pal);
 			newLabel->setFrameStyle(1);
 			newLabel->setAutoFillBackground(true);
@@ -181,14 +181,13 @@ void DetailWindow::receiveKeyEstimates(const std::vector<int>& keys){
 }
 
 void DetailWindow::receiveGlobalKeyEstimate(int key){
-	Metadata* md = Metadata::getMetadata((char*)filePath.toAscii().data());
-	QString shortName = QString::fromUtf8(md->getTitle().c_str());
-	delete md;
+	TagLibMetadata md(filePath);
+	QString shortName = md.getTitle();
 	if(shortName == ""){
 		shortName = filePath.right(filePath.length() - filePath.lastIndexOf("/") - 1);
 	}
 	this->setWindowTitle("KeyFinder - Detailed Analysis - " + shortName);
-	say(shortName + " : key estimate " + vis->keyNames[key]);
+	say("Key estimate: " + vis->getKeyName(key));
 	cleanUpAfterRun();
 }
 

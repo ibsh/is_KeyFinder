@@ -41,20 +41,20 @@ CONFIG(debug, debug|release){
 	QT += gui
 	TARGET = KeyFinder
 	HEADERS += \
-		detailwindow.h \
-		batchwindow.h \
-		aboutdialog.h \
-		visuals.h \
-		prefsdialog.h \
-		mainmenuhandler.h
+		guiabout.h \
+		guibatch.h \
+		guidetail.h \
+		guimenuhandler.h \
+		guiprefs.h \
+		guiguivisuals.h
 	SOURCES += \
 		main.cpp \
-		detailwindow.cpp \
-		batchwindow.cpp \
-		aboutdialog.cpp \
-		visuals.cpp \
-		prefsdialog.cpp \
-		mainmenuhandler.cpp
+		guiabout.cpp \
+		guibatch.cpp \
+		guidetail.cpp \
+		guimenuhandler.cpp \
+		guiprefs.cpp \
+		guivisuals.cpp
 	FORMS += \
 		detailwindow.ui \
 		batchwindow.ui \
@@ -64,15 +64,10 @@ CONFIG(debug, debug|release){
 
 SOURCES += \
     decoderlibav.cpp \
-    constantqpostproc.cpp \
     chromagram.cpp \
     audiobuffer.cpp \
-    goertzelanalyser.cpp \
-    fftwanalyser.cpp \
-    fftpostprocessor.cpp \
     downsamplerlibsrc.cpp \
     downsamplerib.cpp \
-    directskpostproc.cpp \
     windowfunctions.cpp \
     toneprofiles.cpp \
     spectrumanalyser.cpp \
@@ -83,26 +78,25 @@ SOURCES += \
     downsampler.cpp \
     keyclassifier.cpp \
     metadatataglib.cpp \
-    metadata.cpp \
 		hcdf.cpp \
     hcdfharte.cpp \
     hcdfcosine.cpp \
 		hcdfnone.cpp \
-    keyfinderworkerthread.cpp
+    keyfinderworkerthread.cpp \
+    fftpp.cpp \
+    fftppconstantq.cpp \
+    fftppdirectsk.cpp \
+    spectrumanalyserfftw.cpp \
+		spectrumanalysergoertzel.cpp
 
 HEADERS  += \
     decoderlibav.h \
     decoder.h \
-    constantqpostproc.h \
     chromagram.h \
     audiobuffer.h \
-    goertzelanalyser.h \
-    fftwanalyser.h \
-    fftpostprocessor.h \
     downsamplerlibsrc.h \
     downsamplerib.h \
     downsampler.h \
-    directskpostproc.h \
     windowfunctions.h \
     toneprofiles.h \
     spectrumanalyser.h \
@@ -112,12 +106,16 @@ HEADERS  += \
     exception.h \
     hcdf.h \
     keyclassifier.h \
-    metadata.h \
 		metadatataglib.h \
     hcdfharte.h \
     hcdfcosine.h \
 		hcdfnone.h \
-    keyfinderworkerthread.h
+    keyfinderworkerthread.h \
+    fftppdirectsk.h \
+    fftppconstantq.h \
+    spectrumanalyserfftw.h \
+    spectrumanalysergoertzel.h \
+		fftpp.h
 
 OTHER_FILES += \
 		is_KeyFinder.pro.user \
@@ -125,7 +123,7 @@ OTHER_FILES += \
 
 INCLUDEPATH += /usr/local/include/taglib
 
-LIBS += -lfftw3 -lsndfile -lavcodec -lavformat -lsamplerate -ltag -lavutil
+LIBS += -lfftw3 -lavcodec -lavformat -lsamplerate -ltag -lavutil
 
 ICON = is_KeyFinder.icns
 

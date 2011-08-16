@@ -39,9 +39,31 @@ Configure commands used to build them:
 #include <QtGui/QApplication>
 #include <QMenuBar>
 #include <QKeySequence>
-#include "detailwindow.h"
-#include "batchwindow.h"
-#include "mainmenuhandler.h"
+#include "guidetail.h"
+#include "guibatch.h"
+#include "guimenuhandler.h"
+
+#include <fstream>
+
+void SimpleLoggingHandler(QtMsgType type, const char *msg) {
+	std::ofstream logfile;
+	logfile.open(QDir::homePath().toAscii() + "/KeyFinder.log",std::ios::app);
+	switch (type) {
+	case QtDebugMsg:
+		logfile << QTime::currentTime().toString().toAscii().data() << " Debug: " << msg << "\n";
+		break;
+	case QtCriticalMsg:
+		logfile << QTime::currentTime().toString().toAscii().data() << " Critical: " << msg << "\n";
+		break;
+	case QtWarningMsg:
+		logfile << QTime::currentTime().toString().toAscii().data() << " Warning: " << msg << "\n";
+		break;
+	case QtFatalMsg:
+		logfile << QTime::currentTime().toString().toAscii().data() <<  " Fatal: " << msg << "\n";
+		abort();
+	}
+	logfile.close();
+}
 
 int main(int argc, char *argv[]){
 	QCoreApplication::setOrganizationName("Ibrahim Sha'ath");
@@ -49,6 +71,8 @@ int main(int argc, char *argv[]){
 	QCoreApplication::setApplicationName("KeyFinder");
 
 	QApplication a(argc, argv);
+
+	qInstallMsgHandler(SimpleLoggingHandler);
 
 	QMenuBar* menuBar = new QMenuBar(0);
 	MainMenuHandler* menuHandler = new MainMenuHandler(0);

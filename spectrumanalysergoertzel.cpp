@@ -19,7 +19,7 @@
 
 *************************************************************************/
 
-#include "goertzelanalyser.h"
+#include "spectrumanalysergoertzel.h"
 
 GoertzelAnalyser::GoertzelAnalyser(int f, const Preferences& prefs): SpectrumAnalyser(f,prefs) {
 	goertzels = std::vector<Goertzel*>(bins);

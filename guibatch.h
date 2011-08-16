@@ -19,8 +19,8 @@
 
 *************************************************************************/
 
-#ifndef DETAILWINDOW_H
-#define DETAILWINDOW_H
+#ifndef BATCHWINDOW_H
+#define BATCHWINDOW_H
 
 #include <QtCore>
 #include <QMainWindow>
@@ -28,68 +28,58 @@
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QUrl>
+#include <QFuture>
+#include <QFutureWatcher>
+#include <QClipboard>
+#include <QMessageBox>
 #include <QLabel>
 
 #include <string>
 #include <vector>
 
+#include "guidetail.h"
 #include "preferences.h"
+#include "guivisuals.h"
 #include "keyfinderworkerthread.h"
-#include "chromagram.h"
-#include "metadata.h"
-#include "visuals.h"
-
+#include "metadatataglib.h"
 
 namespace Ui {
-	class DetailWindow;
+	class BatchWindow;
 }
 
-class DetailWindow : public QMainWindow{
+class BatchWindow : public QMainWindow{
 	Q_OBJECT
 public:
-	explicit DetailWindow(QWidget *parent = 0, QString path = "");
-	~DetailWindow();
+	explicit BatchWindow(QWidget *parent = 0);
+	~BatchWindow();
 private:
+	// analysis
 	Preferences prefs;
-	QString filePath;
 	KeyFinderWorkerThread* modelThread;
+	// batch processing
 	bool allowDrops;
 	void dragEnterEvent(QDragEnterEvent*);
 	void dropEvent(QDropEvent*);
+	QFutureWatcher<void> fileDropWatcher;
+	void filesDropped(QList<QUrl>&);
+	QStringList getDirectoryContents(QDir);
+	void addNewRow(QString);
+	void getMetadata();
+	int currentFile;
 	void processCurrentFile();
 	void cleanUpAfterRun();
 	// UI
-	Ui::DetailWindow* ui;
+	Ui::BatchWindow* ui;
 	Visuals* vis;
-	std::vector<QLabel*> keyLabels;
-	QImage chromagramImage;
-	QImage miniChromagramImage;
-	QImage harmonicChangeImage;
-	QImage colourScaleImage;
-	int chromaScaleV;
-	int chromaScaleH;
-	QImage imageFromChromagram(const Chromagram*);
+	QLabel* initialHelpLabel;
 private slots:
-	// interaction with model thread
-	void criticalError(const QString&);
-	void decoded();
-	void madeMono();
-	void downsampled();
-	void receiveFullChromagram(const Chromagram&);
-	void receiveOneOctaveChromagram(const Chromagram&);
-	void receiveHarmonicChangeSignal(const std::vector<double>&);
-	void receiveKeyEstimates(const std::vector<int>&);
-	void receiveGlobalKeyEstimate(int);
-	// UI
-	void say(const QString&);
-	void on_chromaColourCombo_currentIndexChanged(int index);
-	void on_runButton_clicked();
-	void layoutScaling();
-	void blankVisualisations();
-	void deleteKeyLabels();
-	void blankKeyLabel();
-	void drawPianoKeys();
-	void drawColourScale();
+	void fileFailed();
+	void fileFinished(int);
+	void fileDropFinished();
+	void on_runBatchButton_clicked();
+	void copySelectedFromTableWidget();
+	void writeDetectedToGrouping();
+	void runDetailedAnalysis();
 };
 
 #endif

@@ -19,30 +19,28 @@
 
 *************************************************************************/
 
-#include "mainmenuhandler.h"
+#ifndef DIRECTSKPOSTPROC_H
+#define DIRECTSKPOSTPROC_H
 
-MainMenuHandler::MainMenuHandler(QObject *parent) : QObject(parent){}
+#include "fftpp.h"
+#include "preferences.h"
+#include "windowfunctions.h"
+#include <math.h>
+#include <iomanip>
+#include <stdlib.h>
+#include <vector>
 
-void MainMenuHandler::about(){
-	AboutDialog* about = new AboutDialog(0);
-	about->show();
-}
 
-void MainMenuHandler::preferences(){
-	PrefsDialog* prefs = new PrefsDialog(0);
-	prefs->show();
-}
+class DirectSkPostProc : public FftPostProcessor{
+public:
+	DirectSkPostProc(int, const Preferences&);
+	virtual std::vector<float> chromaVector(fftw_complex*)const;
+	virtual void printKernel()const;
+private:
+	std::vector<std::vector<float> > mySpecKernel; // ragged 2D array; narrow for bass, wide for treble.
+	std::vector<int> binOffsets; // which fft bin to multiply by first coefficient.
+	float kernelWindow(float,float)const;
+	float pi;
+};
 
-void MainMenuHandler::new_Batch_Window(){
-	BatchWindow* newWin = new BatchWindow(0);
-	newWin->show();
-}
-
-void MainMenuHandler::new_Detail_Window(){
-	DetailWindow* newWin = new DetailWindow(0);
-	newWin->show();
-}
-
-void MainMenuHandler::close_Window(){
-	QApplication::activeWindow()->close();
-}
+#endif

@@ -19,19 +19,30 @@
 
 *************************************************************************/
 
-#ifndef METADATA_H
-#define METADATA_H
+#include "guimenuhandler.h"
 
-#include <iostream>
-#include <string>
+MainMenuHandler::MainMenuHandler(QObject *parent) : QObject(parent){}
 
-class Metadata{
-public:
-	static Metadata* getMetadata(char*);
-	virtual std::string getTitle() const = 0;
-	virtual std::string getArtist() const = 0;
-	virtual std::string getGrouping() const = 0;
-	virtual void setGrouping(char*) = 0;
-};
+void MainMenuHandler::about(){
+	AboutDialog* about = new AboutDialog(0);
+	about->show();
+}
 
-#endif // METADATA_H
+void MainMenuHandler::preferences(){
+	PrefsDialog* prefs = new PrefsDialog(0);
+	prefs->show();
+}
+
+void MainMenuHandler::new_Batch_Window(){
+	BatchWindow* newWin = new BatchWindow(0);
+	newWin->show();
+}
+
+void MainMenuHandler::new_Detail_Window(){
+	DetailWindow* newWin = new DetailWindow(0);
+	newWin->show();
+}
+
+void MainMenuHandler::close_Window(){
+	QApplication::activeWindow()->close();
+}

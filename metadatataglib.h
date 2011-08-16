@@ -22,29 +22,46 @@
 #ifndef METADATATAGLIB_H
 #define METADATATAGLIB_H
 
-#include "metadata.h"
+#include <QString>
+#include <QDebug>
+
 #include <tag.h>
 #include <taglib.h>
 #include <fileref.h>
-#include <apetag.h>
-#include <asftag.h>
-#include <id3v2tag.h>
-#include <id3v2frame.h>
-#include <id3v2header.h>
-#include <mpegfile.h>
-#include <mp4file.h>
-#include <flacfile.h>
 #include <tfile.h>
+#include <id3v1tag.h>
+#include <id3v2tag.h>
+#include <textidentificationframe.h>
+#include <asftag.h>
+#include <apetag.h>
+#include <mp4tag.h>
+#include <apefile.h>
+#include <asffile.h>
+#include <flacfile.h>
+#include <mp4file.h>
+#include <mpcfile.h>
+#include <mpegfile.h>
+#include <oggfile.h>
+#include <oggflacfile.h>
+#include <speexfile.h>
+#include <vorbisfile.h>
+#include <rifffile.h>
+#include <aifffile.h>
+#include <wavfile.h>
+#include <trueaudiofile.h>
+#include <wavpackfile.h>
 
-class TagLibMetadata : public Metadata{
+class TagLibMetadata{
 public:
-	TagLibMetadata(char*);
-	virtual std::string getTitle() const;
-	virtual std::string getArtist() const;
-	virtual std::string getGrouping() const;
-	virtual void setGrouping(char*);
+	TagLibMetadata(const QString&);
+	~TagLibMetadata();
+	QString getTitle() const;
+	QString getArtist() const;
+	QString getGrouping() const;
+	void setGrouping(const QString&);
 private:
-	TagLib::FileRef f;
+	//TagLib::FileRef f;
+	TagLib::File* f;
 };
 
 #endif // METADATATAGLIB_H

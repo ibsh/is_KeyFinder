@@ -21,34 +21,273 @@
 
 #include "metadatataglib.h"
 
-TagLibMetadata::TagLibMetadata(char* fileName){
-	f = TagLib::FileRef(fileName);
+/*
+	Note that a lot remains untested here. For example, I didn't have any ASF or
+	APE files to hand while writing it, and I wouldn't be surprised if there are
+	many edge cases, though they should at least fail gracefully.
+*/
+
+TagLibMetadata::TagLibMetadata(const QString& filePath){
+
+	QString fileExt = filePath.right(filePath.length() - filePath.lastIndexOf(".") - 1).toLower();
+	char* filePathCh = filePath.toAscii().data();
+
+	if(fileExt == "mp3"){
+		f = new TagLib::MPEG::File(filePathCh);
+		return;
+	}
+
+	#ifdef TAGLIB_WITH_MP4
+		if(fileExt == "m4a" || fileExt == "m4b" || fileExt == "m4p" || fileExt == "mp4" || fileExt == "3g2"){
+			f = new TagLib::MP4::File(filePathCh);
+			return;
+		}
+	#endif
+
+	#ifdef TAGLIB_WITH_ASF
+		if(fileExt == "wma" || fileExt == "asf"){
+			f = new TagLib::ASF::File(filePathCh);
+			return;
+		}
+	#endif
+
+	if(fileExt == "aif" || fileExt == "aiff"){
+		f = new TagLib::RIFF::AIFF::File(filePathCh);
+		return;
+	}
+
+	if(fileExt == "wav"){
+		f = new TagLib::RIFF::WAV::File(filePathCh);
+		return;
+	}
+
+	if(fileExt == "ogg"){
+		f = new TagLib::Ogg::Vorbis::File(filePathCh);
+		return;
+	}
+
+	if(fileExt == "oga"){
+		f = new TagLib::Ogg::FLAC::File(filePathCh);
+		if (f->isValid()){
+			return;
+		}
+		delete f;
+		f = new TagLib::Ogg::Vorbis::File(filePathCh);
+		return;
+	}
+
+	if(fileExt == "flac"){
+		f = new TagLib::FLAC::File(filePathCh);
+		return;
+	}
+
+	if(fileExt == "ape"){
+		f = new TagLib::APE::File(filePathCh);
+		return;
+	}
+
+	if(fileExt == "mpc"){
+		f = new TagLib::MPC::File(filePathCh);
+		return;
+	}
+
+	if(fileExt == "wv"){
+		f = new TagLib::WavPack::File(filePathCh);
+		return;
+	}
+
+	if(fileExt == "spx"){
+		f = new TagLib::Ogg::Speex::File(filePathCh);
+		return;
+	}
+
+	if(fileExt == "tta"){
+		f = new TagLib::TrueAudio::File(filePathCh);
+		return;
+	}
+
+	f = NULL;
+	qDebug("TagLib returned NULL File for %s",filePathCh);
+	return;
+
 }
 
-std::string TagLibMetadata::getTitle() const{
-	if(f.isNull())
+TagLibMetadata::~TagLibMetadata(){
+	if(f != NULL)
+		delete f;
+}
+
+QString TagLibMetadata::getTitle() const{
+	if(f == NULL || !f->isValid())
 		return "";
-	TagLib::String out = f.tag()->title();
-	return (std::string)out.toCString();
+	TagLib::String out = f->tag()->title();
+	return QString::fromUtf8(out.toCString());
 }
 
-std::string TagLibMetadata::getArtist() const{
-	if(f.isNull())
+QString TagLibMetadata::getArtist() const{
+	if(f == NULL || !f->isValid())
 		return "";
-	TagLib::String out = f.tag()->artist();
-	return (std::string)out.toCString();
+	TagLib::String out = f->tag()->artist();
+	return QString::fromUtf8(out.toCString());
 }
 
-std::string TagLibMetadata::getGrouping() const{
-	if(f.isNull())
+QString TagLibMetadata::getGrouping() const{
+
+	if(f == NULL || !f->isValid())
 		return "";
-	TagLib::String out = f.tag()->grouping();
-	return (std::string)out.toCString();
+
+	TagLib::MPEG::File* fileTestMpeg = dynamic_cast<TagLib::MPEG::File*>(f);
+	if(fileTestMpeg != NULL){
+		TagLib::ID3v2::Tag* tagTestId3v2 = fileTestMpeg->ID3v2Tag();
+		if(tagTestId3v2 != NULL){
+			TagLib::ID3v2::FrameList l = tagTestId3v2->frameListMap()["TIT1"];
+			if(!l.isEmpty()){
+				TagLib::String out = l.front()->toString();
+				return QString::fromUtf8((out.toCString()));
+			}
+			return "";
+		}
+		TagLib::ID3v1::Tag* tagTestId3v1 = fileTestMpeg->ID3v1Tag();
+		if(tagTestId3v1 != NULL){
+			qDebug("ID3v1 does not support the Grouping tag (%s)",f->name());
+			return "N/A";
+		}
+	}
+
+	TagLib::RIFF::AIFF::File* fileTestAiff = dynamic_cast<TagLib::RIFF::AIFF::File*>(f);
+	if(fileTestAiff != NULL){
+		TagLib::ID3v2::Tag* tagTestId3v2 = fileTestAiff->tag();
+		if(tagTestId3v2 != NULL){
+			TagLib::ID3v2::FrameList l = tagTestId3v2->frameListMap()["TIT1"];
+			if(!l.isEmpty()){
+				TagLib::String out = l.front()->toString();
+				return QString::fromUtf8((out.toCString()));
+			}
+			return "";
+		}
+	}
+
+	TagLib::RIFF::WAV::File* fileTestWav = dynamic_cast<TagLib::RIFF::WAV::File*>(f);
+	if(fileTestWav != NULL){
+		TagLib::ID3v2::Tag* tagTestId3v2 = fileTestWav->tag();
+		if(tagTestId3v2 != NULL){
+			TagLib::ID3v2::FrameList l = tagTestId3v2->frameListMap()["TIT1"];
+			if(!l.isEmpty()){
+				TagLib::String out = l.front()->toString();
+				return QString::fromUtf8((out.toCString()));
+			}
+			return "";
+		}
+	}
+
+	TagLib::MP4::Tag* tagTestMp4 = dynamic_cast<TagLib::MP4::Tag*>(f->tag());
+	if(tagTestMp4 != NULL){
+		TagLib::MP4::Item m = tagTestMp4->itemListMap()["\251grp"];
+		if(m.isValid()){
+			TagLib::String out = m.toStringList().front();
+			return QString::fromUtf8((out.toCString()));
+		}
+		return "";
+	}
+
+	TagLib::ASF::Tag* tagTestAsf = dynamic_cast<TagLib::ASF::Tag*>(f->tag());
+	if(tagTestAsf != NULL){
+		TagLib::ASF::AttributeList l = tagTestAsf->attributeListMap()["WM/ContentGroupDescription"];
+		if(!l.isEmpty()){
+			TagLib::String out = l.front().toString();
+			return QString::fromUtf8((out.toCString()));
+		}
+		return "";
+	}
+
+	TagLib::APE::Tag* tagTestApe = dynamic_cast<TagLib::APE::Tag*>(f->tag());
+	if(tagTestApe != NULL){
+		TagLib::APE::Item m = tagTestApe->itemListMap()["Grouping"];
+		if(!m.isEmpty()){
+			TagLib::String out = m.toStringList().front();
+			return QString::fromUtf8((out.toCString()));
+		}
+		return "";
+	}
+
+	qDebug("Tag read failed all tests on %s",f->name());
+	return "N/A";
 }
 
-void TagLibMetadata::setGrouping(char* c){
-	// Beware; setGrouping is not usually a member of the TagLib API;
-	// it only exists in my custom version of the v1.7 source.
-	f.tag()->setGrouping(c);
-	f.save();
+void TagLibMetadata::setGrouping(const QString& grp){
+
+	if(f == NULL || !f->isValid()){
+		qDebug("Cannot set grouping tag on invalid file object");
+	}
+
+	TagLib::MPEG::File* fileTestMpeg = dynamic_cast<TagLib::MPEG::File*>(f);
+	if(fileTestMpeg != NULL){
+		TagLib::ID3v2::Tag* tagTestId3v2 = fileTestMpeg->ID3v2Tag();
+		if(tagTestId3v2 != NULL){
+			TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TIT1");
+			frm->setText(TagLib::String(grp.toAscii().data()));
+			tagTestId3v2->removeFrames("TIT1");
+			tagTestId3v2->addFrame(frm);
+			f->save();
+			return;
+		}else{
+			TagLib::ID3v1::Tag* tagTestId3v1 = fileTestMpeg->ID3v1Tag();
+			if(tagTestId3v1 != NULL){
+				qDebug("ID3v1 does not support the Grouping tag (%s)",f->name());
+				return;
+			}
+		}
+	}
+
+	TagLib::RIFF::AIFF::File* fileTestAiff = dynamic_cast<TagLib::RIFF::AIFF::File*>(f);
+	if(fileTestAiff != NULL){
+		TagLib::ID3v2::Tag* tagTestId3v2 = fileTestAiff->tag();
+		if(tagTestId3v2 != NULL){
+			TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TIT1");
+			frm->setText(TagLib::String(grp.toAscii().data()));
+			tagTestId3v2->removeFrames("TIT1");
+			tagTestId3v2->addFrame(frm);
+			f->save();
+			return;
+		}
+	}
+
+	TagLib::RIFF::WAV::File* fileTestWav = dynamic_cast<TagLib::RIFF::WAV::File*>(f);
+	if(fileTestWav != NULL){
+		TagLib::ID3v2::Tag* tagTestId3v2 = fileTestWav->tag();
+		if(tagTestId3v2 != NULL){
+			TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TIT1");
+			frm->setText(TagLib::String(grp.toAscii().data()));
+			tagTestId3v2->removeFrames("TIT1");
+			tagTestId3v2->addFrame(frm);
+			f->save();
+			return;
+		}
+	}
+
+	TagLib::MP4::Tag* tagTestMp4 = dynamic_cast<TagLib::MP4::Tag*>(f->tag());
+	if(tagTestMp4 != NULL){
+		TagLib::StringList sl(TagLib::String(grp.toAscii().data()));
+		tagTestMp4->itemListMap()["\251grp"] = sl;
+		tagTestMp4->save();
+		f->save();
+		return;
+	}
+
+	TagLib::ASF::Tag* tagTestAsf = dynamic_cast<TagLib::ASF::Tag*>(f->tag());
+	if(tagTestAsf != NULL){
+		tagTestAsf->setAttribute("WM/ContentGroupDescription",TagLib::String(grp.toAscii().data()));
+		f->save();
+		return;
+	}
+
+	TagLib::APE::Tag* tagTestApe = dynamic_cast<TagLib::APE::Tag*>(f->tag());
+	if(tagTestApe != NULL){
+		tagTestApe->addValue("GROUPING",TagLib::String(grp.toAscii().data()));
+		f->save();
+		return;
+	}
+
+	qDebug("Tag write failed all tests on %s",f->name());
+	return;
 }

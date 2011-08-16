@@ -19,7 +19,7 @@
 
 *************************************************************************/
 
-#include "batchwindow.h"
+#include "guibatch.h"
 #include "ui_batchwindow.h"
 
 const int COL_PATH = 0;
@@ -38,22 +38,22 @@ BatchWindow::BatchWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Batc
 	allowDrops = true;
 	vis = Visuals::getInstance();
 	// HELP LABEL
-	initialHelp = new QLabel("Drag audio files here", ui->tableWidget);
+	initialHelpLabel = new QLabel("Drag audio files here", ui->tableWidget);
 	QFont font;
 	font.setPointSize(20);
 	font.setBold(true);
-	QPalette palette = initialHelp->palette();
-	palette.setColor(initialHelp->foregroundRole(), Qt::gray);
-	initialHelp->setPalette(palette);
-	initialHelp->setFont(font);
-	// see if you can lose these magic numbers
-	initialHelp->setGeometry(
-			(676 - initialHelp->sizeHint().width()) / 2,
-			(312 - initialHelp->sizeHint().height()) / 2,
-			initialHelp->sizeHint().width(),
-			initialHelp->sizeHint().height()
+	QPalette palette = initialHelpLabel->palette();
+	palette.setColor(initialHelpLabel->foregroundRole(), Qt::gray);
+	initialHelpLabel->setPalette(palette);
+	initialHelpLabel->setFont(font);
+	// can't seem to derive these magic numbers from any useful size hints
+	initialHelpLabel->setGeometry(
+			(676 - initialHelpLabel->sizeHint().width()) / 2,
+			(312 - initialHelpLabel->sizeHint().height()) / 2,
+			initialHelpLabel->sizeHint().width(),
+			initialHelpLabel->sizeHint().height()
 	);
-	initialHelp->show();
+	initialHelpLabel->show();
 	// SETUP TABLE WIDGET CONTEXT MENU
 	QAction* copyAction = new QAction(tr("Copy"),this);
 	copyAction->setShortcut(QKeySequence::Copy);
@@ -89,6 +89,7 @@ void BatchWindow::dragEnterEvent(QDragEnterEvent *e){
 void BatchWindow::dropEvent(QDropEvent *e){
 	allowDrops = false;
 	ui->runBatchButton->setDisabled(true);
+	ui->statusLabel->setText("Loading files...");
 	QFuture<void> future = QtConcurrent::run(this,&BatchWindow::filesDropped,e->mimeData()->urls());
 	fileDropWatcher.setFuture(future);
 }
@@ -127,43 +128,51 @@ void BatchWindow::filesDropped(QList<QUrl>& urls){
 		if(isNew)
 			addNewRow(filePath);
 	}
+	this->setWindowTitle("KeyFinder - Batch Analysis - " + QString::number(ui->tableWidget->rowCount()) + " files");
+	getMetadata();
 }
 
 void BatchWindow::addNewRow(QString filePath){
-	if(initialHelp != NULL){
-		delete initialHelp;
-		initialHelp = NULL;
+	if(initialHelpLabel != NULL){
+		delete initialHelpLabel;
+		initialHelpLabel = NULL;
 	}
 	int newRow = ui->tableWidget->rowCount();
 	ui->tableWidget->insertRow(newRow);
 	ui->tableWidget->setItem(newRow,COL_PATH,new QTableWidgetItem());
 	ui->tableWidget->item(newRow,COL_PATH)->setText(filePath);
+}
 
-
-	// This has begun causing bizarre crashes, apparently failing after exactly 245 iterations (?)
-	Metadata* md = Metadata::getMetadata(filePath.toAscii().data());
-	QString tag = QString::fromUtf8(md->getArtist().c_str());
-	if(tag != ""){
-		ui->tableWidget->setItem(newRow,COL_TAG_ARTIST,new QTableWidgetItem());
-		ui->tableWidget->item(newRow,COL_TAG_ARTIST)->setText(tag);
+void BatchWindow::getMetadata(){
+	ui->progressBar->setMaximum(ui->tableWidget->rowCount());
+	ui->statusLabel->setText("Reading tags...");
+	for(int i=0; i<(signed)ui->tableWidget->rowCount(); i++){
+		ui->progressBar->setValue(i);
+		if(ui->tableWidget->item(i,COL_TAG_ARTIST) != NULL)
+			continue;
+		TagLibMetadata* md = new TagLibMetadata(ui->tableWidget->item(i,COL_PATH)->text());
+		QString tag = md->getArtist();
+		// create an item for artist whether tagging worked or not
+		ui->tableWidget->setItem(i,COL_TAG_ARTIST,new QTableWidgetItem());
+		ui->tableWidget->item(i,COL_TAG_ARTIST)->setText(tag);
+		tag = md->getTitle();
+		if(tag != ""){
+			ui->tableWidget->setItem(i,COL_TAG_TITLE,new QTableWidgetItem());
+			ui->tableWidget->item(i,COL_TAG_TITLE)->setText(tag);
+		}
+		tag = md->getGrouping();
+		if(tag != ""){
+			ui->tableWidget->setItem(i,COL_TAG_GROUPING,new QTableWidgetItem());
+			ui->tableWidget->item(i,COL_TAG_GROUPING)->setText(tag);
+		}
+		delete md;
 	}
-	tag = QString::fromUtf8(md->getTitle().c_str());
-	if(tag != ""){
-		ui->tableWidget->setItem(newRow,COL_TAG_TITLE,new QTableWidgetItem());
-		ui->tableWidget->item(newRow,COL_TAG_TITLE)->setText(tag);
-	}
-	tag = QString::fromUtf8(md->getGrouping().c_str());
-	if(tag != ""){
-		ui->tableWidget->setItem(newRow,COL_TAG_GROUPING,new QTableWidgetItem());
-		ui->tableWidget->item(newRow,COL_TAG_GROUPING)->setText(tag);
-	}
-	delete md;
-
+	ui->progressBar->setValue(0);
+	ui->statusLabel->setText("Ready");
 }
 
 void BatchWindow::fileDropFinished(){
 	allowDrops = true;
-	this->setWindowTitle("KeyFinder - Batch Analysis - " + QString::number(ui->tableWidget->rowCount()) + " files");
 	ui->runBatchButton->setDisabled(false);
 	ui->tableWidget->resizeColumnsToContents();
 	ui->tableWidget->resizeRowsToContents();
@@ -177,6 +186,7 @@ void BatchWindow::on_runBatchButton_clicked(){
 	ui->runBatchButton->setDisabled(true);
 	ui->tableWidget->setContextMenuPolicy(Qt::NoContextMenu); // so that no tags can be written while busy
 	allowDrops = false;
+	ui->statusLabel->setText("Analysing...");
 	ui->progressBar->setMaximum(ui->tableWidget->rowCount());
 	currentFile = 0;
 	processCurrentFile();
@@ -192,6 +202,7 @@ void BatchWindow::processCurrentFile(){
 		currentFile++;
 		processCurrentFile();
 	}else{
+		qDebug("Batch processing " + ui->tableWidget->item(currentFile,COL_PATH)->text().toAscii());
 		ui->progressBar->setValue(currentFile);
 		// now proceed
 		modelThread = new KeyFinderWorkerThread(0);
@@ -207,6 +218,7 @@ void BatchWindow::cleanUpAfterRun(){
 	modelThread = NULL;
 	allowDrops = true;
 	ui->progressBar->setValue(0);
+	ui->statusLabel->setText("Ready");
 	ui->runBatchButton->setDisabled(false);
 	ui->tableWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
 	ui->tableWidget->resizeColumnsToContents();
@@ -214,9 +226,9 @@ void BatchWindow::cleanUpAfterRun(){
 
 void BatchWindow::fileFinished(int key){
 	ui->tableWidget->setItem(currentFile,COL_KEY,new QTableWidgetItem());
-	ui->tableWidget->item(currentFile,COL_KEY)->setText(vis->keyNames[key]);
+	ui->tableWidget->item(currentFile,COL_KEY)->setText(vis->getKeyName(key));
 	ui->tableWidget->setItem(currentFile,COL_KEYCODE,new QTableWidgetItem());
-	ui->tableWidget->item(currentFile,COL_KEYCODE)->setText(vis->keyCodes[key]);
+	ui->tableWidget->item(currentFile,COL_KEYCODE)->setText(vis->getKeyCode(key));
 	currentFile++;
 	processCurrentFile();
 }
@@ -231,7 +243,7 @@ void BatchWindow::fileFailed(){
 }
 
 void BatchWindow::copySelectedFromTableWidget(){
-	copyArray.clear();
+	QByteArray copyArray;
 	int firstRow = INT_MAX;
 	int lastRow = 0;
 	int firstCol = INT_MAX;
@@ -253,32 +265,34 @@ void BatchWindow::copySelectedFromTableWidget(){
 		}
 		copyArray.append("\r\n");
 	}
-	QMimeData* mimeData = new QMimeData();
-	mimeData->setData("text/plain",copyArray);
-	QApplication::clipboard()->setMimeData(mimeData);
+	QMimeData mimeData;
+	mimeData.setData("text/plain",copyArray);
+	QApplication::clipboard()->setMimeData(&mimeData);
 }
 
 void BatchWindow::writeDetectedToGrouping(){
-	int firstRow = INT_MAX;
-	int lastRow = 0;
-	foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()){
-		int chkRow = selectedIndex.row();
-		if(chkRow < firstRow) firstRow = chkRow;
-		if(chkRow > lastRow) lastRow = chkRow;
-	}
-	for(int r = firstRow; r <= lastRow; r++){
-		QTableWidgetItem* item = ui->tableWidget->item(r,COL_KEY); // only write if there's a detected key
-		if(item != NULL && item->text() != "Failed"){
-			Metadata* md = Metadata::getMetadata(ui->tableWidget->item(r,COL_PATH)->text().toAscii().data());
-			md->setGrouping((ui->tableWidget->item(r,COL_KEYCODE)->text() + " " + ui->tableWidget->item(r,COL_KEY)->text()).toAscii().data());
+	if(allowDrops){ // not an ideal check semantically, but it stops the user Cmd+T-ing during a batch run.
+		int firstRow = INT_MAX;
+		int lastRow = 0;
+		foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()){
+			int chkRow = selectedIndex.row();
+			if(chkRow < firstRow) firstRow = chkRow;
+			if(chkRow > lastRow) lastRow = chkRow;
 		}
+		for(int r = firstRow; r <= lastRow; r++){
+			QTableWidgetItem* item = ui->tableWidget->item(r,COL_KEY); // only write if there's a detected key
+			if(item != NULL && item->text() != "Failed"){
+				TagLibMetadata md(ui->tableWidget->item(r,COL_PATH)->text().toAscii().data());
+				md.setGrouping((ui->tableWidget->item(r,COL_KEYCODE)->text() + " " + ui->tableWidget->item(r,COL_KEY)->text()).toAscii().data());
+			}
+		}
+		QMessageBox msg;
+		QString msgText = "Tags written to ";
+		msgText += QString("%1").arg(lastRow-firstRow+1);
+		msgText += " files";
+		msg.setText(msgText);
+		msg.exec();
 	}
-	QMessageBox msg;
-	QString msgText = "Tags written to ";
-	msgText += QString("%1").arg(lastRow-firstRow+1);
-	msgText += " files";
-	msg.setText(msgText);
-	msg.exec();
 }
 
 void BatchWindow::runDetailedAnalysis(){

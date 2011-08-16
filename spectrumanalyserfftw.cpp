@@ -19,7 +19,7 @@
 
 *************************************************************************/
 
-#include "fftwanalyser.h"
+#include "spectrumanalyserfftw.h"
 
 FftwAnalyser::FftwAnalyser(int f, const Preferences& prefs): SpectrumAnalyser(f, prefs) {
 	pp = NULL;
