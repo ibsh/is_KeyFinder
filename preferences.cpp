@@ -195,6 +195,14 @@ Preferences::Preferences(){
 		hcdfPeakPickingNeighbours = defaultVal;
 		qDebug("Wrote default hcdfPeakPickingNeighbours (%d)",hcdfPeakPickingNeighbours);
 	}
+	if(settings.contains("hcdfArbitrarySegments")){
+		hcdfArbitrarySegments = settings.value("hcdfArbitrarySegments").toInt();
+	}else{
+		int defaultVal = 3;
+		settings.setValue("hcdfArbitrarySegments",defaultVal);
+		hcdfArbitrarySegments = defaultVal;
+		qDebug("Wrote default hcdfArbitrarySegments (%d)",hcdfArbitrarySegments);
+	}
 	settings.endGroup();
 
 	// ========================= Key classification ==============================
@@ -294,6 +302,7 @@ Preferences& Preferences::operator=(const Preferences& that){
 		dFactor = that.dFactor;
 		toneProfile = that.toneProfile;
 		hcdfPeakPickingNeighbours = that.hcdfPeakPickingNeighbours;
+		hcdfArbitrarySegments = that.hcdfArbitrarySegments;
 		hcdfGaussianSize = that.hcdfGaussianSize;
 		tuningMethod = that.tuningMethod;
 		hcdfGaussianSigma = that.hcdfGaussianSigma;
@@ -307,7 +316,7 @@ Preferences& Preferences::operator=(const Preferences& that){
 }
 
 
-bool Preferences::operator==(const Preferences& that) const{
+bool Preferences::equivalentSpectralAnalysis(const Preferences& that) const{
 	// not quite as simple as all elements being equal
 	// in fact, the equality of some elements isn't important
 	if(temporalWindow != that.temporalWindow)
@@ -374,6 +383,7 @@ int Preferences::getDFactor()const{return dFactor;}
 int Preferences::getToneProfile()const{return toneProfile;}
 int Preferences::getTuningMethod()const{return tuningMethod;}
 int Preferences::getHcdfPeakPickingNeighbours()const{return hcdfPeakPickingNeighbours;}
+int Preferences::getHcdfArbitrarySegments()const{return hcdfArbitrarySegments;}
 int Preferences::getHcdfGaussianSize()const{return hcdfGaussianSize;}
 float Preferences::getHcdfGaussianSigma()const{return hcdfGaussianSigma;}
 float Preferences::getDirectSkStretch()const{return directSkStretch;}

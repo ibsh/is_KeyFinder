@@ -19,20 +19,23 @@
 
 *************************************************************************/
 
-#include "hcdf.h"
-
-#include "hcdfharte.h"
-#include "hcdfcosine.h"
-#include "hcdfnone.h"
 #include "hcdfarbitrary.h"
 
-Hcdf* Hcdf::getHcdf(const Preferences& prefs){
-	if(prefs.getHcdf() == 'c')
-		return new CosineHcdf();
-	else if(prefs.getHcdf() == 'n')
-		return new NoHcdf();
-	else if(prefs.getHcdf() == 'a')
-		return new ArbitraryHcdf();
-	else
-		return new HarteHcdf();
+std::vector<double> ArbitraryHcdf::hcdf(Chromagram* ch, const Preferences& /*prefs*/){
+	std::vector<double> NoChange(ch->getHops());
+	return NoChange;
+}
+
+std::vector<int> ArbitraryHcdf::peaks(const std::vector<double>& rateOfChange, const Preferences& prefs){
+	// Divide by arbitrary number of segments
+	int segments = prefs.getHcdfArbitrarySegments();
+	std::vector<int> changes(1); // start vector with a 0 to enable first classification
+	if((signed)rateOfChange.size() <= segments){
+		return changes;
+	}
+	float interval = rateOfChange.size() / segments;
+	for(int i=1; i<segments; i++){
+		changes.push_back((int)(interval*i+0.5));
+	}
+	return changes;
 }

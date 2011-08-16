@@ -87,7 +87,8 @@ SOURCES += \
     fftppconstantq.cpp \
     fftppdirectsk.cpp \
     spectrumanalyserfftw.cpp \
-		spectrumanalysergoertzel.cpp
+		spectrumanalysergoertzel.cpp \
+    hcdfarbitrary.cpp
 
 HEADERS  += \
     decoderlibav.h \
@@ -115,7 +116,8 @@ HEADERS  += \
     fftppconstantq.h \
     spectrumanalyserfftw.h \
     spectrumanalysergoertzel.h \
-		fftpp.h
+		fftpp.h \
+    hcdfarbitrary.h
 
 OTHER_FILES += \
 		is_KeyFinder.pro.user \

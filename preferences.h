@@ -37,7 +37,7 @@ class Preferences{
 public:
 	Preferences();
 	Preferences& operator=(const Preferences&);
-	bool operator==(const Preferences&) const;
+	bool equivalentSpectralAnalysis(const Preferences&) const;
 	// setters, used in unit tests
 	void setFftPostProcessor(char);
 	void setBandsPerSemitone(int);
@@ -56,6 +56,7 @@ public:
 	int getDFactor() const;
 	int getToneProfile() const;
 	int getHcdfPeakPickingNeighbours() const;
+	int getHcdfArbitrarySegments() const;
 	int getHcdfGaussianSize() const;
 	int getTuningMethod() const;
 	float getHcdfGaussianSigma() const;
@@ -78,6 +79,7 @@ private:
 	int dFactor;
 	int toneProfile;
 	int hcdfPeakPickingNeighbours;
+	int hcdfArbitrarySegments;
 	int hcdfGaussianSize;
 	int tuningMethod;
 	float hcdfGaussianSigma;

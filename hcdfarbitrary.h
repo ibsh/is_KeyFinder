@@ -19,20 +19,15 @@
 
 *************************************************************************/
 
+#ifndef HCDFARBITRARY_H
+#define HCDFARBITRARY_H
+
 #include "hcdf.h"
 
-#include "hcdfharte.h"
-#include "hcdfcosine.h"
-#include "hcdfnone.h"
-#include "hcdfarbitrary.h"
+class ArbitraryHcdf : public Hcdf{
+public:
+	virtual std::vector<double> hcdf(Chromagram*, const Preferences&);
+	virtual std::vector<int> peaks(const std::vector<double>&, const Preferences&);
+};
 
-Hcdf* Hcdf::getHcdf(const Preferences& prefs){
-	if(prefs.getHcdf() == 'c')
-		return new CosineHcdf();
-	else if(prefs.getHcdf() == 'n')
-		return new NoHcdf();
-	else if(prefs.getHcdf() == 'a')
-		return new ArbitraryHcdf();
-	else
-		return new HarteHcdf();
-}
+#endif // HCDFARBITRARY_H

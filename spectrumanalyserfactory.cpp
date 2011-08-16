@@ -64,7 +64,7 @@ SpectrumAnalyserFactory::~SpectrumAnalyserFactory(){
 SpectrumAnalyser* SpectrumAnalyserFactory::getSpectrumAnalyser(int frameRate, const Preferences& prefs){
 	QMutexLocker locker(&mutex); // This function should be accessed by only one thread at a time
 	for(int i=0; i<(signed)analysers.size(); i++){
-		if(analysers[i]->chkFrameRate() == frameRate && analysers[i]->chkPrefs() == prefs)
+		if(analysers[i]->chkFrameRate() == frameRate && prefs.equivalentSpectralAnalysis(analysers[i]->chkPrefs()))
 			return analysers[i]->getSpectrumAnalyser();
 	}
 	// no match found, build a new spectrum analyser

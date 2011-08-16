@@ -33,7 +33,7 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 	temporalWindowComboIndex = "bmn";
 	spectrumAnalyerComboIndex = "fg";
 	fftPostProcessorComboIndex = "ci";
-	hcdfComboIndex = "nhc";
+	hcdfComboIndex = "nhca";
 
 	// set preferences from QSettings
 	QSettings settings;
@@ -69,6 +69,7 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 	ui->hcdfGaussianSize->setValue(settings.value("hcdfGaussianSize").toInt());
 	ui->hcdfGaussianSigma->setValue(settings.value("hcdfGaussianSigma").toFloat());
 	ui->hcdfPeakPickingNeighbours->setValue(settings.value("hcdfPeakPickingNeighbours").toInt());
+	ui->hcdfArbitrarySegments->setValue(settings.value("hcdfArbitrarySegments").toInt());
 	settings.endGroup();
 
 	settings.beginGroup("keyClassification");
@@ -151,6 +152,7 @@ void PrefsDialog::on_savePrefsButton_clicked(){
 	settings.setValue("hcdfGaussianSize",ui->hcdfGaussianSize->value());
 	settings.setValue("hcdfGaussianSigma",ui->hcdfGaussianSigma->value());
 	settings.setValue("hcdfPeakPickingNeighbours",ui->hcdfPeakPickingNeighbours->value());
+	settings.setValue("hcdfArbitrarySegments",ui->hcdfArbitrarySegments->value());
 	settings.endGroup();
 
 	settings.beginGroup("keyClassification");
@@ -216,10 +218,13 @@ void PrefsDialog::binAdaptiveTuningEnabled(){
 }
 
 void PrefsDialog::hcdfEnabled(){
-	bool e = (ui->hcdf->currentIndex() != 0);
+	int chk = ui->hcdf->currentIndex();
+	bool e = (chk != 0 && chk != 3);
 	ui->hcdfGaussianSigma->setEnabled(e);
 	ui->hcdfGaussianSize->setEnabled(e);
 	ui->hcdfPeakPickingNeighbours->setEnabled(e);
+	e = (chk == 3);
+	ui->hcdfArbitrarySegments->setEnabled(e);
 }
 
 void PrefsDialog::customProfileEnabled(){
