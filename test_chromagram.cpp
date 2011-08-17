@@ -33,7 +33,7 @@ public:
 private Q_SLOTS:
 	void testConstructor();
 	void testSetMagnitude();
-	void testDecomposition();
+	void testAdaptiveDecomposition();
 };
 DECLARE_TEST(Chromagram_Test)
 
@@ -54,11 +54,12 @@ void Chromagram_Test::testSetMagnitude(){
 	delete ch;
 }
 
-void Chromagram_Test::testDecomposition(){
+void Chromagram_Test::testAdaptiveDecomposition(){
 	int octaves = 6;
 	int semitones = 12;
 	int bandsPerSemitone = 3;
 	Preferences prefs;
+	prefs.setTuningMethod(1);
 	prefs.setBandsPerSemitone(bandsPerSemitone);
 	float weight = prefs.getDetunedBandWeight();
 	Chromagram* ch = new Chromagram(1,octaves*semitones*bandsPerSemitone);
@@ -79,9 +80,9 @@ void Chromagram_Test::testDecomposition(){
 	ch->decomposeToTwelveBpo(prefs);
 	QVERIFY(ch->getBins() == 72);
 	// adaptive tuning should mean all three set semitones come out the same
-	QVERIFY(ch->getMagnitude(0,0)  == 10 + 2 * 1.0 * weight);
-	QVERIFY(ch->getMagnitude(0,12) == 10 + 2 * 1.0 * weight);
-	QVERIFY(ch->getMagnitude(0,24) == 10 + 2 * 1.0 * weight);
+	QVERIFY(ch->getMagnitude(0,0)  == 10 + 2.0 * weight);
+	QVERIFY(ch->getMagnitude(0,12) == 10 + 2.0 * weight);
+	QVERIFY(ch->getMagnitude(0,24) == 10 + 2.0 * weight);
 	QVERIFY(ch->getMagnitude(0,36) == 0.0);
 	// decompose to one octave
 	ch->decomposeToOneOctave(prefs);

@@ -369,6 +369,11 @@ void Preferences::setDownsampleFactor(int n){
 	dFactor = n;
 }
 
+void Preferences::setTuningMethod(int n){
+	if(n >= 0 && n <= 1)
+		tuningMethod = n;
+}
+
 char Preferences::getSpectrumAnalyser()const{return spectrumAnalyser;}
 char Preferences::getFftPostProcessor()const{return fftPostProcessor;}
 char Preferences::getTemporalWindow()const{return temporalWindow;}

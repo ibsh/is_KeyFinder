@@ -42,6 +42,7 @@ public:
 	void setFftPostProcessor(char);
 	void setBandsPerSemitone(int);
 	void setDownsampleFactor(int);
+	void setTuningMethod(int);
 	// getters
 	char getSpectrumAnalyser() const;
 	char getFftPostProcessor() const;

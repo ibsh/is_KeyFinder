@@ -24,8 +24,8 @@
 #include "unittest.h"
 
 #include "decoderlibav.h"
-#include "fftwanalyser.h"
-#include "constantqpostproc.h"
+#include "spectrumanalyserfftw.h"
+#include "fftppconstantq.h"
 #include "chromagram.h"
 
 class ConstantQPostProc_Test : public QObject{
