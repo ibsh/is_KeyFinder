@@ -353,10 +353,10 @@
           <number>1</number>
          </property>
          <property name="maximum">
-          <number>12</number>
+          <number>100</number>
          </property>
          <property name="value">
-          <number>10</number>
+          <number>60</number>
          </property>
         </widget>
        </item>
@@ -563,7 +563,7 @@
          <item row="0" column="1">
           <widget class="QComboBox" name="toneProfile">
            <property name="currentIndex">
-            <number>2</number>
+            <number>3</number>
            </property>
            <item>
             <property name="text">
@@ -573,6 +573,11 @@
            <item>
             <property name="text">
              <string>Temperley</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Gomez</string>
             </property>
            </item>
            <item>

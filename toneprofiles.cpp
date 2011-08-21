@@ -48,7 +48,25 @@ ToneProfile::ToneProfile(int whichProfile, bool majorScale, const Preferences& p
 			p[8]=3.5; p[9]=2.0;
 			p[10]=1.5; p[11]=4.0;
 		}
-	}else if(whichProfile == 2){ // Sha'ath profiles
+	}else if(whichProfile == 2){ // Gomez profiles
+		if(majorScale){
+			p[0]=0.82; p[1]=0.00;
+			p[2]=0.55; p[3]=0.00;
+			p[4]=0.53;
+			p[5]=0.30; p[6]=0.08;
+			p[7]=1.00; p[8]=0.00;
+			p[9]=0.38; p[10]=0.00;
+			p[11]=0.47;
+		}else{
+			p[0]=0.81; p[1]=0.00;
+			p[2]=0.53;
+			p[3]=0.54; p[4]=0.00;
+			p[5]=0.27; p[6]=0.07;
+			p[7]=1.00;
+			p[8]=0.27; p[9]=0.07;
+			p[10]=0.10; p[11]=0.36;
+		}
+	}else if(whichProfile == 3){ // Sha'ath profiles
 		if(majorScale){
 			p[0]=6.6; p[1]=2.0;
 			p[2]=3.5; p[3]=2.3;
@@ -66,7 +84,7 @@ ToneProfile::ToneProfile(int whichProfile, bool majorScale, const Preferences& p
 			p[8]=4.0; p[9]=2.7;
 			p[10]=4.3; p[11]=3.2;
 		}
-	}else if(whichProfile == 3){ // Custom profiles
+	}else if(whichProfile == 4){ // Custom profiles
 		std::vector<float> ctp = prefs.getCustomToneProfile();
 		if(majorScale){
 			for(int i=0; i<12; i++)

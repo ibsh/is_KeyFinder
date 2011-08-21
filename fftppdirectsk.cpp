@@ -25,13 +25,13 @@ DirectSkPostProc::DirectSkPostProc(int frameRate, const Preferences& prefs) : Ff
 	pi = (4 * atan(1.0));
 	binOffsets = std::vector<int>(bins);
 	mySpecKernel = std::vector<std::vector<float> >(bins,std::vector<float>(0));
-	std::vector<float> sums = std::vector<float>(bins);
 	float myQFactor = prefs.getDirectSkStretch() * (pow(2,(1.0 / prefs.getBpo()))-1);
 	for(int i=0; i<bins; i++){
 		float centreOfWindow = prefs.getBinFreq(i) * fftFrameSize / frameRate;
 		float widthOfWindow = centreOfWindow * myQFactor;
 		float beginningOfWindow = centreOfWindow - (widthOfWindow / 2);
 		float endOfWindow = beginningOfWindow + widthOfWindow;
+		float sumOfCoefficients = 0.0;
 		for(int thisFftBin = 0; thisFftBin < fftFrameSize; thisFftBin++){
 			if((float)thisFftBin < beginningOfWindow)
 				continue; // haven't got to useful fft bins yet
@@ -39,13 +39,13 @@ DirectSkPostProc::DirectSkPostProc(int frameRate, const Preferences& prefs) : Ff
 				break; // finished with useful fft bins
 			if(binOffsets[i] == 0)
 				binOffsets[i] = thisFftBin; // first useful fft bin
-			float coefficient = kernelWindow(((float)thisFftBin)-beginningOfWindow,widthOfWindow);
-			sums[i] += coefficient;
+			float coefficient = kernelWindow(thisFftBin-beginningOfWindow,widthOfWindow);
+			sumOfCoefficients += coefficient;
 			mySpecKernel[i].push_back(coefficient);
 		}
 		// normalisation by sum of coefficients and frequency of bin; models CQT very closely
 		for(int j=0; j<(signed)mySpecKernel[i].size(); j++)
-			mySpecKernel[i][j] = mySpecKernel[i][j] / sums[i] * prefs.getBinFreq(i);
+			mySpecKernel[i][j] = mySpecKernel[i][j] / sumOfCoefficients * prefs.getBinFreq(i);
 	}
 }
 

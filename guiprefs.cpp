@@ -228,7 +228,7 @@ void PrefsDialog::hcdfEnabled(){
 }
 
 void PrefsDialog::customProfileEnabled(){
-	bool e = (ui->toneProfile->currentIndex() == 3);
+	bool e = (ui->toneProfile->currentText() == "Custom");
 	ui->maj0->setEnabled(e);
 	ui->maj1->setEnabled(e);
 	ui->maj2->setEnabled(e);

@@ -28,52 +28,50 @@ CosineHcdf::CosineHcdf(){
 std::vector<double> CosineHcdf::hcdf(Chromagram* ch, const Preferences& prefs){
 	int hops = ch->getHops();
 	int bins = ch->getBins();
-	// gaussian to smooth chromagram row-wise
 	int gaussianSize = prefs.getHcdfGaussianSize();
 	double gaussianSigma = prefs.getHcdfGaussianSigma();
-	std::vector<double> gaussian(gaussianSize);
-	for(int i=0; i<gaussianSize; i++)
-		gaussian[i] = exp(-1 * (pow(i-gaussianSize/2,2) / (2 * gaussianSigma * gaussianSigma)));
-	// convolve
 	int padding = 0; // as opposed to gaussianSize/2
-	std::vector<std::vector<double> > smoothedChroma(hops+padding,std::vector<double>(bins));
-	for(int bin = 0; bin<bins; bin++){
-		for(int hop = padding; hop < hops + padding; hop++){
-			double conv = 0.0;
-			for(int k=0; k<gaussianSize; k++){
-				int frm = hop - (gaussianSize/2) + k;
-				if(frm >= 0 && frm < hops){
-					conv += ch->getMagnitude(hop,bin) * gaussian[k];
-				}
-			}
-			smoothedChroma[hop-padding][bin] = conv;
-		}
-	}
-	hops += padding;
-	std::vector<double> cosine(hops);
+	std::vector<double> cosine(hops+padding);
 	for(int hop=0; hop<hops; hop++){
 		double top = 0.0;
 		double bottom = 0.0;
 		for(int bin=0; bin<bins; bin++){
-			float mag = smoothedChroma[hop][bin];
+			float mag = ch->getMagnitude(hop,bin);
 			top += mag;
 			bottom += pow(mag,2);
 		}
 		double cos;
-		if(bottom > 0) // divzero
-			cos = top / sqrt(bottom) * sqrt(ch->getBins()*sqrt(2));
+		if(bottom > 0.0) // divzero
+			cos = top / sqrt(bottom) * sqrt(bins*sqrt(2));
 		else
-			cos = 0;
+			cos = 0.0;
 		cosine[hop] = cos;
 	}
-	// RATE OF CHANGE OF HCDF SIGNAL; look at all hops except first and last.
+	// gaussian
+	std::vector<double> gaussian(gaussianSize);
+	for(int i=0; i<gaussianSize; i++){
+		gaussian[i] = exp(-1 * (pow(i-gaussianSize/2,2) / (2 * gaussianSigma * gaussianSigma)));
+	}
+	std::vector<double> smoothed(hops);
+	for(int hop=padding; hop<(signed)cosine.size(); hop++){
+		double conv = 0.0;
+		for(int k=0; k<gaussianSize; k++){
+			int frm = hop - (gaussianSize/2) + k;
+			if(frm >= 0 && frm < (signed)cosine.size()){
+				conv += cosine[frm] * gaussian[k];
+			}
+		}
+		smoothed[hop-padding] = conv;
+	}
+	// RATE OF CHANGE OF HCDF SIGNAL; look at all hops except first.
 	std::vector<double> rateOfChange(hops);
 	for(int hop=1; hop<hops; hop++){
-		double change = (cosine[hop] - cosine[hop-1]) / 90.0;
+		double change = (smoothed[hop] - smoothed[hop-1]) / 90.0;
 		change = (change >= 0 ? change : change * -1.0);
+		change = change/0.16; // magic number; for display purposes only
 		rateOfChange[hop] = change;
 	}
-	// fudge first and last
+	// fudge first
 	rateOfChange[0] = rateOfChange[1];
 	return rateOfChange;
 }

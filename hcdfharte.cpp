@@ -94,20 +94,19 @@ std::vector<double> HarteHcdf::hcdf(Chromagram* ch, const Preferences& prefs){
 			smoothed[hop-padding][d] = conv;
 		}
 	}
-	// RATE OF CHANGE OF HCDF SIGNAL; look at all hops except first and last.
+	// RATE OF CHANGE OF HCDF SIGNAL; look at all hops except first.
 	std::vector<double> rateOfChange(hops);
-	for(int hop=1; hop<hops; hop++){ // was hop<hops-1
+	for(int hop=1; hop<hops; hop++){
 		double xi = 0.0;
 		for(int d=0; d<dims; d++){
-			xi += pow((smoothed[hop][d] - smoothed[hop-1][d]),2); // was hop+1 vs hop-1
+			xi += pow((smoothed[hop][d] - smoothed[hop-1][d]),2);
 		}
 		xi = sqrt(xi);
-		xi = ((log10(xi)+2) / 2); // display purposes only
+		xi *= 3.0; // magic number; for display purposes only
 		rateOfChange[hop] = xi;
 	}
-	// fudge first and last
+	// fudge first
 	rateOfChange[0] = rateOfChange[1];
-	//rateOfChange[hops-1] = rateOfChange[hops-2]; // no longer needed after changes above
 	return rateOfChange;
 }
 
