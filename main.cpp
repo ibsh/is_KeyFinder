@@ -30,7 +30,6 @@ Dependencies:
 Configure commands used to build them:
 	FFTW3 ./configure CC="gcc -arch i386 -arch x86_64" CXX="g++ -arch i386 -arch x86_64" CPP="gcc -E" CXXCPP="g++ -E"
 	LIBSAMPLERATE same as fftw
-	LIBAV ./configure --enable-shared --disable-network --disable-protocol=udp --disable-protocol=tcp --disable-protocol=rtp --arch=x86_64
 	LIBAV ./configure --arch=x86_64 --extra-cflags='-arch x86_64' --target-os=darwin --extra-ldflags='-arch x86_64' --enable-cross-compile --disable-ffmpeg --disable-ffplay --disable-ffserver --disable-doc --enable-shared --disable-network --disable-protocol=udp --disable-protocol=tcp --disable-protocol=rtp
 	TAGLIB cmake -DWITH_MP4=ON -DWITH_ASF=ON -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_RELEASE_TYPE=Release .
 

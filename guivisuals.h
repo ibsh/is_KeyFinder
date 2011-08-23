@@ -35,13 +35,11 @@ public:
 	static Visuals* getInstance();
 	void setImageColours(QImage&, int) const;
 	QString getKeyName(int);
-	QString getKeyCode(int);
 	QColor getKeyColour(int);
 private:
 	Visuals();
 	static Visuals* inst;
 	std::vector<QString> keyNames;
-	std::vector<QString> keyCodes;
 	std::vector<QColor> keyColours;
 };
 

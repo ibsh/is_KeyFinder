@@ -49,6 +49,7 @@ private:
 	QString spectrumAnalyerComboIndex;
 	QString fftPostProcessorComboIndex;
 	QString hcdfComboIndex;
+	QString similarityMeasureComboIndex;
 private slots:
 	void on_savePrefsButton_clicked();
 	void on_cancelButton_clicked();

@@ -38,14 +38,6 @@ QString Visuals::getKeyName(int n){
 	return keyNames[n];
 }
 
-QString Visuals::getKeyCode(int n){
-	if(n<0 || n>(signed)keyCodes.size()){
-		qDebug("Attempt to get code of out-of-bounds key (%d/%d)",n,(int)keyCodes.size());
-		return "";
-	}
-	return keyCodes[n];
-}
-
 QColor Visuals::getKeyColour(int n){
 	if(n<0 || n>(signed)keyColours.size()){
 		qDebug("Attempt to get colour of out-of-bounds key (%d/%d)",n,(int)keyColours.size());
@@ -69,20 +61,6 @@ Visuals::Visuals(){
 	keyNames.push_back("G");		keyNames.push_back("Gm");
 	keyNames.push_back("Ab");		keyNames.push_back("Abm");
 	keyNames.push_back(""); // silence
-	// key codes from Camelot
-	keyCodes.push_back("11B");	keyCodes.push_back("8A");
-	keyCodes.push_back("6B");		keyCodes.push_back("3A");
-	keyCodes.push_back("1B");		keyCodes.push_back("10A");
-	keyCodes.push_back("8B");		keyCodes.push_back("5A");
-	keyCodes.push_back("3B");		keyCodes.push_back("12A");
-	keyCodes.push_back("10B");	keyCodes.push_back("7A");
-	keyCodes.push_back("5B");		keyCodes.push_back("2A");
-	keyCodes.push_back("12B");	keyCodes.push_back("9A");
-	keyCodes.push_back("7B");		keyCodes.push_back("4A");
-	keyCodes.push_back("2B");		keyCodes.push_back("11A");
-	keyCodes.push_back("9B");		keyCodes.push_back("6A");
-	keyCodes.push_back("4B");		keyCodes.push_back("1A");
-	keyCodes.push_back("..."); // silence
 	// key colours for display
 	keyColours.push_back(qRgb(223,255,127));	keyColours.push_back(qRgb(191,223,127));
 	keyColours.push_back(qRgb(255,127,255));	keyColours.push_back(qRgb(223,127,223));

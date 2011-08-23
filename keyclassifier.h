@@ -39,6 +39,7 @@ private:
 	ToneProfile* major;
 	ToneProfile* minor;
 	ToneProfile* silence;
+	char similarityMeasure;
 };
 
 #endif

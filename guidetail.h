@@ -30,7 +30,6 @@
 #include <QUrl>
 #include <QLabel>
 
-#include <string>
 #include <vector>
 
 #include "preferences.h"

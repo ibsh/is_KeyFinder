@@ -113,7 +113,7 @@
         </widget>
        </item>
        <item row="4" column="0">
-        <widget class="QLabel" name="lbl_dfactor">
+        <widget class="QLabel" name="lbl_dFactor">
          <property name="text">
           <string>Downsample factor</string>
          </property>
@@ -165,8 +165,23 @@
        <item row="0" column="1">
         <widget class="QComboBox" name="hopSize">
          <property name="currentIndex">
-          <number>4</number>
+          <number>0</number>
          </property>
+         <item>
+          <property name="text">
+           <string>128</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>256</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>512</string>
+          </property>
+         </item>
          <item>
           <property name="text">
            <string>1024</string>
@@ -195,6 +210,11 @@
          <item>
           <property name="text">
            <string>32768</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>65536</string>
           </property>
          </item>
         </widget>
@@ -256,8 +276,23 @@
        <item row="3" column="1">
         <widget class="QComboBox" name="fftFrameSize">
          <property name="currentIndex">
-          <number>4</number>
+          <number>0</number>
          </property>
+         <item>
+          <property name="text">
+           <string>512</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1024</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>2048</string>
+          </property>
+         </item>
          <item>
           <property name="text">
            <string>4096</string>
@@ -286,6 +321,11 @@
          <item>
           <property name="text">
            <string>131072</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>262144</string>
           </property>
          </item>
         </widget>
@@ -341,7 +381,7 @@
         </widget>
        </item>
        <item row="6" column="0">
-        <widget class="QLabel" name="lblGoertzelminK">
+        <widget class="QLabel" name="lbl_goertzelminK">
          <property name="text">
           <string>Goertzel minimum K</string>
          </property>
@@ -556,7 +596,7 @@
          <item row="0" column="0">
           <widget class="QLabel" name="lbl_toneProfile">
            <property name="text">
-            <string>Tone Profiles</string>
+            <string>Tone profiles</string>
            </property>
           </widget>
          </item>
@@ -592,17 +632,41 @@
            </item>
           </widget>
          </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="similarityMeasure">
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <item>
+            <property name="text">
+             <string>Cosine</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Correlation</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="lbl_similarityMeasure">
+           <property name="text">
+            <string>Similarity measure</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
-        <widget class="Line" name="line">
+        <widget class="Line" name="hline1">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="lbl_customMajor">
          <property name="text">
           <string>Custom profile major</string>
          </property>
@@ -976,21 +1040,21 @@
         </layout>
        </item>
        <item>
-        <widget class="Line" name="line_2">
+        <widget class="Line" name="hline2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="lbl_customMinor">
          <property name="text">
           <string>Custom profile minor</string>
          </property>
         </widget>
        </item>
        <item>
-        <layout class="QGridLayout" name="gridLayout_3">
+        <layout class="QGridLayout" name="customMinor">
          <property name="topMargin">
           <number>6</number>
          </property>
@@ -1358,12 +1422,518 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab5keycodes">
+      <attribute name="title">
+       <string>Key Codes</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QLabel" name="lbl_keyCodes">
+         <property name="text">
+          <string>Custom key codes</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0">
+          <widget class="QLabel" name="lbl_majKey0">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>A</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="majKey0">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="lbl_majKey1">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Bb</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QLineEdit" name="majKey1">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="4">
+          <widget class="QLabel" name="lbl_majKey2">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>B</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="5">
+          <widget class="QLineEdit" name="majKey2">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="6">
+          <widget class="QLabel" name="lbl_majKey3">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>C</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="7">
+          <widget class="QLineEdit" name="majKey3">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="8">
+          <widget class="QLabel" name="lbl_majKey4">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Db</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="9">
+          <widget class="QLineEdit" name="majKey4">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="10">
+          <widget class="QLabel" name="lbl_majKey5">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>D</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="11">
+          <widget class="QLineEdit" name="majKey5">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3">
+          <widget class="QLineEdit" name="majKey7">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QLabel" name="lbl_majKey7">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>E</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="majKey6">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="lbl_majKey6">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Eb</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="4">
+          <widget class="QLabel" name="lbl_majKey8">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>F</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="5">
+          <widget class="QLineEdit" name="majKey8">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="7">
+          <widget class="QLineEdit" name="majKey9">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="6">
+          <widget class="QLabel" name="lbl_majKey9">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Gb</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="9">
+          <widget class="QLineEdit" name="majKey10">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="8">
+          <widget class="QLabel" name="lbl_majKey10">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>G</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="11">
+          <widget class="QLineEdit" name="majKey11">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="10">
+          <widget class="QLabel" name="lbl_majKey11">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Ab</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="lbl_minKey0">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Am</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QLabel" name="lbl_minKey1">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Bbm</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="4">
+          <widget class="QLabel" name="lbl_minKey2">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Bm</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="6">
+          <widget class="QLabel" name="lbl_minKey3">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Cm</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="8">
+          <widget class="QLabel" name="lbl_minKey4">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Dbm</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="10">
+          <widget class="QLabel" name="lbl_minKey5">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Dm</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="lbl_minKey6">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Ebm</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="2">
+          <widget class="QLabel" name="lbl_minKey7">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Em</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="4">
+          <widget class="QLabel" name="lbl_minKey8">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Fm</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="6">
+          <widget class="QLabel" name="lbl_minKey9">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Gbm</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="8">
+          <widget class="QLabel" name="lbl_minKey10">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Gm</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="10">
+          <widget class="QLabel" name="lbl_minKey11">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Abm</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="minKey0">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="3">
+          <widget class="QLineEdit" name="minKey1">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="5">
+          <widget class="QLineEdit" name="minKey2">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="7">
+          <widget class="QLineEdit" name="minKey3">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="9">
+          <widget class="QLineEdit" name="minKey4">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="11">
+          <widget class="QLineEdit" name="minKey5">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLineEdit" name="minKey6">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="3">
+          <widget class="QLineEdit" name="minKey7">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="5">
+          <widget class="QLineEdit" name="minKey8">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="7">
+          <widget class="QLineEdit" name="minKey9">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="9">
+          <widget class="QLineEdit" name="minKey10">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="11">
+          <widget class="QLineEdit" name="minKey11">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="lbl_silence">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Silence</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QLineEdit" name="silence">
+           <property name="maxLength">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="lbl_help">
        <property name="text">
         <string>Saved changes will take effect at next analysis job</string>
        </property>
@@ -1400,6 +1970,80 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>stFreq</tabstop>
+  <tabstop>octaves</tabstop>
+  <tabstop>octaveOffset</tabstop>
+  <tabstop>bps</tabstop>
+  <tabstop>dFactor</tabstop>
+  <tabstop>hopSize</tabstop>
+  <tabstop>temporalWindow</tabstop>
+  <tabstop>spectrumAnalyser</tabstop>
+  <tabstop>fftFrameSize</tabstop>
+  <tabstop>fftPostProcessor</tabstop>
+  <tabstop>directSkStretch</tabstop>
+  <tabstop>goertzelMinK</tabstop>
+  <tabstop>tuningMethod</tabstop>
+  <tabstop>detunedBandWeight</tabstop>
+  <tabstop>hcdf</tabstop>
+  <tabstop>hcdfGaussianSize</tabstop>
+  <tabstop>hcdfGaussianSigma</tabstop>
+  <tabstop>hcdfPeakPickingNeighbours</tabstop>
+  <tabstop>hcdfArbitrarySegments</tabstop>
+  <tabstop>toneProfile</tabstop>
+  <tabstop>maj0</tabstop>
+  <tabstop>maj1</tabstop>
+  <tabstop>maj2</tabstop>
+  <tabstop>maj3</tabstop>
+  <tabstop>maj4</tabstop>
+  <tabstop>maj5</tabstop>
+  <tabstop>maj6</tabstop>
+  <tabstop>maj7</tabstop>
+  <tabstop>maj8</tabstop>
+  <tabstop>maj9</tabstop>
+  <tabstop>maj10</tabstop>
+  <tabstop>maj11</tabstop>
+  <tabstop>min0</tabstop>
+  <tabstop>min1</tabstop>
+  <tabstop>min2</tabstop>
+  <tabstop>min3</tabstop>
+  <tabstop>min4</tabstop>
+  <tabstop>min5</tabstop>
+  <tabstop>min6</tabstop>
+  <tabstop>min7</tabstop>
+  <tabstop>min8</tabstop>
+  <tabstop>min9</tabstop>
+  <tabstop>min10</tabstop>
+  <tabstop>min11</tabstop>
+  <tabstop>majKey0</tabstop>
+  <tabstop>majKey1</tabstop>
+  <tabstop>majKey2</tabstop>
+  <tabstop>majKey3</tabstop>
+  <tabstop>majKey4</tabstop>
+  <tabstop>majKey5</tabstop>
+  <tabstop>majKey6</tabstop>
+  <tabstop>majKey7</tabstop>
+  <tabstop>majKey8</tabstop>
+  <tabstop>majKey9</tabstop>
+  <tabstop>majKey10</tabstop>
+  <tabstop>majKey11</tabstop>
+  <tabstop>minKey0</tabstop>
+  <tabstop>minKey1</tabstop>
+  <tabstop>minKey2</tabstop>
+  <tabstop>minKey3</tabstop>
+  <tabstop>minKey4</tabstop>
+  <tabstop>minKey5</tabstop>
+  <tabstop>minKey6</tabstop>
+  <tabstop>minKey7</tabstop>
+  <tabstop>minKey8</tabstop>
+  <tabstop>minKey9</tabstop>
+  <tabstop>minKey10</tabstop>
+  <tabstop>minKey11</tabstop>
+  <tabstop>silence</tabstop>
+  <tabstop>cancelButton</tabstop>
+  <tabstop>savePrefsButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

@@ -67,6 +67,9 @@ BatchWindow::BatchWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Batc
 	runDetailedAction->setShortcut(QKeySequence("Ctrl+D"));
 	connect(runDetailedAction, SIGNAL(triggered()), this, SLOT(runDetailedAnalysis()));
 	ui->tableWidget->addAction(runDetailedAction);
+	QAction* clearDetectedAction = new QAction(tr("Clear detected keys"),this);
+	connect(clearDetectedAction, SIGNAL(triggered()), this, SLOT(clearDetected()));
+	ui->tableWidget->addAction(clearDetectedAction);
 }
 
 BatchWindow::~BatchWindow(){
@@ -228,7 +231,7 @@ void BatchWindow::fileFinished(int key){
 	ui->tableWidget->setItem(currentFile,COL_KEY,new QTableWidgetItem());
 	ui->tableWidget->item(currentFile,COL_KEY)->setText(vis->getKeyName(key));
 	ui->tableWidget->setItem(currentFile,COL_KEYCODE,new QTableWidgetItem());
-	ui->tableWidget->item(currentFile,COL_KEYCODE)->setText(vis->getKeyCode(key));
+	ui->tableWidget->item(currentFile,COL_KEYCODE)->setText(prefs.getCustomKeyCodes()[key]);
 	currentFile++;
 	processCurrentFile();
 }
@@ -261,7 +264,8 @@ void BatchWindow::copySelectedFromTableWidget(){
 			QTableWidgetItem* item = ui->tableWidget->item(r,c);
 			if(item != NULL && item->isSelected())
 				copyArray.append(item->text());
-			copyArray.append("\t");
+			if(c != lastCol)
+				copyArray.append("\t");
 		}
 		copyArray.append("\r\n");
 	}
@@ -283,7 +287,12 @@ void BatchWindow::writeDetectedToGrouping(){
 			QTableWidgetItem* item = ui->tableWidget->item(r,COL_KEY); // only write if there's a detected key
 			if(item != NULL && item->text() != "Failed"){
 				TagLibMetadata md(ui->tableWidget->item(r,COL_PATH)->text().toAscii().data());
-				md.setGrouping((ui->tableWidget->item(r,COL_KEYCODE)->text() + " " + ui->tableWidget->item(r,COL_KEY)->text()).toAscii().data());
+				// start with custom key code if present
+				QString writeToTag = "";
+				if(ui->tableWidget->item(r,COL_KEYCODE)->text() != "")
+					writeToTag = ui->tableWidget->item(r,COL_KEYCODE)->text() + " ";
+				writeToTag += ui->tableWidget->item(r,COL_KEY)->text();
+				md.setGrouping(writeToTag.toAscii().data());
 			}
 		}
 		QMessageBox msg;
@@ -292,6 +301,22 @@ void BatchWindow::writeDetectedToGrouping(){
 		msgText += " files";
 		msg.setText(msgText);
 		msg.exec();
+	}
+}
+
+void BatchWindow::clearDetected(){
+	int firstRow = INT_MAX;
+	int lastRow = 0;
+	foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()){
+		int chkRow = selectedIndex.row();
+		if(chkRow < firstRow) firstRow = chkRow;
+		if(chkRow > lastRow) lastRow = chkRow;
+	}
+	for(int r = firstRow; r <= lastRow; r++){
+		if(ui->tableWidget->item(r,COL_KEY) != NULL){
+			delete ui->tableWidget->item(r,COL_KEY);
+			delete ui->tableWidget->item(r,COL_KEYCODE);
+		}
 	}
 }
 

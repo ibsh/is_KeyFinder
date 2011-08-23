@@ -24,6 +24,7 @@
 
 #include <QtGlobal>
 #include <QSettings>
+#include <QString>
 
 #include <math.h>
 #include <iostream>
@@ -48,6 +49,7 @@ public:
 	char getFftPostProcessor() const;
 	char getTemporalWindow() const;
 	char getHcdf() const;
+	char getSimilarityMeasure() const;
 	int getHopSize() const;
 	int getFftFrameSize() const;
 	int getGoertzelMinK() const;
@@ -66,11 +68,13 @@ public:
 	float getDirectSkStretch() const;
 	float getDetunedBandWeight() const;
 	std::vector<float> getCustomToneProfile() const;
+	std::vector<QString> getCustomKeyCodes() const;
 private:
 	char spectrumAnalyser;
 	char fftPostProcessor;
 	char temporalWindow;
 	char hcdf;
+	char similarityMeasure;
 	int hopSize;
 	int fftFrameSize;
 	int goertzelMinK;
@@ -88,6 +92,7 @@ private:
 	float directSkStretch;
 	float detunedBandWeight;
 	std::vector<float> customToneProfile;
+	std::vector<QString> customKeyCodes;
 	std::vector<float> binFreqs;
 	void generateBinFreqs();
 };

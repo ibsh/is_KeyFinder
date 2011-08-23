@@ -336,11 +336,11 @@ void DetailWindow::drawPianoKeys(){
 	miniPianoImage.setColor(0,qRgb(255,255,255));
 	miniPianoImage.setColor(1,qRgb(0,0,0));
 	miniPianoImage.setColor(2,qRgb(127,127,127));
-	// reverse of octave for visual representation (ending at A; don't forget the offset)
-	std::string octaveRev = "bwbwwbwbwwbw";
+	// reverse of octave for visual representation (ending at A by default)
+	QString octaveRev = "bwbwwbwbwwbw";
 	int off = prefs.getOctaveOffset();
 	if(off > 0)
-		octaveRev = octaveRev.substr(12-off,off) + octaveRev.substr(0,12 - off);
+		octaveRev = octaveRev.right(off) + octaveRev.left(12-off);
 	for(int o=0; o<prefs.getOctaves(); o++){
 		for(int s=0; s<12; s++){
 			for(int px=0; px<scale-1; px++){

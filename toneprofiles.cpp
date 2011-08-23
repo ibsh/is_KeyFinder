@@ -124,6 +124,10 @@ ToneProfile::ToneProfile(int whichProfile, bool majorScale, const Preferences& p
 	// offset by number of semitones specified in preferences
 	for(int i=0; i<prefs.getOctaveOffset(); i++)
 		tonic = tonic->r;
+	// get mean in preparation for correlation
+	profileMean = 0.0;
+	for(int i=0; i<12; i++)
+		profileMean += (p[i] / 12.0);
 }
 
 ToneProfile::~ToneProfile(){
@@ -140,7 +144,7 @@ void ToneProfile::free(){
 }
 
 /*
-	Determines cosine similarity between input vector and a particular scale.
+	Determines cosine similarity between input vector and profile scale.
 	input = array of 12 doubles relating to an octave starting at A natural
 	offset = which scale to test against; 0 = A, 1 = Bb, 2 = B, 3 = C etc
 */
@@ -150,18 +154,43 @@ double ToneProfile::cosine(const std::vector<double>& input, const int& offset) 
 	Binode* p = tonic;
 	for(int i=0; i<offset; i++)
 		p = p->l;
-	// calculate cosine similarity between vector and offset circular list
-	double top = 0.0;
-	double bottomleft = 0.0;
-	double bottomright = 0.0;
+	double intersection = 0.0;
+	double profileNorm = 0.0;
+	double inputNorm = 0.0;
 	for(int i=0; i<12; i++){
-		top += input[i] * p->n;
-		bottomleft += pow((p->n),2);
-		bottomright += pow((input[i]),2);
+		intersection += input[i] * p->n;
+		profileNorm += pow((p->n),2);
+		inputNorm += pow((input[i]),2);
 		p = p->r;
 	}
-	if(bottomleft > 0 && bottomright > 0) // divzero
-		return top / (sqrt(bottomleft) * sqrt(bottomright));
+	if(profileNorm > 0 && inputNorm > 0) // divzero
+		return intersection / (sqrt(profileNorm) * sqrt(inputNorm));
+	else
+		return 0;
+}
+
+/*
+	Krumhansl's correlation between input vector and profile scale.
+	input = array of 12 doubles relating to an octave starting at A natural
+	offset = which scale to test against; 0 = A, 1 = Bb, 2 = B, 3 = C etc
+*/
+double ToneProfile::correlation(const std::vector<double>& input, const double& inputMean, const int& offset) const{
+	Binode* p = tonic;
+	for(int i=0; i<offset; i++)
+		p = p->l;
+	double sumTop = 0.0;
+	double sumBottomLeft = 0.0;
+	double sumBottomRight = 0.0;
+	for(int i=0; i<12; i++){
+		double xMinusXBar = p->n - profileMean;
+		double yMinusYBar = input[i] - inputMean;
+		sumTop += xMinusXBar * yMinusYBar;
+		sumBottomLeft += pow(xMinusXBar,2);
+		sumBottomRight += pow(yMinusYBar,2);
+		p = p->r;
+	}
+	if(sumBottomRight > 0 && sumBottomLeft > 0) // divzero
+		return sumTop / sqrt(sumBottomLeft * sumBottomRight);
 	else
 		return 0;
 }

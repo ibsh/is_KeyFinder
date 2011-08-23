@@ -34,6 +34,7 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 	spectrumAnalyerComboIndex = "fg";
 	fftPostProcessorComboIndex = "ci";
 	hcdfComboIndex = "nhca";
+	similarityMeasureComboIndex = "ck";
 
 	// set preferences from QSettings
 	QSettings settings;
@@ -49,8 +50,8 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 	ui->temporalWindow->setCurrentIndex(temporalWindowComboIndex.indexOf(settings.value("temporalWindow").toChar()));
 	ui->spectrumAnalyser->setCurrentIndex(spectrumAnalyerComboIndex.indexOf(settings.value("spectrumAnalyser").toChar()));
 	ui->fftPostProcessor->setCurrentIndex(fftPostProcessorComboIndex.indexOf(settings.value("fftPostProcessor").toChar()));
-	ui->fftFrameSize->setCurrentIndex(log2(settings.value("fftFrameSize").toInt()/4096));
-	ui->hopSize->setCurrentIndex(log2(settings.value("hopSize").toInt()/1024));
+	ui->fftFrameSize->setCurrentIndex(log2(settings.value("fftFrameSize").toInt()/512));
+	ui->hopSize->setCurrentIndex(log2(settings.value("hopSize").toInt()/128));
 	ui->directSkStretch->setValue(settings.value("directSkStretch").toFloat());
 	ui->goertzelMinK->setValue(settings.value("goertzelMinK").toInt());
 	settings.endGroup();
@@ -74,6 +75,7 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 
 	settings.beginGroup("keyClassification");
 	ui->toneProfile ->setCurrentIndex(settings.value("toneProfile").toInt());
+	ui->similarityMeasure->setCurrentIndex(similarityMeasureComboIndex.indexOf(settings.value("similarityMeasure").toChar()));
 	settings.endGroup();
 
 	settings.beginGroup("customToneProfile");
@@ -101,6 +103,34 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 	ui->min9->setValue(settings.value("min9").toFloat());
 	ui->min10->setValue(settings.value("min10").toFloat());
 	ui->min11->setValue(settings.value("min11").toFloat());
+	settings.endGroup();
+
+	settings.beginGroup("customKeyCodes");
+	ui->majKey0->setText(settings.value("majKey0").toString());
+	ui->majKey1->setText(settings.value("majKey1").toString());
+	ui->majKey2->setText(settings.value("majKey2").toString());
+	ui->majKey3->setText(settings.value("majKey3").toString());
+	ui->majKey4->setText(settings.value("majKey4").toString());
+	ui->majKey5->setText(settings.value("majKey5").toString());
+	ui->majKey6->setText(settings.value("majKey6").toString());
+	ui->majKey7->setText(settings.value("majKey7").toString());
+	ui->majKey8->setText(settings.value("majKey8").toString());
+	ui->majKey9->setText(settings.value("majKey9").toString());
+	ui->majKey10->setText(settings.value("majKey10").toString());
+	ui->majKey11->setText(settings.value("majKey11").toString());
+	ui->minKey0->setText(settings.value("minKey0").toString());
+	ui->minKey1->setText(settings.value("minKey1").toString());
+	ui->minKey2->setText(settings.value("minKey2").toString());
+	ui->minKey3->setText(settings.value("minKey3").toString());
+	ui->minKey4->setText(settings.value("minKey4").toString());
+	ui->minKey5->setText(settings.value("minKey5").toString());
+	ui->minKey6->setText(settings.value("minKey6").toString());
+	ui->minKey7->setText(settings.value("minKey7").toString());
+	ui->minKey8->setText(settings.value("minKey8").toString());
+	ui->minKey9->setText(settings.value("minKey9").toString());
+	ui->minKey10->setText(settings.value("minKey10").toString());
+	ui->minKey11->setText(settings.value("minKey11").toString());
+	ui->silence->setText(settings.value("silence").toString());
 	settings.endGroup();
 
 	// enable/disable fields as necessary
@@ -132,8 +162,8 @@ void PrefsDialog::on_savePrefsButton_clicked(){
 	settings.setValue("temporalWindow",temporalWindowComboIndex[ui->temporalWindow->currentIndex()].toAscii());
 	settings.setValue("spectrumAnalyser",spectrumAnalyerComboIndex[ui->spectrumAnalyser->currentIndex()].toAscii());
 	settings.setValue("fftPostProcessor",fftPostProcessorComboIndex[ui->fftPostProcessor->currentIndex()].toAscii());
-	settings.setValue("fftFrameSize",pow(2,ui->fftFrameSize->currentIndex())*4096);
-	settings.setValue("hopSize",pow(2,ui->hopSize->currentIndex())*1024);
+	settings.setValue("fftFrameSize",pow(2,ui->fftFrameSize->currentIndex())*512);
+	settings.setValue("hopSize",pow(2,ui->hopSize->currentIndex())*128);
 	settings.setValue("directSkStretch",ui->directSkStretch->value());
 	settings.setValue("goertzelMinK",ui->goertzelMinK->value());
 	settings.endGroup();
@@ -157,6 +187,7 @@ void PrefsDialog::on_savePrefsButton_clicked(){
 
 	settings.beginGroup("keyClassification");
 	settings.setValue("toneProfile",ui->toneProfile->currentIndex());
+	settings.setValue("similarityMeasure",similarityMeasureComboIndex[ui->similarityMeasure->currentIndex()].toAscii());
 	settings.endGroup();
 
 	settings.beginGroup("customToneProfile");
@@ -184,6 +215,34 @@ void PrefsDialog::on_savePrefsButton_clicked(){
 	settings.setValue("min9",ui->min9->value());
 	settings.setValue("min10",ui->min10->value());
 	settings.setValue("min11",ui->min11->value());
+	settings.endGroup();
+
+	settings.beginGroup("customKeyCodes");
+	settings.setValue("majKey0",ui->majKey0->text());
+	settings.setValue("majKey1",ui->majKey1->text());
+	settings.setValue("majKey2",ui->majKey2->text());
+	settings.setValue("majKey3",ui->majKey3->text());
+	settings.setValue("majKey4",ui->majKey4->text());
+	settings.setValue("majKey5",ui->majKey5->text());
+	settings.setValue("majKey6",ui->majKey6->text());
+	settings.setValue("majKey7",ui->majKey7->text());
+	settings.setValue("majKey8",ui->majKey8->text());
+	settings.setValue("majKey9",ui->majKey9->text());
+	settings.setValue("majKey10",ui->majKey10->text());
+	settings.setValue("majKey11",ui->majKey11->text());
+	settings.setValue("minKey0",ui->minKey0->text());
+	settings.setValue("minKey1",ui->minKey1->text());
+	settings.setValue("minKey2",ui->minKey2->text());
+	settings.setValue("minKey3",ui->minKey3->text());
+	settings.setValue("minKey4",ui->minKey4->text());
+	settings.setValue("minKey5",ui->minKey5->text());
+	settings.setValue("minKey6",ui->minKey6->text());
+	settings.setValue("minKey7",ui->minKey7->text());
+	settings.setValue("minKey8",ui->minKey8->text());
+	settings.setValue("minKey9",ui->minKey9->text());
+	settings.setValue("minKey10",ui->minKey10->text());
+	settings.setValue("minKey11",ui->minKey11->text());
+	settings.setValue("silence",ui->silence->text());
 	settings.endGroup();
 
 	// CLOSE

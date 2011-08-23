@@ -46,7 +46,7 @@ CONFIG(debug, debug|release){
 		guidetail.h \
 		guimenuhandler.h \
 		guiprefs.h \
-		guiguivisuals.h
+		guivisuals.h
 	SOURCES += \
 		main.cpp \
 		guiabout.cpp \
@@ -117,8 +117,7 @@ HEADERS  += \
     spectrumanalyserfftw.h \
     spectrumanalysergoertzel.h \
 		fftpp.h \
-    hcdfarbitrary.h
-
+		hcdfarbitrary.h
 OTHER_FILES += \
 		is_KeyFinder.pro.user \
     README

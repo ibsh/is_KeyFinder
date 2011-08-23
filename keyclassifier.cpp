@@ -26,6 +26,7 @@ KeyClassifier::KeyClassifier(const Preferences& prefs){
 	major = new ToneProfile(prefs.getToneProfile(),true,prefs);
 	minor = new ToneProfile(prefs.getToneProfile(),false,prefs);
 	silence = new ToneProfile(-1,true,prefs);
+	similarityMeasure = prefs.getSimilarityMeasure();
 }
 
 KeyClassifier::~KeyClassifier(){
@@ -36,14 +37,31 @@ KeyClassifier::~KeyClassifier(){
 
 int KeyClassifier::classify(const std::vector<double>& chroma){
 	std::vector<double> scores(24);
-	for(int i=0; i<12; i++){ // for each pair of profiles
-		double cosi = major->cosine(chroma,i); // major
-		scores[i*2] = cosi;
-		cosi = minor->cosine(chroma,i); // minor
-		scores[(i*2)+1] = cosi;
+	double bestScore = 0.0;
+	if(similarityMeasure == 'k'){
+		// Correlation measure
+		double chromaMean = 0.0;
+		for(int i=0; i<(signed)chroma.size(); i++)
+			chromaMean += chroma[i];
+		chromaMean /= chroma.size();
+		for(int i=0; i<12; i++){ // for each pair of profiles
+			double sc = major->correlation(chroma,chromaMean,i); // major
+			scores[i*2] = sc;
+			sc = minor->correlation(chroma,chromaMean,i); // minor
+			scores[(i*2)+1] = sc;
+		}
+		bestScore = silence->correlation(chroma,chromaMean,0);
+	}else{
+		// Cosine measure
+		for(int i=0; i<12; i++){ // for each pair of profiles
+			double sc = major->cosine(chroma,i); // major
+			scores[i*2] = sc;
+			sc = minor->cosine(chroma,i); // minor
+			scores[(i*2)+1] = sc;
+		}
+		bestScore = silence->cosine(chroma,0);
 	}
 	// find best match, starting with silence
-	double bestScore = silence->cosine(chroma,0);
 	int bestMatch = 24;
 	for(int i=0; i<24; i++){
 		if(scores[i] > bestScore){

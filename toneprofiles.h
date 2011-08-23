@@ -33,10 +33,12 @@ public:
 	ToneProfile(int,bool,const Preferences&);
 	~ToneProfile();
 	double cosine(const std::vector<double>&, const int&) const;
+	double correlation(const std::vector<double>&, const double&, const int&) const;
 private:
 	void free();
 	class Binode;
 	Binode* tonic;
+	double profileMean;
 };
 
 class ToneProfile::Binode{

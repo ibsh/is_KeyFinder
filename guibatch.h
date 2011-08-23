@@ -34,7 +34,6 @@
 #include <QMessageBox>
 #include <QLabel>
 
-#include <string>
 #include <vector>
 
 #include "guidetail.h"
@@ -79,6 +78,7 @@ private slots:
 	void on_runBatchButton_clicked();
 	void copySelectedFromTableWidget();
 	void writeDetectedToGrouping();
+	void clearDetected();
 	void runDetailedAnalysis();
 };
 

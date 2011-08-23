@@ -216,6 +216,14 @@ Preferences::Preferences(){
 		toneProfile = defaultVal;
 		qDebug("Wrote default toneProfile (%d)",toneProfile);
 	}
+	if(settings.contains("similarityMeasure")){
+		similarityMeasure = settings.value("similarityMeasure").toChar().toAscii();
+	}else{
+		char defaultVal = 'c';
+		settings.setValue("similarityMeasure",defaultVal);
+		similarityMeasure = defaultVal;
+		qDebug("Wrote default similarityMeasure (%c)",similarityMeasure);
+	}
 	settings.endGroup();
 
 	// ========================= Custom Tone Profile ==============================
@@ -277,7 +285,69 @@ Preferences::Preferences(){
 		settings.setValue("min9",customToneProfile[21]);
 		settings.setValue("min10",customToneProfile[22]);
 		settings.setValue("min11",customToneProfile[23]);
-		qDebug("Wrote default customToneProfile (%d)",toneProfile);
+		qDebug("Wrote default customToneProfile");
+	}
+	settings.endGroup();
+
+	// ========================== Custom Key Codes ===============================
+
+	settings.beginGroup("customKeyCodes");
+	if(settings.contains("majKey0")){
+		customKeyCodes = std::vector<QString>(0);
+		// interleaved major/minor to match tone profiling system
+		customKeyCodes.push_back(settings.value("majKey0").toString());
+		customKeyCodes.push_back(settings.value("minKey0").toString());
+		customKeyCodes.push_back(settings.value("majKey1").toString());
+		customKeyCodes.push_back(settings.value("minKey1").toString());
+		customKeyCodes.push_back(settings.value("majKey2").toString());
+		customKeyCodes.push_back(settings.value("minKey2").toString());
+		customKeyCodes.push_back(settings.value("majKey3").toString());
+		customKeyCodes.push_back(settings.value("minKey3").toString());
+		customKeyCodes.push_back(settings.value("majKey4").toString());
+		customKeyCodes.push_back(settings.value("minKey4").toString());
+		customKeyCodes.push_back(settings.value("majKey5").toString());
+		customKeyCodes.push_back(settings.value("minKey5").toString());
+		customKeyCodes.push_back(settings.value("majKey6").toString());
+		customKeyCodes.push_back(settings.value("minKey6").toString());
+		customKeyCodes.push_back(settings.value("majKey7").toString());
+		customKeyCodes.push_back(settings.value("minKey7").toString());
+		customKeyCodes.push_back(settings.value("majKey8").toString());
+		customKeyCodes.push_back(settings.value("minKey8").toString());
+		customKeyCodes.push_back(settings.value("majKey9").toString());
+		customKeyCodes.push_back(settings.value("minKey9").toString());
+		customKeyCodes.push_back(settings.value("majKey10").toString());
+		customKeyCodes.push_back(settings.value("minKey10").toString());
+		customKeyCodes.push_back(settings.value("majKey11").toString());
+		customKeyCodes.push_back(settings.value("minKey11").toString());
+		customKeyCodes.push_back(settings.value("silence").toString());
+	}else{
+		customKeyCodes = std::vector<QString>(25); // default to empty strings
+		settings.setValue("majKey0",customKeyCodes[0]);
+		settings.setValue("minKey0",customKeyCodes[1]);
+		settings.setValue("majKey1",customKeyCodes[2]);
+		settings.setValue("minKey1",customKeyCodes[3]);
+		settings.setValue("majKey2",customKeyCodes[4]);
+		settings.setValue("minKey2",customKeyCodes[5]);
+		settings.setValue("majKey3",customKeyCodes[6]);
+		settings.setValue("minKey3",customKeyCodes[7]);
+		settings.setValue("majKey4",customKeyCodes[8]);
+		settings.setValue("minKey4",customKeyCodes[9]);
+		settings.setValue("majKey5",customKeyCodes[10]);
+		settings.setValue("minKey5",customKeyCodes[11]);
+		settings.setValue("majKey6",customKeyCodes[12]);
+		settings.setValue("minKey6",customKeyCodes[13]);
+		settings.setValue("majKey7",customKeyCodes[14]);
+		settings.setValue("minKey7",customKeyCodes[15]);
+		settings.setValue("majKey8",customKeyCodes[16]);
+		settings.setValue("minKey8",customKeyCodes[17]);
+		settings.setValue("majKey9",customKeyCodes[18]);
+		settings.setValue("minKey9",customKeyCodes[19]);
+		settings.setValue("majKey10",customKeyCodes[20]);
+		settings.setValue("minKey10",customKeyCodes[21]);
+		settings.setValue("majKey11",customKeyCodes[22]);
+		settings.setValue("minKey11",customKeyCodes[23]);
+		settings.setValue("silence",customKeyCodes[24]);
+		qDebug("Wrote default (blank) customKeyCodes");
 	}
 	settings.endGroup();
 
@@ -301,6 +371,7 @@ Preferences& Preferences::operator=(const Preferences& that){
 		octaveOffset = that.octaveOffset;
 		dFactor = that.dFactor;
 		toneProfile = that.toneProfile;
+		similarityMeasure = that.similarityMeasure;
 		hcdfPeakPickingNeighbours = that.hcdfPeakPickingNeighbours;
 		hcdfArbitrarySegments = that.hcdfArbitrarySegments;
 		hcdfGaussianSize = that.hcdfGaussianSize;
@@ -310,6 +381,7 @@ Preferences& Preferences::operator=(const Preferences& that){
 		directSkStretch = that.directSkStretch;
 		detunedBandWeight = that.detunedBandWeight;
 		customToneProfile = that.customToneProfile;
+		customKeyCodes = that.customKeyCodes;
 		generateBinFreqs();
 	}
 	return *this;
@@ -317,8 +389,6 @@ Preferences& Preferences::operator=(const Preferences& that){
 
 
 bool Preferences::equivalentSpectralAnalysis(const Preferences& that) const{
-	// not quite as simple as all elements being equal
-	// in fact, the equality of some elements isn't important
 	if(temporalWindow != that.temporalWindow)
 		return false;
 	if(bps != that.bps)
@@ -378,6 +448,7 @@ char Preferences::getSpectrumAnalyser()const{return spectrumAnalyser;}
 char Preferences::getFftPostProcessor()const{return fftPostProcessor;}
 char Preferences::getTemporalWindow()const{return temporalWindow;}
 char Preferences::getHcdf()const{return hcdf;}
+char Preferences::getSimilarityMeasure()const{return similarityMeasure;}
 int Preferences::getHopSize()const{return hopSize;}
 int Preferences::getFftFrameSize()const{return fftFrameSize;}
 int Preferences::getGoertzelMinK()const{return goertzelMinK;}
@@ -408,6 +479,10 @@ float Preferences::getLastFreq() const{
 
 std::vector<float> Preferences::getCustomToneProfile() const{
 	return customToneProfile;
+}
+
+std::vector<QString> Preferences::getCustomKeyCodes() const{
+	return customKeyCodes;
 }
 
 void Preferences::generateBinFreqs(){
