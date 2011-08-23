@@ -136,11 +136,19 @@ void DetailWindow::receiveFullChromagram(const Chromagram& ch){
 	ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
 	ui->chromagramLabel->setMinimumHeight(ch.getBins()+2);
 	ui->chromagramLabel->setMinimumWidth(ch.getHops()+2);
+	// Tooltip
+	QString numbers[] = {"","one octave","two octaves","three octaves","four octaves","five octaves","six octaves","seven octaves","eight octaves"};
+	QString tooltip = "This chromagram spans " + numbers[prefs.getOctaves()] + ".\n";
+	tooltip += "The vertical axis represents musical frequencies\nas indicated by the piano keyboard.\n";
+	tooltip += "The horizontal axis splits the track into analysis\nwindows of about " + QString::number((44100.0/prefs.getDFactor())/prefs.getHopSize()).left(4) + " seconds each.\n";
+	tooltip += "The brighter the colour, the higher the energy\nfound at that frequency.";
+	ui->chromagramLabel->setToolTip(tooltip);
 }
 
 void DetailWindow::receiveOneOctaveChromagram(const Chromagram& ch){
 	miniChromagramImage = imageFromChromagram(&ch);
 	ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
+	ui->miniChromagramLabel->setToolTip("This is the same chromagram data,\ndecomposed to a single octave.");
 	say("Spectrum analysis done...");
 	ui->progressBar->setValue(PROGRESS_DONESPECTRUMANALYSIS);
 }
@@ -156,6 +164,14 @@ void DetailWindow::receiveHarmonicChangeSignal(const std::vector<double>& rateOf
 				harmonicChangeImage.setPixel(h*chromaScaleH+x, y, (rateOfChangePrecision - y > value ? 0 : 50));
 	}
 	ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
+	// Tooltip
+	if(prefs.getHcdf() == 'n'){
+		ui->harmonicChangeLabel->setToolTip("You are not using segmentation,\nso there is no harmonic change\ndata to display.");
+	}else if(prefs.getHcdf() == 'a'){
+		ui->harmonicChangeLabel->setToolTip("You are using arbitrary segmentation,\nso there is no harmonic change\ndata to display.");
+	}else{
+		ui->harmonicChangeLabel->setToolTip("This is the level of harmonic\nchange detected in the\nchromagram over time. Peaks\nin this signal are used to\nsegment the chromagram.");
+	}
 }
 
 void DetailWindow::receiveKeyEstimates(const std::vector<int>& keys){
@@ -172,7 +188,13 @@ void DetailWindow::receiveKeyEstimates(const std::vector<int>& keys){
 			newLabel->setAutoFillBackground(true);
 			newLabel->setMinimumHeight(20);
 			newLabel->setMaximumHeight(30);
-			newLabel->setToolTip("This row shows the key(s) detected\nin the segments between peak\nharmonic changes.");
+			if(prefs.getHcdf() == 'n'){
+				newLabel->setToolTip("This row shows the key estimate for\nthe unsegmented chromagram.");
+			}else if(prefs.getHcdf() == 'a'){
+				newLabel->setToolTip("This row shows the key estimates\nfor the arbitrary segments.");
+			}else{
+				newLabel->setToolTip("This row shows the key estimates\nfor the segments between peak\nharmonic changes.");
+			}
 			ui->horizontalLayout_keyLabels->addWidget(newLabel,h-lastChange);
 			keyLabels.push_back(newLabel);
 			lastChange = h;
@@ -277,6 +299,10 @@ void DetailWindow::blankVisualisations(){
 	ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
 	ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
 	ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
+	QString blank = "Drag an audio file onto the window.";
+	ui->chromagramLabel->setToolTip(blank);
+	ui->miniChromagramLabel->setToolTip(blank);
+	ui->harmonicChangeLabel->setToolTip(blank);
 }
 
 void DetailWindow::deleteKeyLabels(){
@@ -295,7 +321,7 @@ void DetailWindow::blankKeyLabel(){
 	dummyLabel->setAutoFillBackground(true);
 	dummyLabel->setMinimumHeight(20);
 	dummyLabel->setMaximumHeight(30);
-	dummyLabel->setToolTip("This row shows the key(s) detected\nin the segments between peak\nharmonic changes.");
+	dummyLabel->setToolTip("Drag an audio file onto the window.");
 	ui->horizontalLayout_keyLabels->addWidget(dummyLabel);
 	keyLabels.push_back(dummyLabel);
 }
