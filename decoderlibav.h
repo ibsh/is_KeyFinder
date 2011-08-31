@@ -39,9 +39,9 @@ extern "C"{
 class LibAvDecoder : public AudioFileDecoder{
 public:
 	LibAvDecoder();
-	virtual AudioBuffer* decodeFile(char*) throw (Exception);
+	virtual AudioStream* decodeFile(char*) throw (Exception);
 private:
-	int decodePacket(AVCodecContext*, AVPacket*, AudioBuffer*) throw (Exception);
+	int decodePacket(AVCodecContext*, AVPacket*, AudioStream*) throw (Exception);
 	static int libAv_mutexManager(void**, enum AVLockOp);
 	static bool concurrencyRegistered;
 };

@@ -23,42 +23,42 @@
 #include <QtTest/QtTest>
 #include "unittest.h"
 
-#include "audiobuffer.h"
+#include "audiostream.h"
 
-class AudioBuffer_Test : public QObject{
+class AudioStream_Test : public QObject{
 	Q_OBJECT
 public:
-	AudioBuffer_Test();
+	AudioStream_Test();
 private Q_SLOTS:
 	void testConstructor();
 	void testMutators();
 };
-DECLARE_TEST(AudioBuffer_Test)
+DECLARE_TEST(AudioStream_Test)
 
-AudioBuffer_Test::AudioBuffer_Test(){}
+AudioStream_Test::AudioStream_Test(){}
 
-void AudioBuffer_Test::testConstructor(){
-	AudioBuffer* ab = new AudioBuffer();
+void AudioStream_Test::testConstructor(){
+	AudioStream* ab = new AudioStream();
 	QVERIFY(ab->getChannels() == 0);
 	QVERIFY(ab->getFrameRate() == 0);
 	QVERIFY(ab->getSampleCount() == 0);
 	delete ab;
 }
 
-void AudioBuffer_Test::testMutators(){
-	AudioBuffer* ab = new AudioBuffer();
+void AudioStream_Test::testMutators(){
+	AudioStream* ab = new AudioStream();
 	ab->setChannels(2);
 	QVERIFY(ab->getChannels() == 2);
 	ab->setFrameRate(44100);
 	QVERIFY(ab->getFrameRate() == 44100);
-	ab->addSamples(65536);
+	ab->addToSampleCount(65536);
 	QVERIFY(ab->getSampleCount() == 65536);
 	QVERIFY(ab->getSample(0) == 0.0);
 	ab->setSample(101,16384.0);
 	QVERIFY(ab->getSample(101) == 16384.0);
 	// test that exception handling for bad alloc
 	try{
-		ab->addSamples(INT_MAX);
+		ab->addToSampleCount(INT_MAX);
 		QFAIL("Either your machine has a startlingly large memory or an exception failed to throw.");
 	}catch(...){
 		QVERIFY(true);

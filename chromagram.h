@@ -36,14 +36,12 @@ public:
 	float getMagnitude(int,int) const;
 	int getHops() const;
 	int getBins() const;
-	void decomposeToOneOctave(const Preferences&);
-	void decomposeToTwelveBpo(const Preferences&);
-	void printBinsByHops() const;
-	void printHopsByBins() const;
+	void reduceToOneOctave(const Preferences&);
+	void reduceTuningBins(const Preferences&);
 private:
 	int hops;
 	int bins;
-	std::vector<std::vector<float> > chroma;
+	std::vector<std::vector<float> > chromagram;
 	void tuningHarte(const Preferences&);
 	void tuningBinAdaptive(const Preferences&);
 };

@@ -9,7 +9,7 @@
 
 #include "preferences.h"
 #include "exception.h"
-#include "audiobuffer.h"
+#include "audiostream.h"
 #include "decoder.h"
 #include "monaural.h"
 #include "downsampler.h"

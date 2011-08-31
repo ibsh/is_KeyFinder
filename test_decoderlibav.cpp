@@ -42,7 +42,7 @@ LibAvDecoder_Test::LibAvDecoder_Test(){}
 
 void LibAvDecoder_Test::testDecodeWav(){
 	LibAvDecoder* dec = new LibAvDecoder;
-	AudioBuffer* ab = NULL;
+	AudioStream* ab = NULL;
 	try{
 		ab = dec->decodeFile("../is_KeyFinder/_testaudio/audio-441-sq.wav");
 	}catch(...){
@@ -67,7 +67,7 @@ void LibAvDecoder_Test::testDecodeWav(){
 
 void LibAvDecoder_Test::testDecodeFlac(){
 	LibAvDecoder* dec = new LibAvDecoder;
-	AudioBuffer* ab = NULL;
+	AudioStream* ab = NULL;
 	try{
 		ab = dec->decodeFile("../is_KeyFinder/_testaudio/audio-441-sq.flac");
 	}catch(...){
@@ -84,7 +84,7 @@ void LibAvDecoder_Test::testDecodeFlac(){
 
 void LibAvDecoder_Test::testDecodeAlac(){
 	LibAvDecoder* dec = new LibAvDecoder;
-	AudioBuffer* ab = NULL;
+	AudioStream* ab = NULL;
 	try{
 		ab = dec->decodeFile("../is_KeyFinder/_testaudio/audio-441-sq.m4a");
 	}catch(...){
@@ -101,7 +101,7 @@ void LibAvDecoder_Test::testDecodeAlac(){
 
 void LibAvDecoder_Test::testDecodeMp3(){
 	LibAvDecoder* dec = new LibAvDecoder;
-	AudioBuffer* ab = NULL;
+	AudioStream* ab = NULL;
 	try{
 		ab = dec->decodeFile("../is_KeyFinder/_testaudio/audio-441-sq.mp3");
 	}catch(...){

@@ -23,11 +23,11 @@
 #define MONAURAL_H
 
 #include "exception.h"
-#include "audiobuffer.h"
+#include "audiostream.h"
 
 class Monaural{
 public:
-		virtual AudioBuffer* makeMono(AudioBuffer*);
+		virtual AudioStream* makeMono(AudioStream*);
 };
 
 #endif

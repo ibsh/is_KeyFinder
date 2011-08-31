@@ -65,7 +65,6 @@ CONFIG(debug, debug|release){
 SOURCES += \
     decoderlibav.cpp \
     chromagram.cpp \
-    audiobuffer.cpp \
     downsamplerlibsrc.cpp \
     downsamplerib.cpp \
     windowfunctions.cpp \
@@ -88,13 +87,13 @@ SOURCES += \
     fftppdirectsk.cpp \
     spectrumanalyserfftw.cpp \
 		spectrumanalysergoertzel.cpp \
-    hcdfarbitrary.cpp
+    hcdfarbitrary.cpp \
+    audiostream.cpp
 
 HEADERS  += \
     decoderlibav.h \
     decoder.h \
     chromagram.h \
-    audiobuffer.h \
     downsamplerlibsrc.h \
     downsamplerib.h \
     downsampler.h \
@@ -117,7 +116,8 @@ HEADERS  += \
     spectrumanalyserfftw.h \
     spectrumanalysergoertzel.h \
 		fftpp.h \
-		hcdfarbitrary.h
+		hcdfarbitrary.h \
+		audiostream.h
 OTHER_FILES += \
 		is_KeyFinder.pro.user \
     README

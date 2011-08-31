@@ -33,7 +33,7 @@ class GoertzelAnalyser : public SpectrumAnalyser{
 public:
 	GoertzelAnalyser(int, const Preferences&);
 	~GoertzelAnalyser();
-	virtual Chromagram* chromagram(AudioBuffer*);
+	virtual Chromagram* chromagram(AudioStream*);
 private:
 	class Goertzel;
 	std::vector<Goertzel*> goertzels;

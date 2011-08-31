@@ -41,18 +41,18 @@ public:
 	float n;
 };
 
-AudioBuffer* IbDownsampler::downsample(AudioBuffer* inbuf, int factor) throw (Exception){
-	if(factor == 1) return inbuf;
+AudioStream* IbDownsampler::downsample(AudioStream* instrm, int factor) throw (Exception){
+	if(factor == 1) return instrm;
 	// prep output buffer
-	AudioBuffer* outbuf = new AudioBuffer();
-	outbuf->setFrameRate(inbuf->getFrameRate() / factor);
-	outbuf->setChannels(inbuf->getChannels());
-	int c = inbuf->getChannels();
-	int ns = inbuf->getSampleCount() / factor;
+	AudioStream* outstrm = new AudioStream();
+	outstrm->setFrameRate(instrm->getFrameRate() / factor);
+	outstrm->setChannels(instrm->getChannels());
+	int c = instrm->getChannels();
+	int ns = instrm->getSampleCount() / factor;
 	while(ns%c != 0) ns++;
-	if(inbuf->getSampleCount() % factor > 0) ns += c;
+	if(instrm->getSampleCount() % factor > 0) ns += c;
 	try{
-		outbuf->addSamples(ns);
+		outstrm->addToSampleCount(ns);
 	}catch(const Exception& e){
 		throw e;
 	}
@@ -140,14 +140,14 @@ AudioBuffer* IbDownsampler::downsample(AudioBuffer* inbuf, int factor) throw (Ex
 			q = q->r;
 		}
 		// for each frame (running off the end of the file by filterDelay)
-		for(int j=i; j<inbuf->getSampleCount()+filterDelay; j+=c){
+		for(int j=i; j<instrm->getSampleCount()+filterDelay; j+=c){
 
 			// shuffle old samples along delay buffer
 			p = p->r;
 
 			// load new sample into delay buffer
-			if (j < inbuf->getSampleCount())
-				p->l->n = inbuf->getSample(j) / gain;
+			if (j < instrm->getSampleCount())
+				p->l->n = instrm->getSample(j) / gain;
 			else
 				p->l->n = 0.0; // zero pad once we're into the delay at the end of the file
 
@@ -160,7 +160,7 @@ AudioBuffer* IbDownsampler::downsample(AudioBuffer* inbuf, int factor) throw (Ex
 				}
 				// don't try and set samples during the warm-up, only once we've passed filterDelay samples
 				if(j-filterDelay >= 0)
-					outbuf->setSample(((j-filterDelay) / factor) + i, sum);
+					outstrm->setSample(((j-filterDelay) / factor) + i, sum);
 			}
 		}
 	}
@@ -170,6 +170,6 @@ AudioBuffer* IbDownsampler::downsample(AudioBuffer* inbuf, int factor) throw (Ex
 		p = p->r;
 		delete q;
 	}
-	delete inbuf;
-	return outbuf;
+	delete instrm;
+	return outstrm;
 }

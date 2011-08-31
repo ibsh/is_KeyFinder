@@ -33,7 +33,7 @@ GoertzelAnalyser::~GoertzelAnalyser(){
 	}
 }
 
-Chromagram* GoertzelAnalyser::chromagram(AudioBuffer* ab){
+Chromagram* GoertzelAnalyser::chromagram(AudioStream* ab){
 	QMutexLocker locker(&mutex); // Mutex this function
 	/*
 	New approach. Run every goertzel as many times as possible (zero padding during last run),

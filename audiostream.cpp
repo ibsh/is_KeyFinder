@@ -19,52 +19,52 @@
 
 *************************************************************************/
 
-#include "audiobuffer.h"
+#include "audiostream.h"
 
-AudioBuffer::AudioBuffer():  buffer(0), channels(0), frameRate(0),  samples(0){}
+AudioStream::AudioStream():  stream(0), channels(0), frameRate(0),  samples(0){}
 
-int AudioBuffer::getChannels() const{
+int AudioStream::getChannels() const{
 	return channels;
 }
 
-void AudioBuffer::setChannels(int n){
+void AudioStream::setChannels(int n){
 	channels = n;
 }
 
-int AudioBuffer::getFrameRate() const{
+int AudioStream::getFrameRate() const{
 	return frameRate;
 }
 
-void AudioBuffer::setFrameRate(int n){
+void AudioStream::setFrameRate(int n){
 	frameRate = n;
 }
 
-float AudioBuffer::getSample(int n) const{
+float AudioStream::getSample(int n) const{
 	if(n < samples){
-		return buffer[n];
+		return stream[n];
 	}else{
 		qDebug("Attempt to get out-of-bounds sample (%d/%d)",n,samples);
 		return 0;
 	}
 }
 
-void AudioBuffer::setSample(int n,float x){
+void AudioStream::setSample(int n,float x){
 	if(n < samples)
-		buffer[n] = x;
+		stream[n] = x;
 	else
 		qDebug("Attempt to set out-of-bounds sample (%d/%d)",n,samples);
 }
 
-void AudioBuffer::addSamples(int newSamples) throw (Exception){
+void AudioStream::addToSampleCount(int newSamples) throw (Exception){
 	try{
-		buffer.resize(samples + newSamples);
+		stream.resize(samples + newSamples);
 		samples += newSamples;
 	}catch(...){
-		qCritical("Memory allocation failure adding %d samples to buffer of size %d",newSamples,samples);
+		qCritical("Memory allocation failure adding %d samples to audio stream of size %d",newSamples,samples);
 		throw Exception();
 	}
 }
 
-int AudioBuffer::getSampleCount() const{
+int AudioStream::getSampleCount() const{
 	return samples;
 }

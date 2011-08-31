@@ -23,11 +23,11 @@
 #define DOWNSAMPLER_H
 
 #include "exception.h"
-#include "audiobuffer.h"
+#include "audiostream.h"
 
 class Downsampler{
 public:
-	virtual AudioBuffer* downsample(AudioBuffer*,int) throw (Exception) = 0;
+	virtual AudioStream* downsample(AudioStream*,int) throw (Exception) = 0;
 	static Downsampler* getDownsampler(int,int,float);
 };
 

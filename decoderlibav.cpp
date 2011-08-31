@@ -67,7 +67,7 @@ int LibAvDecoder::libAv_mutexManager(void** av_mutex, enum AVLockOp op){
 	return 1;
 }
 
-AudioBuffer* LibAvDecoder::decodeFile(char* fileName) throw (Exception){
+AudioStream* LibAvDecoder::decodeFile(char* fileName) throw (Exception){
 	av_register_all();
 	AVCodec *codec = NULL;
 	AVFormatContext *fCtx = NULL;
@@ -104,16 +104,16 @@ AudioBuffer* LibAvDecoder::decodeFile(char* fileName) throw (Exception){
 		throw Exception();
 	}
 	// Prep buffer
-	AudioBuffer *ab = new AudioBuffer();
-	ab->setFrameRate(cCtx->sample_rate);
-	ab->setChannels(cCtx->channels);
+	AudioStream *astrm = new AudioStream();
+	astrm->setFrameRate(cCtx->sample_rate);
+	astrm->setChannels(cCtx->channels);
 	// Decode stream
 	AVPacket avpkt;
 	av_init_packet(&avpkt);
 	while(av_read_frame(fCtx, &avpkt) == 0){
 		if(avpkt.stream_index == audioStream)
 			try{
-				if(decodePacket(cCtx, &avpkt, ab) != 0)
+				if(decodePacket(cCtx, &avpkt, astrm) != 0)
 					qWarning("LibAV: Error while processing packet");
 			}catch(Exception& e){
 				throw e;
@@ -122,10 +122,10 @@ AudioBuffer* LibAvDecoder::decodeFile(char* fileName) throw (Exception){
 	}
 	avcodec_close(cCtx);
 	av_close_input_file(fCtx);
-	return ab;
+	return astrm;
 }
 
-int LibAvDecoder::decodePacket(AVCodecContext* cCtx, AVPacket* avpkt, AudioBuffer* ab) throw (Exception){
+int LibAvDecoder::decodePacket(AVCodecContext* cCtx, AVPacket* avpkt, AudioStream* ab) throw (Exception){
 	int16_t outputBuffer[AVCODEC_MAX_AUDIO_FRAME_SIZE];
 	int16_t *samples = (int16_t*)outputBuffer;
 	int outputBufferSize, bytesConsumed;
@@ -139,7 +139,7 @@ int LibAvDecoder::decodePacket(AVCodecContext* cCtx, AVPacket* avpkt, AudioBuffe
 			int newSamplesDecoded = outputBufferSize/sizeof(int16_t);
 			int oldSampleCount = ab->getSampleCount();
 			try{
-				ab->addSamples(newSamplesDecoded);
+				ab->addToSampleCount(newSamplesDecoded);
 			}catch(Exception& e){
 				throw e;
 			}

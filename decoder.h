@@ -23,11 +23,11 @@
 #define AUDIOFILEDECODER_H
 
 #include "exception.h"
-#include "audiobuffer.h"
+#include "audiostream.h"
 
 class AudioFileDecoder{
 public:
-	virtual AudioBuffer* decodeFile(char*) throw (Exception) = 0;
+	virtual AudioStream* decodeFile(char*) throw (Exception) = 0;
 	static AudioFileDecoder* getDecoder(const char*);
 };
 

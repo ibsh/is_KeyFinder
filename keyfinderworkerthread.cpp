@@ -24,13 +24,13 @@ void KeyFinderWorkerThread::run(){
 		emit failed("No parameters.");
 		return;
 	}
-	// initialise buffer and decode file into it
-	AudioBuffer* ab = NULL;
+	// initialise stream and decode file into it
+	AudioStream* astrm = NULL;
 	AudioFileDecoder* dec = AudioFileDecoder::getDecoder(filePath.toAscii().data());
 	try{
-		ab = dec->decodeFile(filePath.toAscii().data());
+		astrm = dec->decodeFile(filePath.toAscii().data());
 	}catch(Exception){
-		delete ab;
+		delete astrm;
 		delete dec;
 		emit failed("Could not decode file.");
 		return;
@@ -40,17 +40,17 @@ void KeyFinderWorkerThread::run(){
 
 	// make audio stream monaural
 	Monaural* mono = new Monaural();
-	ab = mono->makeMono(ab);
+	astrm = mono->makeMono(astrm);
 	delete mono;
 	emit madeMono();
 
 	// downsample if necessary
 	if(prefs.getDFactor() > 1){
-		Downsampler* ds = Downsampler::getDownsampler(prefs.getDFactor(),ab->getFrameRate(),prefs.getLastFreq());
+		Downsampler* ds = Downsampler::getDownsampler(prefs.getDFactor(),astrm->getFrameRate(),prefs.getLastFreq());
 		try{
-			ab = ds->downsample(ab,prefs.getDFactor());
+			astrm = ds->downsample(astrm,prefs.getDFactor());
 		}catch(Exception){
-			delete ab;
+			delete astrm;
 			delete ds;
 			emit failed("Downsampler failed.");
 			return;
@@ -62,15 +62,15 @@ void KeyFinderWorkerThread::run(){
 	// start spectrum analysis
 	SpectrumAnalyser* sa = NULL;
 	Chromagram* ch = NULL;
-	sa = SpectrumAnalyserFactory::getInstance()->getSpectrumAnalyser(ab->getFrameRate(),prefs);
-	ch = sa->chromagram(ab);
-	delete ab;
+	sa = SpectrumAnalyserFactory::getInstance()->getSpectrumAnalyser(astrm->getFrameRate(),prefs);
+	ch = sa->chromagram(astrm);
+	delete astrm;
 	// note we don't delete the spectrum analyser; it stays in the centralised factory for reuse.
 	emit producedFullChromagram(*ch);
 
-	// decompose chromagram
-	ch->decomposeToTwelveBpo(prefs);
-	ch->decomposeToOneOctave(prefs);
+	// reduce chromagram
+	ch->reduceTuningBins(prefs);
+	ch->reduceToOneOctave(prefs);
 	emit producedOneOctaveChromagram(*ch);
 
 	// get energy level across track to weight segments

@@ -33,7 +33,7 @@ class FftwAnalyser : public SpectrumAnalyser{
 public:
 	FftwAnalyser(int, const Preferences&);
 	~FftwAnalyser();
-	virtual Chromagram* chromagram(AudioBuffer*);
+	virtual Chromagram* chromagram(AudioStream*);
 private:
 	int fftFrameSize;
 	FftPostProcessor* pp;

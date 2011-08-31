@@ -76,16 +76,16 @@ void Chromagram_Test::testAdaptiveDecomposition(){
 	ch->setMagnitude(0,72,1.0);
 	ch->setMagnitude(0,73,1.0);
 	ch->setMagnitude(0,74,10.0);
-	// decompose to 1 band per semitone
-	ch->decomposeToTwelveBpo(prefs);
+	// reduce to 1 band per semitone
+	ch->reduceTuningBins(prefs);
 	QVERIFY(ch->getBins() == 72);
 	// adaptive tuning should mean all three set semitones come out the same
 	QVERIFY(ch->getMagnitude(0,0)  == 10 + 2.0 * weight);
 	QVERIFY(ch->getMagnitude(0,12) == 10 + 2.0 * weight);
 	QVERIFY(ch->getMagnitude(0,24) == 10 + 2.0 * weight);
 	QVERIFY(ch->getMagnitude(0,36) == 0.0);
-	// decompose to one octave
-	ch->decomposeToOneOctave(prefs);
+	// reduce to one octave
+	ch->reduceToOneOctave(prefs);
 	QVERIFY(ch->getBins() == 12);
 	// test that the magnitude is now halved, since only three of six were set
 	QVERIFY(ch->getMagnitude(0,0) == 0.5 * (10 + 2 * 1.0 * weight));

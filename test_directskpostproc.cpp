@@ -41,7 +41,7 @@ DirectSkPostProc_Test::DirectSkPostProc_Test(){}
 
 void DirectSkPostProc_Test::testTransform(){
 	LibAvDecoder* dec = new LibAvDecoder;
-	AudioBuffer* ab = NULL;
+	AudioStream* ab = NULL;
 	try{
 		ab = dec->decodeFile("../is_KeyFinder/_testaudio/audio-sine-chord.wav");
 	}catch(...){

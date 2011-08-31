@@ -148,7 +148,7 @@ void DetailWindow::receiveFullChromagram(const Chromagram& ch){
 void DetailWindow::receiveOneOctaveChromagram(const Chromagram& ch){
 	miniChromagramImage = imageFromChromagram(&ch);
 	ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
-	ui->miniChromagramLabel->setToolTip("This is the same chromagram data,\ndecomposed to a single octave.");
+	ui->miniChromagramLabel->setToolTip("This is the same chromagram data,\nreduced to a single octave.");
 	say("Spectrum analysis done...");
 	ui->progressBar->setValue(PROGRESS_DONESPECTRUMANALYSIS);
 }

@@ -40,7 +40,7 @@ SecretRabbitDownsampler_Test::SecretRabbitDownsampler_Test(){}
 
 void SecretRabbitDownsampler_Test::testDownsample(){
 	LibAvDecoder* dec = new LibAvDecoder;
-	AudioBuffer* ab = NULL;
+	AudioStream* ab = NULL;
 	try{
 		ab = dec->decodeFile("../is_KeyFinder/_testaudio/audio-441-sine.wav");
 	}catch(...){
