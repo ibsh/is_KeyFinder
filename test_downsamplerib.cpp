@@ -51,7 +51,7 @@ void IbDownsampler_Test::testDownsample(){
 		441-sine.wav contains 1 monophonic second of unity-magnitude sine wave at 441Hz,
 		so we can downsample by a factor of 10 and then test the waveform.
 	*/
-	IbDownsampler* ds = new IbDownsampler();
+	PrimaryDownsampler* ds = new PrimaryDownsampler();
 	ab = ds->downsample(ab,10);
 	QVERIFY(ab->getFrameRate() == 4410);
 	QVERIFY(ab->getSampleCount() == 4410);

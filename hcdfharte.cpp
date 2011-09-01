@@ -46,7 +46,7 @@ double HarteHcdf::phi(int d, int l){
 	}
 }
 
-std::vector<double> HarteHcdf::hcdf(Chromagram* ch, const Preferences& prefs){
+std::vector<double> HarteHcdf::getRateOfChange(Chromagram* ch, const Preferences& prefs){
 	int bpo = 12; // note this function must always be applied *after* decomposition to 1 bps.
 	int hops = ch->getHops();
 	int dims = 6;
@@ -110,7 +110,7 @@ std::vector<double> HarteHcdf::hcdf(Chromagram* ch, const Preferences& prefs){
 	return rateOfChange;
 }
 
-std::vector<int> HarteHcdf::peaks(const std::vector<double>& rateOfChange, const Preferences& prefs){
+std::vector<int> HarteHcdf::getSegments(const std::vector<double>& rateOfChange, const Preferences& prefs){
 	// Pick peaks
 	std::vector<int> changes(1); // start vector with a 0 to enable first classification
 	int neighbours = prefs.getHcdfPeakPickingNeighbours();

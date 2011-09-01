@@ -22,13 +22,8 @@
 #include "spectrumanalyserfftw.h"
 
 FftwAnalyser::FftwAnalyser(int f, const Preferences& prefs): SpectrumAnalyser(f, prefs) {
-	pp = NULL;
 	fftFrameSize = prefs.getFftFrameSize();
-	if(prefs.getFftPostProcessor() == 'c'){
-		pp = new ConstantQPostProc(frameRate, prefs);
-	}else{
-		pp = new DirectSkPostProc(frameRate, prefs);
-	}
+  pp = FftPostProcessor::getFftPostProcessor(f, prefs);
 	//pp->printKernel();
 	fftInput = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*fftFrameSize);
 	fftResult = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*fftFrameSize);

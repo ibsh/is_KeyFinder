@@ -26,7 +26,7 @@
 
 Downsampler* Downsampler::getDownsampler(int downsampleFactor, int frameRate, float maxFreq){
 	if(downsampleFactor == 10 && frameRate == 44100 && maxFreq < 2205.0){
-		return new IbDownsampler();
+		return new PrimaryDownsampler();
 	}else{
 		return new SecretRabbitDownsampler();
 	}

@@ -27,6 +27,7 @@
 
 class FftPostProcessor{
 public:
+  static FftPostProcessor* getFftPostProcessor(int, const Preferences&);
 	FftPostProcessor(int, const Preferences&);
 	virtual std::vector<float> chromaVector(fftw_complex*) const = 0;
 	virtual void printKernel() const = 0;

@@ -21,12 +21,12 @@
 
 #include "hcdfarbitrary.h"
 
-std::vector<double> ArbitraryHcdf::hcdf(Chromagram* ch, const Preferences& /*prefs*/){
+std::vector<double> ArbitrarySeg::getRateOfChange(Chromagram* ch, const Preferences& /*prefs*/){
 	std::vector<double> NoChange(ch->getHops());
 	return NoChange;
 }
 
-std::vector<int> ArbitraryHcdf::peaks(const std::vector<double>& rateOfChange, const Preferences& prefs){
+std::vector<int> ArbitrarySeg::getSegments(const std::vector<double>& rateOfChange, const Preferences& prefs){
 	// Divide by arbitrary number of segments
 	int segments = prefs.getHcdfArbitrarySegments();
 	std::vector<int> changes(1); // start vector with a 0 to enable first classification

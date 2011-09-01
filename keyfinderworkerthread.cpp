@@ -78,12 +78,12 @@ void KeyFinderWorkerThread::run(){
 			loudness[h] += ch->getMagnitude(h,b);
 
 	// get harmonic change signal
-	Hcdf* hcdf = Hcdf::getHcdf(prefs);
-	std::vector<double> harmonicChangeSignal = hcdf->hcdf(ch,prefs);
+	Segmentation* hcdf = Segmentation::getSegmentation(prefs);
+	std::vector<double> harmonicChangeSignal = hcdf->getRateOfChange(ch,prefs);
 	emit producedHarmonicChangeSignal(harmonicChangeSignal);
 
 	// get track segmentation
-	std::vector<int> changes = hcdf->peaks(harmonicChangeSignal,prefs);
+	std::vector<int> changes = hcdf->getSegments(harmonicChangeSignal,prefs);
 	changes.push_back(ch->getHops()-1);
 
 	// batch output of keychange locations for Beatles experiment

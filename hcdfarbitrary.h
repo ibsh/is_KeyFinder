@@ -24,10 +24,10 @@
 
 #include "hcdf.h"
 
-class ArbitraryHcdf : public Hcdf{
+class ArbitrarySeg : public Segmentation{
 public:
-	virtual std::vector<double> hcdf(Chromagram*, const Preferences&);
-	virtual std::vector<int> peaks(const std::vector<double>&, const Preferences&);
+	virtual std::vector<double> getRateOfChange(Chromagram*, const Preferences&);
+	virtual std::vector<int> getSegments(const std::vector<double>&, const Preferences&);
 };
 
 #endif // HCDFARBITRARY_H

@@ -26,13 +26,13 @@
 #include "hcdfnone.h"
 #include "hcdfarbitrary.h"
 
-Hcdf* Hcdf::getHcdf(const Preferences& prefs){
+Segmentation* Segmentation::getSegmentation(const Preferences& prefs){
 	if(prefs.getHcdf() == 'c')
 		return new CosineHcdf();
 	else if(prefs.getHcdf() == 'n')
-		return new NoHcdf();
+		return new NoSeg();
 	else if(prefs.getHcdf() == 'a')
-		return new ArbitraryHcdf();
+		return new ArbitrarySeg();
 	else
 		return new HarteHcdf();
 }

@@ -24,11 +24,11 @@
 
 #include "hcdf.h"
 
-class CosineHcdf : public Hcdf{
+class CosineHcdf : public Segmentation{
 public:
 	CosineHcdf();
-	virtual std::vector<double> hcdf(Chromagram*, const Preferences&);
-	virtual std::vector<int> peaks(const std::vector<double>&, const Preferences&);
+	virtual std::vector<double> getRateOfChange(Chromagram*, const Preferences&);
+	virtual std::vector<int> getSegments(const std::vector<double>&, const Preferences&);
 private:
 	double pi;
 };

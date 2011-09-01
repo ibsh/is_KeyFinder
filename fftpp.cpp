@@ -21,6 +21,17 @@
 
 #include "fftpp.h"
 
+#include "fftppconstantq.h"
+#include "fftppdirectsk.h"
+
+FftPostProcessor* FftPostProcessor::getFftPostProcessor(int fr, const Preferences& prefs){
+  if(prefs.getFftPostProcessor() == 'c'){
+    return new ConstantQPostProc(fr, prefs);
+  }else{
+    return new DirectSkPostProc(fr, prefs);
+  }
+}
+
 FftPostProcessor::FftPostProcessor(int f, const Preferences& prefs){
 	frameRate = f;
 	bins = prefs.getOctaves() * prefs.getBpo();

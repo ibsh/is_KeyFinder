@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>613</width>
-    <height>383</height>
+    <width>678</width>
+    <height>407</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -459,15 +459,15 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab3hcdf">
+     <widget class="QWidget" name="tab3segmentation">
       <attribute name="title">
-       <string>HCDF</string>
+       <string>Segmentation</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout_4">
        <item row="0" column="0">
         <widget class="QLabel" name="lbl_hcdf">
          <property name="text">
-          <string>Harmonic change detection</string>
+          <string>Segmentation</string>
          </property>
         </widget>
        </item>
@@ -483,12 +483,12 @@
          </item>
          <item>
           <property name="text">
-           <string>Harte</string>
+           <string>Harte HCDF</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Sha'ath</string>
+           <string>Cosine similarity CDF</string>
           </property>
          </item>
          <item>

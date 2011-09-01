@@ -25,7 +25,7 @@ CosineHcdf::CosineHcdf(){
 	pi = (4 * atan(1.0));
 }
 
-std::vector<double> CosineHcdf::hcdf(Chromagram* ch, const Preferences& prefs){
+std::vector<double> CosineHcdf::getRateOfChange(Chromagram* ch, const Preferences& prefs){
 	int hops = ch->getHops();
 	int bins = ch->getBins();
 	int gaussianSize = prefs.getHcdfGaussianSize();
@@ -76,7 +76,7 @@ std::vector<double> CosineHcdf::hcdf(Chromagram* ch, const Preferences& prefs){
 	return rateOfChange;
 }
 
-std::vector<int> CosineHcdf::peaks(const std::vector<double>& rateOfChange, const Preferences& prefs){
+std::vector<int> CosineHcdf::getSegments(const std::vector<double>& rateOfChange, const Preferences& prefs){
 	// Pick peaks
 	std::vector<int> changes(1); // start vector with a 0 to enable first classification
 	int neighbours = prefs.getHcdfPeakPickingNeighbours();

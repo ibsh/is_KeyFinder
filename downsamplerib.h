@@ -24,7 +24,7 @@
 
 #include "downsampler.h"
 
-class IbDownsampler : public Downsampler{
+class PrimaryDownsampler : public Downsampler{
 public:
 		virtual AudioStream* downsample(AudioStream*,int) throw (Exception);
 };

@@ -32,11 +32,11 @@
 #include "chromagram.h"
 #include "preferences.h"
 
-class Hcdf{
+class Segmentation{
 public:
-	static Hcdf* getHcdf(const Preferences&);
-	virtual std::vector<double> hcdf(Chromagram*, const Preferences&) = 0;
-	virtual std::vector<int> peaks(const std::vector<double>&, const Preferences&) = 0;
+	static Segmentation* getSegmentation(const Preferences&);
+	virtual std::vector<double> getRateOfChange(Chromagram*, const Preferences&) = 0;
+	virtual std::vector<int> getSegments(const std::vector<double>&, const Preferences&) = 0;
 };
 
 #endif
