@@ -24,7 +24,7 @@
 Chromagram::Chromagram(int h, int b){
 	hops = h;
 	bins = b;
-	chromagram = std::vector<std::vector<float> >(hops,std::vector<float>(bins));
+	chromaData = std::vector<std::vector<float> >(hops,std::vector<float>(bins));
 }
 
 float Chromagram::getMagnitude(int h, int b) const{
@@ -36,7 +36,7 @@ float Chromagram::getMagnitude(int h, int b) const{
 		qDebug("Attempt to get magnitude of out-of-bounds bin (%d/%d)",b,bins);
 		return 0;
 	}
-	return chromagram[h][b];
+	return chromaData[h][b];
 }
 
 void Chromagram::setMagnitude(int h, int b, float val){
@@ -48,7 +48,7 @@ void Chromagram::setMagnitude(int h, int b, float val){
 		qDebug("Attempt to set magnitude of out-of-bounds bin (%d/%d)",b,bins);
 		return;
 	}
-	chromagram[h][b] = val;
+	chromaData[h][b] = val;
 }
 
 void Chromagram::reduceTuningBins(const Preferences& prefs){
@@ -78,7 +78,7 @@ void Chromagram::tuningHarte(const Preferences& prefs){
 		// find mean magnitude for this hop
 		float meanVal = 0;
 		for(int bin = 0; bin < bins; bin++){
-			meanVal += chromagram[hop][bin];
+			meanVal += chromaData[hop][bin];
 		}
 		meanVal /= bins;
 		// find peak bins
@@ -149,7 +149,7 @@ void Chromagram::tuningHarte(const Preferences& prefs){
 			}
 		}
 	}
-	chromagram = twelveBpoChroma;
+	chromaData = twelveBpoChroma;
 	bins = 12 * oct;
 }
 
@@ -166,7 +166,7 @@ void Chromagram::tuningBinAdaptive(const Preferences& prefs){
 		std::vector<float> oneSemitoneChroma(bps);
 		for(int h = 0; h < hops; h++)
 			for(int b = 0; b < bps; b++)
-				oneSemitoneChroma[b] += chromagram[h][st*bps+b];
+				oneSemitoneChroma[b] += chromaData[h][st*bps+b];
 		// determine highest energy tuning bin
 		int whichBin = 0;
 		float max = oneSemitoneChroma[0];
@@ -179,11 +179,11 @@ void Chromagram::tuningBinAdaptive(const Preferences& prefs){
 		for(int h = 0; h < hops; h++){
 			float weighted = 0.0;
 			for(int b = 0; b < bps; b++)
-				weighted += (chromagram[h][st*bps+b] * (b == whichBin ? 1.0 : prefs.getDetunedBandWeight()));
+				weighted += (chromaData[h][st*bps+b] * (b == whichBin ? 1.0 : prefs.getDetunedBandWeight()));
 			twelveBpoChroma[h][st] = weighted;
 		}
 	}
-	chromagram = twelveBpoChroma;
+	chromaData = twelveBpoChroma;
 	bins = 12 * oct;
 }
 
@@ -197,11 +197,11 @@ void Chromagram::reduceToOneOctave(const Preferences& prefs){
 		for(int b = 0; b < bpo; b++){
 			float singleBin = 0.0;
 			for(int o=0; o<oct; o++)
-				singleBin += chromagram[h][o*bpo+b];
+				singleBin += chromaData[h][o*bpo+b];
 			oneOctaveChroma[h][b] = singleBin / oct;
 		}
 	}
-	chromagram = oneOctaveChroma;
+	chromaData = oneOctaveChroma;
 	bins = bpo;
 }
 

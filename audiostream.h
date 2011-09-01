@@ -40,7 +40,8 @@ public:
 	void setSample(int,float);
 	int getSampleCount() const;
 	void addToSampleCount(int) throw (Exception);
-	std::vector<float> stream; // not ideal, but libavcodec needs access to stream.front()
+	void reduceToMono();
+	std::vector<float> stream; // not ideal, but libsrc needs access to stream.front()
 private:
 	int channels;
 	int frameRate;

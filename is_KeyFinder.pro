@@ -72,7 +72,6 @@ SOURCES += \
     spectrumanalyser.cpp \
     preferences.cpp \
     spectrumanalyserfactory.cpp \
-    monaural.cpp \
     decoder.cpp \
     downsampler.cpp \
     keyclassifier.cpp \
@@ -101,7 +100,6 @@ HEADERS  += \
     toneprofiles.h \
     spectrumanalyser.h \
     preferences.h \
-    monaural.h \
     spectrumanalyserfactory.h \
     exception.h \
     hcdf.h \

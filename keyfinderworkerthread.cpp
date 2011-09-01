@@ -39,9 +39,7 @@ void KeyFinderWorkerThread::run(){
 	emit decoded();
 
 	// make audio stream monaural
-	Monaural* mono = new Monaural();
-	astrm = mono->makeMono(astrm);
-	delete mono;
+	astrm->reduceToMono();
 	emit madeMono();
 
 	// downsample if necessary

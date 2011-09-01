@@ -68,3 +68,18 @@ void AudioStream::addToSampleCount(int newSamples) throw (Exception){
 int AudioStream::getSampleCount() const{
 	return samples;
 }
+
+void AudioStream::reduceToMono(){
+	if(channels == 1) return;
+	std::vector<float> newStream(samples / channels);
+	for(int i = 0; i < samples; i += channels){
+		float mono = 0.0;
+		for(int j = 0; j < channels; j++)
+			mono += stream[i + j];
+		mono /= channels;
+		newStream[i/channels] = mono;
+	}
+	stream = newStream;
+	channels = 1;
+	return;
+}

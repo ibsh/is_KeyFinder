@@ -23,8 +23,6 @@
 #define CHROMAGRAM_H
 
 #include "preferences.h"
-#include <iostream>
-#include <iomanip>
 #include <vector>
 #include <math.h>
 #include <stdlib.h>
@@ -41,7 +39,7 @@ public:
 private:
 	int hops;
 	int bins;
-	std::vector<std::vector<float> > chromagram;
+	std::vector<std::vector<float> > chromaData;
 	void tuningHarte(const Preferences&);
 	void tuningBinAdaptive(const Preferences&);
 };

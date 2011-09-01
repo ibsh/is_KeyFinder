@@ -11,7 +11,6 @@
 #include "exception.h"
 #include "audiostream.h"
 #include "decoder.h"
-#include "monaural.h"
 #include "downsampler.h"
 #include "chromagram.h"
 #include "spectrumanalyserfactory.h"
