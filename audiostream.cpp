@@ -80,6 +80,7 @@ void AudioStream::reduceToMono(){
 		newStream[i/channels] = mono;
 	}
 	stream = newStream;
+  samples /= channels;
 	channels = 1;
 	return;
 }
