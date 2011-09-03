@@ -62,12 +62,11 @@ void KeyFinderWorkerThread::run(){
 	Chromagram* ch = NULL;
 	sa = SpectrumAnalyserFactory::getInstance()->getSpectrumAnalyser(astrm->getFrameRate(),prefs);
 	ch = sa->chromagram(astrm);
-	delete astrm;
-	// note we don't delete the spectrum analyser; it stays in the centralised factory for reuse.
+  delete astrm; // note we don't delete the spectrum analyser; it stays in the centralised factory for reuse.
+  ch->reduceTuningBins(prefs);
 	emit producedFullChromagram(*ch);
 
 	// reduce chromagram
-	ch->reduceTuningBins(prefs);
 	ch->reduceToOneOctave(prefs);
 	emit producedOneOctaveChromagram(*ch);
 
