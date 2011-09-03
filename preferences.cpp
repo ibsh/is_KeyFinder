@@ -44,16 +44,16 @@ Preferences::Preferences(){
 		octaves = defaultVal;
 		qDebug("Wrote default numOctaves (%d)",octaves);
 	}
-	// 3 gets an octave that starts at C, but accuracy drops a little.
+  // 3 gets an octave that starts at C.
 	if(settings.contains("octaveBeginOffset")){
 		octaveOffset = settings.value("octaveBeginOffset").toInt();
 	}else{
-		int defaultVal = 0;
+    int defaultVal = 3;
 		settings.setValue("octaveBeginOffset",defaultVal);
 		octaveOffset = defaultVal;
 		qDebug("Wrote default octaveBeginOffset (%d)",octaveOffset);
 	}
-	// 3 bps has only reduced accuracy, all other things being equal. default 1.
+  // >1 bps has only reduced accuracy, all other things being equal. default 1.
 	if(settings.contains("bandsPerSemitone")){
 		bps = settings.value("bandsPerSemitone").toInt();
 	}else{
@@ -91,7 +91,7 @@ Preferences::Preferences(){
 		fftPostProcessor = defaultVal;
 		qDebug("Wrote default fftPostProcessor (%c)",fftPostProcessor);
 	}
-	int defFrameSize = 65536;
+  int defFrameSize = 16384;
 	if(settings.contains("fftFrameSize")){
 		fftFrameSize = settings.value("fftFrameSize").toInt();
 	}else{
@@ -107,11 +107,11 @@ Preferences::Preferences(){
 		hopSize = defHopSize;
 		qDebug("Wrote default hopSize (%d)",hopSize);
 	}
-	// 3.8 closely models the CQT, 1.0 is much tighter and apparently more accurate.
+  // 3.8 closely models the CQT, 0.8 is much tighter and more accurate.
 	if(settings.contains("directSkStretch")){
 		directSkStretch = settings.value("directSkStretch").toFloat();
 	}else{
-		float defaultVal = 1.0;
+    float defaultVal = 0.8;
 		settings.setValue("directSkStretch",defaultVal);
 		directSkStretch = defaultVal;
 		qDebug("Wrote default directSkStretch (%f)",directSkStretch);
@@ -211,7 +211,7 @@ Preferences::Preferences(){
 	if(settings.contains("toneProfile")){
 		toneProfile = settings.value("toneProfile").toInt();
 	}else{
-		int defaultVal = 2;
+    int defaultVal = 3;
 		settings.setValue("toneProfile",defaultVal);
 		toneProfile = defaultVal;
 		qDebug("Wrote default toneProfile (%d)",toneProfile);
