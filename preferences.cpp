@@ -153,7 +153,7 @@ Preferences::Preferences(){
 	if(settings.contains("detunedBandWeight")){
 		detunedBandWeight = settings.value("detunedBandWeight").toFloat();
 	}else{
-		float defaultVal = 0.5;
+    float defaultVal = 0.2;
 		settings.setValue("detunedBandWeight",defaultVal);
 		detunedBandWeight = defaultVal;
 		qDebug("Wrote default detunedBandWeight (%f)",detunedBandWeight);
