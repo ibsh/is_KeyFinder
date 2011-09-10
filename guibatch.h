@@ -77,7 +77,7 @@ private slots:
 	void fileDropFinished();
 	void on_runBatchButton_clicked();
 	void copySelectedFromTableWidget();
-	void writeDetectedToGrouping();
+	void writeDetectedToTags();
 	void clearDetected();
 	void runDetailedAnalysis();
 };

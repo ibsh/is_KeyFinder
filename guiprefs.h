@@ -50,6 +50,8 @@ private:
 	QString fftPostProcessorComboIndex;
 	QString hcdfComboIndex;
 	QString similarityMeasureComboIndex;
+  QString tagFormatComboIndex;
+  QString tagFieldComboIndex;
 private slots:
 	void on_savePrefsButton_clicked();
 	void on_cancelButton_clicked();

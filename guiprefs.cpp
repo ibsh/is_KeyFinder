@@ -35,6 +35,8 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 	fftPostProcessorComboIndex = "ci";
 	hcdfComboIndex = "nhca";
 	similarityMeasureComboIndex = "ck";
+  tagFieldComboIndex = "cg";
+  tagFormatComboIndex = "kcb";
 
 	// set preferences from QSettings
 	QSettings settings;
@@ -74,7 +76,7 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 	settings.endGroup();
 
 	settings.beginGroup("keyClassification");
-	ui->toneProfile ->setCurrentIndex(settings.value("toneProfile").toInt());
+  ui->toneProfile->setCurrentIndex(settings.value("toneProfile").toInt());
 	ui->similarityMeasure->setCurrentIndex(similarityMeasureComboIndex.indexOf(settings.value("similarityMeasure").toChar()));
 	settings.endGroup();
 
@@ -132,6 +134,11 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 	ui->minKey11->setText(settings.value("minKey11").toString());
 	ui->silence->setText(settings.value("silence").toString());
 	settings.endGroup();
+
+  settings.beginGroup("tags");
+  ui->tagFormat->setCurrentIndex(tagFormatComboIndex.indexOf(settings.value("tagFormat").toChar()));
+  ui->tagField->setCurrentIndex(tagFieldComboIndex.indexOf(settings.value("tagField").toChar()));
+  settings.endGroup();
 
 	// enable/disable fields as necessary
 	fftEnabled();
@@ -244,6 +251,11 @@ void PrefsDialog::on_savePrefsButton_clicked(){
 	settings.setValue("minKey11",ui->minKey11->text());
 	settings.setValue("silence",ui->silence->text());
 	settings.endGroup();
+
+  settings.beginGroup("tags");
+  settings.setValue("tagFormat",tagFormatComboIndex[ui->tagFormat->currentIndex()].toAscii());
+  settings.setValue("tagField",tagFieldComboIndex[ui->tagField->currentIndex()].toAscii());
+  settings.endGroup();
 
 	// CLOSE
 	this->close();

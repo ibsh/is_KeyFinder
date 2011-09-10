@@ -57,11 +57,12 @@ public:
 	~TagLibMetadata();
 	QString getTitle() const;
 	QString getArtist() const;
+  QString getComment() const;
 	QString getGrouping() const;
 	void setGrouping(const QString&);
+  void setComment(const QString&);
 private:
-	//TagLib::FileRef f;
-	TagLib::File* f;
+  TagLib::File* f;
 };
 
 #endif // METADATATAGLIB_H

@@ -351,6 +351,27 @@ Preferences::Preferences(){
 	}
 	settings.endGroup();
 
+  // ========================= Key classification ==============================
+
+  settings.beginGroup("tags");
+  if(settings.contains("tagFormat")){
+    tagFormat = settings.value("tagFormat").toChar().toAscii();
+  }else{
+    char defaultVal = 'k';
+    settings.setValue("tagFormat",defaultVal);
+    tagFormat = defaultVal;
+    qDebug("Wrote default tagFormat (%c)",tagFormat);
+  }
+  if(settings.contains("tagField")){
+    tagField = settings.value("tagField").toChar().toAscii();
+  }else{
+    char defaultVal = 'c';
+    settings.setValue("tagField",defaultVal);
+    tagField = defaultVal;
+    qDebug("Wrote default tagField (%c)",tagField);
+  }
+  settings.endGroup();
+
 	// ================================ End ======================================
 
 	generateBinFreqs();
@@ -382,6 +403,8 @@ Preferences& Preferences::operator=(const Preferences& that){
 		detunedBandWeight = that.detunedBandWeight;
 		customToneProfile = that.customToneProfile;
 		customKeyCodes = that.customKeyCodes;
+    tagFormat = that.tagFormat;
+    tagField = that.tagField;
 		generateBinFreqs();
 	}
 	return *this;
@@ -449,6 +472,8 @@ char Preferences::getFftPostProcessor()const{return fftPostProcessor;}
 char Preferences::getTemporalWindow()const{return temporalWindow;}
 char Preferences::getHcdf()const{return hcdf;}
 char Preferences::getSimilarityMeasure()const{return similarityMeasure;}
+char Preferences::getTagFormat()const{return tagFormat;}
+char Preferences::getTagField()const{return tagField;}
 int Preferences::getHopSize()const{return hopSize;}
 int Preferences::getFftFrameSize()const{return fftFrameSize;}
 int Preferences::getGoertzelMinK()const{return goertzelMinK;}

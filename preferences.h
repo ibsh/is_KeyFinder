@@ -50,6 +50,8 @@ public:
 	char getTemporalWindow() const;
 	char getHcdf() const;
 	char getSimilarityMeasure() const;
+  char getTagFormat() const;
+  char getTagField() const;
 	int getHopSize() const;
 	int getFftFrameSize() const;
 	int getGoertzelMinK() const;
@@ -75,6 +77,8 @@ private:
 	char temporalWindow;
 	char hcdf;
 	char similarityMeasure;
+  char tagFormat;
+  char tagField;
 	int hopSize;
 	int fftFrameSize;
 	int goertzelMinK;

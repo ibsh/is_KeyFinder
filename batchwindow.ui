@@ -57,6 +57,11 @@
       </column>
       <column>
        <property name="text">
+        <string>Comment Tag</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
         <string>Grouping Tag</string>
        </property>
       </column>

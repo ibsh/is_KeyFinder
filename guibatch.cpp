@@ -25,9 +25,10 @@
 const int COL_PATH = 0;
 const int COL_TAG_ARTIST = 1;
 const int COL_TAG_TITLE = 2;
-const int COL_TAG_GROUPING = 3;
-const int COL_KEY = 4;
-const int COL_KEYCODE = 5;
+const int COL_TAG_COMMENT = 3;
+const int COL_TAG_GROUPING = 4;
+const int COL_KEY = 5;
+const int COL_KEYCODE = 6;
 
 BatchWindow::BatchWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::BatchWindow){
 	// ASYNC
@@ -59,10 +60,10 @@ BatchWindow::BatchWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::Batc
 	copyAction->setShortcut(QKeySequence::Copy);
 	connect(copyAction, SIGNAL(triggered()), this, SLOT(copySelectedFromTableWidget()));
 	ui->tableWidget->addAction(copyAction);
-	QAction* writeToGroupingAction = new QAction(tr("Write key to Grouping tag"),this);
-	writeToGroupingAction->setShortcut(QKeySequence("Ctrl+T"));
-	connect(writeToGroupingAction, SIGNAL(triggered()), this, SLOT(writeDetectedToGrouping()));
-	ui->tableWidget->addAction(writeToGroupingAction);
+  QAction* writeToTagsAction = new QAction(tr("Write key to tags"),this);
+  writeToTagsAction->setShortcut(QKeySequence("Ctrl+T"));
+  connect(writeToTagsAction, SIGNAL(triggered()), this, SLOT(writeDetectedToTags()));
+  ui->tableWidget->addAction(writeToTagsAction);
 	QAction* runDetailedAction = new QAction(tr("Run detailed analysis"),this);
 	runDetailedAction->setShortcut(QKeySequence("Ctrl+D"));
 	connect(runDetailedAction, SIGNAL(triggered()), this, SLOT(runDetailedAnalysis()));
@@ -163,6 +164,11 @@ void BatchWindow::getMetadata(){
 			ui->tableWidget->setItem(i,COL_TAG_TITLE,new QTableWidgetItem());
 			ui->tableWidget->item(i,COL_TAG_TITLE)->setText(tag);
 		}
+    tag = md->getComment();
+    if(tag != ""){
+      ui->tableWidget->setItem(i,COL_TAG_COMMENT,new QTableWidgetItem());
+      ui->tableWidget->item(i,COL_TAG_COMMENT)->setText(tag);
+    }
 		tag = md->getGrouping();
 		if(tag != ""){
 			ui->tableWidget->setItem(i,COL_TAG_GROUPING,new QTableWidgetItem());
@@ -274,8 +280,11 @@ void BatchWindow::copySelectedFromTableWidget(){
 	QApplication::clipboard()->setMimeData(&mimeData);
 }
 
-void BatchWindow::writeDetectedToGrouping(){
+void BatchWindow::writeDetectedToTags(){
 	if(allowDrops){ // not an ideal check semantically, but it stops the user Cmd+T-ing during a batch run.
+    // get a new preferences object in case they've changed since the last run.
+    prefs = Preferences();
+    // which files to write to
 		int firstRow = INT_MAX;
 		int lastRow = 0;
 		foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()){
@@ -283,20 +292,27 @@ void BatchWindow::writeDetectedToGrouping(){
 			if(chkRow < firstRow) firstRow = chkRow;
 			if(chkRow > lastRow) lastRow = chkRow;
 		}
+    // write
 		for(int r = firstRow; r <= lastRow; r++){
 			QTableWidgetItem* item = ui->tableWidget->item(r,COL_KEY); // only write if there's a detected key
 			if(item != NULL && item->text() != "Failed"){
 				TagLibMetadata md(ui->tableWidget->item(r,COL_PATH)->text().toAscii().data());
-				// start with custom key code if present
 				QString writeToTag = "";
-				if(ui->tableWidget->item(r,COL_KEYCODE)->text() != "")
-					writeToTag = ui->tableWidget->item(r,COL_KEYCODE)->text() + " ";
-				writeToTag += ui->tableWidget->item(r,COL_KEY)->text();
-				md.setGrouping(writeToTag.toAscii().data());
+        if(prefs.getTagFormat() == 'k')
+          writeToTag = ui->tableWidget->item(r,COL_KEY)->text();
+        else if(prefs.getTagFormat() == 'c')
+          writeToTag = ui->tableWidget->item(r,COL_KEYCODE)->text();
+        else
+          writeToTag = ui->tableWidget->item(r,COL_KEYCODE)->text() + " " + ui->tableWidget->item(r,COL_KEY)->text();
+        if(prefs.getTagField() == 'g')
+          md.setGrouping(writeToTag.toAscii().data());
+        else
+          md.setComment(writeToTag.toAscii().data());
 			}
 		}
 		QMessageBox msg;
-		QString msgText = "Tags written to ";
+    QString msgText = "Data written to ";
+    msgText += (prefs.getTagField() == 'c' ? "comment tag in " : "grouping tag in ");
 		msgText += QString("%1").arg(lastRow-firstRow+1);
 		msgText += " files";
 		msg.setText(msgText);

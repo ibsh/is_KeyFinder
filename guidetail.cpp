@@ -90,8 +90,6 @@ void DetailWindow::processCurrentFile(){
 	}
 	// visuals
 	say("Decoding audio... ");
-	//blankVisualisations();
-	//blankKeyLabel();
 	ui->progressBar->setValue(PROGRESS_START);
 	ui->progressBar->setVisible(true);
 	ui->chromaColourCombo->setDisabled(true);
