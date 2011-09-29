@@ -303,6 +303,7 @@ void BatchWindow::writeDetectedToTags(){
 			if(chkRow > lastRow) lastRow = chkRow;
 		}
     // write
+    int count = 0;
 		for(int r = firstRow; r <= lastRow; r++){
 			QTableWidgetItem* item = ui->tableWidget->item(r,COL_KEY); // only write if there's a detected key
 			if(item != NULL && item->text() != "Failed"){
@@ -315,15 +316,15 @@ void BatchWindow::writeDetectedToTags(){
         else
           writeToTag = ui->tableWidget->item(r,COL_KEYCODE)->text() + " " + ui->tableWidget->item(r,COL_KEY)->text();
         if(prefs.getTagField() == 'g')
-          md.setGrouping(writeToTag.toAscii().data());
+          if(md.setGrouping(writeToTag.toAscii().data()) == 0) count++;
         else
-          md.setComment(writeToTag.toAscii().data());
+          if(md.setComment(writeToTag.toAscii().data()) == 0) count++;
 			}
 		}
 		QMessageBox msg;
     QString msgText = "Data written to ";
     msgText += (prefs.getTagField() == 'c' ? "comment tag in " : "grouping tag in ");
-		msgText += QString("%1").arg(lastRow-firstRow+1);
+    msgText += QString("%1").arg(count);
 		msgText += " files";
 		msg.setText(msgText);
 		msg.exec();

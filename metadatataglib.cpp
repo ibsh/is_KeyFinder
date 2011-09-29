@@ -221,18 +221,21 @@ QString TagLibMetadata::getGrouping() const{
 	return "N/A";
 }
 
-void TagLibMetadata::setComment(const QString& cmt){
+int TagLibMetadata::setComment(const QString& cmt){
   if(f == NULL || !f->isValid()){
     qDebug("Cannot set comment tag on invalid file object");
+    return 1;
   }
   f->tag()->setComment(TagLib::String(cmt.toAscii().data()));
   f->save();
+  return 0;
 }
 
-void TagLibMetadata::setGrouping(const QString& grp){
+int TagLibMetadata::setGrouping(const QString& grp){
 
   if(f == NULL || !f->isValid()){
 		qDebug("Cannot set grouping tag on invalid file object");
+    return 1;
 	}
 
 	TagLib::MPEG::File* fileTestMpeg = dynamic_cast<TagLib::MPEG::File*>(f);
@@ -244,12 +247,12 @@ void TagLibMetadata::setGrouping(const QString& grp){
 			tagTestId3v2->removeFrames("TIT1");
 			tagTestId3v2->addFrame(frm);
       f->save();
-			return;
+      return 0;
 		}else{
 			TagLib::ID3v1::Tag* tagTestId3v1 = fileTestMpeg->ID3v1Tag();
 			if(tagTestId3v1 != NULL){
         qDebug("ID3v1 does not support the Grouping tag (%s)",f->name());
-				return;
+        return 1;
 			}
 		}
 	}
@@ -263,7 +266,7 @@ void TagLibMetadata::setGrouping(const QString& grp){
 			tagTestId3v2->removeFrames("TIT1");
 			tagTestId3v2->addFrame(frm);
       f->save();
-			return;
+      return 0;
 		}
 	}
 
@@ -276,7 +279,7 @@ void TagLibMetadata::setGrouping(const QString& grp){
 			tagTestId3v2->removeFrames("TIT1");
 			tagTestId3v2->addFrame(frm);
       f->save();
-			return;
+      return 0;
 		}
 	}
 
@@ -286,23 +289,23 @@ void TagLibMetadata::setGrouping(const QString& grp){
 		tagTestMp4->itemListMap()["\251grp"] = sl;
 		tagTestMp4->save();
     f->save();
-		return;
+    return 0;
 	}
 
   TagLib::ASF::Tag* tagTestAsf = dynamic_cast<TagLib::ASF::Tag*>(f->tag());
 	if(tagTestAsf != NULL){
     tagTestAsf->setAttribute("WM/ContentGroupDescription",TagLib::String(grp.toAscii().data()));
     f->save();
-		return;
+    return 0;
 	}
 
   TagLib::APE::Tag* tagTestApe = dynamic_cast<TagLib::APE::Tag*>(f->tag());
 	if(tagTestApe != NULL){
 		tagTestApe->addValue("GROUPING",TagLib::String(grp.toAscii().data()));
     f->save();
-		return;
+    return 0;
 	}
 
   qDebug("Tag write failed all tests on %s",f->name());
-	return;
+  return 1;
 }
