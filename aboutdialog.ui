@@ -102,7 +102,7 @@ Ibrahim Sha'ath</string>
      </property>
      <property name="text">
       <string>KeyFinder
-v1.0</string>
+v1.01</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignBottom|Qt::AlignHCenter</set>

@@ -66,6 +66,7 @@ private:
 	void getMetadata();
 	int currentFile;
 	void processCurrentFile();
+  bool cancel;
 	void cleanUpAfterRun();
 	// UI
 	Ui::BatchWindow* ui;
@@ -80,6 +81,7 @@ private slots:
 	void writeDetectedToTags();
 	void clearDetected();
 	void runDetailedAnalysis();
+  void on_cancelBatchButton_clicked();
 };
 
 #endif

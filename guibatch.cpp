@@ -83,6 +83,7 @@ BatchWindow::~BatchWindow(){
 	delete ui;
 }
 
+
 void BatchWindow::dragEnterEvent(QDragEnterEvent *e){
 	// accept only local files
 	if(allowDrops && e->mimeData()->hasUrls() && !e->mimeData()->urls().at(0).toLocalFile().isEmpty()){
@@ -193,6 +194,8 @@ void BatchWindow::on_runBatchButton_clicked(){
 	if(ui->tableWidget->rowCount()==0)
 		return;
 	ui->runBatchButton->setDisabled(true);
+  ui->cancelBatchButton->setDisabled(false);
+  cancel = false;
 	ui->tableWidget->setContextMenuPolicy(Qt::NoContextMenu); // so that no tags can be written while busy
 	allowDrops = false;
 	ui->statusLabel->setText("Analysing...");
@@ -201,8 +204,14 @@ void BatchWindow::on_runBatchButton_clicked(){
 	processCurrentFile();
 }
 
+void BatchWindow::on_cancelBatchButton_clicked(){
+  cancel = true;
+  ui->statusLabel->setText("Cancelling...");
+  ui->cancelBatchButton->setDisabled(true);
+}
+
 void BatchWindow::processCurrentFile(){
-	if(currentFile == ui->tableWidget->rowCount()){
+  if(cancel || currentFile == ui->tableWidget->rowCount()){
 		cleanUpAfterRun();
 		QApplication::beep();
 		return;
@@ -229,6 +238,7 @@ void BatchWindow::cleanUpAfterRun(){
 	ui->progressBar->setValue(0);
 	ui->statusLabel->setText("Ready");
 	ui->runBatchButton->setDisabled(false);
+  ui->cancelBatchButton->setDisabled(true);
 	ui->tableWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
 	ui->tableWidget->resizeColumnsToContents();
 }
