@@ -35,7 +35,7 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 	fftPostProcessorComboIndex = "ci";
 	hcdfComboIndex = "nhca";
 	similarityMeasureComboIndex = "ck";
-  tagFieldComboIndex = "cg";
+  tagFieldComboIndex = "cgk";
   tagFormatComboIndex = "kcb";
 
 	// set preferences from QSettings

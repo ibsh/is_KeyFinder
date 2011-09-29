@@ -309,21 +309,36 @@ void BatchWindow::writeDetectedToTags(){
 			if(item != NULL && item->text() != "Failed"){
 				TagLibMetadata md(ui->tableWidget->item(r,COL_PATH)->text().toAscii().data());
 				QString writeToTag = "";
-        if(prefs.getTagFormat() == 'k')
+        // what are we writing?
+        if(prefs.getTagFormat() == 'k'){
           writeToTag = ui->tableWidget->item(r,COL_KEY)->text();
-        else if(prefs.getTagFormat() == 'c')
+        }else if(prefs.getTagFormat() == 'c'){
           writeToTag = ui->tableWidget->item(r,COL_KEYCODE)->text();
-        else
+        }else{
           writeToTag = ui->tableWidget->item(r,COL_KEYCODE)->text() + " " + ui->tableWidget->item(r,COL_KEY)->text();
-        if(prefs.getTagField() == 'g')
-          if(md.setGrouping(writeToTag.toAscii().data()) == 0) count++;
-        else
-          if(md.setComment(writeToTag.toAscii().data()) == 0) count++;
+        }
+        // where are we writing it?
+        if(prefs.getTagField() == 'g'){
+          if(md.setGrouping(writeToTag.toAscii().data()) == 0)
+            count++;
+        }else if(prefs.getTagField() == 'k'){
+          if(md.setKey(writeToTag.left(3).toAscii().data()) == 0)
+            count++;
+        }else{
+          if(md.setComment(writeToTag.toAscii().data()) == 0)
+            count++;
+        }
 			}
 		}
 		QMessageBox msg;
     QString msgText = "Data written to ";
-    msgText += (prefs.getTagField() == 'c' ? "comment tag in " : "grouping tag in ");
+    if(prefs.getTagField() == 'g')
+      msgText += "grouping";
+    else if(prefs.getTagField() == 'k')
+      msgText += "key";
+    else
+      msgText += "comment";
+    msgText += " tag in ";
     msgText += QString("%1").arg(count);
 		msgText += " files";
 		msg.setText(msgText);

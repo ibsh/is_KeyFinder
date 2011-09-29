@@ -1956,6 +1956,11 @@
              <string>Grouping</string>
             </property>
            </item>
+           <item>
+            <property name="text">
+             <string>Key (limited support)</string>
+            </property>
+           </item>
           </widget>
          </item>
          <item row="1" column="0">

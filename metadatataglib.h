@@ -59,8 +59,10 @@ public:
 	QString getArtist() const;
   QString getComment() const;
 	QString getGrouping() const;
-  int setGrouping(const QString&);
+  QString getKey() const;
   int setComment(const QString&);
+  int setGrouping(const QString&);
+  int setKey(const QString&);
 private:
   TagLib::File* f;
 };
