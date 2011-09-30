@@ -67,6 +67,11 @@
       </column>
       <column>
        <property name="text">
+        <string>Key Tag</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
         <string>Detected Key</string>
        </property>
       </column>

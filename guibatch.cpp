@@ -27,8 +27,9 @@ const int COL_TAG_ARTIST = 1;
 const int COL_TAG_TITLE = 2;
 const int COL_TAG_COMMENT = 3;
 const int COL_TAG_GROUPING = 4;
-const int COL_KEY = 5;
-const int COL_KEYCODE = 6;
+const int COL_TAG_KEY = 5;
+const int COL_KEY = 6;
+const int COL_KEYCODE = 7;
 
 BatchWindow::BatchWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::BatchWindow){
 	// ASYNC
@@ -175,6 +176,11 @@ void BatchWindow::getMetadata(){
 			ui->tableWidget->setItem(i,COL_TAG_GROUPING,new QTableWidgetItem());
 			ui->tableWidget->item(i,COL_TAG_GROUPING)->setText(tag);
 		}
+    tag = md->getKey();
+    if(tag != ""){
+      ui->tableWidget->setItem(i,COL_TAG_KEY,new QTableWidgetItem());
+      ui->tableWidget->item(i,COL_TAG_KEY)->setText(tag);
+    }
 		delete md;
 	}
 	ui->progressBar->setValue(0);
