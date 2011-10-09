@@ -17,50 +17,9 @@
 
 
 QT += core
+QT += gui
 TEMPLATE = app
-
-CONFIG(debug, debug|release){
-	# DEBUG (UNIT TESTING) CONFIGURATION
-	QT -= gui
-	QT += testlib
-	TARGET = keyfinder_test
-	CONFIG += console
-	CONFIG -= app_bundle
-	HEADERS += unittest.h
-	SOURCES += \
-		test__main.cpp \
-		test_audiobuffer.cpp \
-		test_chromagram.cpp \
-		test_decoderlibav.cpp \
-		test_downsamplerib.cpp \
-		test_downsamplerlibsrc.cpp \
-		test_directskpostproc.cpp \
-		test_constantqpostproc.cpp
-}else{
-	# RELEASE CONFIGURATION
-	QT += gui
-	TARGET = KeyFinder
-	HEADERS += \
-		guiabout.h \
-		guibatch.h \
-		guidetail.h \
-		guimenuhandler.h \
-		guiprefs.h \
-		guivisuals.h
-	SOURCES += \
-		main.cpp \
-		guiabout.cpp \
-		guibatch.cpp \
-		guidetail.cpp \
-		guimenuhandler.cpp \
-		guiprefs.cpp \
-		guivisuals.cpp
-	FORMS += \
-		detailwindow.ui \
-		batchwindow.ui \
-		aboutdialog.ui \
-		prefsdialog.ui
-}
+TARGET = KeyFinder
 
 SOURCES += \
     decoderlibav.cpp \
@@ -87,7 +46,14 @@ SOURCES += \
     spectrumanalyserfftw.cpp \
 		spectrumanalysergoertzel.cpp \
     hcdfarbitrary.cpp \
-    audiostream.cpp
+    audiostream.cpp \
+    main.cpp \
+    guiabout.cpp \
+    guibatch.cpp \
+    guidetail.cpp \
+    guimenuhandler.cpp \
+    guiprefs.cpp \
+    guivisuals.cpp
 
 HEADERS  += \
     decoderlibav.h \
@@ -115,7 +81,20 @@ HEADERS  += \
     spectrumanalysergoertzel.h \
 		fftpp.h \
 		hcdfarbitrary.h \
-		audiostream.h
+    audiostream.h \
+    guiabout.h \
+    guibatch.h \
+    guidetail.h \
+    guimenuhandler.h \
+    guiprefs.h \
+    guivisuals.h
+
+FORMS += \
+    detailwindow.ui \
+    batchwindow.ui \
+    aboutdialog.ui \
+    prefsdialog.ui
+
 OTHER_FILES += \
 		is_KeyFinder.pro.user \
     README
