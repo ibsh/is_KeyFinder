@@ -25,13 +25,11 @@ MainMenuHandler::MainMenuHandler(QObject *parent) : QObject(parent){}
 
 void MainMenuHandler::about(){
   AboutDialog* about = new AboutDialog(0);
-  about->setMenuBar(newMenuBar());
   about->show();
 }
 
 void MainMenuHandler::preferences(){
   PrefsDialog* prefs = new PrefsDialog(0);
-  prefs->setMenuBar(newMenuBar());
   prefs->show();
 }
 
