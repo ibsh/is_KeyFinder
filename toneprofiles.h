@@ -22,7 +22,7 @@
 #ifndef TONEPROFILES_H
 #define TONEPROFILES_H
 
-#include <preferences.h>
+#include "preferences.h"
 
 #include <vector>
 #include <math.h>

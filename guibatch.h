@@ -22,6 +22,9 @@
 #ifndef BATCHWINDOW_H
 #define BATCHWINDOW_H
 
+// forward declaration for circular dependency
+class MainMenuHandler;
+
 #include <QtCore>
 #include <QMainWindow>
 #include <QThread>
@@ -41,6 +44,7 @@
 #include "guivisuals.h"
 #include "keyfinderworkerthread.h"
 #include "metadatataglib.h"
+#include "guimenuhandler.h"
 
 namespace Ui {
 	class BatchWindow;
@@ -49,7 +53,7 @@ namespace Ui {
 class BatchWindow : public QMainWindow{
 	Q_OBJECT
 public:
-	explicit BatchWindow(QWidget *parent = 0);
+  explicit BatchWindow(MainMenuHandler* handler, QWidget* parent = 0);
 	~BatchWindow();
 private:
 	// analysis
@@ -72,6 +76,7 @@ private:
 	Ui::BatchWindow* ui;
 	Visuals* vis;
 	QLabel* initialHelpLabel;
+  MainMenuHandler* menuHandler;
 private slots:
 	void fileFailed();
 	void fileFinished(int);

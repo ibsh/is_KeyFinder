@@ -35,7 +35,7 @@
 #include <asftag.h>
 #include <apetag.h>
 #include <mp4tag.h>
-#include <apefile.h>
+// #include <apefile.h> // removed with Windows version; difficulty in compilation
 #include <asffile.h>
 #include <flacfile.h>
 #include <mp4file.h>

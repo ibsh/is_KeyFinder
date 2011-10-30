@@ -1,30 +1,30 @@
 /*************************************************************************
 
-	Copyright 2011 Ibrahim Sha'ath
+  Copyright 2011 Ibrahim Sha'ath
 
-	This file is part of KeyFinder.
+  This file is part of KeyFinder.
 
-	KeyFinder is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+  KeyFinder is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-	KeyFinder is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+  KeyFinder is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with KeyFinder.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License
+  along with KeyFinder.  If not, see <http://www.gnu.org/licenses/>.
 
 *************************************************************************/
 
 #include "metadatataglib.h"
 
 /*
-	Note that a lot remains untested here. For example, I didn't have any ASF or
-	APE files to hand while writing it, and I wouldn't be surprised if there are
-	many edge cases, though they should at least fail gracefully.
+  Note that a lot remains untested here. For example, I didn't have any ASF or
+  APE files to hand while writing it, and I wouldn't be surprised if there are
+  many edge cases, though they should at least fail gracefully.
 */
 
 TagLibMetadata::TagLibMetadata(const QString& filePath){
@@ -81,10 +81,12 @@ TagLibMetadata::TagLibMetadata(const QString& filePath){
     return;
   }
 
+  /*
   if(fileExt == "ape"){
     f = new TagLib::APE::File(filePathCh);
     return;
   }
+  */
 
   if(fileExt == "mpc"){
     f = new TagLib::MPC::File(filePathCh);
@@ -107,7 +109,11 @@ TagLibMetadata::TagLibMetadata(const QString& filePath){
   }
 
   f = NULL;
-  qDebug("TagLib returned NULL File for %s",filePathCh);
+  #ifdef Q_OS_WIN
+    qDebug("TagLib returned NULL File");
+  #else
+    qDebug("TagLib returned NULL File for %s",filePathCh);
+  #endif
   return;
 
 }
@@ -119,14 +125,14 @@ TagLibMetadata::~TagLibMetadata(){
 
 QString TagLibMetadata::getTitle() const{
   if(f == NULL || !f->isValid())
-		return "";
+    return "";
   TagLib::String out = f->tag()->title();
   return QString::fromUtf8(out.toCString(true));
 }
 
 QString TagLibMetadata::getArtist() const{
   if(f == NULL || !f->isValid())
-		return "";
+    return "";
   TagLib::String out = f->tag()->artist();
   return QString::fromUtf8(out.toCString(true));
 }
@@ -141,84 +147,92 @@ QString TagLibMetadata::getComment() const{
 QString TagLibMetadata::getGrouping() const{
 
   if(f == NULL || !f->isValid())
-		return "";
+    return "";
 
-	TagLib::MPEG::File* fileTestMpeg = dynamic_cast<TagLib::MPEG::File*>(f);
-	if(fileTestMpeg != NULL){
-		TagLib::ID3v2::Tag* tagTestId3v2 = fileTestMpeg->ID3v2Tag();
-		if(tagTestId3v2 != NULL){
-			TagLib::ID3v2::FrameList l = tagTestId3v2->frameListMap()["TIT1"];
-			if(!l.isEmpty()){
-				TagLib::String out = l.front()->toString();
-				return QString::fromUtf8((out.toCString()));
-			}
-			return "";
-		}
-		TagLib::ID3v1::Tag* tagTestId3v1 = fileTestMpeg->ID3v1Tag();
-		if(tagTestId3v1 != NULL){
-      qDebug("ID3v1 does not support the Grouping tag (%s)",f->name());
-			return "N/A";
-		}
-	}
+  TagLib::MPEG::File* fileTestMpeg = dynamic_cast<TagLib::MPEG::File*>(f);
+  if(fileTestMpeg != NULL){
+    TagLib::ID3v2::Tag* tagTestId3v2 = fileTestMpeg->ID3v2Tag();
+    if(tagTestId3v2 != NULL){
+      TagLib::ID3v2::FrameList l = tagTestId3v2->frameListMap()["TIT1"];
+      if(!l.isEmpty()){
+        TagLib::String out = l.front()->toString();
+        return QString::fromUtf8((out.toCString()));
+      }
+      return "";
+    }
+    TagLib::ID3v1::Tag* tagTestId3v1 = fileTestMpeg->ID3v1Tag();
+    if(tagTestId3v1 != NULL){
+      #ifdef Q_OS_WIN
+        qDebug("ID3v1 does not support the Grouping tag");
+      #else
+        qDebug("ID3v1 does not support the Grouping tag (%s)",f->name());
+      #endif
+      return "N/A";
+    }
+  }
 
-	TagLib::RIFF::AIFF::File* fileTestAiff = dynamic_cast<TagLib::RIFF::AIFF::File*>(f);
-	if(fileTestAiff != NULL){
+  TagLib::RIFF::AIFF::File* fileTestAiff = dynamic_cast<TagLib::RIFF::AIFF::File*>(f);
+  if(fileTestAiff != NULL){
     TagLib::ID3v2::Tag* tagTestId3v2 = fileTestAiff->tag();
-		if(tagTestId3v2 != NULL){
-			TagLib::ID3v2::FrameList l = tagTestId3v2->frameListMap()["TIT1"];
-			if(!l.isEmpty()){
-				TagLib::String out = l.front()->toString();
-				return QString::fromUtf8((out.toCString()));
-			}
-			return "";
-		}
-	}
+    if(tagTestId3v2 != NULL){
+      TagLib::ID3v2::FrameList l = tagTestId3v2->frameListMap()["TIT1"];
+      if(!l.isEmpty()){
+        TagLib::String out = l.front()->toString();
+        return QString::fromUtf8((out.toCString()));
+      }
+      return "";
+    }
+  }
 
-	TagLib::RIFF::WAV::File* fileTestWav = dynamic_cast<TagLib::RIFF::WAV::File*>(f);
-	if(fileTestWav != NULL){
-		TagLib::ID3v2::Tag* tagTestId3v2 = fileTestWav->tag();
-		if(tagTestId3v2 != NULL){
-			TagLib::ID3v2::FrameList l = tagTestId3v2->frameListMap()["TIT1"];
-			if(!l.isEmpty()){
-				TagLib::String out = l.front()->toString();
-				return QString::fromUtf8((out.toCString()));
-			}
-			return "";
-		}
-	}
+  TagLib::RIFF::WAV::File* fileTestWav = dynamic_cast<TagLib::RIFF::WAV::File*>(f);
+  if(fileTestWav != NULL){
+    TagLib::ID3v2::Tag* tagTestId3v2 = fileTestWav->tag();
+    if(tagTestId3v2 != NULL){
+      TagLib::ID3v2::FrameList l = tagTestId3v2->frameListMap()["TIT1"];
+      if(!l.isEmpty()){
+        TagLib::String out = l.front()->toString();
+        return QString::fromUtf8((out.toCString()));
+      }
+      return "";
+    }
+  }
 
   TagLib::MP4::Tag* tagTestMp4 = dynamic_cast<TagLib::MP4::Tag*>(f->tag());
-	if(tagTestMp4 != NULL){
-		TagLib::MP4::Item m = tagTestMp4->itemListMap()["\251grp"];
-		if(m.isValid()){
-			TagLib::String out = m.toStringList().front();
-			return QString::fromUtf8((out.toCString()));
-		}
-		return "";
-	}
+  if(tagTestMp4 != NULL){
+    TagLib::MP4::Item m = tagTestMp4->itemListMap()["\251grp"];
+    if(m.isValid()){
+      TagLib::String out = m.toStringList().front();
+      return QString::fromUtf8((out.toCString()));
+    }
+    return "";
+  }
 
   TagLib::ASF::Tag* tagTestAsf = dynamic_cast<TagLib::ASF::Tag*>(f->tag());
-	if(tagTestAsf != NULL){
+  if(tagTestAsf != NULL){
     TagLib::ASF::AttributeList l = tagTestAsf->attributeListMap()["WM/ContentGroupDescription"];
-		if(!l.isEmpty()){
-			TagLib::String out = l.front().toString();
-			return QString::fromUtf8((out.toCString()));
-		}
-		return "";
-	}
+    if(!l.isEmpty()){
+      TagLib::String out = l.front().toString();
+      return QString::fromUtf8((out.toCString()));
+    }
+    return "";
+  }
 
   TagLib::APE::Tag* tagTestApe = dynamic_cast<TagLib::APE::Tag*>(f->tag());
-	if(tagTestApe != NULL){
-		TagLib::APE::Item m = tagTestApe->itemListMap()["Grouping"];
-		if(!m.isEmpty()){
-			TagLib::String out = m.toStringList().front();
-			return QString::fromUtf8((out.toCString()));
-		}
-		return "";
-	}
+  if(tagTestApe != NULL){
+    TagLib::APE::Item m = tagTestApe->itemListMap()["Grouping"];
+    if(!m.isEmpty()){
+      TagLib::String out = m.toStringList().front();
+      return QString::fromUtf8((out.toCString()));
+    }
+    return "";
+  }
 
-  qDebug("Grouping tag read failed all tests on %s",f->name());
-	return "N/A";
+  #ifdef Q_OS_WIN
+    qDebug("Grouping tag read failed all tests");
+  #else
+    qDebug("Grouping tag read failed all tests on %s",f->name());
+  #endif
+  return "N/A";
 }
 
 QString TagLibMetadata::getKey() const{
@@ -239,7 +253,11 @@ QString TagLibMetadata::getKey() const{
     }
     TagLib::ID3v1::Tag* tagTestId3v1 = fileTestMpeg->ID3v1Tag();
     if(tagTestId3v1 != NULL){
-      qDebug("ID3v1 does not support the Key tag (%s)",f->name());
+      #ifdef Q_OS_WIN
+        qDebug("ID3v1 does not support the Key tag");
+      #else
+        qDebug("ID3v1 does not support the Key tag (%s)",f->name());
+      #endif
       return "N/A";
     }
   }
@@ -272,7 +290,11 @@ QString TagLibMetadata::getKey() const{
 
   TagLib::MP4::Tag* tagTestMp4 = dynamic_cast<TagLib::MP4::Tag*>(f->tag());
   if(tagTestMp4 != NULL){
-    qDebug("iTunes metadata does not support the Key tag (%s)",f->name());
+    #ifdef Q_OS_WIN
+      qDebug("iTunes metadata does not support the Key tag");
+    #else
+      qDebug("iTunes metadata does not support the Key tag (%s)",f->name());
+    #endif
     return "N/A";
   }
 
@@ -288,11 +310,20 @@ QString TagLibMetadata::getKey() const{
 
   TagLib::APE::Tag* tagTestApe = dynamic_cast<TagLib::APE::Tag*>(f->tag());
   if(tagTestApe != NULL){
-    qDebug("APE metadata does not support the Key tag (%s)",f->name());
+    #ifdef Q_OS_WIN
+      qDebug("APE metadata does not support the Key tag");
+    #else
+      qDebug("APE metadata does not support the Key tag (%s)",f->name());
+    #endif
     return "N/A";
   }
 
-  qDebug("Key tag read failed all tests on %s",f->name());
+  #ifdef Q_OS_WIN
+    qDebug("Key tag read failed all tests");
+  #else
+    qDebug("Key tag read failed all tests on %s",f->name());
+  #endif
+
   return "N/A";
 }
 
@@ -309,79 +340,87 @@ int TagLibMetadata::setComment(const QString& cmt){
 int TagLibMetadata::setGrouping(const QString& grp){
 
   if(f == NULL || !f->isValid()){
-		qDebug("Cannot set grouping tag on invalid file object");
+    qDebug("Cannot set grouping tag on invalid file object");
     return 1;
-	}
+  }
 
-	TagLib::MPEG::File* fileTestMpeg = dynamic_cast<TagLib::MPEG::File*>(f);
-	if(fileTestMpeg != NULL){
-		TagLib::ID3v2::Tag* tagTestId3v2 = fileTestMpeg->ID3v2Tag();
-		if(tagTestId3v2 != NULL){
-			TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TIT1");
-			frm->setText(TagLib::String(grp.toAscii().data()));
-			tagTestId3v2->removeFrames("TIT1");
-			tagTestId3v2->addFrame(frm);
+  TagLib::MPEG::File* fileTestMpeg = dynamic_cast<TagLib::MPEG::File*>(f);
+  if(fileTestMpeg != NULL){
+    TagLib::ID3v2::Tag* tagTestId3v2 = fileTestMpeg->ID3v2Tag();
+    if(tagTestId3v2 != NULL){
+      TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TIT1");
+      frm->setText(TagLib::String(grp.toAscii().data()));
+      tagTestId3v2->removeFrames("TIT1");
+      tagTestId3v2->addFrame(frm);
       f->save();
       return 0;
-		}else{
-			TagLib::ID3v1::Tag* tagTestId3v1 = fileTestMpeg->ID3v1Tag();
-			if(tagTestId3v1 != NULL){
-        qDebug("ID3v1 does not support the Grouping tag (%s)",f->name());
+    }else{
+      TagLib::ID3v1::Tag* tagTestId3v1 = fileTestMpeg->ID3v1Tag();
+      if(tagTestId3v1 != NULL){
+        #ifdef Q_OS_WIN
+          qDebug("ID3v1 does not support the Grouping tag");
+        #else
+          qDebug("ID3v1 does not support the Grouping tag (%s)",f->name());
+        #endif
         return 1;
-			}
-		}
-	}
+      }
+    }
+  }
 
-	TagLib::RIFF::AIFF::File* fileTestAiff = dynamic_cast<TagLib::RIFF::AIFF::File*>(f);
-	if(fileTestAiff != NULL){
+  TagLib::RIFF::AIFF::File* fileTestAiff = dynamic_cast<TagLib::RIFF::AIFF::File*>(f);
+  if(fileTestAiff != NULL){
     TagLib::ID3v2::Tag* tagTestId3v2 = fileTestAiff->tag();
-		if(tagTestId3v2 != NULL){
-			TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TIT1");
-			frm->setText(TagLib::String(grp.toAscii().data()));
-			tagTestId3v2->removeFrames("TIT1");
-			tagTestId3v2->addFrame(frm);
+    if(tagTestId3v2 != NULL){
+      TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TIT1");
+      frm->setText(TagLib::String(grp.toAscii().data()));
+      tagTestId3v2->removeFrames("TIT1");
+      tagTestId3v2->addFrame(frm);
       f->save();
       return 0;
-		}
-	}
+    }
+  }
 
-	TagLib::RIFF::WAV::File* fileTestWav = dynamic_cast<TagLib::RIFF::WAV::File*>(f);
-	if(fileTestWav != NULL){
-		TagLib::ID3v2::Tag* tagTestId3v2 = fileTestWav->tag();
-		if(tagTestId3v2 != NULL){
-			TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TIT1");
-			frm->setText(TagLib::String(grp.toAscii().data()));
-			tagTestId3v2->removeFrames("TIT1");
-			tagTestId3v2->addFrame(frm);
+  TagLib::RIFF::WAV::File* fileTestWav = dynamic_cast<TagLib::RIFF::WAV::File*>(f);
+  if(fileTestWav != NULL){
+    TagLib::ID3v2::Tag* tagTestId3v2 = fileTestWav->tag();
+    if(tagTestId3v2 != NULL){
+      TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TIT1");
+      frm->setText(TagLib::String(grp.toAscii().data()));
+      tagTestId3v2->removeFrames("TIT1");
+      tagTestId3v2->addFrame(frm);
       f->save();
       return 0;
-		}
-	}
+    }
+  }
 
   TagLib::MP4::Tag* tagTestMp4 = dynamic_cast<TagLib::MP4::Tag*>(f->tag());
-	if(tagTestMp4 != NULL){
-		TagLib::StringList sl(TagLib::String(grp.toAscii().data()));
-		tagTestMp4->itemListMap()["\251grp"] = sl;
-		tagTestMp4->save();
+  if(tagTestMp4 != NULL){
+    TagLib::StringList sl(TagLib::String(grp.toAscii().data()));
+    tagTestMp4->itemListMap()["\251grp"] = sl;
+    tagTestMp4->save();
     f->save();
     return 0;
-	}
+  }
 
   TagLib::ASF::Tag* tagTestAsf = dynamic_cast<TagLib::ASF::Tag*>(f->tag());
-	if(tagTestAsf != NULL){
+  if(tagTestAsf != NULL){
     tagTestAsf->setAttribute("WM/ContentGroupDescription",TagLib::String(grp.toAscii().data()));
     f->save();
     return 0;
-	}
+  }
 
   TagLib::APE::Tag* tagTestApe = dynamic_cast<TagLib::APE::Tag*>(f->tag());
-	if(tagTestApe != NULL){
-		tagTestApe->addValue("GROUPING",TagLib::String(grp.toAscii().data()));
+  if(tagTestApe != NULL){
+    tagTestApe->addValue("GROUPING",TagLib::String(grp.toAscii().data()));
     f->save();
     return 0;
-	}
+  }
 
-  qDebug("Grouping tag write failed all tests on %s",f->name());
+  #ifdef Q_OS_WIN
+    qDebug("Grouping tag write failed all tests");
+  #else
+    qDebug("Grouping tag write failed all tests on %s",f->name());
+  #endif
   return 1;
 }
 
@@ -405,7 +444,11 @@ int TagLibMetadata::setKey(const QString& key){
     }else{
       TagLib::ID3v1::Tag* tagTestId3v1 = fileTestMpeg->ID3v1Tag();
       if(tagTestId3v1 != NULL){
-        qDebug("ID3v1 does not support the Key tag (%s)",f->name());
+        #ifdef Q_OS_WIN
+          qDebug("ID3v1 does not support the Key tag");
+        #else
+          qDebug("ID3v1 does not support the Key tag (%s)",f->name());
+        #endif
         return 1;
       }
     }
@@ -439,7 +482,11 @@ int TagLibMetadata::setKey(const QString& key){
 
   TagLib::MP4::Tag* tagTestMp4 = dynamic_cast<TagLib::MP4::Tag*>(f->tag());
   if(tagTestMp4 != NULL){
-    qDebug("iTunes metadata does not support the Key tag (%s)",f->name());
+    #ifdef Q_OS_WIN
+      qDebug("iTunes metadata does not support the Key tag");
+    #else
+      qDebug("iTunes metadata does not support the Key tag (%s)",f->name());
+    #endif
     return 1;
   }
 
@@ -452,10 +499,18 @@ int TagLibMetadata::setKey(const QString& key){
 
   TagLib::APE::Tag* tagTestApe = dynamic_cast<TagLib::APE::Tag*>(f->tag());
   if(tagTestApe != NULL){
-    qDebug("APE metadata does not support the Key tag (%s)",f->name());
+    #ifdef Q_OS_WIN
+      qDebug("APE metadata does not support the Key tag");
+    #else
+      qDebug("APE metadata does not support the Key tag (%s)",f->name());
+    #endif
     return 1;
   }
 
-  qDebug("Key tag write failed all tests on %s",f->name());
+  #ifdef Q_OS_WIN
+    qDebug("Key tag write failed all tests");
+  #else
+    qDebug("Key tag write failed all tests on %s",f->name());
+  #endif
   return 1;
 }

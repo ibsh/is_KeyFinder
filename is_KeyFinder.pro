@@ -97,15 +97,49 @@ FORMS += \
 
 OTHER_FILES += \
 		is_KeyFinder.pro.user \
-    README
-
-INCLUDEPATH += /usr/local/include/taglib
-
-LIBS += -lfftw3 -lavcodec -lavformat -lsamplerate -ltag -lavutil
-
-ICON = is_KeyFinder.icns
+		README \
+    win32.rc
 
 UI_DIR = ../is_KeyFinder-build-desktop/
 
-RESOURCES += \
-    resources.qrc
+RESOURCES += resources.qrc
+
+mac{
+	LIBS += -lfftw3 -lavcodec -lavformat -lsamplerate -ltag -lavutil
+	INCLUDEPATH += /usr/local/include/taglib
+	ICON = is_KeyFinder.icns
+}
+
+win32{
+	INCLUDEPATH += $$PWD/../Desktop/fftw-3.3-dll32
+	DEPENDPATH += $$PWD/../Desktop/fftw-3.3-dll32
+	LIBS += -L$$PWD/../Desktop/fftw-3.3-dll32 -llibfftw3-3
+
+	INCLUDEPATH += $$PWD/../Desktop/libav-win32-0.7.2/usr/include
+	DEPENDPATH += $$PWD/../Desktop/libav-win32-0.7.2/usr/bin
+	LIBS += -L$$PWD/../Desktop/libav-win32-0.7.2/usr/bin -lavcodec
+	LIBS += -lavformat
+	LIBS += -lavutil
+
+	INCLUDEPATH += $$PWD/../Desktop/libsamplerate-0.1.8
+	INCLUDEPATH += $$PWD/../Desktop/libsamplerate-0.1.8/src
+	DEPENDPATH += $$PWD/../Desktop/libsamplerate-0.1.8
+	LIBS += -L$$PWD/../Desktop/libsamplerate-0.1.8/ -llibsamplerate-0
+
+
+	INCLUDEPATH += $$PWD/../Desktop/taglib-1.7
+	INCLUDEPATH += $$PWD/../Desktop/taglib-1.7/include
+	DEPENDPATH += $$PWD/../Desktop/taglib-1.7/taglib
+	LIBS += -L$$PWD/../Desktop/taglib-1.7/taglib -llibtag
+
+	OTHER_FILES += \
+		is_KeyFinder.ico
+	RC_FILE = win32.rc
+}
+
+
+
+
+
+
+

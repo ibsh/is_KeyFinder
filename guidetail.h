@@ -38,7 +38,6 @@
 #include "metadatataglib.h"
 #include "guivisuals.h"
 
-
 namespace Ui {
 	class DetailWindow;
 }
