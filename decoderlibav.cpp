@@ -110,11 +110,19 @@ AudioStream* LibAvDecoder::decodeFile(char* fileName) throw (Exception){
 	// Decode stream
 	AVPacket avpkt;
 	av_init_packet(&avpkt);
+  int bad_pkt_count = 0;
 	while(av_read_frame(fCtx, &avpkt) == 0){
 		if(avpkt.stream_index == audioStream)
 			try{
-				if(decodePacket(cCtx, &avpkt, astrm) != 0)
+        if(decodePacket(cCtx, &avpkt, astrm) != 0){
 					qWarning("LibAV: Error while processing packet");
+          if(bad_pkt_count < 100){
+            bad_pkt_count++;
+          }else{
+            qCritical("100 bad packets, may be DRM or corruption in file: %s", fileName);
+            throw Exception();
+          }
+        }
 			}catch(Exception& e){
 				throw e;
 			}
