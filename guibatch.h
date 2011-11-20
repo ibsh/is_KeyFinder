@@ -66,6 +66,8 @@ private:
 	QFutureWatcher<void> fileDropWatcher;
 	void filesDropped(QList<QUrl>&);
 	QStringList getDirectoryContents(QDir);
+  void loadPlaylistM3u(QString);
+  void loadPlaylistXml(QString);
 	void addNewRow(QString);
 	void getMetadata();
 	int currentFile;

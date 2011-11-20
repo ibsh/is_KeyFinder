@@ -24,7 +24,15 @@
 
 AboutDialog::AboutDialog(QWidget *parent): QDialog(parent),ui(new Ui::AboutDialog){
 	ui->setupUi(this);
-	this->setWindowFlags(Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::CustomizeWindowHint);
+  this->setWindowFlags(Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::CustomizeWindowHint);
+
+  ui->label_1_vn->setText("KeyFinder\nv1.1.3");
+
+  int yr = QDate::currentDate().year();
+  if(yr > 2011)
+    ui->label_2_cp->setText(QString("Copyright 2011-") + QString(yr) + QString("\nIbrahim Sha'ath"));
+  else
+    ui->label_2_cp->setText("Copyright 2011\nIbrahim Sha'ath");
 }
 
 AboutDialog::~AboutDialog(){

@@ -116,10 +116,10 @@ QStringList BatchWindow::getDirectoryContents(QDir dir){
 
 void BatchWindow::filesDropped(QList<QUrl>& urls){
   for(int i=0; i<urls.size(); i++){
-    QString filePath = urls[i].toLocalFile();
+    QString fileUrl = urls[i].toLocalFile();
     // check if url is a directory; if so, get contents rather than adding
-    if(QFileInfo(filePath).isDir()){
-      QStringList contents = getDirectoryContents(QDir(filePath));
+    if(QFileInfo(fileUrl).isDir()){
+      QStringList contents = getDirectoryContents(QDir(fileUrl));
       for(int j=0; j<contents.size(); j++)
         urls.push_back(QUrl(contents[j]));
       continue;
@@ -127,13 +127,13 @@ void BatchWindow::filesDropped(QList<QUrl>& urls){
     // check if path is already in the list
     bool isNew = true;
     for(int j=0; j<ui->tableWidget->rowCount(); j++){
-      if(ui->tableWidget->item(j,COL_PATH)->text() == filePath){
+      if(ui->tableWidget->item(j,COL_PATH)->text() == fileUrl){
         isNew = false;
         break;
       }
     }
     if(isNew){
-      addNewRow(filePath);
+      addNewRow(fileUrl);
     }
   }
   this->setWindowTitle("KeyFinder - Batch Analysis - " + QString::number(ui->tableWidget->rowCount()) + " files");
@@ -141,6 +141,14 @@ void BatchWindow::filesDropped(QList<QUrl>& urls){
 }
 
 void BatchWindow::addNewRow(QString fileUrl){
+  QString fileExt = fileUrl.right(3);
+  if(fileExt == "m3u"){
+    loadPlaylistM3u(fileUrl);
+    return;
+  }else if(fileExt == "xml"){
+    loadPlaylistXml(fileUrl);
+    return;
+  }
   if(initialHelpLabel != NULL){
     delete initialHelpLabel;
     initialHelpLabel = NULL;
@@ -149,6 +157,51 @@ void BatchWindow::addNewRow(QString fileUrl){
   ui->tableWidget->insertRow(newRow);
   ui->tableWidget->setItem(newRow,COL_PATH,new QTableWidgetItem());
   ui->tableWidget->item(newRow,COL_PATH)->setText(fileUrl);
+}
+
+void BatchWindow::loadPlaylistM3u(QString m3uUrl){
+  QFile m3uFile(m3uUrl);
+  if(!m3uFile.open(QIODevice::ReadOnly))
+    return;
+  QTextStream m3uTextStream(&m3uFile);
+  QString m3uChar;
+  QString m3uLine;
+  QList<QUrl> songUrls;
+  // M3U files break with ch13, and comment with ch35.
+  // QTextStream.readLine doesn't work, so we do it a char at a time
+  while(!(m3uChar = m3uTextStream.read(1)).isNull()){
+    if(int(m3uChar[0].toAscii()) != 13){
+      m3uLine += m3uChar;
+    }else{
+      if(int(m3uLine[0].toAscii()) != 35)
+        songUrls.push_back(QUrl(m3uLine));
+      m3uLine = "";
+    }
+  }
+  filesDropped(songUrls);
+}
+
+void BatchWindow::loadPlaylistXml(QString /*xmlUrl*/){
+  qDebug("XML playlists not working yet");
+//  QDomDocument domDoc("whatevs");
+//  QFile xmlFile(xmlUrl);
+//  if (!xmlFile.open(QIODevice::ReadOnly))
+//    return;
+//  if (!domDoc.setContent(&xmlFile)) {
+//    xmlFile.close();
+//    return;
+//  }
+//  xmlFile.close();
+//  // print out the element names of all elements that are direct children of the outermost element.
+//  QDomElement docElem = domDoc.documentElement();
+//  QDomNode n = docElem.firstChild();
+//  while(!n.isNull()) {
+//    QDomElement e = n.toElement(); // try to convert the node to an element.
+//    if(!e.isNull()) {
+//      std::cerr << qPrintable(e.tagName()) << std::endl; // the node really is an element.
+//    }
+//    n = n.nextSibling();
+//  }
 }
 
 void BatchWindow::getMetadata(){
@@ -380,7 +433,7 @@ void BatchWindow::runDetailedAnalysis(){
   }
   if(firstRow != lastRow){
     QMessageBox msg;
-    QString msgText = "Please select only a single row for detailed analysis";
+    QString msgText = "Please select a single row for detailed analysis";
     msg.setText(msgText);
     msg.exec();
     return;

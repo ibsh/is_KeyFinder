@@ -59,9 +59,9 @@ void KeyFinderWorkerThread::run(){
 
 	// start spectrum analysis
 	SpectrumAnalyser* sa = NULL;
-	Chromagram* ch = NULL;
-	sa = SpectrumAnalyserFactory::getInstance()->getSpectrumAnalyser(astrm->getFrameRate(),prefs);
-	ch = sa->chromagram(astrm);
+  Chromagram* ch = NULL;
+  sa = SpectrumAnalyserFactory::getInstance()->getSpectrumAnalyser(astrm->getFrameRate(),prefs);
+  ch = sa->chromagram(astrm);
   delete astrm; // note we don't delete the spectrum analyser; it stays in the centralised factory for reuse.
   ch->reduceTuningBins(prefs);
 	emit producedFullChromagram(*ch);
@@ -82,8 +82,8 @@ void KeyFinderWorkerThread::run(){
 	emit producedHarmonicChangeSignal(harmonicChangeSignal);
 
 	// get track segmentation
-	std::vector<int> changes = hcdf->getSegments(harmonicChangeSignal,prefs);
-	changes.push_back(ch->getHops()-1);
+  std::vector<int> changes = hcdf->getSegments(harmonicChangeSignal,prefs);
+  changes.push_back(ch->getHops()); // It used to be getHops()-1. But this doesn't crash. So we like it.
 
 	// batch output of keychange locations for Beatles experiment
 	//for(int i=1; i<changes.size(); i++) // don't want the leading zero
@@ -94,17 +94,17 @@ void KeyFinderWorkerThread::run(){
 	KeyClassifier hc(prefs);
 	std::vector<int> keys(0);
 	std::vector<float> keyWeights(24);
-	for(int i=0; i<(signed)changes.size()-1; i++){
-		std::vector<double> chroma(ch->getBins());
+  for(int i=0; i<(signed)changes.size()-1; i++){
+    std::vector<double> chroma(ch->getBins());
 		for(int j=changes[i]; j<changes[i+1]; j++)
 			for(int k=0; k<ch->getBins(); k++)
-				chroma[k] += ch->getMagnitude(j,k);
-		int key = hc.classify(chroma);
-		for(int j=changes[i]; j<changes[i+1]; j++){
+        chroma[k] += ch->getMagnitude(j,k);
+    int key = hc.classify(chroma);
+    for(int j=changes[i]; j<changes[i+1]; j++){
 			keys.push_back(key);
 			if(key < 24) // ignore parts that were classified as silent
 				keyWeights[key] += loudness[j];
-		}
+    }
 	}
 	keys.push_back(keys[keys.size()-1]); // put last key on again to match length of track
 	delete ch;

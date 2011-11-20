@@ -108,6 +108,7 @@ mac{
 	LIBS += -lfftw3 -lavcodec -lavformat -lsamplerate -ltag -lavutil
 	INCLUDEPATH += /usr/local/include/taglib
 	ICON = is_KeyFinder.icns
+  QMAKE_MAC_SDK = /Developer/SDKs/MacOSX10.6.sdk
 }
 
 win32{
@@ -136,6 +137,12 @@ win32{
 		is_KeyFinder.ico
 	RC_FILE = win32.rc
 }
+
+
+
+
+
+
 
 
 

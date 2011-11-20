@@ -80,7 +80,7 @@ Qt (http://qt.nokia.com)</string>
    <item row="1" column="1">
     <widget class="QLabel" name="label_2_cp">
      <property name="text">
-      <string>Copyright 2011
+      <string>copyright_years
 Ibrahim Sha'ath</string>
      </property>
      <property name="textFormat">
@@ -102,7 +102,7 @@ Ibrahim Sha'ath</string>
      </property>
      <property name="text">
       <string>KeyFinder
-v1.1.0</string>
+version_num</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignBottom|Qt::AlignHCenter</set>
