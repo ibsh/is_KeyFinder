@@ -181,27 +181,29 @@ void BatchWindow::loadPlaylistM3u(QString m3uUrl){
   filesDropped(songUrls);
 }
 
-void BatchWindow::loadPlaylistXml(QString /*xmlUrl*/){
+void BatchWindow::loadPlaylistXml(QString xmlUrl){
   qDebug("XML playlists not working yet");
-//  QDomDocument domDoc("whatevs");
-//  QFile xmlFile(xmlUrl);
-//  if (!xmlFile.open(QIODevice::ReadOnly))
-//    return;
-//  if (!domDoc.setContent(&xmlFile)) {
-//    xmlFile.close();
-//    return;
-//  }
-//  xmlFile.close();
-//  // print out the element names of all elements that are direct children of the outermost element.
-//  QDomElement docElem = domDoc.documentElement();
-//  QDomNode n = docElem.firstChild();
-//  while(!n.isNull()) {
-//    QDomElement e = n.toElement(); // try to convert the node to an element.
-//    if(!e.isNull()) {
-//      std::cerr << qPrintable(e.tagName()) << std::endl; // the node really is an element.
-//    }
-//    n = n.nextSibling();
-//  }
+  /*
+  QDomDocument domDoc("whatevs");
+  QFile xmlFile(xmlUrl);
+  if (!xmlFile.open(QIODevice::ReadOnly))
+    return;
+  if (!domDoc.setContent(&xmlFile)) {
+    xmlFile.close();
+    return;
+  }
+  xmlFile.close();
+  // path is plist -> dict -> dict -> each dict -> string element after key element = location
+  QDomNode n = domDoc.documentElement().firstChild().firstChild(); // plist -> dict
+  while(!n.isNull()) {
+    QDomElement e = n.toElement(); // try to convert the node to an element.
+    if(!e.isNull() && e.tagName() == "dict") {
+      n = n.firstChild(); // plist -> dict -> dict
+      break;
+    }
+    n = n.nextSibling();
+  }
+  */
 }
 
 void BatchWindow::getMetadata(){
@@ -281,7 +283,7 @@ void BatchWindow::processCurrentFile(){
     currentFile++;
     processCurrentFile();
   }else{
-    qDebug("Batch processing %s",ui->tableWidget->item(currentFile,COL_PATH)->text().toAscii().data());
+    qDebug("Batch processing %s",ui->tableWidget->item(currentFile,COL_PATH)->text().toUtf8().data());
     ui->progressBar->setValue(currentFile);
     // now proceed
     modelThread = new KeyFinderWorkerThread(0);
@@ -368,7 +370,7 @@ void BatchWindow::writeDetectedToTags(){
     for(int r = firstRow; r <= lastRow; r++){
       QTableWidgetItem* item = ui->tableWidget->item(r,COL_KEY); // only write if there's a detected key
       if(item != NULL && item->text() != "Failed"){
-        TagLibMetadata md(ui->tableWidget->item(r,COL_PATH)->text().toAscii().data());
+        TagLibMetadata md(ui->tableWidget->item(r,COL_PATH)->text().toUtf8().data());
         QString writeToTag = "";
         // what are we writing?
         if(prefs.getTagFormat() == 'k'){
@@ -380,13 +382,13 @@ void BatchWindow::writeDetectedToTags(){
         }
         // where are we writing it?
         if(prefs.getTagField() == 'g'){
-          if(md.setGrouping(writeToTag.toAscii().data()) == 0)
+          if(md.setGrouping(writeToTag.toUtf8().data()) == 0)
             count++;
         }else if(prefs.getTagField() == 'k'){
-          if(md.setKey(writeToTag.left(3).toAscii().data()) == 0)
+          if(md.setKey(writeToTag.left(3).toUtf8().data()) == 0)
             count++;
         }else{
-          if(md.setComment(writeToTag.toAscii().data()) == 0)
+          if(md.setComment(writeToTag.toUtf8().data()) == 0)
             count++;
         }
       }

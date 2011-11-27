@@ -18,6 +18,7 @@
 
 QT += core
 QT += gui
+QT += xml
 TEMPLATE = app
 TARGET = KeyFinder
 

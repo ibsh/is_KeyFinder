@@ -68,7 +68,7 @@ Preferences::Preferences(){
 
 	settings.beginGroup("spectralAnalysis");
 	if(settings.contains("temporalWindow")){
-		temporalWindow = settings.value("temporalWindow").toChar().toAscii();
+    temporalWindow = settings.value("temporalWindow").toChar().toAscii();
 	}else{
 		char defaultVal = 'b';
 		settings.setValue("temporalWindow",defaultVal);
@@ -76,7 +76,7 @@ Preferences::Preferences(){
 		qDebug("Wrote default temporalWindow (%c)",temporalWindow);
 	}
 	if(settings.contains("spectrumAnalyser")){
-		spectrumAnalyser = settings.value("spectrumAnalyser").toChar().toAscii();
+    spectrumAnalyser = settings.value("spectrumAnalyser").toChar().toAscii();
 	}else{
 		char defaultVal = 'f';
 		settings.setValue("spectrumAnalyser",defaultVal);
@@ -84,7 +84,7 @@ Preferences::Preferences(){
 		qDebug("Wrote default spectrumAnalyser (%c)",spectrumAnalyser);
 	}
 	if(settings.contains("fftPostProcessor")){
-		fftPostProcessor = settings.value("fftPostProcessor").toChar().toAscii();
+    fftPostProcessor = settings.value("fftPostProcessor").toChar().toAscii();
 	}else{
 		char defaultVal = 'i';
 		settings.setValue("fftPostProcessor",defaultVal);
@@ -164,7 +164,7 @@ Preferences::Preferences(){
 
 	settings.beginGroup("harmonicChangeDetectionFunction");
 	if(settings.contains("hcdf")){
-		hcdf = settings.value("hcdf").toChar().toAscii();
+    hcdf = settings.value("hcdf").toChar().toAscii();
 	}else{
 		char defaultVal = 'n';
 		settings.setValue("hcdf",defaultVal);
@@ -217,7 +217,7 @@ Preferences::Preferences(){
 		qDebug("Wrote default toneProfile (%d)",toneProfile);
 	}
 	if(settings.contains("similarityMeasure")){
-		similarityMeasure = settings.value("similarityMeasure").toChar().toAscii();
+    similarityMeasure = settings.value("similarityMeasure").toChar().toAscii();
 	}else{
 		char defaultVal = 'c';
 		settings.setValue("similarityMeasure",defaultVal);

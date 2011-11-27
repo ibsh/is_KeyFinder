@@ -166,9 +166,9 @@ void PrefsDialog::on_savePrefsButton_clicked(){
 	settings.endGroup();
 
 	settings.beginGroup("spectralAnalysis");
-	settings.setValue("temporalWindow",temporalWindowComboIndex[ui->temporalWindow->currentIndex()].toAscii());
-	settings.setValue("spectrumAnalyser",spectrumAnalyerComboIndex[ui->spectrumAnalyser->currentIndex()].toAscii());
-	settings.setValue("fftPostProcessor",fftPostProcessorComboIndex[ui->fftPostProcessor->currentIndex()].toAscii());
+  settings.setValue("temporalWindow",temporalWindowComboIndex[ui->temporalWindow->currentIndex()].toAscii());
+  settings.setValue("spectrumAnalyser",spectrumAnalyerComboIndex[ui->spectrumAnalyser->currentIndex()].toAscii());
+  settings.setValue("fftPostProcessor",fftPostProcessorComboIndex[ui->fftPostProcessor->currentIndex()].toAscii());
 	settings.setValue("fftFrameSize",pow(2,ui->fftFrameSize->currentIndex())*512);
 	settings.setValue("hopSize",pow(2,ui->hopSize->currentIndex())*128);
 	settings.setValue("directSkStretch",ui->directSkStretch->value());
@@ -185,7 +185,7 @@ void PrefsDialog::on_savePrefsButton_clicked(){
 	settings.endGroup();
 
 	settings.beginGroup("harmonicChangeDetectionFunction");
-	settings.setValue("hcdf",hcdfComboIndex[ui->hcdf->currentIndex()].toAscii());
+  settings.setValue("hcdf",hcdfComboIndex[ui->hcdf->currentIndex()].toAscii());
 	settings.setValue("hcdfGaussianSize",ui->hcdfGaussianSize->value());
 	settings.setValue("hcdfGaussianSigma",ui->hcdfGaussianSigma->value());
 	settings.setValue("hcdfPeakPickingNeighbours",ui->hcdfPeakPickingNeighbours->value());
@@ -194,7 +194,7 @@ void PrefsDialog::on_savePrefsButton_clicked(){
 
 	settings.beginGroup("keyClassification");
 	settings.setValue("toneProfile",ui->toneProfile->currentIndex());
-	settings.setValue("similarityMeasure",similarityMeasureComboIndex[ui->similarityMeasure->currentIndex()].toAscii());
+  settings.setValue("similarityMeasure",similarityMeasureComboIndex[ui->similarityMeasure->currentIndex()].toAscii());
 	settings.endGroup();
 
 	settings.beginGroup("customToneProfile");

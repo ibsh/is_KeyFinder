@@ -30,7 +30,7 @@
 TagLibMetadata::TagLibMetadata(const QString& filePath){
 
   QString fileExt = filePath.right(filePath.length() - filePath.lastIndexOf(".") - 1).toLower();
-  char* filePathCh = filePath.toAscii().data();
+  char* filePathCh = filePath.toUtf8().data();
 
   if(fileExt == "mp3"){
     f = new TagLib::MPEG::File(filePathCh);
@@ -332,7 +332,7 @@ int TagLibMetadata::setComment(const QString& cmt){
     qDebug("Cannot set comment tag on invalid file object");
     return 1;
   }
-  f->tag()->setComment(TagLib::String(cmt.toAscii().data()));
+  f->tag()->setComment(TagLib::String(cmt.toUtf8().data()));
   f->save();
   return 0;
 }
@@ -349,7 +349,7 @@ int TagLibMetadata::setGrouping(const QString& grp){
     TagLib::ID3v2::Tag* tagTestId3v2 = fileTestMpeg->ID3v2Tag();
     if(tagTestId3v2 != NULL){
       TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TIT1");
-      frm->setText(TagLib::String(grp.toAscii().data()));
+      frm->setText(TagLib::String(grp.toUtf8().data()));
       tagTestId3v2->removeFrames("TIT1");
       tagTestId3v2->addFrame(frm);
       f->save();
@@ -372,7 +372,7 @@ int TagLibMetadata::setGrouping(const QString& grp){
     TagLib::ID3v2::Tag* tagTestId3v2 = fileTestAiff->tag();
     if(tagTestId3v2 != NULL){
       TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TIT1");
-      frm->setText(TagLib::String(grp.toAscii().data()));
+      frm->setText(TagLib::String(grp.toUtf8().data()));
       tagTestId3v2->removeFrames("TIT1");
       tagTestId3v2->addFrame(frm);
       f->save();
@@ -385,7 +385,7 @@ int TagLibMetadata::setGrouping(const QString& grp){
     TagLib::ID3v2::Tag* tagTestId3v2 = fileTestWav->tag();
     if(tagTestId3v2 != NULL){
       TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TIT1");
-      frm->setText(TagLib::String(grp.toAscii().data()));
+      frm->setText(TagLib::String(grp.toUtf8().data()));
       tagTestId3v2->removeFrames("TIT1");
       tagTestId3v2->addFrame(frm);
       f->save();
@@ -395,7 +395,7 @@ int TagLibMetadata::setGrouping(const QString& grp){
 
   TagLib::MP4::Tag* tagTestMp4 = dynamic_cast<TagLib::MP4::Tag*>(f->tag());
   if(tagTestMp4 != NULL){
-    TagLib::StringList sl(TagLib::String(grp.toAscii().data()));
+    TagLib::StringList sl(TagLib::String(grp.toUtf8().data()));
     tagTestMp4->itemListMap()["\251grp"] = sl;
     tagTestMp4->save();
     f->save();
@@ -404,14 +404,14 @@ int TagLibMetadata::setGrouping(const QString& grp){
 
   TagLib::ASF::Tag* tagTestAsf = dynamic_cast<TagLib::ASF::Tag*>(f->tag());
   if(tagTestAsf != NULL){
-    tagTestAsf->setAttribute("WM/ContentGroupDescription",TagLib::String(grp.toAscii().data()));
+    tagTestAsf->setAttribute("WM/ContentGroupDescription",TagLib::String(grp.toUtf8().data()));
     f->save();
     return 0;
   }
 
   TagLib::APE::Tag* tagTestApe = dynamic_cast<TagLib::APE::Tag*>(f->tag());
   if(tagTestApe != NULL){
-    tagTestApe->addValue("GROUPING",TagLib::String(grp.toAscii().data()));
+    tagTestApe->addValue("GROUPING",TagLib::String(grp.toUtf8().data()));
     f->save();
     return 0;
   }
@@ -436,7 +436,7 @@ int TagLibMetadata::setKey(const QString& key){
     TagLib::ID3v2::Tag* tagTestId3v2 = fileTestMpeg->ID3v2Tag();
     if(tagTestId3v2 != NULL){
       TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TKEY");
-      frm->setText(TagLib::String(key.toAscii().data()));
+      frm->setText(TagLib::String(key.toUtf8().data()));
       tagTestId3v2->removeFrames("TKEY");
       tagTestId3v2->addFrame(frm);
       f->save();
@@ -459,7 +459,7 @@ int TagLibMetadata::setKey(const QString& key){
     TagLib::ID3v2::Tag* tagTestId3v2 = fileTestAiff->tag();
     if(tagTestId3v2 != NULL){
       TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TKEY");
-      frm->setText(TagLib::String(key.toAscii().data()));
+      frm->setText(TagLib::String(key.toUtf8().data()));
       tagTestId3v2->removeFrames("TKEY");
       tagTestId3v2->addFrame(frm);
       f->save();
@@ -472,7 +472,7 @@ int TagLibMetadata::setKey(const QString& key){
     TagLib::ID3v2::Tag* tagTestId3v2 = fileTestWav->tag();
     if(tagTestId3v2 != NULL){
       TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TKEY");
-      frm->setText(TagLib::String(key.toAscii().data()));
+      frm->setText(TagLib::String(key.toUtf8().data()));
       tagTestId3v2->removeFrames("TKEY");
       tagTestId3v2->addFrame(frm);
       f->save();
@@ -492,7 +492,7 @@ int TagLibMetadata::setKey(const QString& key){
 
   TagLib::ASF::Tag* tagTestAsf = dynamic_cast<TagLib::ASF::Tag*>(f->tag());
   if(tagTestAsf != NULL){
-    tagTestAsf->setAttribute("WM/InitialKey",TagLib::String(key.toAscii().data()));
+    tagTestAsf->setAttribute("WM/InitialKey",TagLib::String(key.toUtf8().data()));
     f->save();
     return 0;
   }

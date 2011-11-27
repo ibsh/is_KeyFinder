@@ -46,19 +46,19 @@ Configure commands used to build them on Mac:
 
 void MacLoggingHandler(QtMsgType type, const char *msg) {
   std::ofstream logfile;
-  logfile.open(QDir::homePath().toAscii() + "/Library/Logs/KeyFinder.log",std::ios::app);
+  logfile.open(QDir::homePath().toUtf8() + "/Library/Logs/KeyFinder.log",std::ios::app);
   switch (type) {
   case QtDebugMsg:
-    logfile << QTime::currentTime().toString().toAscii().data() << " Debug: " << msg << "\n";
+    logfile << QTime::currentTime().toString().toUtf8().data() << " Debug: " << msg << "\n";
     break;
   case QtCriticalMsg:
-    logfile << QTime::currentTime().toString().toAscii().data() << " Critical: " << msg << "\n";
+    logfile << QTime::currentTime().toString().toUtf8().data() << " Critical: " << msg << "\n";
     break;
   case QtWarningMsg:
-    logfile << QTime::currentTime().toString().toAscii().data() << " Warning: " << msg << "\n";
+    logfile << QTime::currentTime().toString().toUtf8().data() << " Warning: " << msg << "\n";
     break;
   case QtFatalMsg:
-    logfile << QTime::currentTime().toString().toAscii().data() <<  " Fatal: " << msg << "\n";
+    logfile << QTime::currentTime().toString().toUtf8().data() <<  " Fatal: " << msg << "\n";
     abort();
   }
   logfile.close();

@@ -36,6 +36,7 @@ class MainMenuHandler;
 #include <QClipboard>
 #include <QMessageBox>
 #include <QLabel>
+#include <QtXml>
 
 #include <vector>
 

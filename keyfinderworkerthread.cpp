@@ -26,9 +26,9 @@ void KeyFinderWorkerThread::run(){
 	}
 	// initialise stream and decode file into it
 	AudioStream* astrm = NULL;
-	AudioFileDecoder* dec = AudioFileDecoder::getDecoder(filePath.toAscii().data());
+  AudioFileDecoder* dec = AudioFileDecoder::getDecoder(filePath.toUtf8().data());
 	try{
-		astrm = dec->decodeFile(filePath.toAscii().data());
+    astrm = dec->decodeFile(filePath.toUtf8().data());
 	}catch(Exception){
 		delete astrm;
 		delete dec;
