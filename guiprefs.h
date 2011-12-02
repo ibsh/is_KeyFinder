@@ -38,16 +38,11 @@ public:
 	explicit PrefsDialog(QWidget *parent = 0);
 	~PrefsDialog();
 private:
-	void fftEnabled();
-	void goertzelEnabled();
-	void directSkEnabled();
 	void tuningEnabled();
 	void binAdaptiveTuningEnabled();
 	void hcdfEnabled();
 	void customProfileEnabled();
 	QString temporalWindowComboIndex;
-	QString spectrumAnalyerComboIndex;
-	QString fftPostProcessorComboIndex;
 	QString hcdfComboIndex;
 	QString similarityMeasureComboIndex;
   QString tagFormatComboIndex;
@@ -55,8 +50,6 @@ private:
 private slots:
 	void on_savePrefsButton_clicked();
 	void on_cancelButton_clicked();
-	void on_spectrumAnalyser_currentIndexChanged(int index);
-	void on_fftPostProcessor_currentIndexChanged(int index);
 	void on_bps_valueChanged(int arg1);
 	void on_hcdf_currentIndexChanged(int index);
 	void on_toneProfile_currentIndexChanged(int index);

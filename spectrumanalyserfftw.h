@@ -24,7 +24,6 @@
 
 #include "spectrumanalyser.h"
 #include "fftpp.h"
-#include "fftppconstantq.h"
 #include "fftppdirectsk.h"
 #include "windowfunctions.h"
 #include <fftw3.h>

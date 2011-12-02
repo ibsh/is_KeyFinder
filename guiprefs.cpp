@@ -31,8 +31,6 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 
 	// these strings store the chars relating to each index of their dropdowns
 	temporalWindowComboIndex = "bmn";
-	spectrumAnalyerComboIndex = "fg";
-	fftPostProcessorComboIndex = "ci";
 	hcdfComboIndex = "nhca";
 	similarityMeasureComboIndex = "ck";
   tagFieldComboIndex = "cgk";
@@ -50,12 +48,9 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 
 	settings.beginGroup("spectralAnalysis");
 	ui->temporalWindow->setCurrentIndex(temporalWindowComboIndex.indexOf(settings.value("temporalWindow").toChar()));
-	ui->spectrumAnalyser->setCurrentIndex(spectrumAnalyerComboIndex.indexOf(settings.value("spectrumAnalyser").toChar()));
-	ui->fftPostProcessor->setCurrentIndex(fftPostProcessorComboIndex.indexOf(settings.value("fftPostProcessor").toChar()));
 	ui->fftFrameSize->setCurrentIndex(log2(settings.value("fftFrameSize").toInt()/512));
 	ui->hopSize->setCurrentIndex(log2(settings.value("hopSize").toInt()/128));
 	ui->directSkStretch->setValue(settings.value("directSkStretch").toFloat());
-	ui->goertzelMinK->setValue(settings.value("goertzelMinK").toInt());
 	settings.endGroup();
 
 	settings.beginGroup("downsampling");
@@ -141,9 +136,6 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   settings.endGroup();
 
 	// enable/disable fields as necessary
-	fftEnabled();
-	goertzelEnabled();
-	directSkEnabled();
 	tuningEnabled();
 	binAdaptiveTuningEnabled();
 	hcdfEnabled();
@@ -167,12 +159,9 @@ void PrefsDialog::on_savePrefsButton_clicked(){
 
 	settings.beginGroup("spectralAnalysis");
   settings.setValue("temporalWindow",temporalWindowComboIndex[ui->temporalWindow->currentIndex()].toAscii());
-  settings.setValue("spectrumAnalyser",spectrumAnalyerComboIndex[ui->spectrumAnalyser->currentIndex()].toAscii());
-  settings.setValue("fftPostProcessor",fftPostProcessorComboIndex[ui->fftPostProcessor->currentIndex()].toAscii());
 	settings.setValue("fftFrameSize",pow(2,ui->fftFrameSize->currentIndex())*512);
 	settings.setValue("hopSize",pow(2,ui->hopSize->currentIndex())*128);
 	settings.setValue("directSkStretch",ui->directSkStretch->value());
-	settings.setValue("goertzelMinK",ui->goertzelMinK->value());
 	settings.endGroup();
 
 	settings.beginGroup("downsampling");
@@ -265,21 +254,6 @@ void PrefsDialog::on_cancelButton_clicked(){
 	this->close();
 }
 
-void PrefsDialog::fftEnabled(){
-	bool e = (ui->spectrumAnalyser->currentIndex() == 0);
-	ui->fftFrameSize->setEnabled(e);
-	ui->fftPostProcessor->setEnabled(e);
-}
-
-void PrefsDialog::goertzelEnabled(){
-	ui->goertzelMinK->setEnabled(ui->spectrumAnalyser->currentIndex() == 1);
-	ui->directSkStretch->setEnabled(!ui->goertzelMinK->isEnabled());
-}
-
-void PrefsDialog::directSkEnabled(){
-	ui->directSkStretch->setEnabled(ui->fftPostProcessor->currentIndex() == 1);
-}
-
 void PrefsDialog::tuningEnabled(){
 	ui->tab2Tuning->setEnabled(ui->bps->value() > 1);
 }
@@ -324,15 +298,6 @@ void PrefsDialog::customProfileEnabled(){
 	ui->min9->setEnabled(e);
 	ui->min10->setEnabled(e);
 	ui->min11->setEnabled(e);
-}
-
-void PrefsDialog::on_spectrumAnalyser_currentIndexChanged(int /*index*/){
-	fftEnabled();
-	goertzelEnabled();
-}
-
-void PrefsDialog::on_fftPostProcessor_currentIndexChanged(int /*index*/){
-	directSkEnabled();
 }
 
 void PrefsDialog::on_bps_valueChanged(int /*arg1*/){

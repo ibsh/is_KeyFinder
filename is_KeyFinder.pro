@@ -42,10 +42,8 @@ SOURCES += \
 		hcdfnone.cpp \
     keyfinderworkerthread.cpp \
     fftpp.cpp \
-    fftppconstantq.cpp \
     fftppdirectsk.cpp \
     spectrumanalyserfftw.cpp \
-		spectrumanalysergoertzel.cpp \
     hcdfarbitrary.cpp \
     audiostream.cpp \
     main.cpp \
@@ -77,9 +75,7 @@ HEADERS  += \
 		hcdfnone.h \
     keyfinderworkerthread.h \
     fftppdirectsk.h \
-    fftppconstantq.h \
     spectrumanalyserfftw.h \
-    spectrumanalysergoertzel.h \
 		fftpp.h \
 		hcdfarbitrary.h \
     audiostream.h \
@@ -138,6 +134,10 @@ win32{
 		is_KeyFinder.ico
 	RC_FILE = win32.rc
 }
+
+
+
+
 
 
 

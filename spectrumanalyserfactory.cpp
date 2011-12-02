@@ -68,9 +68,6 @@ SpectrumAnalyser* SpectrumAnalyserFactory::getSpectrumAnalyser(int frameRate, co
 			return analysers[i]->getSpectrumAnalyser();
 	}
 	// no match found, build a new spectrum analyser
-	if(prefs.getSpectrumAnalyser() == 'g')
-		analysers.push_back(new SpectrumAnalyserWrapper(frameRate, prefs, new GoertzelAnalyser(frameRate,prefs)));
-	else
-		analysers.push_back(new SpectrumAnalyserWrapper(frameRate, prefs, new FftwAnalyser(frameRate,prefs)));
+  analysers.push_back(new SpectrumAnalyserWrapper(frameRate, prefs, new FftwAnalyser(frameRate,prefs)));
 	return analysers[analysers.size()-1]->getSpectrumAnalyser();
 }

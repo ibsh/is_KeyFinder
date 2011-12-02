@@ -181,18 +181,21 @@ void BatchWindow::loadPlaylistM3u(QString m3uUrl){
   filesDropped(songUrls);
 }
 
-void BatchWindow::loadPlaylistXml(QString xmlUrl){
+void BatchWindow::loadPlaylistXml(QString /*xmlUrl*/){
   qDebug("XML playlists not working yet");
   /*
-  QDomDocument domDoc("whatevs");
   QFile xmlFile(xmlUrl);
   if (!xmlFile.open(QIODevice::ReadOnly))
     return;
-  if (!domDoc.setContent(&xmlFile)) {
-    xmlFile.close();
-    return;
-  }
+
+  QXmlQuery xq;
+  xq.bindVariable("inputDocument", &xmlFile);
+  xq.setQuery("doc($inputDocument)/plist/dict/dict/dict");
+
   xmlFile.close();
+  */
+  /*
+  QDomDocument domDoc("whatevs");
   // path is plist -> dict -> dict -> each dict -> string element after key element = location
   QDomNode n = domDoc.documentElement().firstChild().firstChild(); // plist -> dict
   while(!n.isNull()) {

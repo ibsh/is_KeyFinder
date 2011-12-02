@@ -25,7 +25,6 @@
 #include <QMutexLocker>
 
 #include "spectrumanalyser.h"
-#include "spectrumanalysergoertzel.h"
 #include "spectrumanalyserfftw.h"
 #include "preferences.h"
 

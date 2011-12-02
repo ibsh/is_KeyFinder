@@ -75,22 +75,6 @@ Preferences::Preferences(){
 		temporalWindow = defaultVal;
 		qDebug("Wrote default temporalWindow (%c)",temporalWindow);
 	}
-	if(settings.contains("spectrumAnalyser")){
-    spectrumAnalyser = settings.value("spectrumAnalyser").toChar().toAscii();
-	}else{
-		char defaultVal = 'f';
-		settings.setValue("spectrumAnalyser",defaultVal);
-		spectrumAnalyser = defaultVal;
-		qDebug("Wrote default spectrumAnalyser (%c)",spectrumAnalyser);
-	}
-	if(settings.contains("fftPostProcessor")){
-    fftPostProcessor = settings.value("fftPostProcessor").toChar().toAscii();
-	}else{
-		char defaultVal = 'i';
-		settings.setValue("fftPostProcessor",defaultVal);
-		fftPostProcessor = defaultVal;
-		qDebug("Wrote default fftPostProcessor (%c)",fftPostProcessor);
-	}
   int defFrameSize = 16384;
 	if(settings.contains("fftFrameSize")){
 		fftFrameSize = settings.value("fftFrameSize").toInt();
@@ -107,7 +91,6 @@ Preferences::Preferences(){
 		hopSize = defHopSize;
 		qDebug("Wrote default hopSize (%d)",hopSize);
 	}
-  // 3.8 closely models the CQT, 0.8 is much tighter and more accurate.
 	if(settings.contains("directSkStretch")){
 		directSkStretch = settings.value("directSkStretch").toFloat();
 	}else{
@@ -115,14 +98,6 @@ Preferences::Preferences(){
 		settings.setValue("directSkStretch",defaultVal);
 		directSkStretch = defaultVal;
 		qDebug("Wrote default directSkStretch (%f)",directSkStretch);
-	}
-	if(settings.contains("goertzelMinK")){
-		goertzelMinK = settings.value("goertzelMinK").toInt();
-	}else{
-		int defaultVal = 60;
-		settings.setValue("goertzelMinK",defaultVal);
-		goertzelMinK = defaultVal;
-		qDebug("Wrote default goertzelMinK (%d)",goertzelMinK);
 	}
 	settings.endGroup();
 
@@ -380,13 +355,10 @@ Preferences::Preferences(){
 
 Preferences& Preferences::operator=(const Preferences& that){
 	if(this != &that){
-		spectrumAnalyser = that.spectrumAnalyser;
-		fftPostProcessor = that.fftPostProcessor;
 		temporalWindow = that.temporalWindow;
 		hcdf = that.hcdf;
 		hopSize = that.hopSize;
 		fftFrameSize = that.fftFrameSize;
-		goertzelMinK = that.goertzelMinK;
 		octaves = that.octaves;
 		bps = that.bps;
 		octaveOffset = that.octaveOffset;
@@ -422,53 +394,13 @@ bool Preferences::equivalentSpectralAnalysis(const Preferences& that) const{
 		return false;
 	if(octaveOffset != that.octaveOffset)
 		return false;
-	if(spectrumAnalyser != that.spectrumAnalyser)
-		return false;
-	else{
-		if(spectrumAnalyser == 'f'){
-			if(fftFrameSize != that.fftFrameSize)
-				return false;
-			if(fftPostProcessor != that.fftPostProcessor)
-				return false;
-			else{
-				if(fftPostProcessor == 'i'){
-					if(directSkStretch != that.directSkStretch)
-						return false;
-				}
-			}
-		}else{
-			if(goertzelMinK != that.goertzelMinK)
-			 return false;
-		}
-	}
+  if(fftFrameSize != that.fftFrameSize)
+    return false;
+  if(directSkStretch != that.directSkStretch)
+    return false;
 	return true;
 }
 
-// These mutators are only used by unit tests at present
-
-void Preferences::setFftPostProcessor(char ch){
-	if (ch == 'i' || ch == 'c' || ch == 'l')
-		fftPostProcessor = ch;
-}
-
-void Preferences::setBandsPerSemitone(int n){
-	if(n%2 != 0){
-		bps = n;
-		generateBinFreqs();
-	}
-}
-
-void Preferences::setDownsampleFactor(int n){
-	dFactor = n;
-}
-
-void Preferences::setTuningMethod(int n){
-	if(n >= 0 && n <= 1)
-		tuningMethod = n;
-}
-
-char Preferences::getSpectrumAnalyser()const{return spectrumAnalyser;}
-char Preferences::getFftPostProcessor()const{return fftPostProcessor;}
 char Preferences::getTemporalWindow()const{return temporalWindow;}
 char Preferences::getHcdf()const{return hcdf;}
 char Preferences::getSimilarityMeasure()const{return similarityMeasure;}
@@ -476,7 +408,6 @@ char Preferences::getTagFormat()const{return tagFormat;}
 char Preferences::getTagField()const{return tagField;}
 int Preferences::getHopSize()const{return hopSize;}
 int Preferences::getFftFrameSize()const{return fftFrameSize;}
-int Preferences::getGoertzelMinK()const{return goertzelMinK;}
 int Preferences::getOctaves()const{return octaves;}
 int Preferences::getBpo()const{return bps * 12;}
 int Preferences::getOctaveOffset()const{return octaveOffset;}

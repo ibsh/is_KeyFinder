@@ -39,14 +39,7 @@ public:
 	Preferences();
 	Preferences& operator=(const Preferences&);
 	bool equivalentSpectralAnalysis(const Preferences&) const;
-	// setters, used in unit tests
-	void setFftPostProcessor(char);
-	void setBandsPerSemitone(int);
-	void setDownsampleFactor(int);
-	void setTuningMethod(int);
 	// getters
-	char getSpectrumAnalyser() const;
-	char getFftPostProcessor() const;
 	char getTemporalWindow() const;
 	char getHcdf() const;
 	char getSimilarityMeasure() const;
@@ -54,7 +47,6 @@ public:
   char getTagField() const;
 	int getHopSize() const;
 	int getFftFrameSize() const;
-	int getGoertzelMinK() const;
 	int getOctaves() const;
 	int getBpo() const;
 	int getOctaveOffset() const;
@@ -72,8 +64,6 @@ public:
 	std::vector<float> getCustomToneProfile() const;
 	std::vector<QString> getCustomKeyCodes() const;
 private:
-	char spectrumAnalyser;
-	char fftPostProcessor;
 	char temporalWindow;
 	char hcdf;
 	char similarityMeasure;
@@ -81,7 +71,6 @@ private:
   char tagField;
 	int hopSize;
 	int fftFrameSize;
-	int goertzelMinK;
 	int octaves;
 	int bps;
 	int octaveOffset;
