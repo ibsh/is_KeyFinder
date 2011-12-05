@@ -167,15 +167,19 @@ void BatchWindow::loadPlaylistM3u(QString m3uUrl){
   QString m3uChar;
   QString m3uLine;
   QList<QUrl> songUrls;
-  // M3U files break with ch13, and comment with ch35.
+  // M3U files break with ch10/13, and comment with ch35.
   // QTextStream.readLine doesn't work, so we do it a char at a time
   while(!(m3uChar = m3uTextStream.read(1)).isNull()){
-    if(int(m3uChar[0].toAscii()) != 13){
-      m3uLine += m3uChar;
-    }else{
-      if(int(m3uLine[0].toAscii()) != 35)
+    //std::cerr << m3uChar.toAscii().data() << ":" << int(m3uChar[0].toAscii()) << std::endl;
+    int chVal = int(m3uChar[0].toAscii());
+    if(chVal == 13 || chVal == 10){
+      //std::cerr << "Line (length " << m3uLine.length() << "): " << m3uLine.toUtf8().data() << std::endl;
+      if(m3uLine.length() > 0 && int(m3uLine[0].toAscii()) != 35){
         songUrls.push_back(QUrl(m3uLine));
+      }
       m3uLine = "";
+    }else{
+      m3uLine += m3uChar;
     }
   }
   filesDropped(songUrls);

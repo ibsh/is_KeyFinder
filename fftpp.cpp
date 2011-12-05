@@ -21,7 +21,6 @@
 
 #include "fftpp.h"
 
-#include "fftppconstantq.h"
 #include "fftppdirectsk.h"
 
 FftPostProcessor* FftPostProcessor::getFftPostProcessor(int fr, const Preferences& prefs){
