@@ -26,7 +26,7 @@ AboutDialog::AboutDialog(QWidget *parent): QDialog(parent),ui(new Ui::AboutDialo
 	ui->setupUi(this);
   this->setWindowFlags(Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::CustomizeWindowHint);
 
-  ui->label_1_vn->setText("KeyFinder\nv1.1.3");
+  ui->label_1_vn->setText("KeyFinder\nv1.1.4");
 
   int yr = QDate::currentDate().year();
   if(yr > 2011)
