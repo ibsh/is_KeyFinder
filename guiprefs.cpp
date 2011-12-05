@@ -140,6 +140,24 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 	binAdaptiveTuningEnabled();
 	hcdfEnabled();
 	customProfileEnabled();
+
+  //relative sizing on Mac only
+  #ifdef Q_OS_MAC
+    QFont smallerFont;
+    smallerFont.setPointSize(smallerFont.pointSize() - 2);
+    for(int i=0; i<ui->gridLayoutKeyCodes->count(); i++)
+      if(!ui->gridLayoutKeyCodes->itemAt(i)->isEmpty())
+        if(ui->gridLayoutKeyCodes->itemAt(i)->widget()->inherits("QLabel"))
+          ui->gridLayoutKeyCodes->itemAt(i)->widget()->setFont(smallerFont);
+    for(int i=0; i<ui->customMajor->count(); i++)
+      if(!ui->customMajor->itemAt(i)->isEmpty())
+        if(ui->customMajor->itemAt(i)->widget()->inherits("QLabel"))
+          ui->customMajor->itemAt(i)->widget()->setFont(smallerFont);
+    for(int i=0; i<ui->customMinor->count(); i++)
+      if(!ui->customMinor->itemAt(i)->isEmpty())
+        if(ui->customMinor->itemAt(i)->widget()->inherits("QLabel"))
+          ui->customMinor->itemAt(i)->widget()->setFont(smallerFont);
+  #endif
 }
 
 PrefsDialog::~PrefsDialog(){

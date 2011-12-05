@@ -773,13 +773,6 @@
          </item>
          <item row="0" column="0">
           <widget class="QLabel" name="lbl_maj0">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>P1</string>
            </property>
@@ -790,13 +783,6 @@
          </item>
          <item row="0" column="2">
           <widget class="QLabel" name="lbl_maj1">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>m2</string>
            </property>
@@ -807,13 +793,6 @@
          </item>
          <item row="0" column="4">
           <widget class="QLabel" name="lbl_maj2">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>M2</string>
            </property>
@@ -824,13 +803,6 @@
          </item>
          <item row="0" column="6">
           <widget class="QLabel" name="lbl_maj3">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>m3</string>
            </property>
@@ -841,13 +813,6 @@
          </item>
          <item row="0" column="8">
           <widget class="QLabel" name="lbl_maj4">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>M3</string>
            </property>
@@ -858,13 +823,6 @@
          </item>
          <item row="0" column="10">
           <widget class="QLabel" name="lbl_maj5">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>P4</string>
            </property>
@@ -875,13 +833,6 @@
          </item>
          <item row="1" column="10">
           <widget class="QLabel" name="lbl_maj11">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>M7</string>
            </property>
@@ -892,13 +843,6 @@
          </item>
          <item row="1" column="8">
           <widget class="QLabel" name="lbl_maj10">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>m7</string>
            </property>
@@ -909,13 +853,6 @@
          </item>
          <item row="1" column="6">
           <widget class="QLabel" name="lbl_maj9">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>M6</string>
            </property>
@@ -926,13 +863,6 @@
          </item>
          <item row="1" column="4">
           <widget class="QLabel" name="lbl_maj8">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>m6</string>
            </property>
@@ -943,13 +873,6 @@
          </item>
          <item row="1" column="2">
           <widget class="QLabel" name="lbl_maj7">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>P5</string>
            </property>
@@ -960,13 +883,6 @@
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="lbl_maj6">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>TT</string>
            </property>
@@ -1154,13 +1070,6 @@
          </item>
          <item row="0" column="0">
           <widget class="QLabel" name="lbl_min0">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>P1</string>
            </property>
@@ -1171,13 +1080,6 @@
          </item>
          <item row="0" column="2">
           <widget class="QLabel" name="lbl_min1">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>m2</string>
            </property>
@@ -1188,13 +1090,6 @@
          </item>
          <item row="0" column="4">
           <widget class="QLabel" name="lbl_min2">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>M2</string>
            </property>
@@ -1205,13 +1100,6 @@
          </item>
          <item row="0" column="6">
           <widget class="QLabel" name="lbl_min3">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>m3</string>
            </property>
@@ -1222,13 +1110,6 @@
          </item>
          <item row="0" column="8">
           <widget class="QLabel" name="lbl_min4">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>M3</string>
            </property>
@@ -1239,13 +1120,6 @@
          </item>
          <item row="0" column="10">
           <widget class="QLabel" name="lbl_min5">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>P4</string>
            </property>
@@ -1256,13 +1130,6 @@
          </item>
          <item row="1" column="10">
           <widget class="QLabel" name="lbl_min11">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>M7</string>
            </property>
@@ -1273,13 +1140,6 @@
          </item>
          <item row="1" column="8">
           <widget class="QLabel" name="lbl_min10">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>m7</string>
            </property>
@@ -1290,13 +1150,6 @@
          </item>
          <item row="1" column="6">
           <widget class="QLabel" name="lbl_min9">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>M6</string>
            </property>
@@ -1307,13 +1160,6 @@
          </item>
          <item row="1" column="4">
           <widget class="QLabel" name="lbl_min8">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>m6</string>
            </property>
@@ -1324,13 +1170,6 @@
          </item>
          <item row="1" column="2">
           <widget class="QLabel" name="lbl_min7">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>P5</string>
            </property>
@@ -1341,13 +1180,6 @@
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="lbl_min6">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>TT</string>
            </property>
@@ -1373,14 +1205,9 @@
         </widget>
        </item>
        <item>
-        <layout class="QGridLayout" name="gridLayout">
+        <layout class="QGridLayout" name="gridLayoutKeyCodes">
          <item row="0" column="0">
           <widget class="QLabel" name="lbl_majKey0">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>A</string>
            </property>
@@ -1395,11 +1222,6 @@
          </item>
          <item row="0" column="2">
           <widget class="QLabel" name="lbl_majKey1">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>Bb</string>
            </property>
@@ -1414,11 +1236,6 @@
          </item>
          <item row="0" column="4">
           <widget class="QLabel" name="lbl_majKey2">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>B</string>
            </property>
@@ -1433,11 +1250,6 @@
          </item>
          <item row="0" column="6">
           <widget class="QLabel" name="lbl_majKey3">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>C</string>
            </property>
@@ -1452,11 +1264,6 @@
          </item>
          <item row="0" column="8">
           <widget class="QLabel" name="lbl_majKey4">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>Db</string>
            </property>
@@ -1471,11 +1278,6 @@
          </item>
          <item row="0" column="10">
           <widget class="QLabel" name="lbl_majKey5">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>D</string>
            </property>
@@ -1497,11 +1299,6 @@
          </item>
          <item row="1" column="2">
           <widget class="QLabel" name="lbl_majKey7">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>E</string>
            </property>
@@ -1516,11 +1313,6 @@
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="lbl_majKey6">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>Eb</string>
            </property>
@@ -1528,11 +1320,6 @@
          </item>
          <item row="1" column="4">
           <widget class="QLabel" name="lbl_majKey8">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>F</string>
            </property>
@@ -1554,11 +1341,6 @@
          </item>
          <item row="1" column="6">
           <widget class="QLabel" name="lbl_majKey9">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>Gb</string>
            </property>
@@ -1573,11 +1355,6 @@
          </item>
          <item row="1" column="8">
           <widget class="QLabel" name="lbl_majKey10">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>G</string>
            </property>
@@ -1592,11 +1369,6 @@
          </item>
          <item row="1" column="10">
           <widget class="QLabel" name="lbl_majKey11">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>Ab</string>
            </property>
@@ -1604,11 +1376,6 @@
          </item>
          <item row="2" column="0">
           <widget class="QLabel" name="lbl_minKey0">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>Am</string>
            </property>
@@ -1616,11 +1383,6 @@
          </item>
          <item row="2" column="2">
           <widget class="QLabel" name="lbl_minKey1">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>Bbm</string>
            </property>
@@ -1628,11 +1390,6 @@
          </item>
          <item row="2" column="4">
           <widget class="QLabel" name="lbl_minKey2">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>Bm</string>
            </property>
@@ -1640,11 +1397,6 @@
          </item>
          <item row="2" column="6">
           <widget class="QLabel" name="lbl_minKey3">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>Cm</string>
            </property>
@@ -1652,11 +1404,6 @@
          </item>
          <item row="2" column="8">
           <widget class="QLabel" name="lbl_minKey4">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>Dbm</string>
            </property>
@@ -1664,11 +1411,6 @@
          </item>
          <item row="2" column="10">
           <widget class="QLabel" name="lbl_minKey5">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>Dm</string>
            </property>
@@ -1676,11 +1418,6 @@
          </item>
          <item row="3" column="0">
           <widget class="QLabel" name="lbl_minKey6">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>Ebm</string>
            </property>
@@ -1688,11 +1425,6 @@
          </item>
          <item row="3" column="2">
           <widget class="QLabel" name="lbl_minKey7">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>Em</string>
            </property>
@@ -1700,11 +1432,6 @@
          </item>
          <item row="3" column="4">
           <widget class="QLabel" name="lbl_minKey8">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>Fm</string>
            </property>
@@ -1712,11 +1439,6 @@
          </item>
          <item row="3" column="6">
           <widget class="QLabel" name="lbl_minKey9">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>Gbm</string>
            </property>
@@ -1724,11 +1446,6 @@
          </item>
          <item row="3" column="8">
           <widget class="QLabel" name="lbl_minKey10">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>Gm</string>
            </property>
@@ -1736,11 +1453,6 @@
          </item>
          <item row="3" column="10">
           <widget class="QLabel" name="lbl_minKey11">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>Abm</string>
            </property>
@@ -1832,11 +1544,6 @@
          </item>
          <item row="4" column="0">
           <widget class="QLabel" name="lbl_silence">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>Silence</string>
            </property>

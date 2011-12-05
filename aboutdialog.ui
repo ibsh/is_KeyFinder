@@ -34,11 +34,6 @@
   <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,1">
    <item row="2" column="0" colspan="2">
     <widget class="QLabel" name="label_3_gpl">
-     <property name="font">
-      <font>
-       <pointsize>11</pointsize>
-      </font>
-     </property>
      <property name="text">
       <string>KeyFinder is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
@@ -55,9 +50,6 @@ Qt (http://qt.nokia.com)</string>
      </property>
      <property name="textFormat">
       <enum>Qt::PlainText</enum>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignJustify|Qt::AlignVCenter</set>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
