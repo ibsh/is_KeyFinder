@@ -318,6 +318,8 @@ void BatchWindow::fileFinished(int key){
   ui->tableWidget->item(currentFile,COL_KEY)->setText(vis->getKeyName(key));
   ui->tableWidget->setItem(currentFile,COL_KEYCODE,new QTableWidgetItem());
   ui->tableWidget->item(currentFile,COL_KEYCODE)->setText(prefs.getCustomKeyCodes()[key]);
+  if(prefs.getWriteTagsAutomatically())
+    writeToTagsAtRow(currentFile);
   currentFile++;
   processCurrentFile();
 }
@@ -375,30 +377,8 @@ void BatchWindow::writeDetectedToTags(){
     // write
     int count = 0;
     for(int r = firstRow; r <= lastRow; r++){
-      QTableWidgetItem* item = ui->tableWidget->item(r,COL_KEY); // only write if there's a detected key
-      if(item != NULL && item->text() != "Failed"){
-        TagLibMetadata md(ui->tableWidget->item(r,COL_PATH)->text().toUtf8().data());
-        QString writeToTag = "";
-        // what are we writing?
-        if(prefs.getTagFormat() == 'k'){
-          writeToTag = ui->tableWidget->item(r,COL_KEY)->text();
-        }else if(prefs.getTagFormat() == 'c'){
-          writeToTag = ui->tableWidget->item(r,COL_KEYCODE)->text();
-        }else{
-          writeToTag = ui->tableWidget->item(r,COL_KEYCODE)->text() + " " + ui->tableWidget->item(r,COL_KEY)->text();
-        }
-        // where are we writing it?
-        if(prefs.getTagField() == 'g'){
-          if(md.setGrouping(writeToTag.toUtf8().data()) == 0)
-            count++;
-        }else if(prefs.getTagField() == 'k'){
-          if(md.setKey(writeToTag.left(3).toUtf8().data()) == 0)
-            count++;
-        }else{
-          if(md.setComment(writeToTag.toUtf8().data()) == 0)
-            count++;
-        }
-      }
+      if(writeToTagsAtRow(r))
+         count++;
     }
     QMessageBox msg;
     QString msgText = "Data written to ";
@@ -414,6 +394,29 @@ void BatchWindow::writeDetectedToTags(){
     msg.setText(msgText);
     msg.exec();
   }
+}
+
+bool BatchWindow::writeToTagsAtRow(int row){
+  QTableWidgetItem* item = ui->tableWidget->item(row,COL_KEY); // only write if there's a detected key
+  if(item != NULL && item->text() == "Failed")
+    return false;
+  TagLibMetadata md(ui->tableWidget->item(row,COL_PATH)->text().toUtf8().data());
+  QString writeToTag = "";
+  // what are we writing?
+  if(prefs.getTagFormat() == 'k'){
+    writeToTag = ui->tableWidget->item(row,COL_KEY)->text();
+  }else if(prefs.getTagFormat() == 'c'){
+    writeToTag = ui->tableWidget->item(row,COL_KEYCODE)->text();
+  }else{
+    writeToTag = ui->tableWidget->item(row,COL_KEYCODE)->text() + " " + ui->tableWidget->item(row,COL_KEY)->text();
+  }
+  // where are we writing it?
+  if(prefs.getTagField() == 'g')
+    return (md.setGrouping(writeToTag.toUtf8().data()) == 0);
+  else if(prefs.getTagField() == 'k')
+    return (md.setKey(writeToTag.left(3).toUtf8().data()) == 0);
+  else
+    return (md.setComment(writeToTag.toUtf8().data()) == 0);
 }
 
 void BatchWindow::clearDetected(){

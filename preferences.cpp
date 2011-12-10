@@ -322,7 +322,7 @@ Preferences::Preferences(){
 		settings.setValue("majKey11",customKeyCodes[22]);
 		settings.setValue("minKey11",customKeyCodes[23]);
 		settings.setValue("silence",customKeyCodes[24]);
-		qDebug("Wrote default (blank) customKeyCodes");
+    qDebug("Wrote default customKeyCodes (blank)");
 	}
 	settings.endGroup();
 
@@ -344,6 +344,14 @@ Preferences::Preferences(){
     settings.setValue("tagField",defaultVal);
     tagField = defaultVal;
     qDebug("Wrote default tagField (%c)",tagField);
+  }
+  if(settings.contains("writeTagsAutomatically")){
+    writeTagsAutomatically = settings.value("writeTagsAutomatically").toBool();
+  }else{
+    bool defaultVal = false;
+    settings.setValue("writeTagsAutomatically",defaultVal);
+    writeTagsAutomatically = defaultVal;
+    qDebug("Wrote default writeTagsAutomatically (false)");
   }
   settings.endGroup();
 
@@ -377,6 +385,7 @@ Preferences& Preferences::operator=(const Preferences& that){
 		customKeyCodes = that.customKeyCodes;
     tagFormat = that.tagFormat;
     tagField = that.tagField;
+    writeTagsAutomatically = that.writeTagsAutomatically;
 		generateBinFreqs();
 	}
 	return *this;
@@ -401,6 +410,7 @@ bool Preferences::equivalentSpectralAnalysis(const Preferences& that) const{
 	return true;
 }
 
+bool Preferences::getWriteTagsAutomatically()const{return writeTagsAutomatically;}
 char Preferences::getTemporalWindow()const{return temporalWindow;}
 char Preferences::getHcdf()const{return hcdf;}
 char Preferences::getSimilarityMeasure()const{return similarityMeasure;}

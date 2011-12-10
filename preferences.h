@@ -40,6 +40,7 @@ public:
 	Preferences& operator=(const Preferences&);
 	bool equivalentSpectralAnalysis(const Preferences&) const;
 	// getters
+  bool getWriteTagsAutomatically() const;
 	char getTemporalWindow() const;
 	char getHcdf() const;
 	char getSimilarityMeasure() const;
@@ -64,6 +65,7 @@ public:
 	std::vector<float> getCustomToneProfile() const;
 	std::vector<QString> getCustomKeyCodes() const;
 private:
+  bool writeTagsAutomatically;
 	char temporalWindow;
 	char hcdf;
 	char similarityMeasure;

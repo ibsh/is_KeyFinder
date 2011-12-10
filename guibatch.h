@@ -72,6 +72,7 @@ private:
   void loadPlaylistXml(QString);
 	void addNewRow(QString);
 	void getMetadata();
+  bool writeToTagsAtRow(int);
 	int currentFile;
 	void processCurrentFile();
   bool cancel;

@@ -133,6 +133,7 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   settings.beginGroup("tags");
   ui->tagFormat->setCurrentIndex(tagFormatComboIndex.indexOf(settings.value("tagFormat").toChar()));
   ui->tagField->setCurrentIndex(tagFieldComboIndex.indexOf(settings.value("tagField").toChar()));
+  ui->writeTagsAutomatically->setChecked(settings.value(("writeTagsAutomatically")).toBool());
   settings.endGroup();
 
 	// enable/disable fields as necessary
@@ -262,6 +263,7 @@ void PrefsDialog::on_savePrefsButton_clicked(){
   settings.beginGroup("tags");
   settings.setValue("tagFormat",tagFormatComboIndex[ui->tagFormat->currentIndex()].toAscii());
   settings.setValue("tagField",tagFieldComboIndex[ui->tagField->currentIndex()].toAscii());
+  settings.setValue("writeTagsAutomatically",ui->writeTagsAutomatically->isChecked());
   settings.endGroup();
 
 	// CLOSE
