@@ -40,6 +40,12 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   allowDrops = true;
   vis = Visuals::getInstance();
   menuHandler = handler;
+  //relative sizing on Mac only
+  #ifdef Q_OS_MAC
+    QFont smallerFont;
+    smallerFont.setPointSize(smallerFont.pointSize() - 2);
+    ui->tableWidget->setFont(smallerFont);
+  #endif
   // HELP LABEL
   initialHelpLabel = new QLabel("Drag audio files here", ui->tableWidget);
   QFont font;

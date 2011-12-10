@@ -23,11 +23,6 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QTableWidget" name="tableWidget">
-      <property name="font">
-       <font>
-        <pointsize>11</pointsize>
-       </font>
-      </property>
       <property name="contextMenuPolicy">
        <enum>Qt::ActionsContextMenu</enum>
       </property>
