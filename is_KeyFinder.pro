@@ -134,20 +134,3 @@ win32{
 		is_KeyFinder.ico
 	RC_FILE = win32.rc
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

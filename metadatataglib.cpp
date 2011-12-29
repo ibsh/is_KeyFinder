@@ -140,8 +140,19 @@ QString TagLibMetadata::getArtist() const{
 QString TagLibMetadata::getComment() const{
   if(f == NULL || !f->isValid())
     return "";
-  TagLib::String out = f->tag()->comment();
-  return QString::fromUtf8(out.toCString(true));
+  TagLib::FLAC::File* fileTestFlac = dynamic_cast<TagLib::FLAC::File*>(f);
+  if(fileTestFlac != NULL){
+    // TagLib's default behaviour treats Description as Comment: override
+    if(fileTestFlac->xiphComment()->contains("COMMENT")){
+      TagLib::String out = fileTestFlac->xiphComment()->fieldListMap()["COMMENT"].toString();
+      return QString::fromUtf8((out.toCString()));
+    }else{
+      return "";
+    }
+  }else{
+    TagLib::String out = f->tag()->comment();
+    return QString::fromUtf8(out.toCString(true));
+  }
 }
 
 QString TagLibMetadata::getGrouping() const{
@@ -332,7 +343,13 @@ int TagLibMetadata::setComment(const QString& cmt){
     qDebug("Cannot set comment tag on invalid file object");
     return 1;
   }
-  f->tag()->setComment(TagLib::String(cmt.toUtf8().data()));
+  TagLib::FLAC::File* fileTestFlac = dynamic_cast<TagLib::FLAC::File*>(f);
+  if(fileTestFlac != NULL){
+    // TagLib's default behaviour treats Description as Comment: override
+    fileTestFlac->xiphComment()->addField("COMMENT",TagLib::String(cmt.toUtf8().data()),true);
+  }else{
+    f->tag()->setComment(TagLib::String(cmt.toUtf8().data()));
+  }
   f->save();
   return 0;
 }
