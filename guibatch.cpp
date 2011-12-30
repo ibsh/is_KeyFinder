@@ -37,7 +37,8 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   int numThreads = QThread::idealThreadCount();
   if(numThreads == -1)
     numThreads = 1; // number could not be detected, force.
-  modelThreads = vector<KeyFinderWorkerThread*> (numThreads,NULL);
+  for(int i=0; i<numThreads; i++)
+    modelThreads.push_back(NULL);
   // SETUP UI
   ui->setupUi(this);
   allowDrops = true;
