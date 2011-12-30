@@ -13,15 +13,16 @@ KeyFinderWorkerThread::KeyFinderWorkerThread(QObject *parent) : QThread(parent){
 	haveParams = false;
 }
 
-void KeyFinderWorkerThread::setParams(const QString& f, const Preferences& p){
+void KeyFinderWorkerThread::setParams(const QString& f, const Preferences& p, int idx){
 	filePath = f;
 	prefs = p;
+  guiIndex = idx;
 	haveParams = true;
 }
 
 void KeyFinderWorkerThread::run(){
 	if(!haveParams){
-		emit failed("No parameters.");
+    emit failed(guiIndex,"No parameters.");
 		return;
 	}
 	// initialise stream and decode file into it
@@ -32,7 +33,7 @@ void KeyFinderWorkerThread::run(){
 	}catch(Exception){
 		delete astrm;
 		delete dec;
-		emit failed("Could not decode file.");
+    emit failed(guiIndex,"Could not decode file.");
 		return;
 	}
 	delete dec;
@@ -50,7 +51,7 @@ void KeyFinderWorkerThread::run(){
 		}catch(Exception){
 			delete astrm;
 			delete ds;
-			emit failed("Downsampler failed.");
+      emit failed(guiIndex,"Downsampler failed.");
 			return;
 		}
 		delete ds;
@@ -119,6 +120,6 @@ void KeyFinderWorkerThread::run(){
 			mostCommonKey = i;
 		}
 	}
-	emit producedGlobalKeyEstimate(mostCommonKey);
+  emit producedGlobalKeyEstimate(guiIndex,mostCommonKey);
 	return;
 }

@@ -69,7 +69,7 @@ private:
 	QImage imageFromChromagram(const Chromagram*);
 private slots:
 	// interaction with model thread
-	void criticalError(const QString&);
+  void criticalError(int, const QString&);
 	void decoded();
 	void madeMono();
 	void downsampled();
@@ -77,7 +77,7 @@ private slots:
 	void receiveOneOctaveChromagram(const Chromagram&);
 	void receiveHarmonicChangeSignal(const std::vector<double>&);
 	void receiveKeyEstimates(const std::vector<int>&);
-	void receiveGlobalKeyEstimate(int);
+  void receiveGlobalKeyEstimate(int,int);
 	// UI
 	void say(const QString&);
 	void on_chromaColourCombo_currentIndexChanged(int index);

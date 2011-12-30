@@ -21,11 +21,11 @@ class KeyFinderWorkerThread : public QThread{
 Q_OBJECT
 public:
 	KeyFinderWorkerThread(QObject *parent);
-	void setParams(const QString&, const Preferences&);
+  void setParams(const QString&, const Preferences&, int);
 protected:
 	void run();
 signals:
-	void failed(const QString&);
+  void failed(int,const QString&);
 	void decoded();
 	void madeMono();
 	void downsampled();
@@ -33,11 +33,12 @@ signals:
 	void producedOneOctaveChromagram(const Chromagram&);
 	void producedHarmonicChangeSignal(const std::vector<double>&);
 	void producedKeyEstimates(const std::vector<int>&);
-	void producedGlobalKeyEstimate(int);
+  void producedGlobalKeyEstimate(int,int);
 private:
 	Preferences prefs;
 	QString filePath;
 	bool haveParams;
+  int guiIndex;
 };
 
 #endif // KEYFINDERMODEL_H

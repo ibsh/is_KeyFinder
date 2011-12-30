@@ -60,7 +60,7 @@ public:
 private:
 	// analysis
 	Preferences prefs;
-	KeyFinderWorkerThread* modelThread;
+  vector<KeyFinderWorkerThread*> modelThreads;
 	// batch processing
 	bool allowDrops;
 	void dragEnterEvent(QDragEnterEvent*);
@@ -73,8 +73,8 @@ private:
 	void addNewRow(QString);
 	void getMetadata();
   bool writeToTagsAtRow(int);
-	int currentFile;
-	void processCurrentFile();
+  int nextFile;
+  void processFiles();
   bool cancel;
 	void cleanUpAfterRun();
 	// UI
@@ -83,8 +83,8 @@ private:
 	QLabel* initialHelpLabel;
   MainMenuHandler* menuHandler;
 private slots:
-	void fileFailed();
-	void fileFinished(int);
+  void fileFailed(int);
+  void fileFinished(int,int);
 	void fileDropFinished();
 	void on_runBatchButton_clicked();
 	void copySelectedFromTableWidget();

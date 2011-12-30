@@ -34,7 +34,7 @@ const int COL_KEYCODE = 7;
 BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindow(parent), ui(new Ui::BatchWindow){
   // ASYNC
   connect(&fileDropWatcher, SIGNAL(finished()), this, SLOT(fileDropFinished()));
-  modelThread = NULL;
+  modelThreads = vector<KeyFinderWorkerThread*> (QThread::idealThreadCount(),NULL);
   // SETUP UI
   ui->setupUi(this);
   allowDrops = true;
@@ -84,10 +84,7 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
 BatchWindow::~BatchWindow(){
   fileDropWatcher.cancel();
   fileDropWatcher.waitForFinished();
-  if(modelThread!=NULL && modelThread->isRunning()){
-    modelThread->quit();
-    modelThread->wait();
-  }
+  cleanUpAfterRun();
   delete ui;
 }
 
@@ -274,10 +271,10 @@ void BatchWindow::on_runBatchButton_clicked(){
   cancel = false;
   ui->tableWidget->setContextMenuPolicy(Qt::NoContextMenu); // so that no tags can be written while busy
   allowDrops = false;
-  ui->statusLabel->setText("Analysing...");
+  ui->statusLabel->setText("Analysing (" + QString::number(modelThreads.size()) + " threads)...");
   ui->progressBar->setMaximum(ui->tableWidget->rowCount());
-  currentFile = 0;
-  processCurrentFile();
+  nextFile = 0;
+  processFiles();
 }
 
 void BatchWindow::on_cancelBatchButton_clicked(){
@@ -286,30 +283,47 @@ void BatchWindow::on_cancelBatchButton_clicked(){
   ui->cancelBatchButton->setDisabled(true);
 }
 
-void BatchWindow::processCurrentFile(){
-  if(cancel || currentFile == ui->tableWidget->rowCount()){
+void BatchWindow::processFiles(){
+  bool tryNext = false;
+  if(cancel || nextFile == ui->tableWidget->rowCount()){
     cleanUpAfterRun();
     QApplication::beep();
     return;
-  }else if(ui->tableWidget->item(currentFile,COL_KEY) != NULL){
+  }else if(ui->tableWidget->item(nextFile,COL_KEY) != NULL){
     // don't reprocess files
-    currentFile++;
-    processCurrentFile();
+    tryNext = true;
   }else{
-    qDebug("Batch processing %s",ui->tableWidget->item(currentFile,COL_PATH)->text().toUtf8().data());
-    ui->progressBar->setValue(currentFile);
-    // now proceed
-    modelThread = new KeyFinderWorkerThread(0);
-    modelThread->setParams(ui->tableWidget->item(currentFile,COL_PATH)->text(),prefs);
-    connect(modelThread,SIGNAL(failed(QString)),this,SLOT(fileFailed()));
-    connect(modelThread,SIGNAL(producedGlobalKeyEstimate(int)),this,SLOT(fileFinished(int)));
-    modelThread->start();
+    for(int i=0; i<(signed)modelThreads.size(); i++){
+      if(modelThreads[i] == NULL || modelThreads[i]->isFinished()){
+        qDebug("Batch processing %s on thread %d of %d",ui->tableWidget->item(nextFile,COL_PATH)->text().toUtf8().data(),i,(int)modelThreads.size());
+        ui->progressBar->setValue(nextFile);
+        // now proceed
+        if(modelThreads[i] != NULL)
+          delete modelThreads[i];
+        modelThreads[i] = new KeyFinderWorkerThread(0);
+        modelThreads[i]->setParams(ui->tableWidget->item(nextFile,COL_PATH)->text(),prefs,nextFile);
+        connect(modelThreads[i],SIGNAL(failed(int,QString)),this,SLOT(fileFailed(int)));
+        connect(modelThreads[i],SIGNAL(producedGlobalKeyEstimate(int,int)),this,SLOT(fileFinished(int,int)));
+        modelThreads[i]->start();
+        tryNext = true;
+        break;
+      }
+    }
+  }
+  if(tryNext){
+    nextFile++;
+    processFiles();
   }
 }
 
 void BatchWindow::cleanUpAfterRun(){
-  delete modelThread;
-  modelThread = NULL;
+  for(int i=0; i<(signed)modelThreads.size(); i++){
+    if(modelThreads[i] != NULL && modelThreads[i]->isRunning()){
+      modelThreads[i]->wait();
+      delete modelThreads[i];
+      modelThreads[i] = NULL;
+    }
+  }
   allowDrops = true;
   ui->progressBar->setValue(0);
   ui->statusLabel->setText("Ready");
@@ -319,24 +333,22 @@ void BatchWindow::cleanUpAfterRun(){
   ui->tableWidget->resizeColumnsToContents();
 }
 
-void BatchWindow::fileFinished(int key){
-  ui->tableWidget->setItem(currentFile,COL_KEY,new QTableWidgetItem());
-  ui->tableWidget->item(currentFile,COL_KEY)->setText(vis->getKeyName(key));
-  ui->tableWidget->setItem(currentFile,COL_KEYCODE,new QTableWidgetItem());
-  ui->tableWidget->item(currentFile,COL_KEYCODE)->setText(prefs.getCustomKeyCodes()[key]);
+void BatchWindow::fileFinished(int fileIndex, int key){
+  ui->tableWidget->setItem(fileIndex,COL_KEY,new QTableWidgetItem());
+  ui->tableWidget->item(fileIndex,COL_KEY)->setText(vis->getKeyName(key));
+  ui->tableWidget->setItem(fileIndex,COL_KEYCODE,new QTableWidgetItem());
+  ui->tableWidget->item(fileIndex,COL_KEYCODE)->setText(prefs.getCustomKeyCodes()[key]);
   if(prefs.getWriteTagsAutomatically())
-    writeToTagsAtRow(currentFile);
-  currentFile++;
-  processCurrentFile();
+    writeToTagsAtRow(fileIndex);
+  processFiles();
 }
 
-void BatchWindow::fileFailed(){
-  ui->tableWidget->setItem(currentFile,COL_KEY,new QTableWidgetItem());
-  ui->tableWidget->item(currentFile,COL_KEY)->setText("Failed");
-  ui->tableWidget->item(currentFile,COL_KEY)->setTextColor(qRgb(255,0,0));
-  ui->tableWidget->item(currentFile,COL_PATH)->setTextColor(qRgb(255,0,0));
-  currentFile++;
-  processCurrentFile();
+void BatchWindow::fileFailed(int fileIndex){
+  ui->tableWidget->setItem(fileIndex,COL_KEY,new QTableWidgetItem());
+  ui->tableWidget->item(fileIndex,COL_KEY)->setText("Failed");
+  ui->tableWidget->item(fileIndex,COL_KEY)->setTextColor(qRgb(255,0,0));
+  ui->tableWidget->item(fileIndex,COL_PATH)->setTextColor(qRgb(255,0,0));
+  processFiles();
 }
 
 void BatchWindow::copySelectedFromTableWidget(){

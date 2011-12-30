@@ -96,8 +96,8 @@ void DetailWindow::processCurrentFile(){
 	ui->runButton->setDisabled(true);
 	// and proceed
 	modelThread = new KeyFinderWorkerThread(0);
-	modelThread->setParams(filePath,prefs);
-	connect(modelThread,SIGNAL(failed(QString)),this,SLOT(criticalError(QString)));
+  modelThread->setParams(filePath,prefs,0);
+  connect(modelThread,SIGNAL(failed(int,QString)),this,SLOT(criticalError(int,QString)));
 	connect(modelThread,SIGNAL(decoded()),this,SLOT(decoded()));
 	connect(modelThread,SIGNAL(madeMono()),this,SLOT(madeMono()));
 	connect(modelThread,SIGNAL(downsampled()),this,SLOT(downsampled()));
@@ -105,11 +105,11 @@ void DetailWindow::processCurrentFile(){
 	connect(modelThread,SIGNAL(producedOneOctaveChromagram(Chromagram)),this,SLOT(receiveOneOctaveChromagram(Chromagram)));
 	connect(modelThread,SIGNAL(producedHarmonicChangeSignal(std::vector<double>)),this,SLOT(receiveHarmonicChangeSignal(std::vector<double>)));
 	connect(modelThread,SIGNAL(producedKeyEstimates(std::vector<int>)),this,SLOT(receiveKeyEstimates(std::vector<int>)));
-	connect(modelThread,SIGNAL(producedGlobalKeyEstimate(int)),this,SLOT(receiveGlobalKeyEstimate(int)));
+  connect(modelThread,SIGNAL(producedGlobalKeyEstimate(int,int)),this,SLOT(receiveGlobalKeyEstimate(int,int)));
 	modelThread->start();
 }
 
-void DetailWindow::criticalError(const QString& s){
+void DetailWindow::criticalError(int /*index*/, const QString& s){
 	say(s);
 	cleanUpAfterRun();
 }
@@ -200,7 +200,7 @@ void DetailWindow::receiveKeyEstimates(const std::vector<int>& keys){
 	}
 }
 
-void DetailWindow::receiveGlobalKeyEstimate(int key){
+void DetailWindow::receiveGlobalKeyEstimate(int /*index*/, int key){
 	TagLibMetadata md(filePath);
 	QString shortName = md.getTitle();
 	if(shortName == ""){
