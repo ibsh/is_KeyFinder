@@ -28,6 +28,23 @@ void KeyFinderWorkerThread::run(){
 	// initialise stream and decode file into it
 	AudioStream* astrm = NULL;
   AudioFileDecoder* dec = AudioFileDecoder::getDecoder(filePath.toUtf8().data());
+  // this is a very primitive bugfix to stop too many failures when libav is first woken.
+  for(int i=1; ;i++){
+    try{
+      astrm = dec->decodeFile(filePath.toUtf8().data());
+      break;
+    }catch(Exception){
+      delete astrm;
+      astrm = NULL;
+      if(i==3){ // fail on third try
+        delete dec;
+        emit failed(guiIndex,"Could not decode file.");
+        return;
+      }
+    }
+    msleep(50); // sleep 50 milliseconds to give libav time to wake.
+  }
+
 	try{
     astrm = dec->decodeFile(filePath.toUtf8().data());
 	}catch(Exception){
