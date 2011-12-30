@@ -72,11 +72,17 @@ AudioStream* LibAvDecoder::decodeFile(char* fileName) throw (Exception){
 	AVCodec *codec = NULL;
 	AVFormatContext *fCtx = NULL;
 	AVCodecContext *cCtx = NULL;
-	// Find audio stream
-	if(avformat_open_input(&fCtx, fileName, NULL, NULL) != 0){
-		qCritical("Failed to open audio file: %s", fileName);
-		throw Exception();
-	}
+  // open file: this is a very primitive bugfix to stop too many failures when libav is first woken.
+  for(int i=0;i<3;i++){
+    if(avformat_open_input(&fCtx, fileName, NULL, NULL) == 0)
+      break;
+    if(i==2){
+      qCritical("Failed to open audio file: %s", fileName);
+      throw Exception();
+    }
+    usleep(50000); // sleep 50 milliseconds to give libav time to wake.
+  }
+  // Find audio stream
 	if(av_find_stream_info(fCtx) < 0){
 		qCritical("Failed to find stream information in file: %s", fileName);
 		throw Exception();

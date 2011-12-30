@@ -173,11 +173,6 @@ QString TagLibMetadata::getGrouping() const{
     }
     TagLib::ID3v1::Tag* tagTestId3v1 = fileTestMpeg->ID3v1Tag();
     if(tagTestId3v1 != NULL){
-      #ifdef Q_OS_WIN
-        qDebug("ID3v1 does not support the Grouping tag");
-      #else
-        qDebug("ID3v1 does not support the Grouping tag (%s)",f->name());
-      #endif
       return "N/A";
     }
   }
@@ -264,11 +259,6 @@ QString TagLibMetadata::getKey() const{
     }
     TagLib::ID3v1::Tag* tagTestId3v1 = fileTestMpeg->ID3v1Tag();
     if(tagTestId3v1 != NULL){
-      #ifdef Q_OS_WIN
-        qDebug("ID3v1 does not support the Key tag");
-      #else
-        qDebug("ID3v1 does not support the Key tag (%s)",f->name());
-      #endif
       return "N/A";
     }
   }
@@ -301,11 +291,6 @@ QString TagLibMetadata::getKey() const{
 
   TagLib::MP4::Tag* tagTestMp4 = dynamic_cast<TagLib::MP4::Tag*>(f->tag());
   if(tagTestMp4 != NULL){
-    #ifdef Q_OS_WIN
-      qDebug("iTunes metadata does not support the Key tag");
-    #else
-      qDebug("iTunes metadata does not support the Key tag (%s)",f->name());
-    #endif
     return "N/A";
   }
 
@@ -321,11 +306,6 @@ QString TagLibMetadata::getKey() const{
 
   TagLib::APE::Tag* tagTestApe = dynamic_cast<TagLib::APE::Tag*>(f->tag());
   if(tagTestApe != NULL){
-    #ifdef Q_OS_WIN
-      qDebug("APE metadata does not support the Key tag");
-    #else
-      qDebug("APE metadata does not support the Key tag (%s)",f->name());
-    #endif
     return "N/A";
   }
 
@@ -334,7 +314,6 @@ QString TagLibMetadata::getKey() const{
   #else
     qDebug("Key tag read failed all tests on %s",f->name());
   #endif
-
   return "N/A";
 }
 
