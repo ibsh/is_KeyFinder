@@ -34,7 +34,10 @@ const int COL_KEYCODE = 7;
 BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindow(parent), ui(new Ui::BatchWindow){
   // ASYNC
   connect(&fileDropWatcher, SIGNAL(finished()), this, SLOT(fileDropFinished()));
-  modelThreads = vector<KeyFinderWorkerThread*> (QThread::idealThreadCount(),NULL);
+  int numThreads = QThread::idealThreadCount();
+  if(numThreads == -1)
+    numThreads = 1; // number could not be detected, force.
+  modelThreads = vector<KeyFinderWorkerThread*> (numThreads,NULL);
   // SETUP UI
   ui->setupUi(this);
   allowDrops = true;

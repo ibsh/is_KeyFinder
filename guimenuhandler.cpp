@@ -41,7 +41,6 @@ void MainMenuHandler::new_Batch_Window(){
 
 void MainMenuHandler::new_Detail_Window(QString path){
   DetailWindow* newWin = new DetailWindow(0,path);
-  std::cerr << newWin->menuBar() << std::endl;
   newWin->setMenuBar(newMenuBar());
   newWin->show();
 }
