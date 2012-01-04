@@ -53,18 +53,20 @@ Attempted commands for dual-architecture versions:
 void MacLoggingHandler(QtMsgType type, const char *msg) {
   std::ofstream logfile;
   logfile.open(QDir::homePath().toUtf8() + "/Library/Logs/KeyFinder.log",std::ios::app);
+  logfile << QDate::currentDate().toString("yyyy-MM-dd").toUtf8().data() << " ";
+  logfile << QTime::currentTime().toString("hh:mm:ss.zzz").toUtf8().data() << " ";
   switch (type) {
   case QtDebugMsg:
-    logfile << QTime::currentTime().toString().toUtf8().data() << " Debug: " << msg << "\n";
+    logfile << "Debug: " << msg << "\n";
     break;
   case QtCriticalMsg:
-    logfile << QTime::currentTime().toString().toUtf8().data() << " Critical: " << msg << "\n";
+    logfile << "Critical: " << msg << "\n";
     break;
   case QtWarningMsg:
-    logfile << QTime::currentTime().toString().toUtf8().data() << " Warning: " << msg << "\n";
+    logfile << "Warning: " << msg << "\n";
     break;
   case QtFatalMsg:
-    logfile << QTime::currentTime().toString().toUtf8().data() <<  " Fatal: " << msg << "\n";
+    logfile << "Fatal: " << msg << "\n";
     abort();
   }
   logfile.close();

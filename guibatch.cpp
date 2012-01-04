@@ -88,6 +88,7 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
 BatchWindow::~BatchWindow(){
   fileDropWatcher.cancel();
   fileDropWatcher.waitForFinished();
+  cancel = true; // just to force quit threads
   cleanUpAfterRun();
   delete ui;
 }
@@ -322,8 +323,12 @@ void BatchWindow::processFiles(){
 
 void BatchWindow::cleanUpAfterRun(){
   for(int i=0; i<(signed)modelThreads.size(); i++){
-    if(modelThreads[i] != NULL && modelThreads[i]->isRunning()){
-      modelThreads[i]->wait();
+    if(modelThreads[i] != NULL){
+      if(modelThreads[i]->isRunning()){
+        if(cancel)
+          modelThreads[i]->quit();
+        modelThreads[i]->wait();
+      }
       delete modelThreads[i];
       modelThreads[i] = NULL;
     }
@@ -420,7 +425,7 @@ void BatchWindow::writeDetectedToTags(){
 
 bool BatchWindow::writeToTagsAtRow(int row){
   QTableWidgetItem* item = ui->tableWidget->item(row,COL_KEY); // only write if there's a detected key
-  if(item != NULL && item->text() == "Failed")
+  if(item == NULL || item->text() == "Failed")
     return false;
   TagLibMetadata md(ui->tableWidget->item(row,COL_PATH)->text().toUtf8().data());
   QString writeToTag = "";
