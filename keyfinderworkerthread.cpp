@@ -29,10 +29,10 @@ void KeyFinderWorkerThread::run(){
 
   // initialise stream and decode file into it. Includes very primitive bugfix to stop too many failures when libav is first woken.
   AudioStream* astrm = NULL;
-  AudioFileDecoder* dec = AudioFileDecoder::getDecoder(filePath.toUtf8().data());
+	AudioFileDecoder* dec = AudioFileDecoder::getDecoder(filePath.toLocal8Bit().data());
   for(int i=1; ;i++){
     try{
-      astrm = dec->decodeFile(filePath.toUtf8().data());
+			astrm = dec->decodeFile(filePath.toLocal8Bit().data());
       break;
     }catch(Exception){ }
     if(astrm != NULL){
@@ -48,7 +48,7 @@ void KeyFinderWorkerThread::run(){
   }
 
 	try{
-    astrm = dec->decodeFile(filePath.toUtf8().data());
+		astrm = dec->decodeFile(filePath.toLocal8Bit().data());
 	}catch(Exception){
 		delete astrm;
 		delete dec;

@@ -30,9 +30,9 @@
 
 void MacLoggingHandler(QtMsgType type, const char *msg) {
   std::ofstream logfile;
-  logfile.open(QDir::homePath().toUtf8() + "/Library/Logs/KeyFinder.log",std::ios::app);
-  logfile << QDate::currentDate().toString("yyyy-MM-dd").toUtf8().data() << " ";
-  logfile << QTime::currentTime().toString("hh:mm:ss.zzz").toUtf8().data() << " ";
+	logfile.open(QDir::homePath().toLocal8Bit() + "/Library/Logs/KeyFinder.log",std::ios::app);
+	logfile << QDate::currentDate().toString("yyyy-MM-dd").toLocal8Bit().data() << " ";
+	logfile << QTime::currentTime().toString("hh:mm:ss.zzz").toLocal8Bit().data() << " ";
   switch (type) {
   case QtDebugMsg:
     logfile << "Debug: " << msg << "\n";

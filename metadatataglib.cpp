@@ -29,88 +29,39 @@
 
 TagLibMetadata::TagLibMetadata(const QString& filePath){
 
-  QString fileExt = filePath.right(filePath.length() - filePath.lastIndexOf(".") - 1).toLower();
-  char* filePathCh = filePath.toUtf8().data();
+	QString fileExt = filePath.right(filePath.length() - filePath.lastIndexOf(".") - 1).toLower();
+	const char* filePathCh = filePath.toLocal8Bit().data();
 
-  if(fileExt == "mp3"){
-    f = new TagLib::MPEG::File(filePathCh);
-    return;
-  }
-
-  #ifdef TAGLIB_WITH_MP4
-    if(fileExt == "m4a" || fileExt == "m4b" || fileExt == "m4p" || fileExt == "mp4" || fileExt == "3g2"){
-      f = new TagLib::MP4::File(filePathCh);
-      return;
-    }
-  #endif
-
-  #ifdef TAGLIB_WITH_ASF
-    if(fileExt == "wma" || fileExt == "asf"){
-      f = new TagLib::ASF::File(filePathCh);
-      return;
-    }
-  #endif
-
-  if(fileExt == "aif" || fileExt == "aiff"){
-    f = new TagLib::RIFF::AIFF::File(filePathCh);
-    return;
-  }
-
-  if(fileExt == "wav"){
-    f = new TagLib::RIFF::WAV::File(filePathCh);
-    return;
-  }
-
-  if(fileExt == "ogg"){
-    f = new TagLib::Ogg::Vorbis::File(filePathCh);
-    return;
-  }
-
+	if(fileExt == "mp3") f = new TagLib::MPEG::File(filePathCh);
+	if(fileExt == "aif" || fileExt == "aiff") f = new TagLib::RIFF::AIFF::File(filePathCh);
+	if(fileExt == "wav") f = new TagLib::RIFF::WAV::File(filePathCh);
+	if(fileExt == "ogg") f = new TagLib::Ogg::Vorbis::File(filePathCh);
   if(fileExt == "oga"){
     f = new TagLib::Ogg::FLAC::File(filePathCh);
-    if (f->isValid()){
-      return;
-    }
-    delete f;
-    f = new TagLib::Ogg::Vorbis::File(filePathCh);
-    return;
+		if (f == NULL || !f->isValid()){
+			delete f;
+			f = new TagLib::Ogg::Vorbis::File(filePathCh);
+		}
   }
+	if(fileExt == "flac") f = new TagLib::FLAC::File(filePathCh);
+//  if(fileExt == "ape") f = new TagLib::APE::File(filePathCh);
+	if(fileExt == "mpc") f = new TagLib::MPC::File(filePathCh);
+	if(fileExt == "wv") f = new TagLib::WavPack::File(filePathCh);
+	if(fileExt == "spx") f = new TagLib::Ogg::Speex::File(filePathCh);
+	if(fileExt == "tta") f = new TagLib::TrueAudio::File(filePathCh);
+#ifdef TAGLIB_WITH_MP4
+	if(fileExt == "m4a" || fileExt == "m4b" || fileExt == "m4p" || fileExt == "mp4" || fileExt == "3g2") f = new TagLib::MP4::File(filePathCh);
+#endif
+#ifdef TAGLIB_WITH_ASF
+	if(fileExt == "wma" || fileExt == "asf") f = new TagLib::ASF::File(filePathCh);
+#endif
 
-  if(fileExt == "flac"){
-    f = new TagLib::FLAC::File(filePathCh);
-    return;
-  }
+	if(f != NULL && f->isValid()) return; // everything's fine.
 
-  /*
-  if(fileExt == "ape"){
-    f = new TagLib::APE::File(filePathCh);
-    return;
-  }
-  */
-
-  if(fileExt == "mpc"){
-    f = new TagLib::MPC::File(filePathCh);
-    return;
-  }
-
-  if(fileExt == "wv"){
-    f = new TagLib::WavPack::File(filePathCh);
-    return;
-  }
-
-  if(fileExt == "spx"){
-    f = new TagLib::Ogg::Speex::File(filePathCh);
-    return;
-  }
-
-  if(fileExt == "tta"){
-    f = new TagLib::TrueAudio::File(filePathCh);
-    return;
-  }
-
-  f = NULL;
+	// or else...
+	f = NULL;
   #ifdef Q_OS_WIN
-    qDebug("TagLib returned NULL File");
+		qDebug("TagLib returned NULL File");
   #else
     qDebug("TagLib returned NULL File for %s",filePathCh);
   #endif
@@ -332,11 +283,11 @@ bool TagLibMetadata::writeKeyToMetadata(int key, const Preferences& prefs){
 
   // where are we writing it?
   if(prefs.getTagField() == 'g')
-    return (setGrouping(dataToWrite.toUtf8().data()) == 0);
+		return (setGrouping(dataToWrite.toLocal8Bit().data()) == 0);
   else if(prefs.getTagField() == 'k')
-    return (setKey(dataToWrite.left(3).toUtf8().data()) == 0);
+		return (setKey(dataToWrite.left(3).toLocal8Bit().data()) == 0);
   else
-    return (setComment(dataToWrite.toUtf8().data()) == 0);
+		return (setComment(dataToWrite.toLocal8Bit().data()) == 0);
 
 }
 
@@ -348,9 +299,9 @@ int TagLibMetadata::setComment(const QString& cmt){
   TagLib::FLAC::File* fileTestFlac = dynamic_cast<TagLib::FLAC::File*>(f);
   if(fileTestFlac != NULL){
     // TagLib's default behaviour treats Description as Comment: override
-    fileTestFlac->xiphComment()->addField("COMMENT",TagLib::String(cmt.toUtf8().data()),true);
+		fileTestFlac->xiphComment()->addField("COMMENT",TagLib::String(cmt.toLocal8Bit().data()),true);
   }else{
-    f->tag()->setComment(TagLib::String(cmt.toUtf8().data()));
+		f->tag()->setComment(TagLib::String(cmt.toLocal8Bit().data()));
   }
   f->save();
   return 0;
@@ -368,7 +319,7 @@ int TagLibMetadata::setGrouping(const QString& grp){
     TagLib::ID3v2::Tag* tagTestId3v2 = fileTestMpeg->ID3v2Tag();
     if(tagTestId3v2 != NULL){
       TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TIT1");
-      frm->setText(TagLib::String(grp.toUtf8().data()));
+			frm->setText(TagLib::String(grp.toLocal8Bit().data()));
       tagTestId3v2->removeFrames("TIT1");
       tagTestId3v2->addFrame(frm);
       f->save();
@@ -391,7 +342,7 @@ int TagLibMetadata::setGrouping(const QString& grp){
     TagLib::ID3v2::Tag* tagTestId3v2 = fileTestAiff->tag();
     if(tagTestId3v2 != NULL){
       TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TIT1");
-      frm->setText(TagLib::String(grp.toUtf8().data()));
+			frm->setText(TagLib::String(grp.toLocal8Bit().data()));
       tagTestId3v2->removeFrames("TIT1");
       tagTestId3v2->addFrame(frm);
       f->save();
@@ -404,7 +355,7 @@ int TagLibMetadata::setGrouping(const QString& grp){
     TagLib::ID3v2::Tag* tagTestId3v2 = fileTestWav->tag();
     if(tagTestId3v2 != NULL){
       TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TIT1");
-      frm->setText(TagLib::String(grp.toUtf8().data()));
+			frm->setText(TagLib::String(grp.toLocal8Bit().data()));
       tagTestId3v2->removeFrames("TIT1");
       tagTestId3v2->addFrame(frm);
       f->save();
@@ -414,7 +365,7 @@ int TagLibMetadata::setGrouping(const QString& grp){
 
   TagLib::MP4::Tag* tagTestMp4 = dynamic_cast<TagLib::MP4::Tag*>(f->tag());
   if(tagTestMp4 != NULL){
-    TagLib::StringList sl(TagLib::String(grp.toUtf8().data()));
+		TagLib::StringList sl(TagLib::String(grp.toLocal8Bit().data()));
     tagTestMp4->itemListMap()["\251grp"] = sl;
     tagTestMp4->save();
     f->save();
@@ -423,14 +374,14 @@ int TagLibMetadata::setGrouping(const QString& grp){
 
   TagLib::ASF::Tag* tagTestAsf = dynamic_cast<TagLib::ASF::Tag*>(f->tag());
   if(tagTestAsf != NULL){
-    tagTestAsf->setAttribute("WM/ContentGroupDescription",TagLib::String(grp.toUtf8().data()));
+		tagTestAsf->setAttribute("WM/ContentGroupDescription",TagLib::String(grp.toLocal8Bit().data()));
     f->save();
     return 0;
   }
 
   TagLib::APE::Tag* tagTestApe = dynamic_cast<TagLib::APE::Tag*>(f->tag());
   if(tagTestApe != NULL){
-    tagTestApe->addValue("GROUPING",TagLib::String(grp.toUtf8().data()));
+		tagTestApe->addValue("GROUPING",TagLib::String(grp.toLocal8Bit().data()));
     f->save();
     return 0;
   }
@@ -455,7 +406,7 @@ int TagLibMetadata::setKey(const QString& key){
     TagLib::ID3v2::Tag* tagTestId3v2 = fileTestMpeg->ID3v2Tag();
     if(tagTestId3v2 != NULL){
       TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TKEY");
-      frm->setText(TagLib::String(key.toUtf8().data()));
+			frm->setText(TagLib::String(key.toLocal8Bit().data()));
       tagTestId3v2->removeFrames("TKEY");
       tagTestId3v2->addFrame(frm);
       f->save();
@@ -478,7 +429,7 @@ int TagLibMetadata::setKey(const QString& key){
     TagLib::ID3v2::Tag* tagTestId3v2 = fileTestAiff->tag();
     if(tagTestId3v2 != NULL){
       TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TKEY");
-      frm->setText(TagLib::String(key.toUtf8().data()));
+			frm->setText(TagLib::String(key.toLocal8Bit().data()));
       tagTestId3v2->removeFrames("TKEY");
       tagTestId3v2->addFrame(frm);
       f->save();
@@ -491,7 +442,7 @@ int TagLibMetadata::setKey(const QString& key){
     TagLib::ID3v2::Tag* tagTestId3v2 = fileTestWav->tag();
     if(tagTestId3v2 != NULL){
       TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TKEY");
-      frm->setText(TagLib::String(key.toUtf8().data()));
+			frm->setText(TagLib::String(key.toLocal8Bit().data()));
       tagTestId3v2->removeFrames("TKEY");
       tagTestId3v2->addFrame(frm);
       f->save();
@@ -511,7 +462,7 @@ int TagLibMetadata::setKey(const QString& key){
 
   TagLib::ASF::Tag* tagTestAsf = dynamic_cast<TagLib::ASF::Tag*>(f->tag());
   if(tagTestAsf != NULL){
-    tagTestAsf->setAttribute("WM/InitialKey",TagLib::String(key.toUtf8().data()));
+		tagTestAsf->setAttribute("WM/InitialKey",TagLib::String(key.toLocal8Bit().data()));
     f->save();
     return 0;
   }

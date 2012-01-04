@@ -190,7 +190,7 @@ void BatchWindow::loadPlaylistM3u(QString m3uUrl){
     //std::cerr << m3uChar.toAscii().data() << ":" << int(m3uChar[0].toAscii()) << std::endl;
     int chVal = int(m3uChar[0].toAscii());
     if(chVal == 13 || chVal == 10){
-      //std::cerr << "Line (length " << m3uLine.length() << "): " << m3uLine.toUtf8().data() << std::endl;
+			//std::cerr << "Line (length " << m3uLine.length() << "): " << m3uLine.toLocal8Bit().data() << std::endl;
       if(m3uLine.length() > 0 && int(m3uLine[0].toAscii()) != 35){
         songUrls.push_back(QUrl(m3uLine));
       }
@@ -312,18 +312,17 @@ void BatchWindow::on_cancelBatchButton_clicked(){
 }
 
 void BatchWindow::processFiles(){
-  bool tryNext = false;
   if(cancel || nextFile == ui->tableWidget->rowCount()){
     cleanUpAfterRun();
     QApplication::beep();
     return;
-  }else if(ui->tableWidget->item(nextFile,COL_KEY) != NULL){
-    // don't reprocess files
-    tryNext = true;
-  }else{
+	}
+	bool tryAnother = false;
+	QString status = ui->tableWidget->item(nextFile,COL_STATUS)->text();
+	if(status == STATUS_NEW || status == STATUS_TAGSREAD){
     for(int i=0; i<(signed)modelThreads.size(); i++){
       if(modelThreads[i] == NULL || modelThreads[i]->isFinished()){
-        qDebug("Batch processing %s on thread %d of %d",ui->tableWidget->item(nextFile,COL_PATH)->text().toUtf8().data(),i,(int)modelThreads.size());
+				qDebug("Batch processing %s on thread %d of %d",ui->tableWidget->item(nextFile,COL_PATH)->text().toLocal8Bit().data(),i,(int)modelThreads.size());
         ui->progressBar->setValue(nextFile);
         // now proceed
         if(modelThreads[i] != NULL)
@@ -333,15 +332,17 @@ void BatchWindow::processFiles(){
         connect(modelThreads[i],SIGNAL(failed(int,QString)),this,SLOT(fileFailed(int)));
         connect(modelThreads[i],SIGNAL(producedGlobalKeyEstimate(int,int)),this,SLOT(fileFinished(int,int)));
         modelThreads[i]->start();
-        tryNext = true;
+				tryAnother = true;
         break;
       }
-    }
-  }
-  if(tryNext){
+		}
+	}else{
+		tryAnother = true; // but don't reprocess this one
+	}
+	if(tryAnother){
     nextFile++;
     processFiles();
-  }
+	}
 }
 
 void BatchWindow::cleanUpAfterRun(){
@@ -454,7 +455,7 @@ bool BatchWindow::writeToTagsAtRow(int row){
   int key = ui->tableWidget->item(row,COL_STATUS)->text().toInt(&toIntOk);
   if(!toIntOk || key < 0)
     return false;
-  TagLibMetadata md(ui->tableWidget->item(row,COL_PATH)->text().toUtf8().data());
+	TagLibMetadata md(ui->tableWidget->item(row,COL_PATH)->text().toLocal8Bit().data());
   return md.writeKeyToMetadata(key,prefs);
 }
 
