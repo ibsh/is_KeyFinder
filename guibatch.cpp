@@ -34,7 +34,8 @@ const int COL_KEYCODE = 8;
 
 // Statuses >= 0 are key codes
 const QString STATUS_NEW = "-1";
-const QString STATUS_FAILED = "-2";
+const QString STATUS_TAGSREAD = "-2";
+const QString STATUS_FAILED = "-3";
 
 BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindow(parent), ui(new Ui::BatchWindow){
   // ASYNC
@@ -230,39 +231,53 @@ void BatchWindow::loadPlaylistXml(QString /*xmlUrl*/){
 }
 
 void BatchWindow::getMetadata(){
+
   ui->progressBar->setMaximum(ui->tableWidget->rowCount());
   ui->statusLabel->setText("Reading tags...");
+
   for(int i=0; i<(signed)ui->tableWidget->rowCount(); i++){
+
     ui->progressBar->setValue(i);
-    if(ui->tableWidget->item(i,COL_TAG_ARTIST) != NULL)
+
+		if(ui->tableWidget->item(i,COL_STATUS)->text() != STATUS_NEW)
       continue;
+		ui->tableWidget->item(i,COL_STATUS)->setText(STATUS_TAGSREAD);
+
     TagLibMetadata* md = new TagLibMetadata(ui->tableWidget->item(i,COL_PATH)->text());
-    QString tag = md->getArtist();
-    // create an item for artist whether tagging worked or not
-    ui->tableWidget->setItem(i,COL_TAG_ARTIST,new QTableWidgetItem());
-    ui->tableWidget->item(i,COL_TAG_ARTIST)->setText(tag);
-    tag = md->getTitle();
+
+		QString tag = md->getArtist();
+		if(tag != ""){
+			ui->tableWidget->setItem(i,COL_TAG_ARTIST,new QTableWidgetItem());
+			ui->tableWidget->item(i,COL_TAG_ARTIST)->setText(tag);
+		}
+
+		tag = md->getTitle();
     if(tag != ""){
       ui->tableWidget->setItem(i,COL_TAG_TITLE,new QTableWidgetItem());
       ui->tableWidget->item(i,COL_TAG_TITLE)->setText(tag);
     }
+
     tag = md->getComment();
     if(tag != ""){
       ui->tableWidget->setItem(i,COL_TAG_COMMENT,new QTableWidgetItem());
       ui->tableWidget->item(i,COL_TAG_COMMENT)->setText(tag);
     }
+
     tag = md->getGrouping();
     if(tag != ""){
       ui->tableWidget->setItem(i,COL_TAG_GROUPING,new QTableWidgetItem());
       ui->tableWidget->item(i,COL_TAG_GROUPING)->setText(tag);
     }
+
     tag = md->getKey();
     if(tag != ""){
       ui->tableWidget->setItem(i,COL_TAG_KEY,new QTableWidgetItem());
       ui->tableWidget->item(i,COL_TAG_KEY)->setText(tag);
     }
+
     delete md;
   }
+
   ui->progressBar->setValue(0);
   ui->statusLabel->setText("Ready");
 }
