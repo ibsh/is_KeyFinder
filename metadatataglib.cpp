@@ -317,6 +317,29 @@ QString TagLibMetadata::getKey() const{
   return "N/A";
 }
 
+bool TagLibMetadata::writeKeyToMetadata(int key, const Preferences& prefs){
+
+  Visuals* vis = Visuals::getInstance();
+
+  // what are we writing?
+  QString dataToWrite = "";
+  if(prefs.getTagFormat() == 'k')
+    dataToWrite = vis->getKeyName(key);
+  else if(prefs.getTagFormat() == 'c')
+    dataToWrite = prefs.getCustomKeyCodes()[key];
+  else
+    dataToWrite = prefs.getCustomKeyCodes()[key] + " " + vis->getKeyName(key);
+
+  // where are we writing it?
+  if(prefs.getTagField() == 'g')
+    return (setGrouping(dataToWrite.toUtf8().data()) == 0);
+  else if(prefs.getTagField() == 'k')
+    return (setKey(dataToWrite.left(3).toUtf8().data()) == 0);
+  else
+    return (setComment(dataToWrite.toUtf8().data()) == 0);
+
+}
+
 int TagLibMetadata::setComment(const QString& cmt){
   if(f == NULL || !f->isValid()){
     qDebug("Cannot set comment tag on invalid file object");

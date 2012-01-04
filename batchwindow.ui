@@ -37,6 +37,11 @@
       </property>
       <column>
        <property name="text">
+        <string>Status (Hidden)</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
         <string>Audio File Path</string>
        </property>
       </column>

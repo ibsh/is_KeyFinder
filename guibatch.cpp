@@ -22,14 +22,19 @@
 #include "guibatch.h"
 #include "ui_batchwindow.h"
 
-const int COL_PATH = 0;
-const int COL_TAG_ARTIST = 1;
-const int COL_TAG_TITLE = 2;
-const int COL_TAG_COMMENT = 3;
-const int COL_TAG_GROUPING = 4;
-const int COL_TAG_KEY = 5;
-const int COL_KEY = 6;
-const int COL_KEYCODE = 7;
+const int COL_STATUS = 0;
+const int COL_PATH = 1;
+const int COL_TAG_ARTIST = 2;
+const int COL_TAG_TITLE = 3;
+const int COL_TAG_COMMENT = 4;
+const int COL_TAG_GROUPING = 5;
+const int COL_TAG_KEY = 6;
+const int COL_KEY = 7;
+const int COL_KEYCODE = 8;
+
+// Statuses >= 0 are key codes
+const QString STATUS_NEW = "-1";
+const QString STATUS_FAILED = "-2";
 
 BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindow(parent), ui(new Ui::BatchWindow){
   // ASYNC
@@ -44,6 +49,7 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   allowDrops = true;
   vis = Visuals::getInstance();
   menuHandler = handler;
+  ui->tableWidget->setColumnHidden(COL_STATUS,true);
   //relative sizing on Mac only
   #ifdef Q_OS_MAC
     QFont smallerFont;
@@ -163,6 +169,8 @@ void BatchWindow::addNewRow(QString fileUrl){
   }
   int newRow = ui->tableWidget->rowCount();
   ui->tableWidget->insertRow(newRow);
+  ui->tableWidget->setItem(newRow,COL_STATUS,new QTableWidgetItem());
+  ui->tableWidget->item(newRow,COL_STATUS)->setText(STATUS_NEW);
   ui->tableWidget->setItem(newRow,COL_PATH,new QTableWidgetItem());
   ui->tableWidget->item(newRow,COL_PATH)->setText(fileUrl);
 }
@@ -343,6 +351,7 @@ void BatchWindow::cleanUpAfterRun(){
 }
 
 void BatchWindow::fileFinished(int fileIndex, int key){
+  ui->tableWidget->item(fileIndex,COL_STATUS)->setText(QString::number(key));
   ui->tableWidget->setItem(fileIndex,COL_KEY,new QTableWidgetItem());
   ui->tableWidget->item(fileIndex,COL_KEY)->setText(vis->getKeyName(key));
   ui->tableWidget->setItem(fileIndex,COL_KEYCODE,new QTableWidgetItem());
@@ -353,6 +362,7 @@ void BatchWindow::fileFinished(int fileIndex, int key){
 }
 
 void BatchWindow::fileFailed(int fileIndex){
+  ui->tableWidget->item(fileIndex,COL_STATUS)->setText(STATUS_FAILED);
   ui->tableWidget->setItem(fileIndex,COL_KEY,new QTableWidgetItem());
   ui->tableWidget->item(fileIndex,COL_KEY)->setText("Failed");
   ui->tableWidget->item(fileIndex,COL_KEY)->setTextColor(qRgb(255,0,0));
@@ -424,26 +434,13 @@ void BatchWindow::writeDetectedToTags(){
 }
 
 bool BatchWindow::writeToTagsAtRow(int row){
-  QTableWidgetItem* item = ui->tableWidget->item(row,COL_KEY); // only write if there's a detected key
-  if(item == NULL || item->text() == "Failed")
+  // only write if there's a detected key
+  bool toIntOk = false;
+  int key = ui->tableWidget->item(row,COL_STATUS)->text().toInt(&toIntOk);
+  if(!toIntOk || key < 0)
     return false;
   TagLibMetadata md(ui->tableWidget->item(row,COL_PATH)->text().toUtf8().data());
-  QString writeToTag = "";
-  // what are we writing?
-  if(prefs.getTagFormat() == 'k'){
-    writeToTag = ui->tableWidget->item(row,COL_KEY)->text();
-  }else if(prefs.getTagFormat() == 'c'){
-    writeToTag = ui->tableWidget->item(row,COL_KEYCODE)->text();
-  }else{
-    writeToTag = ui->tableWidget->item(row,COL_KEYCODE)->text() + " " + ui->tableWidget->item(row,COL_KEY)->text();
-  }
-  // where are we writing it?
-  if(prefs.getTagField() == 'g')
-    return (md.setGrouping(writeToTag.toUtf8().data()) == 0);
-  else if(prefs.getTagField() == 'k')
-    return (md.setKey(writeToTag.left(3).toUtf8().data()) == 0);
-  else
-    return (md.setComment(writeToTag.toUtf8().data()) == 0);
+  return md.writeKeyToMetadata(key,prefs);
 }
 
 void BatchWindow::clearDetected(){

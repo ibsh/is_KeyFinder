@@ -26,13 +26,9 @@ AboutDialog::AboutDialog(QWidget *parent): QDialog(parent),ui(new Ui::AboutDialo
 	ui->setupUi(this);
   this->setWindowFlags(Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::CustomizeWindowHint);
 
-  ui->label_1_vn->setText("KeyFinder\nv1.1.6");
+  ui->label_1_vn->setText("KeyFinder\nv1.1.7");
 
-  int yr = QDate::currentDate().year();
-  if(yr > 2011)
-    ui->label_2_cp->setText(QString("Copyright 2011-") + QString(yr) + QString("\nIbrahim Sha'ath"));
-  else
-    ui->label_2_cp->setText("Copyright 2011\nIbrahim Sha'ath");
+  ui->label_2_cp->setText(QString("Copyright 2011-") + QString::number(QDate::currentDate().year()) + QString("\nIbrahim Sha'ath"));
 
   //relative sizing on Mac only
   #ifdef Q_OS_MAC

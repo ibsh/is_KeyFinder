@@ -51,20 +51,24 @@
 #include <trueaudiofile.h>
 #include <wavpackfile.h>
 
+#include "guivisuals.h"
+#include "preferences.h"
+
 class TagLibMetadata{
 public:
-	TagLibMetadata(const QString&);
+  TagLibMetadata(const QString&);
 	~TagLibMetadata();
 	QString getTitle() const;
 	QString getArtist() const;
   QString getComment() const;
 	QString getGrouping() const;
   QString getKey() const;
+  bool writeKeyToMetadata(int, const Preferences&);
+private:
+  TagLib::File* f;
   int setComment(const QString&);
   int setGrouping(const QString&);
   int setKey(const QString&);
-private:
-  TagLib::File* f;
 };
 
 #endif // METADATATAGLIB_H
