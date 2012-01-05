@@ -22,6 +22,8 @@ Q_OBJECT
 public:
 	KeyFinderWorkerThread(QObject *parent);
   void setParams(const QString&, const Preferences&, int);
+public slots:
+	void quit();
 protected:
 	void run();
 signals:
@@ -38,6 +40,7 @@ private:
 	Preferences prefs;
 	QString filePath;
 	bool haveParams;
+	bool receivedQuit;
   int guiIndex;
 };
 

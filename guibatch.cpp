@@ -164,11 +164,11 @@ void BatchWindow::addNewRow(QString fileUrl){
     loadPlaylistXml(fileUrl);
     return;
   }
-  if(initialHelpLabel != NULL){
-    delete initialHelpLabel;
-    initialHelpLabel = NULL;
-  }
-  int newRow = ui->tableWidget->rowCount();
+	if(initialHelpLabel != NULL){
+		delete initialHelpLabel;
+		initialHelpLabel = NULL;
+	}
+	int newRow = ui->tableWidget->rowCount();
   ui->tableWidget->insertRow(newRow);
   ui->tableWidget->setItem(newRow,COL_STATUS,new QTableWidgetItem());
   ui->tableWidget->item(newRow,COL_STATUS)->setText(STATUS_NEW);
@@ -292,15 +292,13 @@ void BatchWindow::fileDropFinished(){
 void BatchWindow::on_runBatchButton_clicked(){
   // get a new preferences object in case they've changed since the last run.
   prefs = Preferences();
-  if(ui->tableWidget->rowCount()==0)
-    return;
   ui->runBatchButton->setDisabled(true);
   ui->cancelBatchButton->setDisabled(false);
   cancel = false;
   ui->tableWidget->setContextMenuPolicy(Qt::NoContextMenu); // so that no tags can be written while busy
   allowDrops = false;
   ui->statusLabel->setText("Analysing (" + QString::number(modelThreads.size()) + " threads)...");
-  ui->progressBar->setMaximum(ui->tableWidget->rowCount());
+	ui->progressBar->setMaximum(ui->tableWidget->rowCount());
   nextFile = 0;
   processFiles();
 }
@@ -321,12 +319,12 @@ void BatchWindow::processFiles(){
 	QString status = ui->tableWidget->item(nextFile,COL_STATUS)->text();
 	if(status == STATUS_NEW || status == STATUS_TAGSREAD){
     for(int i=0; i<(signed)modelThreads.size(); i++){
-      if(modelThreads[i] == NULL || modelThreads[i]->isFinished()){
+			if(modelThreads[i] == NULL || modelThreads[i]->isFinished()){
 				qDebug("Batch processing %s on thread %d of %d",ui->tableWidget->item(nextFile,COL_PATH)->text().toLocal8Bit().data(),i,(int)modelThreads.size());
         ui->progressBar->setValue(nextFile);
         // now proceed
-        if(modelThreads[i] != NULL)
-          delete modelThreads[i];
+				if(modelThreads[i] != NULL)
+					delete modelThreads[i];
         modelThreads[i] = new KeyFinderWorkerThread(0);
         modelThreads[i]->setParams(ui->tableWidget->item(nextFile,COL_PATH)->text(),prefs,nextFile);
         connect(modelThreads[i],SIGNAL(failed(int,QString)),this,SLOT(fileFailed(int)));
@@ -346,19 +344,21 @@ void BatchWindow::processFiles(){
 }
 
 void BatchWindow::cleanUpAfterRun(){
+	// quit signal to all threads if required
+	if(cancel)
+		for(int i=0; i<(signed)modelThreads.size(); i++)
+			if(modelThreads[i] != NULL && modelThreads[i]->isRunning())
+				modelThreads[i]->quit();
+	// wait for all threads to finish
   for(int i=0; i<(signed)modelThreads.size(); i++){
-    if(modelThreads[i] != NULL){
-      if(modelThreads[i]->isRunning()){
-        if(cancel)
-          modelThreads[i]->quit();
-        modelThreads[i]->wait();
-      }
-      delete modelThreads[i];
-      modelThreads[i] = NULL;
-    }
+		if(modelThreads[i] != NULL && modelThreads[i]->isRunning())
+			modelThreads[i]->wait();
+		delete modelThreads[i];
+		modelThreads[i] = NULL;
   }
   allowDrops = true;
   ui->progressBar->setValue(0);
+	ui->progressBar->setMaximum(1);
   ui->statusLabel->setText("Ready");
   ui->runBatchButton->setDisabled(false);
   ui->cancelBatchButton->setDisabled(true);

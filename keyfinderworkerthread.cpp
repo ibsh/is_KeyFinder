@@ -18,6 +18,11 @@ void KeyFinderWorkerThread::setParams(const QString& f, const Preferences& p, in
 	prefs = p;
   guiIndex = idx;
 	haveParams = true;
+	receivedQuit = false;
+}
+
+void KeyFinderWorkerThread::quit(){
+	receivedQuit = true;
 }
 
 void KeyFinderWorkerThread::run(){
@@ -31,14 +36,16 @@ void KeyFinderWorkerThread::run(){
   AudioStream* astrm = NULL;
 	AudioFileDecoder* dec = AudioFileDecoder::getDecoder(filePath.toLocal8Bit().data());
   for(int i=1; ;i++){
-    try{
+		if(receivedQuit){
+			delete dec;
+			return;
+		}
+		try{
 			astrm = dec->decodeFile(filePath.toLocal8Bit().data());
+			delete dec;
       break;
     }catch(Exception){ }
-    if(astrm != NULL){
-      delete astrm;
-      astrm = NULL;
-    }
+		delete astrm;
     if(i==3){ // fail on third try
       delete dec;
       emit failed(guiIndex,"Could not decode file.");
@@ -47,16 +54,10 @@ void KeyFinderWorkerThread::run(){
     msleep(50); // sleep 50 milliseconds to give libav a chance to wake.
   }
 
-	try{
-		astrm = dec->decodeFile(filePath.toLocal8Bit().data());
-	}catch(Exception){
+	if(receivedQuit){
 		delete astrm;
-		delete dec;
-    emit failed(guiIndex,"Could not decode file.");
 		return;
 	}
-	delete dec;
-	emit decoded();
 
 	// make audio stream monaural
 	astrm->reduceToMono();
@@ -77,6 +78,11 @@ void KeyFinderWorkerThread::run(){
 		emit downsampled();
 	}
 
+	if(receivedQuit){
+		delete astrm;
+		return;
+	}
+
 	// start spectrum analysis
 	SpectrumAnalyser* sa = NULL;
   Chromagram* ch = NULL;
@@ -86,9 +92,19 @@ void KeyFinderWorkerThread::run(){
   ch->reduceTuningBins(prefs);
 	emit producedFullChromagram(*ch);
 
+	if(receivedQuit){
+		delete ch;
+		return;
+	}
+
 	// reduce chromagram
 	ch->reduceToOneOctave(prefs);
 	emit producedOneOctaveChromagram(*ch);
+
+	if(receivedQuit){
+		delete ch;
+		return;
+	}
 
 	// get energy level across track to weight segments
 	std::vector<float> loudness(ch->getHops());
@@ -96,14 +112,31 @@ void KeyFinderWorkerThread::run(){
 		for(int b=0; b<ch->getBins(); b++)
 			loudness[h] += ch->getMagnitude(h,b);
 
+	if(receivedQuit){
+		delete ch;
+		return;
+	}
+
 	// get harmonic change signal
 	Segmentation* hcdf = Segmentation::getSegmentation(prefs);
 	std::vector<double> harmonicChangeSignal = hcdf->getRateOfChange(ch,prefs);
 	emit producedHarmonicChangeSignal(harmonicChangeSignal);
 
+	if(receivedQuit){
+		delete hcdf;
+		delete ch;
+		return;
+	}
+
 	// get track segmentation
   std::vector<int> changes = hcdf->getSegments(harmonicChangeSignal,prefs);
+	delete hcdf;
   changes.push_back(ch->getHops()); // It used to be getHops()-1. But this doesn't crash. So we like it.
+
+	if(receivedQuit){
+		delete ch;
+		return;
+	}
 
 	// batch output of keychange locations for Beatles experiment
 	//for(int i=1; i<changes.size(); i++) // don't want the leading zero
