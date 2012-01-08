@@ -105,7 +105,9 @@ mac{
 	LIBS += -lfftw3 -lavcodec -lavformat -lsamplerate -ltag -lavutil
 	INCLUDEPATH += /usr/local/include/taglib
 	ICON = is_KeyFinder.icns
-  QMAKE_MAC_SDK = /Developer/SDKs/MacOSX10.6.sdk
+	QMAKE_MAC_SDK = /Developer/SDKs/MacOSX10.6.sdk
+#	CONFIG -= x86_64 ppc ppc64
+#	CONFIG += x86
 }
 
 win32{

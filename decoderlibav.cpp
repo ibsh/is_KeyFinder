@@ -72,6 +72,8 @@ AudioStream* LibAvDecoder::decodeFile(char* fileName) throw (Exception){
 	AVCodec *codec = NULL;
 	AVFormatContext *fCtx = NULL;
 	AVCodecContext *cCtx = NULL;
+	AVDictionary* opts = NULL;
+	av_dict_set(&opts, "b", "2.5M", 0);
   // open file
   if(avformat_open_input(&fCtx, fileName, NULL, NULL) != 0){
     qCritical("Failed to open audio file: %s", fileName);
@@ -99,7 +101,7 @@ AudioStream* LibAvDecoder::decodeFile(char* fileName) throw (Exception){
 		qCritical("Audio stream has unsupported codec in file: %s", fileName);
 		throw Exception();
 	}
-	if(avcodec_open(cCtx, codec) < 0){
+	if(avcodec_open2(cCtx, codec, &opts) < 0){
 		qCritical("Error opening audio codec: %s", codec->long_name);
 		throw Exception();
 	}
