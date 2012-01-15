@@ -115,9 +115,10 @@ win32{
 	DEPENDPATH += $$PWD/../Desktop/fftw-3.3-dll32
 	LIBS += -L$$PWD/../Desktop/fftw-3.3-dll32 -llibfftw3-3
 
-	INCLUDEPATH += $$PWD/../Desktop/libav-win32-0.7.2/usr/include
-	DEPENDPATH += $$PWD/../Desktop/libav-win32-0.7.2/usr/bin
-	LIBS += -L$$PWD/../Desktop/libav-win32-0.7.2/usr/bin -lavcodec
+	INCLUDEPATH += $$PWD/../Desktop/libav-win32-20120104/usr/include
+	DEPENDPATH += $$PWD/../Desktop/libav-win32-20120104/usr/bin
+	LIBS += -L$$PWD/../Desktop/libav-win32-20120104/usr/bin
+	LIBS += -lavcodec
 	LIBS += -lavformat
 	LIBS += -lavutil
 
