@@ -36,8 +36,9 @@ class MainMenuHandler;
 #include <QClipboard>
 #include <QMessageBox>
 #include <QLabel>
-//#include <QtXml>
-//#include <Qt/QXmlQuery.h> // is this the right path? Can't find symbols.
+#include <Qt/QtXml>
+#include <Qt/QtXmlPatterns>
+#include <QXmlResultItems>
 
 #include <vector>
 

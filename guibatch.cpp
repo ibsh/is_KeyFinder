@@ -199,35 +199,32 @@ void BatchWindow::loadPlaylistM3u(QString m3uUrl){
       m3uLine += m3uChar;
     }
   }
-  filesDropped(songUrls);
+
 }
 
-void BatchWindow::loadPlaylistXml(QString /*xmlUrl*/){
-  qDebug("XML playlists not working yet");
-  /*
-  QFile xmlFile(xmlUrl);
+void BatchWindow::loadPlaylistXml(QString xmlFileUrl){
+  // Here be ugly.
+  QFile xmlFile(xmlFileUrl);
   if (!xmlFile.open(QIODevice::ReadOnly))
     return;
 
-  QXmlQuery xq;
-  xq.bindVariable("inputDocument", &xmlFile);
-  xq.setQuery("doc($inputDocument)/plist/dict/dict/dict");
+  // I want the text contents of the <string> node following a sibling <key> node of value "Location"
+  // but for the moment the last string node seems to do it...
+  QXmlQuery xmlQuery;
+  xmlQuery.bindVariable("inputDocument", &xmlFile);
+  xmlQuery.setQuery("doc($inputDocument)/plist/dict/dict/dict/string[last()]/string(text())");
+  if (!xmlQuery.isValid())
+    return;
 
+  QStringList results;
+  xmlQuery.evaluateTo(&results);
   xmlFile.close();
-  */
-  /*
-  QDomDocument domDoc("whatevs");
-  // path is plist -> dict -> dict -> each dict -> string element after key element = location
-  QDomNode n = domDoc.documentElement().firstChild().firstChild(); // plist -> dict
-  while(!n.isNull()) {
-    QDomElement e = n.toElement(); // try to convert the node to an element.
-    if(!e.isNull() && e.tagName() == "dict") {
-      n = n.firstChild(); // plist -> dict -> dict
-      break;
-    }
-    n = n.nextSibling();
-  }
-  */
+
+  QList<QUrl> songUrls;
+  // subbing out iTunes' localhost addressing.
+  for(int i=0; i<(signed)results.size(); i++)
+    songUrls.push_back(QUrl(results[i].replace(QString("//localhost"),QString("")).toLocal8Bit()));
+  filesDropped(songUrls);
 }
 
 void BatchWindow::getMetadata(){
