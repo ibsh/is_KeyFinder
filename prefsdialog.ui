@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>678</width>
+    <width>757</width>
     <height>407</height>
    </rect>
   </property>
@@ -1589,6 +1589,13 @@
            </item>
           </widget>
          </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="lbl_tagField">
+           <property name="text">
+            <string>Write tag to field</string>
+           </property>
+          </widget>
+         </item>
          <item row="1" column="1">
           <widget class="QComboBox" name="tagField">
            <item>
@@ -1608,13 +1615,6 @@
            </item>
           </widget>
          </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="lbl_tagField">
-           <property name="text">
-            <string>Write tag to field</string>
-           </property>
-          </widget>
-         </item>
          <item row="2" column="0">
           <widget class="QLabel" name="lbl_writeTagsAutomatically">
            <property name="text">
@@ -1623,7 +1623,11 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="QCheckBox" name="writeTagsAutomatically"/>
+          <widget class="QCheckBox" name="writeTagsAutomatically">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -1639,6 +1643,30 @@
           </size>
          </property>
         </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab6batch">
+      <attribute name="title">
+       <string>Batch jobs</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout_7">
+       <property name="fieldGrowthPolicy">
+        <enum>QFormLayout::FieldsStayAtSizeHint</enum>
+       </property>
+       <item row="0" column="0">
+        <widget class="QLabel" name="lbl_parallelBatchJobs">
+         <property name="text">
+          <string>Parallelise batch jobs (faster, but higher CPU load)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QCheckBox" name="parallelBatchJobs">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

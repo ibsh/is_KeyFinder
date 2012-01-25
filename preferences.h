@@ -41,6 +41,7 @@ public:
 	bool equivalentSpectralAnalysis(const Preferences&) const;
 	// getters
   bool getWriteTagsAutomatically() const;
+  bool getParallelBatchJobs() const;
 	char getTemporalWindow() const;
 	char getHcdf() const;
 	char getSimilarityMeasure() const;
@@ -66,6 +67,7 @@ public:
 	std::vector<QString> getCustomKeyCodes() const;
 private:
   bool writeTagsAutomatically;
+  bool parallelBatchJobs;
 	char temporalWindow;
 	char hcdf;
 	char similarityMeasure;

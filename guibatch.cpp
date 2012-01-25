@@ -40,11 +40,6 @@ const QString STATUS_FAILED = "-3";
 BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindow(parent), ui(new Ui::BatchWindow){
   // ASYNC
   connect(&fileDropWatcher, SIGNAL(finished()), this, SLOT(fileDropFinished()));
-  int numThreads = QThread::idealThreadCount();
-  if(numThreads == -1)
-    numThreads = 1; // number could not be detected, force.
-  for(int i=0; i<numThreads; i++)
-    modelThreads.push_back(NULL);
   // SETUP UI
   ui->setupUi(this);
   allowDrops = true;
@@ -95,7 +90,7 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
 BatchWindow::~BatchWindow(){
   fileDropWatcher.cancel();
   fileDropWatcher.waitForFinished();
-  cancel = true; // just to force quit threads
+  cancelled = true; // just to force quit threads
   cleanUpAfterRun();
   delete ui;
 }
@@ -289,9 +284,10 @@ void BatchWindow::fileDropFinished(){
 void BatchWindow::on_runBatchButton_clicked(){
   // get a new preferences object in case they've changed since the last run.
   prefs = Preferences();
+  prepareThreads();
   ui->runBatchButton->setDisabled(true);
   ui->cancelBatchButton->setDisabled(false);
-  cancel = false;
+  cancelled = false;
   ui->tableWidget->setContextMenuPolicy(Qt::NoContextMenu); // so that no tags can be written while busy
   allowDrops = false;
   ui->statusLabel->setText("Analysing (" + QString::number(modelThreads.size()) + " threads)...");
@@ -301,13 +297,13 @@ void BatchWindow::on_runBatchButton_clicked(){
 }
 
 void BatchWindow::on_cancelBatchButton_clicked(){
-  cancel = true;
+  cancelled = true;
   ui->statusLabel->setText("Cancelling...");
   ui->cancelBatchButton->setDisabled(true);
 }
 
 void BatchWindow::processFiles(){
-  if(cancel || nextFile == ui->tableWidget->rowCount()){
+  if(cancelled || nextFile == ui->tableWidget->rowCount()){
     cleanUpAfterRun();
     QApplication::beep();
     return;
@@ -317,7 +313,7 @@ void BatchWindow::processFiles(){
 	if(status == STATUS_NEW || status == STATUS_TAGSREAD){
     for(int i=0; i<(signed)modelThreads.size(); i++){
 			if(modelThreads[i] == NULL || modelThreads[i]->isFinished()){
-				qDebug("Batch processing %s on thread %d of %d",ui->tableWidget->item(nextFile,COL_PATH)->text().toLocal8Bit().data(),i,(int)modelThreads.size());
+        qDebug("Batch processing %s on thread %d of %d",ui->tableWidget->item(nextFile,COL_PATH)->text().toLocal8Bit().data(),i+1,(int)modelThreads.size());
         ui->progressBar->setValue(nextFile);
         // now proceed
 				if(modelThreads[i] != NULL)
@@ -340,19 +336,33 @@ void BatchWindow::processFiles(){
 	}
 }
 
-void BatchWindow::cleanUpAfterRun(){
-	// quit signal to all threads if required
-	if(cancel)
-		for(int i=0; i<(signed)modelThreads.size(); i++)
-			if(modelThreads[i] != NULL && modelThreads[i]->isRunning())
-				modelThreads[i]->quit();
-	// wait for all threads to finish
+void BatchWindow::prepareThreads(){
+  cleanUpThreads();
+  int numThreads = QThread::idealThreadCount();
+  if(numThreads == -1 || prefs.getParallelBatchJobs() == false)
+    numThreads = 1; // number could not be detected, or parallelism disabled. Force single thread.
+  modelThreads.clear();
+  for(int i=0; i<numThreads; i++)
+    modelThreads.push_back(NULL);
+}
+
+void BatchWindow::cleanUpThreads(){
+  // quit signal to all threads if required
+  if(cancelled)
+    for(int i=0; i<(signed)modelThreads.size(); i++)
+      if(modelThreads[i] != NULL && modelThreads[i]->isRunning())
+        modelThreads[i]->quit();
+  // wait for all threads to finish
   for(int i=0; i<(signed)modelThreads.size(); i++){
-		if(modelThreads[i] != NULL && modelThreads[i]->isRunning())
-			modelThreads[i]->wait();
-		delete modelThreads[i];
-		modelThreads[i] = NULL;
+    if(modelThreads[i] != NULL && modelThreads[i]->isRunning())
+      modelThreads[i]->wait();
+    delete modelThreads[i];
+    modelThreads[i] = NULL;
   }
+}
+
+void BatchWindow::cleanUpAfterRun(){
+  cleanUpThreads();
   allowDrops = true;
   ui->progressBar->setValue(0);
 	ui->progressBar->setMaximum(1);

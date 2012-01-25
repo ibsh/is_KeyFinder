@@ -74,10 +74,12 @@ private:
 	void addNewRow(QString);
 	void getMetadata();
   bool writeToTagsAtRow(int);
-  int nextFile;
   void processFiles();
-  bool cancel;
+  void prepareThreads();
+  void cleanUpThreads();
 	void cleanUpAfterRun();
+  int nextFile;
+  bool cancelled;
 	// UI
 	Ui::BatchWindow* ui;
 	Visuals* vis;

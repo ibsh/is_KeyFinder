@@ -355,6 +355,19 @@ Preferences::Preferences(){
   }
   settings.endGroup();
 
+  // ========================= Batch jobs ==============================
+
+  settings.beginGroup("batch");
+  if(settings.contains("parallelBatchJobs")){
+    parallelBatchJobs = settings.value("parallelBatchJobs").toBool();
+  }else{
+    bool defaultVal = true;
+    settings.setValue("parallelBatchJobs",defaultVal);
+    parallelBatchJobs = defaultVal;
+    qDebug("Wrote default parallelBatchJobs (true)");
+  }
+  settings.endGroup();
+
 	// ================================ End ======================================
 
 	generateBinFreqs();
@@ -386,6 +399,7 @@ Preferences& Preferences::operator=(const Preferences& that){
     tagFormat = that.tagFormat;
     tagField = that.tagField;
     writeTagsAutomatically = that.writeTagsAutomatically;
+    parallelBatchJobs = that.parallelBatchJobs;
 		generateBinFreqs();
 	}
 	return *this;
@@ -411,6 +425,7 @@ bool Preferences::equivalentSpectralAnalysis(const Preferences& that) const{
 }
 
 bool Preferences::getWriteTagsAutomatically()const{return writeTagsAutomatically;}
+bool Preferences::getParallelBatchJobs()const{return parallelBatchJobs;}
 char Preferences::getTemporalWindow()const{return temporalWindow;}
 char Preferences::getHcdf()const{return hcdf;}
 char Preferences::getSimilarityMeasure()const{return similarityMeasure;}

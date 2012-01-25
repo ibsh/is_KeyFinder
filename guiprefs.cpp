@@ -136,6 +136,10 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   ui->writeTagsAutomatically->setChecked(settings.value(("writeTagsAutomatically")).toBool());
   settings.endGroup();
 
+  settings.beginGroup("batch");
+  ui->parallelBatchJobs->setChecked(settings.value(("parallelBatchJobs")).toBool());
+  settings.endGroup();
+
 	// enable/disable fields as necessary
 	tuningEnabled();
 	binAdaptiveTuningEnabled();
@@ -264,6 +268,10 @@ void PrefsDialog::on_savePrefsButton_clicked(){
   settings.setValue("tagFormat",tagFormatComboIndex[ui->tagFormat->currentIndex()].toAscii());
   settings.setValue("tagField",tagFieldComboIndex[ui->tagField->currentIndex()].toAscii());
   settings.setValue("writeTagsAutomatically",ui->writeTagsAutomatically->isChecked());
+  settings.endGroup();
+
+  settings.beginGroup("batch");
+  settings.setValue("parallelBatchJobs",ui->parallelBatchJobs->isChecked());
   settings.endGroup();
 
 	// CLOSE

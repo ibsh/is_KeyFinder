@@ -117,7 +117,7 @@ AudioStream* LibAvDecoder::decodeFile(char* fileName) throw (Exception){
 		if(avpkt.stream_index == audioStream){
 			try{
 				if(decodePacket(cCtx, &avpkt, astrm) != 0){
-					qWarning("LibAV: Error while processing packet");
+          //qWarning("LibAV: Error while processing packet");
           if(bad_pkt_count < 100){
 						bad_pkt_count++;
           }else{
