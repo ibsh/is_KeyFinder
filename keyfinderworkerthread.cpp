@@ -37,27 +37,29 @@ void KeyFinderWorkerThread::run(){
 	AudioFileDecoder* dec = AudioFileDecoder::getDecoder(filePath.toLocal8Bit().data());
   for(int i=1; ;i++){
 		if(receivedQuit){
-			delete dec;
-			return;
-		}
-		try{
-			astrm = dec->decodeFile(filePath.toLocal8Bit().data());
-			delete dec;
+      delete dec;
+      return;
+    }
+    try{
+      astrm = dec->decodeFile(filePath.toLocal8Bit().data());
+      delete dec;
       break;
+    }catch(ExceptionNoRetry){
+      i = 3;
     }catch(Exception){ }
-		delete astrm;
+    delete astrm;
     if(i==3){ // fail on third try
       delete dec;
       emit failed(guiIndex,"Could not decode file.");
       return;
     }
-    msleep(50); // sleep 50 milliseconds to give libav a chance to wake.
+    msleep(100); // wait, giving libav a chance to wake.
   }
 
-	if(receivedQuit){
-		delete astrm;
-		return;
-	}
+  if(receivedQuit){
+    delete astrm;
+    return;
+  }
 
 	// make audio stream monaural
 	astrm->reduceToMono();

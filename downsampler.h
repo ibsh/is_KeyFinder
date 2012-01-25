@@ -27,7 +27,7 @@
 
 class Downsampler{
 public:
-	virtual AudioStream* downsample(AudioStream*,int) throw (Exception) = 0;
+  virtual AudioStream* downsample(AudioStream*,int) = 0;
 	static Downsampler* getDownsampler(int,int,float);
 };
 

@@ -39,7 +39,7 @@ public:
 	float n;
 };
 
-AudioStream* PrimaryDownsampler::downsample(AudioStream* instrm, int factor) throw (Exception){
+AudioStream* PrimaryDownsampler::downsample(AudioStream* instrm, int factor){
 	if(factor == 1) return instrm;
 	// prep output buffer
 	AudioStream* outstrm = new AudioStream();

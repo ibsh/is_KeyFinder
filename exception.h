@@ -24,4 +24,6 @@
 
 class Exception{ };
 
+class ExceptionNoRetry{ };
+
 #endif

@@ -55,7 +55,7 @@ void AudioStream::setSample(int n,float x){
 		qDebug("Attempt to set out-of-bounds sample (%d/%d)",n,samples);
 }
 
-void AudioStream::addToSampleCount(int newSamples) throw (Exception){
+void AudioStream::addToSampleCount(int newSamples){
 	try{
 		stream.resize(samples + newSamples);
 		samples += newSamples;

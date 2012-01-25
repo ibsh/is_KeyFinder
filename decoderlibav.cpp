@@ -67,7 +67,7 @@ int LibAvDecoder::libAv_mutexManager(void** av_mutex, enum AVLockOp op){
 	return 1;
 }
 
-AudioStream* LibAvDecoder::decodeFile(char* fileName) throw (Exception){
+AudioStream* LibAvDecoder::decodeFile(char* fileName){
 	av_register_all();
 	AVCodec *codec = NULL;
 	AVFormatContext *fCtx = NULL;
@@ -122,7 +122,7 @@ AudioStream* LibAvDecoder::decodeFile(char* fileName) throw (Exception){
 						bad_pkt_count++;
           }else{
             qCritical("100 bad packets, may be DRM or corruption in file: %s", fileName);
-            throw Exception();
+            throw ExceptionNoRetry();
           }
         }
 			}catch(Exception& e){
@@ -136,7 +136,7 @@ AudioStream* LibAvDecoder::decodeFile(char* fileName) throw (Exception){
 	return astrm;
 }
 
-int LibAvDecoder::decodePacket(AVCodecContext* cCtx, AVPacket* avpkt, AudioStream* ab) throw (Exception){
+int LibAvDecoder::decodePacket(AVCodecContext* cCtx, AVPacket* avpkt, AudioStream* ab){
 	int16_t outputBuffer[AVCODEC_MAX_AUDIO_FRAME_SIZE];
 	int16_t *samples = (int16_t*)outputBuffer;
 	int outputBufferSize, bytesConsumed;

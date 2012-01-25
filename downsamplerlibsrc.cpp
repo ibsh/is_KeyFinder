@@ -22,7 +22,7 @@
 #include "downsamplerlibsrc.h"
 #include <samplerate.h>
 
-AudioStream* SecretRabbitDownsampler::downsample(AudioStream* instrm, int factor) throw (Exception){
+AudioStream* SecretRabbitDownsampler::downsample(AudioStream* instrm, int factor){
 	if(factor == 1) return instrm;
 	AudioStream* outstrm = new AudioStream();
 	outstrm->setFrameRate(instrm->getFrameRate() / factor);

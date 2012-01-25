@@ -39,7 +39,7 @@ public:
 	float getSample(int) const;
 	void setSample(int,float);
 	int getSampleCount() const;
-	void addToSampleCount(int) throw (Exception);
+  void addToSampleCount(int);
 	void reduceToMono();
 	std::vector<float> stream; // not ideal, but libsrc needs access to stream.front()
 private:

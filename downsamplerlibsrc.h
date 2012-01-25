@@ -27,7 +27,7 @@
 
 class SecretRabbitDownsampler : public Downsampler{
 public:
-	virtual AudioStream* downsample(AudioStream*,int) throw (Exception);
+  virtual AudioStream* downsample(AudioStream*,int);
 };
 
 #endif
