@@ -47,6 +47,11 @@
       </column>
       <column>
        <property name="text">
+        <string>Audio File Name</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
         <string>Artist Tag</string>
        </property>
       </column>

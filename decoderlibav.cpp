@@ -21,6 +21,7 @@
 
 #include "decoderlibav.h"
 
+// CODECS NOW REGISTERED IN main.cpp
 
 // Thread safety is a bit more complex here, see av_lockmgr_register documentation
 
@@ -68,12 +69,13 @@ int LibAvDecoder::libAv_mutexManager(void** av_mutex, enum AVLockOp op){
 }
 
 AudioStream* LibAvDecoder::decodeFile(char* fileName){
-	av_register_all();
+
 	AVCodec *codec = NULL;
 	AVFormatContext *fCtx = NULL;
 	AVCodecContext *cCtx = NULL;
 	AVDictionary* opts = NULL;
-	av_dict_set(&opts, "b", "2.5M", 0);
+  av_dict_set(&opts, "b", "2.5M", 0);
+
   // open file
   if(avformat_open_input(&fCtx, fileName, NULL, NULL) != 0){
     qCritical("Failed to open audio file: %s", fileName);
@@ -117,7 +119,6 @@ AudioStream* LibAvDecoder::decodeFile(char* fileName){
 		if(avpkt.stream_index == audioStream){
 			try{
 				if(decodePacket(cCtx, &avpkt, astrm) != 0){
-          //qWarning("LibAV: Error while processing packet");
           if(bad_pkt_count < 100){
 						bad_pkt_count++;
           }else{

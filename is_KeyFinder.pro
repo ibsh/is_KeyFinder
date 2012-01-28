@@ -41,7 +41,6 @@ SOURCES += \
     hcdfharte.cpp \
     hcdfcosine.cpp \
 		hcdfnone.cpp \
-    keyfinderworkerthread.cpp \
     fftpp.cpp \
     fftppdirectsk.cpp \
     spectrumanalyserfftw.cpp \
@@ -53,7 +52,9 @@ SOURCES += \
     guidetail.cpp \
     guimenuhandler.cpp \
     guiprefs.cpp \
-    guivisuals.cpp
+    guivisuals.cpp \
+    keyfinderworker.cpp \
+    keyfinderanalysisobject.cpp
 
 HEADERS  += \
     decoderlibav.h \
@@ -74,7 +75,6 @@ HEADERS  += \
     hcdfharte.h \
     hcdfcosine.h \
 		hcdfnone.h \
-    keyfinderworkerthread.h \
     fftppdirectsk.h \
     spectrumanalyserfftw.h \
 		fftpp.h \
@@ -85,7 +85,10 @@ HEADERS  += \
     guidetail.h \
     guimenuhandler.h \
     guiprefs.h \
-    guivisuals.h
+    guivisuals.h \
+    keyfinderworker.h \
+    keyfinderanalysisobject.h \
+    keyfinderresultset.h
 
 FORMS += \
     detailwindow.ui \

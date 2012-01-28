@@ -28,6 +28,17 @@
 
 #include <fstream>
 
+#ifndef INT64_C
+#define UINT64_C(c) (c ## ULL)
+#endif
+#define INBUF_SIZE 4096
+#define AUDIO_INBUF_SIZE 20480
+#define AUDIO_REFILL_THRESH 4096
+extern "C"{
+  #include <libavcodec/avcodec.h>
+  #include <libavformat/avformat.h>
+}
+
 void MacLoggingHandler(QtMsgType type, const char *msg) {
   std::ofstream logfile;
 	logfile.open(QDir::homePath().toLocal8Bit() + "/Library/Logs/KeyFinder.log",std::ios::app);
@@ -52,6 +63,9 @@ void MacLoggingHandler(QtMsgType type, const char *msg) {
 
 #include <iostream>
 int main(int argc, char *argv[]){
+
+  av_register_all(); // first things first.
+
   QCoreApplication::setOrganizationName("Ibrahim Sha'ath");
   QCoreApplication::setOrganizationDomain("ibrahimshaath.co.uk");
   QCoreApplication::setApplicationName("KeyFinder");

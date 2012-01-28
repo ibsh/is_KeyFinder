@@ -26,22 +26,13 @@ const int ROW_BIGCHROMA = 0;
 const int ROW_MINICHROMA = 1;
 const int ROW_RATEOFCHANGE = 2;
 
-const int PROGRESS_DONE = 0;
-const int PROGRESS_START = 1;
-const int PROGRESS_DECODED = 2;
-const int PROGRESS_MADEMONO = 3;
-const int PROGRESS_DOWNSAMPLED = 4;
-const int PROGRESS_DONESPECTRUMANALYSIS = 5;
-const int PROGRESS_DONEHARMONICANALYSIS = 6;
-
 DetailWindow::DetailWindow(QWidget *parent, QString path) : QMainWindow(parent), ui(new Ui::DetailWindow){
 	ui->setupUi(this);
-	modelThread = NULL;
+  connect(&analysisWatcher, SIGNAL(finished()), this, SLOT(analysisFinished()));
 	allowDrops = true;
 	vis = Visuals::getInstance();
-	ui->progressBar->setMaximum(PROGRESS_DONEHARMONICANALYSIS);
-	ui->progressBar->setVisible(false);
-	ui->runButton->setDisabled(true);
+  ui->progressBar->setVisible(false);
+  ui->runButton->setEnabled(false);
 	layoutScaling();
 	drawColourScale();
 	drawPianoKeys();
@@ -49,15 +40,12 @@ DetailWindow::DetailWindow(QWidget *parent, QString path) : QMainWindow(parent),
 	blankKeyLabel();
 	if(path != ""){
 		filePath = path;
-		processCurrentFile();
+    runAnalysis();
 	}
 }
 
 DetailWindow::~DetailWindow(){
-	if(modelThread!=NULL && modelThread->isRunning()){
-		modelThread->quit();
-		modelThread->wait();
-	}
+  analysisWatcher.cancel();
 	delete ui;
 }
 
@@ -76,10 +64,10 @@ void DetailWindow::dragEnterEvent(QDragEnterEvent *e){
 void DetailWindow::dropEvent(QDropEvent *e){
 	allowDrops = false;
 	filePath = e->mimeData()->urls().at(0).toLocalFile();
-	processCurrentFile();
+  runAnalysis();
 }
 
-void DetailWindow::processCurrentFile(){
+void DetailWindow::runAnalysis(){
 	// get latest preferences and redraw variable UI elements if they've changed since the last run.
 	int chkOctaves = prefs.getOctaves();
 	int chkOffset = prefs.getOctaveOffset();
@@ -87,138 +75,109 @@ void DetailWindow::processCurrentFile(){
 	if(chkOctaves != prefs.getOctaves() || chkOffset != prefs.getOctaveOffset()){
 		layoutScaling();
 		drawPianoKeys();
+    // Chromagram yooltip
+    QString numbers[] = {"","one octave","two octaves","three octaves","four octaves","five octaves","six octaves","seven octaves","eight octaves"};
+    QString tooltip = "This chromagram spans " + numbers[prefs.getOctaves()] + ".\n";
+    tooltip += "The vertical axis represents musical frequencies\nas indicated by the piano keyboard.\n";
+    tooltip += "The horizontal axis splits the track into analysis\nwindows of about " + QString::number((44100.0/prefs.getDFactor())/prefs.getHopSize()).left(4) + " seconds each.\n";
+    tooltip += "The brighter the colour, the higher the energy\nfound at that frequency.";
+    ui->chromagramLabel->setToolTip(tooltip);
 	}
 	// visuals
-	say("Decoding audio... ");
-	ui->progressBar->setValue(PROGRESS_START);
+  say("Processing... ");
 	ui->progressBar->setVisible(true);
-	ui->chromaColourCombo->setDisabled(true);
-	ui->runButton->setDisabled(true);
+  ui->chromaColourCombo->setEnabled(false);
+  ui->runButton->setEnabled(false);
 	// and proceed
-	modelThread = new KeyFinderWorkerThread(0);
-  modelThread->setParams(filePath,prefs,0);
-  connect(modelThread,SIGNAL(failed(int,QString)),this,SLOT(criticalError(int,QString)));
-	connect(modelThread,SIGNAL(decoded()),this,SLOT(decoded()));
-	connect(modelThread,SIGNAL(madeMono()),this,SLOT(madeMono()));
-	connect(modelThread,SIGNAL(downsampled()),this,SLOT(downsampled()));
-	connect(modelThread,SIGNAL(producedFullChromagram(Chromagram)),this,SLOT(receiveFullChromagram(Chromagram)));
-	connect(modelThread,SIGNAL(producedOneOctaveChromagram(Chromagram)),this,SLOT(receiveOneOctaveChromagram(Chromagram)));
-	connect(modelThread,SIGNAL(producedHarmonicChangeSignal(std::vector<double>)),this,SLOT(receiveHarmonicChangeSignal(std::vector<double>)));
-	connect(modelThread,SIGNAL(producedKeyEstimates(std::vector<int>)),this,SLOT(receiveKeyEstimates(std::vector<int>)));
-  connect(modelThread,SIGNAL(producedGlobalKeyEstimate(int,int)),this,SLOT(receiveGlobalKeyEstimate(int,int)));
-	modelThread->start();
+  QList<KeyFinderAnalysisObject> objects;
+  objects.push_back(KeyFinderAnalysisObject(filePath,prefs,-1));
+
+  analysisFuture = QtConcurrent::mapped(objects, keyFinderProcessObject);
+  analysisWatcher.setFuture(analysisFuture);
 }
 
-void DetailWindow::criticalError(int /*index*/, const QString& s){
-	say(s);
-	cleanUpAfterRun();
-}
-
-void DetailWindow::decoded(){
-	say("Decoded...");
-	ui->progressBar->setValue(PROGRESS_DECODED);
-}
-
-void DetailWindow::madeMono(){
-	say("Made mono...");
-	ui->progressBar->setValue(PROGRESS_MADEMONO);
-}
-
-void DetailWindow::downsampled(){
-	say("Downsampled...");
-	ui->progressBar->setValue(PROGRESS_DOWNSAMPLED);
-}
-
-void DetailWindow::receiveFullChromagram(const Chromagram& ch){
-	chromagramImage = imageFromChromagram(&ch);
-	ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
-	ui->chromagramLabel->setMinimumHeight(ch.getBins()+2);
-	ui->chromagramLabel->setMinimumWidth(ch.getHops()+2);
-	// Tooltip
-	QString numbers[] = {"","one octave","two octaves","three octaves","four octaves","five octaves","six octaves","seven octaves","eight octaves"};
-	QString tooltip = "This chromagram spans " + numbers[prefs.getOctaves()] + ".\n";
-	tooltip += "The vertical axis represents musical frequencies\nas indicated by the piano keyboard.\n";
-	tooltip += "The horizontal axis splits the track into analysis\nwindows of about " + QString::number((44100.0/prefs.getDFactor())/prefs.getHopSize()).left(4) + " seconds each.\n";
-	tooltip += "The brighter the colour, the higher the energy\nfound at that frequency.";
-	ui->chromagramLabel->setToolTip(tooltip);
-}
-
-void DetailWindow::receiveOneOctaveChromagram(const Chromagram& ch){
-	miniChromagramImage = imageFromChromagram(&ch);
-	ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
-	ui->miniChromagramLabel->setToolTip("This is the same chromagram data,\nreduced to a single octave.");
-	say("Spectrum analysis done...");
-	ui->progressBar->setValue(PROGRESS_DONESPECTRUMANALYSIS);
-}
-
-void DetailWindow::receiveHarmonicChangeSignal(const std::vector<double>& rateOfChange){
-	int rateOfChangePrecision = 100;
-	harmonicChangeImage = QImage(rateOfChange.size()*chromaScaleH,rateOfChangePrecision,QImage::Format_Indexed8);
-	vis->setImageColours(harmonicChangeImage,ui->chromaColourCombo->currentIndex());
-	for(int h=0; h<(signed)rateOfChange.size(); h++){
-		int value = rateOfChange[h] * rateOfChangePrecision;
-		for(int y=0; y<rateOfChangePrecision; y++)
-			for(int x=0; x<chromaScaleH; x++)
-				harmonicChangeImage.setPixel(h*chromaScaleH+x, y, (rateOfChangePrecision - y > value ? 0 : 50));
-	}
-	ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
-	// Tooltip
-	if(prefs.getHcdf() == 'n'){
-		ui->harmonicChangeLabel->setToolTip("You are not using segmentation,\nso there is no harmonic change\ndata to display.");
-	}else if(prefs.getHcdf() == 'a'){
-		ui->harmonicChangeLabel->setToolTip("You are using arbitrary segmentation,\nso there is no harmonic change\ndata to display.");
-	}else{
-		ui->harmonicChangeLabel->setToolTip("This is the level of harmonic\nchange detected in the\nchromagram over time. Peaks\nin this signal are used to\nsegment the chromagram.");
-	}
-}
-
-void DetailWindow::receiveKeyEstimates(const std::vector<int>& keys){
-	deleteKeyLabels();
-	int lastChange = 0;
-	for(int h=1; h<(signed)keys.size(); h++){ // don't test the first hop
-		if(h==(signed)keys.size()-1 || (keys[h] != keys[h-1])){ // at the end, and at changes
-			QLabel* newLabel = new QLabel(vis->getKeyName(keys[h-1]));
-			newLabel->setAlignment(Qt::AlignCenter);
-			QPalette pal = newLabel->palette();
-			pal.setColor(backgroundRole(),vis->getKeyColour(keys[h-1]));
-			newLabel->setPalette(pal);
-			newLabel->setFrameStyle(1);
-			newLabel->setAutoFillBackground(true);
-			newLabel->setMinimumHeight(20);
-			newLabel->setMaximumHeight(30);
-			if(prefs.getHcdf() == 'n'){
-				newLabel->setToolTip("This row shows the key estimate for\nthe unsegmented chromagram.");
-			}else if(prefs.getHcdf() == 'a'){
-				newLabel->setToolTip("This row shows the key estimates\nfor the arbitrary segments.");
-			}else{
-				newLabel->setToolTip("This row shows the key estimates\nfor the segments between peak\nharmonic changes.");
-			}
-			ui->horizontalLayout_keyLabels->addWidget(newLabel,h-lastChange);
-			keyLabels.push_back(newLabel);
-			lastChange = h;
-		}
-	}
-}
-
-void DetailWindow::receiveGlobalKeyEstimate(int /*index*/, int key){
-	TagLibMetadata md(filePath);
-	QString shortName = md.getTitle();
-	if(shortName == ""){
-		shortName = filePath.right(filePath.length() - filePath.lastIndexOf("/") - 1);
-	}
-	this->setWindowTitle("KeyFinder - Detailed Analysis - " + shortName);
-	say("Key estimate: " + vis->getKeyName(key));
-	cleanUpAfterRun();
-}
-
-void DetailWindow::cleanUpAfterRun(){
-	delete modelThread;
-	modelThread = NULL;
-	ui->progressBar->setValue(PROGRESS_DONE);
-	ui->progressBar->setVisible(false);
-	ui->chromaColourCombo->setDisabled(false);
-	ui->runButton->setDisabled(false);
-	allowDrops = true;
+void DetailWindow::analysisFinished(){
+  std::cerr << "0" << std::endl;
+  QString error = analysisWatcher.result().errorMessage;
+  if(error != ""){
+    say(error);
+    return;
+  }
+std::cerr << "A" << std::endl;
+  // Title bar
+  TagLibMetadata md(filePath);
+  QString shortName = md.getTitle();
+  if(shortName == "")
+    shortName = filePath.mid(filePath.lastIndexOf("/") + 1);
+  this->setWindowTitle("KeyFinder - Detailed Analysis - " + shortName);
+std::cerr << "B" << std::endl;
+  // full chromagram
+  chromagramImage = imageFromChromagram(&analysisWatcher.result().fullChromagram);
+  ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
+  ui->chromagramLabel->setMinimumHeight(analysisWatcher.result().fullChromagram.getBins()+2);
+  ui->chromagramLabel->setMinimumWidth(analysisWatcher.result().fullChromagram.getHops()+2);
+std::cerr << "C" << std::endl;
+  // one octave chromagram
+  miniChromagramImage = imageFromChromagram(&analysisWatcher.result().oneOctaveChromagram);
+  ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
+  ui->miniChromagramLabel->setToolTip("This is the same chromagram data,\nreduced to a single octave.");
+std::cerr << "D" << std::endl;
+  // harmonic change signal
+  int rateOfChangePrecision = 100;
+  int size = (signed)analysisWatcher.result().harmonicChangeSignal.size();
+  harmonicChangeImage = QImage(size*chromaScaleH,rateOfChangePrecision,QImage::Format_Indexed8);
+  vis->setImageColours(harmonicChangeImage,ui->chromaColourCombo->currentIndex());
+  for(int h=0; h<size; h++){
+    int value = analysisWatcher.result().harmonicChangeSignal[h] * rateOfChangePrecision;
+    for(int y=0; y<rateOfChangePrecision; y++)
+      for(int x=0; x<chromaScaleH; x++)
+        harmonicChangeImage.setPixel(h*chromaScaleH+x, y, (rateOfChangePrecision - y > value ? 0 : 50));
+  }
+  ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
+  // Tooltip
+  if(prefs.getHcdf() == 'n'){
+    ui->harmonicChangeLabel->setToolTip("You are not using segmentation,\nso there is no harmonic change\ndata to display.");
+  }else if(prefs.getHcdf() == 'a'){
+    ui->harmonicChangeLabel->setToolTip("You are using arbitrary segmentation,\nso there is no harmonic change\ndata to display.");
+  }else{
+    ui->harmonicChangeLabel->setToolTip("This is the level of harmonic\nchange detected in the\nchromagram over time. Peaks\nin this signal are used to\nsegment the chromagram.");
+  }
+std::cerr << "E" << std::endl;
+  // Key estimates
+  deleteKeyLabels();
+  int lastChange = 0;
+  for(int h=1; h<(signed)analysisWatcher.result().keyEstimates.size(); h++){ // don't test the first hop
+    if(h == (signed)analysisWatcher.result().keyEstimates.size()-1 || analysisWatcher.result().keyEstimates[h] != analysisWatcher.result().keyEstimates[h-1]){ // at the end, and at changes
+      QLabel* newLabel = new QLabel(vis->getKeyName(analysisWatcher.result().keyEstimates[h-1]));
+      newLabel->setAlignment(Qt::AlignCenter);
+      QPalette pal = newLabel->palette();
+      pal.setColor(backgroundRole(),vis->getKeyColour(analysisWatcher.result().keyEstimates[h-1]));
+      newLabel->setPalette(pal);
+      newLabel->setFrameStyle(1);
+      newLabel->setAutoFillBackground(true);
+      newLabel->setMinimumHeight(20);
+      newLabel->setMaximumHeight(30);
+      if(prefs.getHcdf() == 'n'){
+        newLabel->setToolTip("This row shows the key estimate for\nthe unsegmented chromagram.");
+      }else if(prefs.getHcdf() == 'a'){
+        newLabel->setToolTip("This row shows the key estimates\nfor the arbitrary segments.");
+      }else{
+        newLabel->setToolTip("This row shows the key estimates\nfor the segments between peak\nharmonic changes.");
+      }
+      ui->horizontalLayout_keyLabels->addWidget(newLabel,h-lastChange);
+      keyLabels.push_back(newLabel);
+      lastChange = h;
+    }
+  }
+std::cerr << "F" << std::endl;
+  // Global key estimate
+  say("Key estimate: " + vis->getKeyName(analysisWatcher.result().globalKeyEstimate));
+std::cerr << "G" << std::endl;
+  ui->progressBar->setVisible(false);
+  ui->chromaColourCombo->setEnabled(true);
+  ui->runButton->setEnabled(true);
+  allowDrops = true;
+std::cerr << "H" << std::endl;
 }
 
 QImage DetailWindow::imageFromChromagram(const Chromagram* ch){
@@ -253,7 +212,7 @@ void DetailWindow::say(const QString& s){
 }
 
 void DetailWindow::on_runButton_clicked(){
-	if(filePath != "") processCurrentFile();
+  if(filePath != "") runAnalysis();
 }
 
 void DetailWindow::on_chromaColourCombo_currentIndexChanged(int index){

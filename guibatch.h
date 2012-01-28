@@ -45,7 +45,8 @@ class MainMenuHandler;
 #include "guidetail.h"
 #include "preferences.h"
 #include "guivisuals.h"
-#include "keyfinderworkerthread.h"
+#include "keyfinderworker.h"
+#include "keyfinderresultset.h"
 #include "metadatataglib.h"
 #include "guimenuhandler.h"
 
@@ -61,40 +62,44 @@ public:
 private:
 	// analysis
 	Preferences prefs;
-  vector<KeyFinderWorkerThread*> modelThreads;
 	// batch processing
 	bool allowDrops;
 	void dragEnterEvent(QDragEnterEvent*);
 	void dropEvent(QDropEvent*);
 	QFutureWatcher<void> fileDropWatcher;
 	void filesDropped(QList<QUrl>&);
+
 	QStringList getDirectoryContents(QDir);
   void loadPlaylistM3u(QString);
   void loadPlaylistXml(QString);
 	void addNewRow(QString);
 	void getMetadata();
+
+  QFuture<KeyFinderResultSet> analysisFuture;
+  QFutureWatcher<KeyFinderResultSet> analysisWatcher;
+  void runAnalysis();
+  void cleanUpAfterRun();
+
   bool writeToTagsAtRow(int);
-  void processFiles();
-  void prepareThreads();
-  void cleanUpThreads();
-	void cleanUpAfterRun();
-  int nextFile;
-  bool cancelled;
 	// UI
 	Ui::BatchWindow* ui;
 	Visuals* vis;
 	QLabel* initialHelpLabel;
   MainMenuHandler* menuHandler;
 private slots:
-  void fileFailed(int);
-  void fileFinished(int,int);
 	void fileDropFinished();
 	void on_runBatchButton_clicked();
+  void on_cancelBatchButton_clicked();
 	void copySelectedFromTableWidget();
 	void writeDetectedToTags();
 	void clearDetected();
 	void runDetailedAnalysis();
-  void on_cancelBatchButton_clicked();
+
+  void analysisFinished();
+  void analysisCancelled();
+  void progressRangeChanged(int, int);
+  void progressValueChanged(int);
+  void resultReadyAt(int);
 };
 
 #endif

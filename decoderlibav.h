@@ -23,12 +23,6 @@
 #define LIBAVDECODER_H
 
 #include "decoder.h"
-#ifndef INT64_C
-#define UINT64_C(c) (c ## ULL)
-#endif
-#define INBUF_SIZE 4096
-#define AUDIO_INBUF_SIZE 20480
-#define AUDIO_REFILL_THRESH 4096
 extern "C"{
 	#include <libavcodec/avcodec.h>
 	#include <libavformat/avformat.h>

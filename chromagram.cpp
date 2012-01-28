@@ -27,6 +27,12 @@ Chromagram::Chromagram(int h, int b){
 	chromaData = std::vector<std::vector<float> >(hops,std::vector<float>(bins));
 }
 
+Chromagram::Chromagram(const Chromagram& that){
+  hops = that.hops;
+  bins = that.bins;
+  chromaData = that.chromaData;
+}
+
 float Chromagram::getMagnitude(int h, int b) const{
 	if(h > hops){
 		qDebug("Attempt to get magnitude of out-of-bounds hop (%d/%d)",h,hops);

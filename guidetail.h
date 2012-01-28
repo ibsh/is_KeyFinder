@@ -33,7 +33,8 @@
 #include <vector>
 
 #include "preferences.h"
-#include "keyfinderworkerthread.h"
+#include "keyfinderworker.h"
+#include "keyfinderresultset.h"
 #include "chromagram.h"
 #include "metadatataglib.h"
 #include "guivisuals.h"
@@ -50,12 +51,14 @@ public:
 private:
 	Preferences prefs;
 	QString filePath;
-	KeyFinderWorkerThread* modelThread;
+
+  QFuture<KeyFinderResultSet> analysisFuture;
+  QFutureWatcher<KeyFinderResultSet> analysisWatcher;
+
 	bool allowDrops;
 	void dragEnterEvent(QDragEnterEvent*);
 	void dropEvent(QDropEvent*);
-	void processCurrentFile();
-	void cleanUpAfterRun();
+  void runAnalysis();
 	// UI
 	Ui::DetailWindow* ui;
 	Visuals* vis;
@@ -69,15 +72,7 @@ private:
 	QImage imageFromChromagram(const Chromagram*);
 private slots:
 	// interaction with model thread
-  void criticalError(int, const QString&);
-	void decoded();
-	void madeMono();
-	void downsampled();
-	void receiveFullChromagram(const Chromagram&);
-	void receiveOneOctaveChromagram(const Chromagram&);
-	void receiveHarmonicChangeSignal(const std::vector<double>&);
-	void receiveKeyEstimates(const std::vector<int>&);
-  void receiveGlobalKeyEstimate(int,int);
+  void analysisFinished();
 	// UI
 	void say(const QString&);
 	void on_chromaColourCombo_currentIndexChanged(int index);
