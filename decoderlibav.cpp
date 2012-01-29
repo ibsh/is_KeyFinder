@@ -21,8 +21,6 @@
 
 #include "decoderlibav.h"
 
-// CODECS NOW REGISTERED IN main.cpp
-
 // Thread safety is a bit more complex here, see av_lockmgr_register documentation
 
 LibAvDecoder::LibAvDecoder(){

@@ -71,11 +71,13 @@ KeyFinderResultSet keyFinderProcessObject(const KeyFinderAnalysisObject& object)
   ch = sa->chromagram(astrm);
   delete astrm; // note we don't delete the spectrum analyser; it stays in the centralised factory for reuse.
   ch->reduceTuningBins(object.prefs);
-  resultSet.fullChromagram = Chromagram(*ch);
+  if(object.batchRow == -1)
+    resultSet.fullChromagram = Chromagram(*ch);
 
   // reduce chromagram
   ch->reduceToOneOctave(object.prefs);
-  resultSet.oneOctaveChromagram = Chromagram(*ch);
+  if(object.batchRow == -1)
+    resultSet.oneOctaveChromagram = Chromagram(*ch);
 
   // get energy level across track to weight segments
   std::vector<float> loudness(ch->getHops());
