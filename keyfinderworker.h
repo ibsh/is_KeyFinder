@@ -19,7 +19,6 @@
 #include "keyfinderresultset.h"
 
 // trying this as a global function rather than an object...
-
 KeyFinderResultSet keyFinderProcessObject(const KeyFinderAnalysisObject&);
 
 #endif // KEYFINDERMODEL_H

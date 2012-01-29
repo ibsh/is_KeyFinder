@@ -7,7 +7,14 @@ KeyFinderResultSet keyFinderProcessObject(const KeyFinderAnalysisObject& object)
 
   // initialise stream and decode file into it.
   AudioStream* astrm = NULL;
-  AudioFileDecoder* dec = AudioFileDecoder::getDecoder(object.filePath.toLocal8Bit().data());
+  AudioFileDecoder* dec = NULL;
+  try{
+    dec = AudioFileDecoder::getDecoder(object.filePath.toLocal8Bit().data());
+  }catch(Exception){
+    delete dec;
+    resultSet.errorMessage = "Could not get decoder.";
+    return resultSet;
+  }
 
   try{
     astrm = dec->decodeFile(object.filePath.toLocal8Bit().data());

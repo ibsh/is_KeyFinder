@@ -25,19 +25,17 @@
 
 // Thread safety is a bit more complex here, see av_lockmgr_register documentation
 
-bool LibAvDecoder::concurrencyRegistered = false;
-
 LibAvDecoder::LibAvDecoder(){
-	if(!concurrencyRegistered){
-		if(av_lockmgr_register(libAv_mutexManager)){
-			qCritical("Failed to register LibAV concurrency manager");
-			throw Exception();
-		}
-		concurrencyRegistered = true;
-	}
+  if(av_lockmgr_register(libAv_mutexManager)){
+    qCritical("Failed to register LibAV concurrency manager");
+    throw Exception();
+  }
 }
 
+QMutex meta_mutex; // global mutex to stop mutex manager freaking (?)
+
 int LibAvDecoder::libAv_mutexManager(void** av_mutex, enum AVLockOp op){
+  QMutexLocker locker(&meta_mutex);
 	QMutex* kf_mutex;
 	switch(op){
 		case AV_LOCK_CREATE:
@@ -55,7 +53,7 @@ int LibAvDecoder::libAv_mutexManager(void** av_mutex, enum AVLockOp op){
 			}else{
 				return 1;
 			}
-		case AV_LOCK_RELEASE:
+    case AV_LOCK_RELEASE:
 			kf_mutex = (QMutex*)*av_mutex;
 			kf_mutex->unlock();
 			return 0;
@@ -68,7 +66,13 @@ int LibAvDecoder::libAv_mutexManager(void** av_mutex, enum AVLockOp op){
 	return 1;
 }
 
+QMutex decoder_mutex; // global mutex to stop first few analysis threads failing
+
 AudioStream* LibAvDecoder::decodeFile(char* fileName){
+
+  QMutexLocker locker(&decoder_mutex); // mutex the preparatory section of this method
+
+  av_register_all();
 
 	AVCodec *codec = NULL;
 	AVFormatContext *fCtx = NULL;
@@ -107,6 +111,9 @@ AudioStream* LibAvDecoder::decodeFile(char* fileName){
 		qCritical("Error opening audio codec: %s", codec->long_name);
 		throw Exception();
 	}
+
+  locker.~QMutexLocker(); // unlock mutex
+
 	// Prep buffer
 	AudioStream *astrm = new AudioStream();
 	astrm->setFrameRate(cCtx->sample_rate);
@@ -123,7 +130,7 @@ AudioStream* LibAvDecoder::decodeFile(char* fileName){
 						bad_pkt_count++;
           }else{
             qCritical("100 bad packets, may be DRM or corruption in file: %s", fileName);
-            throw ExceptionNoRetry();
+            throw Exception();
           }
         }
 			}catch(Exception& e){

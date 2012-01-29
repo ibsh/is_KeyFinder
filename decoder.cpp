@@ -24,5 +24,9 @@
 #include "decoderlibav.h"
 
 AudioFileDecoder* AudioFileDecoder::getDecoder(const char* /*filePath*/){
-	return new LibAvDecoder();
+  try{
+    return new LibAvDecoder();
+  }catch(Exception& e){
+    throw e;
+  }
 }

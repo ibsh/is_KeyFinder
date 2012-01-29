@@ -103,6 +103,9 @@ OTHER_FILES += \
 
 UI_DIR = ../is_KeyFinder-build-desktop/
 
+# for libav
+QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS
+
 RESOURCES += resources.qrc
 
 mac{
