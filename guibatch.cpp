@@ -123,19 +123,6 @@ void BatchWindow::dropEvent(QDropEvent *e){
   fileDropWatcher.setFuture(future);
 }
 
-QStringList BatchWindow::getDirectoryContents(QDir dir){
-  QFileInfoList contents = dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot, QDir::DirsFirst);
-  QStringList results;
-  for(int i = 0; i<(signed)contents.size(); i++){
-    if(QFileInfo(contents[i].filePath()).isDir()){
-      results += getDirectoryContents(QDir(contents[i].filePath()));
-    }else{
-      results.push_back(QUrl::fromLocalFile(contents[i].filePath()).toString());
-    }
-  }
-  return results;
-}
-
 void BatchWindow::filesDropped(QList<QUrl>& urls){
   for(int i=0; i<urls.size(); i++){
     QString fileUrl = urls[i].toLocalFile();
@@ -144,6 +131,18 @@ void BatchWindow::filesDropped(QList<QUrl>& urls){
       QStringList contents = getDirectoryContents(QDir(fileUrl));
       for(int j=0; j<contents.size(); j++)
         urls.push_back(QUrl(contents[j]));
+      continue;
+    }
+    QString fileExt = fileUrl.right(3);
+    if(fileExt == "m3u"){
+      QStringList m3uPlaylist = loadPlaylistM3u(fileUrl);
+      for(int j=0; j<m3uPlaylist.size(); j++)
+        urls.push_back(QUrl(m3uPlaylist[j]));
+      continue;
+    }else if(fileExt == "xml"){
+      QStringList xmlPlaylist = loadPlaylistXml(fileUrl);
+      for(int j=0; j<xmlPlaylist.size(); j++)
+        urls.push_back(QUrl(xmlPlaylist[j]));
       continue;
     }
     // check if path is already in the list
@@ -162,60 +161,51 @@ void BatchWindow::filesDropped(QList<QUrl>& urls){
   getMetadata();
 }
 
-void BatchWindow::addNewRow(QString fileUrl){
-  QString fileExt = fileUrl.right(3);
-  if(fileExt == "m3u"){
-    loadPlaylistM3u(fileUrl);
-    return;
-  }else if(fileExt == "xml"){
-    loadPlaylistXml(fileUrl);
-    return;
+QStringList BatchWindow::getDirectoryContents(QDir dir){
+  QFileInfoList contents = dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot, QDir::DirsFirst);
+  QStringList results;
+  for(int i = 0; i<(signed)contents.size(); i++){
+    if(QFileInfo(contents[i].filePath()).isDir()){
+      results += getDirectoryContents(QDir(contents[i].filePath()));
+    }else{
+      results.push_back(QUrl::fromLocalFile(contents[i].filePath()).toString());
+    }
   }
-	if(initialHelpLabel != NULL){
-		delete initialHelpLabel;
-		initialHelpLabel = NULL;
-	}
-	int newRow = ui->tableWidget->rowCount();
-  ui->tableWidget->insertRow(newRow);
-  ui->tableWidget->setItem(newRow,COL_STATUS,new QTableWidgetItem());
-  ui->tableWidget->item(newRow,COL_STATUS)->setText(STATUS_NEW);
-  ui->tableWidget->setItem(newRow,COL_FILEPATH,new QTableWidgetItem());
-  ui->tableWidget->item(newRow,COL_FILEPATH)->setText(fileUrl);
-  ui->tableWidget->setItem(newRow,COL_FILENAME,new QTableWidgetItem());
-  ui->tableWidget->item(newRow,COL_FILENAME)->setText(fileUrl.mid(fileUrl.lastIndexOf(QDir::separator()) + 1));
+  return results;
 }
 
-void BatchWindow::loadPlaylistM3u(QString m3uUrl){
+QStringList BatchWindow::loadPlaylistM3u(QString m3uUrl){
+  // Here be ugly.
+  QStringList results;
   QFile m3uFile(m3uUrl);
   if(!m3uFile.open(QIODevice::ReadOnly))
-    return;
+    return results;
   QTextStream m3uTextStream(&m3uFile);
   QString m3uChar;
   QString m3uLine;
-  QList<QUrl> songUrls;
   // M3U files break with ch10/13, and comment with ch35.
   // QTextStream.readLine doesn't work, so we do it a char at a time
   while(!(m3uChar = m3uTextStream.read(1)).isNull()){
-    //std::cerr << m3uChar.toAscii().data() << ":" << int(m3uChar[0].toAscii()) << std::endl;
     int chVal = int(m3uChar[0].toAscii());
     if(chVal == 13 || chVal == 10){
       //std::cerr << "Line (length " << m3uLine.length() << "): " << m3uLine.toLocal8Bit().data() << std::endl;
       if(m3uLine.length() > 0 && int(m3uLine[0].toAscii()) != 35){
-        songUrls.push_back(QUrl(m3uLine));
+        results.push_back(m3uLine);
       }
       m3uLine = "";
     }else{
       m3uLine += m3uChar;
     }
   }
-  filesDropped(songUrls);
+  return results;
 }
 
-void BatchWindow::loadPlaylistXml(QString xmlFileUrl){
-  // Here be ugly.
+QStringList BatchWindow::loadPlaylistXml(QString xmlFileUrl){
+  // Here be more ugly.
+  QStringList results;
   QFile xmlFile(xmlFileUrl);
   if (!xmlFile.open(QIODevice::ReadOnly))
-    return;
+    return results;
 
   // I want the text contents of the <string> node following a sibling <key> node of value "Location"
   // but for the moment the last string node seems to do it...
@@ -223,17 +213,30 @@ void BatchWindow::loadPlaylistXml(QString xmlFileUrl){
   xmlQuery.bindVariable("inputDocument", &xmlFile);
   xmlQuery.setQuery("doc($inputDocument)/plist/dict/dict/dict/string[last()]/string(text())");
   if (!xmlQuery.isValid())
-    return;
+    return results;
 
-  QStringList results;
   xmlQuery.evaluateTo(&results);
   xmlFile.close();
 
-  QList<QUrl> songUrls;
-  // subbing out iTunes' localhost addressing.
+  // replace iTunes' localhost addressing.
   for(int i=0; i<(signed)results.size(); i++)
-    songUrls.push_back(QUrl(results[i].replace(QString("//localhost"),QString("")).toLocal8Bit()));
-  filesDropped(songUrls);
+    results[i] = results[i].replace(QString("//localhost"),QString("")).toLocal8Bit();
+  return results;
+}
+
+void BatchWindow::addNewRow(QString fileUrl){
+  if(initialHelpLabel != NULL){
+    delete initialHelpLabel;
+    initialHelpLabel = NULL;
+  }
+  int newRow = ui->tableWidget->rowCount();
+  ui->tableWidget->insertRow(newRow);
+  ui->tableWidget->setItem(newRow,COL_STATUS,new QTableWidgetItem());
+  ui->tableWidget->item(newRow,COL_STATUS)->setText(STATUS_NEW);
+  ui->tableWidget->setItem(newRow,COL_FILEPATH,new QTableWidgetItem());
+  ui->tableWidget->item(newRow,COL_FILEPATH)->setText(fileUrl);
+  ui->tableWidget->setItem(newRow,COL_FILENAME,new QTableWidgetItem());
+  ui->tableWidget->item(newRow,COL_FILENAME)->setText(fileUrl.mid(fileUrl.lastIndexOf(QDir::separator()) + 1));
 }
 
 void BatchWindow::getMetadata(){

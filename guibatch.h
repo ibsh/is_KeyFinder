@@ -70,8 +70,8 @@ private:
   void filesDropped(QList<QUrl>&);
 
 	QStringList getDirectoryContents(QDir);
-  void loadPlaylistM3u(QString);
-  void loadPlaylistXml(QString);
+  QStringList loadPlaylistM3u(QString);
+  QStringList loadPlaylistXml(QString);
 	void addNewRow(QString);
 	void getMetadata();
 
