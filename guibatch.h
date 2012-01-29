@@ -67,7 +67,7 @@ private:
 	void dragEnterEvent(QDragEnterEvent*);
 	void dropEvent(QDropEvent*);
 	QFutureWatcher<void> fileDropWatcher;
-	void filesDropped(QList<QUrl>&);
+  void filesDropped(QList<QUrl>&);
 
 	QStringList getDirectoryContents(QDir);
   void loadPlaylistM3u(QString);

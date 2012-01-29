@@ -84,7 +84,7 @@ void DetailWindow::runAnalysis(){
     ui->chromagramLabel->setToolTip(tooltip);
 	}
 	// visuals
-  say("Processing... ");
+  say("Analysing... ");
 	ui->progressBar->setVisible(true);
   ui->chromaColourCombo->setEnabled(false);
   ui->runButton->setEnabled(false);
@@ -97,31 +97,26 @@ void DetailWindow::runAnalysis(){
 }
 
 void DetailWindow::analysisFinished(){
-  std::cerr << "0" << std::endl;
   QString error = analysisWatcher.result().errorMessage;
   if(error != ""){
     say(error);
     return;
   }
-std::cerr << "A" << std::endl;
   // Title bar
   TagLibMetadata md(filePath);
   QString shortName = md.getTitle();
   if(shortName == "")
     shortName = filePath.mid(filePath.lastIndexOf("/") + 1);
   this->setWindowTitle("KeyFinder - Detailed Analysis - " + shortName);
-std::cerr << "B" << std::endl;
   // full chromagram
   chromagramImage = imageFromChromagram(&analysisWatcher.result().fullChromagram);
   ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
   ui->chromagramLabel->setMinimumHeight(analysisWatcher.result().fullChromagram.getBins()+2);
   ui->chromagramLabel->setMinimumWidth(analysisWatcher.result().fullChromagram.getHops()+2);
-std::cerr << "C" << std::endl;
   // one octave chromagram
   miniChromagramImage = imageFromChromagram(&analysisWatcher.result().oneOctaveChromagram);
   ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
   ui->miniChromagramLabel->setToolTip("This is the same chromagram data,\nreduced to a single octave.");
-std::cerr << "D" << std::endl;
   // harmonic change signal
   int rateOfChangePrecision = 100;
   int size = (signed)analysisWatcher.result().harmonicChangeSignal.size();
@@ -142,7 +137,6 @@ std::cerr << "D" << std::endl;
   }else{
     ui->harmonicChangeLabel->setToolTip("This is the level of harmonic\nchange detected in the\nchromagram over time. Peaks\nin this signal are used to\nsegment the chromagram.");
   }
-std::cerr << "E" << std::endl;
   // Key estimates
   deleteKeyLabels();
   int lastChange = 0;
@@ -169,15 +163,12 @@ std::cerr << "E" << std::endl;
       lastChange = h;
     }
   }
-std::cerr << "F" << std::endl;
   // Global key estimate
   say("Key estimate: " + vis->getKeyName(analysisWatcher.result().globalKeyEstimate));
-std::cerr << "G" << std::endl;
   ui->progressBar->setVisible(false);
   ui->chromaColourCombo->setEnabled(true);
   ui->runButton->setEnabled(true);
   allowDrops = true;
-std::cerr << "H" << std::endl;
 }
 
 QImage DetailWindow::imageFromChromagram(const Chromagram* ch){

@@ -302,6 +302,16 @@ void BatchWindow::on_runBatchButton_clicked(){
   ui->cancelBatchButton->setEnabled(true);
   ui->tableWidget->setContextMenuPolicy(Qt::NoContextMenu); // so that no tags can be written while busy
   allowDrops = false;
+
+  int numThreads = QThread::idealThreadCount();
+  if(numThreads == -1 || prefs.getParallelBatchJobs() == false){
+    QThreadPool::globalInstance()->setMaxThreadCount(1);
+    ui->statusLabel->setText("Analysing (single thread)...");
+  }else{
+    QThreadPool::globalInstance()->setMaxThreadCount(numThreads);
+    ui->statusLabel->setText("Analysing (" + QString::number(numThreads) + " threads)...");
+  }
+
   runAnalysis();
 }
 
@@ -315,7 +325,6 @@ void BatchWindow::runAnalysis(){
       count++;
     }
   }
-  ui->statusLabel->setText("Analysing " + QString::number(count) + " files...");
 
   analysisFuture = QtConcurrent::mapped(objects, keyFinderProcessObject);
   analysisWatcher.setFuture(analysisFuture);
