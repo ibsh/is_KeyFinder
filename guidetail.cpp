@@ -75,7 +75,7 @@ void DetailWindow::runAnalysis(){
 	if(chkOctaves != prefs.getOctaves() || chkOffset != prefs.getOctaveOffset()){
 		layoutScaling();
 		drawPianoKeys();
-    // Chromagram yooltip
+    // Chromagram tooltip
     QString numbers[] = {"","one octave","two octaves","three octaves","four octaves","five octaves","six octaves","seven octaves","eight octaves"};
     QString tooltip = "This chromagram spans " + numbers[prefs.getOctaves()] + ".\n";
     tooltip += "The vertical axis represents musical frequencies\nas indicated by the piano keyboard.\n";
@@ -100,6 +100,7 @@ void DetailWindow::analysisFinished(){
   QString error = analysisWatcher.result().errorMessage;
   if(error != ""){
     say(error);
+    cleanUpAfterRun();
     return;
   }
   // Title bar
@@ -165,6 +166,10 @@ void DetailWindow::analysisFinished(){
   }
   // Global key estimate
   say("Key estimate: " + vis->getKeyName(analysisWatcher.result().globalKeyEstimate));
+  cleanUpAfterRun();
+}
+
+void DetailWindow::cleanUpAfterRun(){
   ui->progressBar->setVisible(false);
   ui->chromaColourCombo->setEnabled(true);
   ui->runButton->setEnabled(true);

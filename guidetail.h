@@ -59,6 +59,8 @@ private:
 	void dragEnterEvent(QDragEnterEvent*);
 	void dropEvent(QDropEvent*);
   void runAnalysis();
+  void cleanUpAfterRun();
+
 	// UI
 	Ui::DetailWindow* ui;
 	Visuals* vis;
