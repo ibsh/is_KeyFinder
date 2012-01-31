@@ -31,7 +31,6 @@ const int COL_TAG_COMMENT = 5;
 const int COL_TAG_GROUPING = 6;
 const int COL_TAG_KEY = 7;
 const int COL_KEY = 8;
-const int COL_KEYCODE = 9;
 
 // Statuses >= 0 are key codes
 const QString STATUS_NEW = "-1";
@@ -40,7 +39,7 @@ const QString STATUS_FAILED = "-3";
 
 BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindow(parent), ui(new Ui::BatchWindow){
   // ASYNC
-  connect(&fileDropWatcher, SIGNAL(finished()), this, SLOT(fileDropFinished()));
+  connect(&addFileWatcher, SIGNAL(finished()), this, SLOT(fileDropFinished()));
 
   connect(&analysisWatcher, SIGNAL(finished()), this, SLOT(analysisFinished()));
   connect(&analysisWatcher, SIGNAL(canceled()), this, SLOT(analysisCancelled()));
@@ -51,7 +50,6 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   // SETUP UI
   ui->setupUi(this);
   allowDrops = true;
-  vis = Visuals::getInstance();
   menuHandler = handler;
   ui->tableWidget->setColumnHidden(COL_STATUS,true);
   ui->tableWidget->setColumnHidden(COL_FILEPATH,true);
@@ -100,9 +98,9 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
 }
 
 BatchWindow::~BatchWindow(){
-  fileDropWatcher.cancel();
+  addFileWatcher.cancel();
   analysisWatcher.cancel();
-  fileDropWatcher.waitForFinished();
+  addFileWatcher.waitForFinished();
   analysisWatcher.waitForFinished();
   delete ui;
 }
@@ -116,33 +114,38 @@ void BatchWindow::dragEnterEvent(QDragEnterEvent *e){
 }
 
 void BatchWindow::dropEvent(QDropEvent *e){
-  allowDrops = false;
-  ui->runBatchButton->setEnabled(false);
-  ui->statusLabel->setText("Loading files...");
-  QFuture<void> future = QtConcurrent::run(this,&BatchWindow::filesDropped,e->mimeData()->urls());
-  fileDropWatcher.setFuture(future);
+  receiveUrls(e->mimeData()->urls());
 }
 
-void BatchWindow::filesDropped(QList<QUrl>& urls){
-  for(int i=0; i<urls.size(); i++){
-    QString fileUrl = urls[i].toLocalFile();
+bool BatchWindow::receiveUrls(const QList<QUrl>& urls){
+  if(analysisWatcher.isRunning())
+    return false;
+  droppedFiles << urls;
+  if(!addFileWatcher.isRunning()){
+    allowDrops = false;
+    ui->runBatchButton->setEnabled(false);
+    ui->statusLabel->setText("Loading files...");
+    QFuture<void> future = QtConcurrent::run(this,&BatchWindow::addDroppedFiles);
+    addFileWatcher.setFuture(future);
+  }
+  return true;
+}
+
+void BatchWindow::addDroppedFiles(){
+  while(!droppedFiles.isEmpty()){
+    QString fileUrl = droppedFiles.first().toLocalFile();
+    droppedFiles.removeFirst();
     // check if url is a directory; if so, get contents rather than adding
     if(QFileInfo(fileUrl).isDir()){
-      QStringList contents = getDirectoryContents(QDir(fileUrl));
-      for(int j=0; j<contents.size(); j++)
-        urls.push_back(QUrl(contents[j]));
+      droppedFiles << getDirectoryContents(QDir(fileUrl));
       continue;
     }
     QString fileExt = fileUrl.right(3);
     if(fileExt == "m3u"){
-      QStringList m3uPlaylist = loadPlaylistM3u(fileUrl);
-      for(int j=0; j<m3uPlaylist.size(); j++)
-        urls.push_back(QUrl(m3uPlaylist[j]));
+      droppedFiles << loadPlaylistM3u(fileUrl);
       continue;
     }else if(fileExt == "xml"){
-      QStringList xmlPlaylist = loadPlaylistXml(fileUrl);
-      for(int j=0; j<xmlPlaylist.size(); j++)
-        urls.push_back(QUrl(xmlPlaylist[j]));
+      droppedFiles << loadPlaylistXml(fileUrl);
       continue;
     }
     // check if path is already in the list
@@ -161,22 +164,22 @@ void BatchWindow::filesDropped(QList<QUrl>& urls){
   getMetadata();
 }
 
-QStringList BatchWindow::getDirectoryContents(QDir dir){
+QList<QUrl> BatchWindow::getDirectoryContents(QDir dir) const{
   QFileInfoList contents = dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot, QDir::DirsFirst);
-  QStringList results;
+  QList<QUrl> results;
   for(int i = 0; i<(signed)contents.size(); i++){
     if(QFileInfo(contents[i].filePath()).isDir()){
-      results += getDirectoryContents(QDir(contents[i].filePath()));
+      results << getDirectoryContents(QDir(contents[i].filePath()));
     }else{
-      results.push_back(QUrl::fromLocalFile(contents[i].filePath()).toString());
+      results.push_back(QUrl::fromLocalFile(contents[i].filePath()));
     }
   }
   return results;
 }
 
-QStringList BatchWindow::loadPlaylistM3u(QString m3uUrl){
+QList<QUrl> BatchWindow::loadPlaylistM3u(QString m3uUrl) const{
   // Here be ugly.
-  QStringList results;
+  QList<QUrl> results;
   QFile m3uFile(m3uUrl);
   if(!m3uFile.open(QIODevice::ReadOnly))
     return results;
@@ -190,7 +193,7 @@ QStringList BatchWindow::loadPlaylistM3u(QString m3uUrl){
     if(chVal == 13 || chVal == 10){
       //std::cerr << "Line (length " << m3uLine.length() << "): " << m3uLine.toLocal8Bit().data() << std::endl;
       if(m3uLine.length() > 0 && int(m3uLine[0].toAscii()) != 35){
-        results.push_back(m3uLine);
+        results.push_back(QUrl(m3uLine));
       }
       m3uLine = "";
     }else{
@@ -200,9 +203,10 @@ QStringList BatchWindow::loadPlaylistM3u(QString m3uUrl){
   return results;
 }
 
-QStringList BatchWindow::loadPlaylistXml(QString xmlFileUrl){
+QList<QUrl> BatchWindow::loadPlaylistXml(QString xmlFileUrl) const{
   // Here be more ugly.
-  QStringList results;
+  QStringList resultStrings;
+  QList<QUrl> results;
   QFile xmlFile(xmlFileUrl);
   if (!xmlFile.open(QIODevice::ReadOnly))
     return results;
@@ -215,12 +219,12 @@ QStringList BatchWindow::loadPlaylistXml(QString xmlFileUrl){
   if (!xmlQuery.isValid())
     return results;
 
-  xmlQuery.evaluateTo(&results);
+  xmlQuery.evaluateTo(&resultStrings);
   xmlFile.close();
 
   // replace iTunes' localhost addressing.
-  for(int i=0; i<(signed)results.size(); i++)
-    results[i] = results[i].replace(QString("//localhost"),QString("")).toLocal8Bit();
+  for(int i=0; i<(signed)resultStrings.size(); i++)
+    results.push_back(QUrl(resultStrings[i].replace(QString("//localhost"),QString("")).toLocal8Bit()));
   return results;
 }
 
@@ -237,6 +241,12 @@ void BatchWindow::addNewRow(QString fileUrl){
   ui->tableWidget->item(newRow,COL_FILEPATH)->setText(fileUrl);
   ui->tableWidget->setItem(newRow,COL_FILENAME,new QTableWidgetItem());
   ui->tableWidget->item(newRow,COL_FILENAME)->setText(fileUrl.mid(fileUrl.lastIndexOf(QDir::separator()) + 1));
+  ui->tableWidget->setItem(newRow,COL_KEY,new QTableWidgetItem());
+  if(newRow % 2 == 0){
+    ui->tableWidget->item(newRow,COL_KEY)->setBackground(QBrush(QColor(191,255,191)));
+  }else{
+    ui->tableWidget->item(newRow,COL_KEY)->setBackground(QBrush(QColor(128,234,128)));
+  }
 }
 
 void BatchWindow::getMetadata(){
@@ -369,18 +379,14 @@ void BatchWindow::resultReadyAt(int index){
   if(error == ""){
     int key = analysisWatcher.resultAt(index).globalKeyEstimate;
     ui->tableWidget->item(row,COL_STATUS)->setText(QString::number(key));
-    ui->tableWidget->setItem(row,COL_KEY,new QTableWidgetItem());
-    ui->tableWidget->item(row,COL_KEY)->setText(vis->getKeyName(key));
-    ui->tableWidget->setItem(row,COL_KEYCODE,new QTableWidgetItem());
-    ui->tableWidget->item(row,COL_KEYCODE)->setText(prefs.getCustomKeyCodes()[key]);
+    ui->tableWidget->item(row,COL_KEY)->setText(prefs.getKeyCode(key));
     if(prefs.getWriteTagsAutomatically())
       writeToTagsAtRow(row);
   }else{
     ui->tableWidget->item(row,COL_STATUS)->setText(STATUS_FAILED);
-    ui->tableWidget->setItem(row,COL_KEY,new QTableWidgetItem());
     ui->tableWidget->item(row,COL_KEY)->setText("Failed: " + error);
-    ui->tableWidget->item(row,COL_KEY)->setTextColor(qRgb(255,0,0));
-    ui->tableWidget->item(row,COL_FILEPATH)->setTextColor(qRgb(255,0,0));
+    ui->tableWidget->item(row,COL_KEY)->setForeground(QBrush(qRgb(255,0,0)));
+    ui->tableWidget->item(row,COL_FILENAME)->setForeground(QBrush(qRgb(255,0,0)));
   }
 }
 
@@ -459,7 +465,20 @@ bool BatchWindow::writeToTagsAtRow(int row){
   if(!toIntOk || key < 0)
     return false;
   TagLibMetadata md(ui->tableWidget->item(row,COL_FILEPATH)->text().toLocal8Bit().data());
-  return md.writeKeyToMetadata(key,prefs);
+  if(md.writeKeyToMetadata(key,prefs)){
+    // update table as necessary
+    int col = COL_TAG_COMMENT; // default
+    if(prefs.getTagField() == 'g')
+      col = COL_TAG_GROUPING;
+    if(prefs.getTagField() == 'g')
+      col = COL_TAG_KEY;
+    if(ui->tableWidget->item(row,col) == 0)
+      ui->tableWidget->setItem(row,col,new QTableWidgetItem());
+    ui->tableWidget->item(row,col)->setText(prefs.getKeyCode(key));
+    ui->tableWidget->item(row,col)->setForeground(QBrush(QColor(0,128,0)));
+    return true;
+  }
+  return false;
 }
 
 void BatchWindow::clearDetected(){
@@ -474,7 +493,6 @@ void BatchWindow::clearDetected(){
     if(ui->tableWidget->item(r,COL_KEY) != NULL){
       ui->tableWidget->item(r,COL_STATUS)->setText(STATUS_TAGSREAD);
       delete ui->tableWidget->item(r,COL_KEY);
-      delete ui->tableWidget->item(r,COL_KEYCODE);
     }
   }
 }

@@ -44,7 +44,6 @@ class MainMenuHandler;
 
 #include "guidetail.h"
 #include "preferences.h"
-#include "guivisuals.h"
 #include "keyfinderworker.h"
 #include "keyfinderresultset.h"
 #include "metadatataglib.h"
@@ -58,6 +57,7 @@ class BatchWindow : public QMainWindow{
 	Q_OBJECT
 public:
   explicit BatchWindow(MainMenuHandler* handler, QWidget* parent = 0);
+  bool receiveUrls(const QList<QUrl>&);
 	~BatchWindow();
 private:
 	// analysis
@@ -66,12 +66,13 @@ private:
 	bool allowDrops;
 	void dragEnterEvent(QDragEnterEvent*);
 	void dropEvent(QDropEvent*);
-	QFutureWatcher<void> fileDropWatcher;
-  void filesDropped(QList<QUrl>&);
+  QList<QUrl> droppedFiles;
+  void addDroppedFiles();
+  QFutureWatcher<void> addFileWatcher;
 
-	QStringList getDirectoryContents(QDir);
-  QStringList loadPlaylistM3u(QString);
-  QStringList loadPlaylistXml(QString);
+  QList<QUrl> getDirectoryContents(QDir) const;
+  QList<QUrl> loadPlaylistM3u(QString) const;
+  QList<QUrl> loadPlaylistXml(QString) const;
 	void addNewRow(QString);
 	void getMetadata();
 
@@ -83,7 +84,6 @@ private:
   bool writeToTagsAtRow(int);
 	// UI
 	Ui::BatchWindow* ui;
-	Visuals* vis;
 	QLabel* initialHelpLabel;
   MainMenuHandler* menuHandler;
 private slots:

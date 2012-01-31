@@ -79,10 +79,8 @@
        <property name="text">
         <string>Detected Key</string>
        </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Detected Key Code</string>
+       <property name="textAlignment">
+        <set>AlignHCenter|AlignVCenter|AlignCenter</set>
        </property>
       </column>
      </widget>

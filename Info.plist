@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<plist version="0.9">
+<dict>
+  <key>CFBundleIconFile</key><string>is_KeyFinder.icns</string>
+  <key>CFBundlePackageType</key><string>APPL</string>
+  <key>CFBundleGetInfoString</key><string>Created by Qt/QMake</string>
+  <key>CFBundleSignature</key><string>????</string>
+  <key>CFBundleExecutable</key><string>KeyFinder</string>
+  <key>CFBundleIdentifier</key><string>com.ibrahimshaath.KeyFinder</string>
+  <key>CFBundleDocumentTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleTypeExtensions</key>
+      <array>
+        <string>*</string>
+      </array>
+      <key>CFBundleTypeMIMETypes</key>
+      <array>
+        <string>audio/*</string>
+        <string>application/x-directory</string>
+        <string>text/plain</string>
+        <string>application/xml</string>
+      </array>
+      <key>CFBundleTypeName</key>
+      <string>KeyFinder File</string>
+      <key>CFBundleTypeRole</key>
+      <string>Viewer</string>
+    </dict>
+  </array>
+</dict>
+</plist>

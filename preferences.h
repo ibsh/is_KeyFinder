@@ -25,6 +25,8 @@
 #include <QtGlobal>
 #include <QSettings>
 #include <QString>
+#include <QImage>
+#include <QColor>
 
 #include <math.h>
 #include <iostream>
@@ -63,8 +65,13 @@ public:
 	float getLastFreq() const;
 	float getDirectSkStretch() const;
 	float getDetunedBandWeight() const;
-	std::vector<float> getCustomToneProfile() const;
-	std::vector<QString> getCustomKeyCodes() const;
+  std::vector<float> getCustomToneProfile() const;
+  std::vector<QString> getCustomKeyCodes() const;
+  // not necessarily related to user preferences, here for convenience
+  QString getKeyCode(int) const;
+  QColor getKeyColour(int) const;
+  void setImageColours(QImage&, int) const;
+
 private:
   bool writeTagsAutomatically;
   bool parallelBatchJobs;
@@ -91,6 +98,8 @@ private:
 	std::vector<float> customToneProfile;
 	std::vector<QString> customKeyCodes;
 	std::vector<float> binFreqs;
+  std::vector<QString> defaultKeyCodes;
+  std::vector<QColor> keyColours;
 	void generateBinFreqs();
 };
 

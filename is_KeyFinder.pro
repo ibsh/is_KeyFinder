@@ -52,9 +52,9 @@ SOURCES += \
     guidetail.cpp \
     guimenuhandler.cpp \
     guiprefs.cpp \
-    guivisuals.cpp \
     keyfinderworker.cpp \
-    keyfinderanalysisobject.cpp
+    keyfinderanalysisobject.cpp \
+    keyfinderapplication.cpp
 
 HEADERS  += \
     decoderlibav.h \
@@ -85,10 +85,10 @@ HEADERS  += \
     guidetail.h \
     guimenuhandler.h \
     guiprefs.h \
-    guivisuals.h \
     keyfinderworker.h \
     keyfinderanalysisobject.h \
-    keyfinderresultset.h
+    keyfinderresultset.h \
+    keyfinderapplication.h
 
 FORMS += \
     detailwindow.ui \
@@ -99,7 +99,8 @@ FORMS += \
 OTHER_FILES += \
 		is_KeyFinder.pro.user \
 		README \
-    win32.rc
+    win32.rc \
+    Info.plist
 
 UI_DIR = ../is_KeyFinder-build-desktop/
 
@@ -113,6 +114,7 @@ mac{
 	INCLUDEPATH += /usr/local/include/taglib
 	ICON = is_KeyFinder.icns
 	QMAKE_MAC_SDK = /Developer/SDKs/MacOSX10.6.sdk
+  QMAKE_INFO_PLIST = Info.plist
 #	CONFIG -= x86_64 ppc ppc64
 #	CONFIG += x86
 }

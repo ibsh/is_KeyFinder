@@ -51,7 +51,6 @@
 #include <trueaudiofile.h>
 #include <wavpackfile.h>
 
-#include "guivisuals.h"
 #include "preferences.h"
 
 class TagLibMetadata{

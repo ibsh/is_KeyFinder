@@ -22,6 +22,7 @@
 #include <QtGui/QApplication>
 #include <QMenuBar>
 #include <QKeySequence>
+#include "keyfinderapplication.h"
 #include "guidetail.h"
 #include "guibatch.h"
 #include "guimenuhandler.h"
@@ -50,14 +51,13 @@ void MacLoggingHandler(QtMsgType type, const char *msg) {
   logfile.close();
 }
 
-#include <iostream>
 int main(int argc, char *argv[]){
 
   QCoreApplication::setOrganizationName("Ibrahim Sha'ath");
   QCoreApplication::setOrganizationDomain("ibrahimshaath.co.uk");
   QCoreApplication::setApplicationName("KeyFinder");
 
-  QApplication a(argc, argv);
+  KeyFinderApplication a(argc, argv);
 
   #ifdef Q_OS_MAC
     qInstallMsgHandler(MacLoggingHandler);

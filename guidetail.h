@@ -37,7 +37,6 @@
 #include "keyfinderresultset.h"
 #include "chromagram.h"
 #include "metadatataglib.h"
-#include "guivisuals.h"
 
 namespace Ui {
 	class DetailWindow;
@@ -63,7 +62,6 @@ private:
 
 	// UI
 	Ui::DetailWindow* ui;
-	Visuals* vis;
 	std::vector<QLabel*> keyLabels;
 	QImage chromagramImage;
 	QImage miniChromagramImage;

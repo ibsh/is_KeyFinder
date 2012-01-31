@@ -282,16 +282,8 @@ QString TagLibMetadata::getKey() const{
 
 bool TagLibMetadata::writeKeyToMetadata(int key, const Preferences& prefs){
 
-  Visuals* vis = Visuals::getInstance();
-
   // what are we writing?
-  QString dataToWrite = "";
-  if(prefs.getTagFormat() == 'k')
-    dataToWrite = vis->getKeyName(key);
-  else if(prefs.getTagFormat() == 'c')
-    dataToWrite = prefs.getCustomKeyCodes()[key];
-  else
-    dataToWrite = prefs.getCustomKeyCodes()[key] + " " + vis->getKeyName(key);
+  QString dataToWrite = prefs.getKeyCode(key);
 
   // where are we writing it?
   if(prefs.getTagField() == 'g')
