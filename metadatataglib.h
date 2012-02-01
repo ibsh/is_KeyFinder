@@ -23,6 +23,7 @@
 #define METADATATAGLIB_H
 
 #include <QString>
+#include <QFile>
 #include <QDebug>
 
 #include <tag.h>
