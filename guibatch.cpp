@@ -133,31 +133,39 @@ bool BatchWindow::receiveUrls(const QList<QUrl>& urls){
 
 void BatchWindow::addDroppedFiles(){
   while(!droppedFiles.isEmpty()){
-    QString fileUrl = droppedFiles.first().toLocalFile();
+    QString filePath = droppedFiles.first().toLocalFile();
+    QFileInfo fileInfo(filePath);
     droppedFiles.removeFirst();
     // check if url is a directory; if so, get contents rather than adding
-    if(QFileInfo(fileUrl).isDir()){
-      droppedFiles << getDirectoryContents(QDir(fileUrl));
+    if(fileInfo.isDir()){
+      std::cerr << "Dir" << std::endl;
+      droppedFiles << getDirectoryContents(QDir(filePath));
       continue;
     }
-    QString fileExt = fileUrl.right(3);
+    // check if url is a symlink (though .isSymLink doesn't seem to work)
+    if(fileInfo.isSymLink() || fileInfo.symLinkTarget() != ""){
+      droppedFiles.push_back(QUrl(QFileInfo(filePath).symLinkTarget()));
+      std::cerr << "sdlkjfh" << std::endl;
+      continue;
+    }
+    QString fileExt = filePath.right(3);
     if(fileExt == "m3u"){
-      droppedFiles << loadPlaylistM3u(fileUrl);
+      droppedFiles << loadPlaylistM3u(filePath);
       continue;
     }else if(fileExt == "xml"){
-      droppedFiles << loadPlaylistXml(fileUrl);
+      droppedFiles << loadPlaylistXml(filePath);
       continue;
     }
     // check if path is already in the list
     bool isNew = true;
     for(int j=0; j<ui->tableWidget->rowCount(); j++){
-      if(ui->tableWidget->item(j,COL_FILEPATH)->text() == fileUrl){
+      if(ui->tableWidget->item(j,COL_FILEPATH)->text() == filePath){
         isNew = false;
         break;
       }
     }
     if(isNew){
-      addNewRow(fileUrl);
+      addNewRow(filePath);
     }
   }
   this->setWindowTitle("KeyFinder - Batch Analysis - " + QString::number(ui->tableWidget->rowCount()) + " files");
