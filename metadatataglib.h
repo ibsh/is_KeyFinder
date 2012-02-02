@@ -56,7 +56,7 @@
 
 class TagLibMetadata{
 public:
-	TagLibMetadata(const QString&);
+  TagLibMetadata(const QString&);
 	~TagLibMetadata();
 	QString getTitle() const;
 	QString getArtist() const;
