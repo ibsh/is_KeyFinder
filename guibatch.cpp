@@ -138,14 +138,12 @@ void BatchWindow::addDroppedFiles(){
     droppedFiles.removeFirst();
     // check if url is a directory; if so, get contents rather than adding
     if(fileInfo.isDir()){
-      std::cerr << "Dir" << std::endl;
       droppedFiles << getDirectoryContents(QDir(filePath));
       continue;
     }
-    // check if url is a symlink (though .isSymLink doesn't seem to work)
+    // check if url is a symlink (.isSymLink doesn't seem to work on Lion)
     if(fileInfo.isSymLink() || fileInfo.symLinkTarget() != ""){
       droppedFiles.push_back(QUrl(QFileInfo(filePath).symLinkTarget()));
-      std::cerr << "sdlkjfh" << std::endl;
       continue;
     }
     QString fileExt = filePath.right(3);

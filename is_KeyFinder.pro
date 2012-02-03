@@ -111,6 +111,8 @@ RESOURCES += resources.qrc
 
 mac{
 	LIBS += -lfftw3 -lavcodec -lavformat -lsamplerate -ltag -lavutil
+  DEPENDPATH += /usr/local/lib
+  INCLUDEPATH += /usr/local/include
 	INCLUDEPATH += /usr/local/include/taglib
 	ICON = is_KeyFinder.icns
 	QMAKE_MAC_SDK = /Developer/SDKs/MacOSX10.6.sdk
