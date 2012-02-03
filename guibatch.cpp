@@ -107,8 +107,7 @@ BatchWindow::~BatchWindow(){
 
 
 void BatchWindow::dragEnterEvent(QDragEnterEvent *e){
-  // accept only local files
-  if(allowDrops && e->mimeData()->hasUrls() && !e->mimeData()->urls().at(0).toLocalFile().isEmpty()){
+  if(allowDrops && e->mimeData()->hasUrls()){
     e->acceptProposedAction();
   }
 }
@@ -134,6 +133,9 @@ bool BatchWindow::receiveUrls(const QList<QUrl>& urls){
 void BatchWindow::addDroppedFiles(){
   while(!droppedFiles.isEmpty()){
     QString filePath = droppedFiles.first().toLocalFile();
+    // check URL resolves to local file
+    if(filePath.isEmpty())
+      continue;
     QFileInfo fileInfo(filePath);
     droppedFiles.removeFirst();
     // check if url is a directory; if so, get contents rather than adding
@@ -362,6 +364,7 @@ void BatchWindow::analysisCancelled(){
 
 void BatchWindow::cleanUpAfterRun(){
   allowDrops = true;
+  ui->progressBar->setMaximum(1);
   ui->progressBar->setValue(0);
   ui->statusLabel->setText("Ready");
   ui->runBatchButton->setEnabled(true);
