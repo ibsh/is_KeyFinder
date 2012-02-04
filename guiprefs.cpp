@@ -288,11 +288,12 @@ void PrefsDialog::on_cancelButton_clicked(){
 }
 
 void PrefsDialog::tuningEnabled(){
-	ui->tab2Tuning->setEnabled(ui->bps->value() > 1);
+  ui->tuningMethod->setEnabled(ui->bps->value() > 1);
+  binAdaptiveTuningEnabled();
 }
 
 void PrefsDialog::binAdaptiveTuningEnabled(){
-	ui->detunedBandWeight->setEnabled(ui->tuningMethod->currentIndex() == 1);
+  ui->detunedBandWeight->setEnabled(ui->tuningMethod->isEnabled() && ui->tuningMethod->currentIndex() == 1);
 }
 
 void PrefsDialog::hcdfEnabled(){
@@ -335,7 +336,6 @@ void PrefsDialog::customProfileEnabled(){
 
 void PrefsDialog::on_bps_valueChanged(int /*arg1*/){
 	tuningEnabled();
-	binAdaptiveTuningEnabled();
 }
 
 void PrefsDialog::on_tuningMethod_currentIndexChanged(int /*index*/){
