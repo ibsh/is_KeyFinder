@@ -31,9 +31,9 @@
 
 void MacLoggingHandler(QtMsgType type, const char *msg) {
   std::ofstream logfile;
-	logfile.open(QDir::homePath().toLocal8Bit() + "/Library/Logs/KeyFinder.log",std::ios::app);
-	logfile << QDate::currentDate().toString("yyyy-MM-dd").toLocal8Bit().data() << " ";
-	logfile << QTime::currentTime().toString("hh:mm:ss.zzz").toLocal8Bit().data() << " ";
+  logfile.open(QDir::homePath().toLocal8Bit() + "/Library/Logs/KeyFinder.log",std::ios::app);
+  logfile << QDate::currentDate().toString("yyyy-MM-dd").toLocal8Bit().data() << " ";
+  logfile << QTime::currentTime().toString("hh:mm:ss.zzz").toLocal8Bit().data() << " ";
   switch (type) {
   case QtDebugMsg:
     logfile << "Debug: " << msg << "\n";
@@ -51,17 +51,34 @@ void MacLoggingHandler(QtMsgType type, const char *msg) {
   logfile.close();
 }
 
-int main(int argc, char *argv[]){
+int main(int argc, char* argv[]){
 
   QCoreApplication::setOrganizationName("Ibrahim Sha'ath");
   QCoreApplication::setOrganizationDomain("ibrahimshaath.co.uk");
   QCoreApplication::setApplicationName("KeyFinder");
 
-  KeyFinderApplication a(argc, argv);
+#ifdef Q_OS_MAC
+  qInstallMsgHandler(MacLoggingHandler);
+#endif
 
-  #ifdef Q_OS_MAC
-    qInstallMsgHandler(MacLoggingHandler);
-  #endif
+  // very primitive command line use
+  if(argc > 2){
+    if(std::strcmp(argv[1], "-f") == 0){
+    Preferences p;
+    QString filePath = argv[2];
+    KeyFinderAnalysisObject object(filePath, p, 0);
+    KeyFinderResultSet result = keyFinderProcessObject(object);
+      if(result.errorMessage == ""){
+        std::cout << p.getKeyCode(result.globalKeyEstimate).toLocal8Bit().data();
+        return 0;
+      }else{
+        std::cout << result.errorMessage.toLocal8Bit().data();
+        return 1;
+      }
+    }
+  }
+
+  KeyFinderApplication a(argc, argv);
 
   MainMenuHandler* menuHandler = new MainMenuHandler(0);
 
