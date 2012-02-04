@@ -89,21 +89,21 @@ TagLibMetadata::~TagLibMetadata(){
 
 QString TagLibMetadata::getTitle() const{
   if(f == NULL || !f->isValid())
-    return "";
+    return "N/A";
   TagLib::String out = f->tag()->title();
   return QString::fromUtf8(out.toCString(true));
 }
 
 QString TagLibMetadata::getArtist() const{
   if(f == NULL || !f->isValid())
-    return "";
+    return "N/A";
   TagLib::String out = f->tag()->artist();
   return QString::fromUtf8(out.toCString(true));
 }
 
 QString TagLibMetadata::getComment() const{
   if(f == NULL || !f->isValid())
-    return "";
+    return "N/A";
   TagLib::FLAC::File* fileTestFlac = dynamic_cast<TagLib::FLAC::File*>(f);
   if(fileTestFlac != NULL){
     // TagLib's default behaviour treats Description as Comment: override
@@ -122,7 +122,7 @@ QString TagLibMetadata::getComment() const{
 QString TagLibMetadata::getGrouping() const{
 
   if(f == NULL || !f->isValid())
-    return "";
+    return "N/A";
 
   TagLib::MPEG::File* fileTestMpeg = dynamic_cast<TagLib::MPEG::File*>(f);
   if(fileTestMpeg != NULL){
@@ -208,7 +208,7 @@ QString TagLibMetadata::getGrouping() const{
 QString TagLibMetadata::getKey() const{
 
   if(f == NULL || !f->isValid())
-    return "";
+    return "N/A";
 
   TagLib::MPEG::File* fileTestMpeg = dynamic_cast<TagLib::MPEG::File*>(f);
   if(fileTestMpeg != NULL){
@@ -281,18 +281,29 @@ QString TagLibMetadata::getKey() const{
   return "N/A";
 }
 
-bool TagLibMetadata::writeKeyToMetadata(int key, const Preferences& prefs){
+QString TagLibMetadata::writeKeyToMetadata(int key, const Preferences& prefs){
 
-  // what are we writing?
+  QString result = "";
+
   QString dataToWrite = prefs.getKeyCode(key);
+  bool alwaysWriteToTags = !prefs.getSkipFilesWithExistingTags();
 
-  // where are we writing it?
-  if(prefs.getTagField() == 'g')
-    return (setGrouping(dataToWrite.toLocal8Bit().data()) == 0);
-  else if(prefs.getTagField() == 'k')
-    return (setKey(dataToWrite.left(3).toLocal8Bit().data()) == 0);
-  else
-    return (setComment(dataToWrite.toLocal8Bit().data()) == 0);
+  if(prefs.getWriteToTagComment())
+    if(alwaysWriteToTags || getComment() == "")
+      if(setComment(dataToWrite.toLocal8Bit().data()) == 0)
+        result += "c";
+
+  if(prefs.getWriteToTagGrouping())
+    if(alwaysWriteToTags || getGrouping() == "")
+      if(setGrouping(dataToWrite.toLocal8Bit().data()) == 0)
+        result += "g";
+
+  if(prefs.getWriteToTagKey())
+    if(alwaysWriteToTags || getKey() == "")
+      if(setKey(dataToWrite.left(3).toLocal8Bit().data()) == 0)
+        result += "k";
+
+  return result;
 
 }
 

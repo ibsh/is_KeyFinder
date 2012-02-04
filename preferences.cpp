@@ -337,13 +337,38 @@ Preferences::Preferences(){
     tagFormat = defaultVal;
     qDebug("Wrote default tagFormat (%c)",tagFormat);
   }
-  if(settings.contains("tagField")){
-    tagField = settings.value("tagField").toChar().toAscii();
+  if(settings.contains("writeToTagComment")){
+    writeToTagComment = settings.value("writeToTagComment").toBool();
+    writeToTagGrouping = settings.value("writeToTagGrouping").toBool();
+    writeToTagKey = settings.value("writeToTagKey").toBool();
   }else{
-    char defaultVal = 'c';
-    settings.setValue("tagField",defaultVal);
-    tagField = defaultVal;
-    qDebug("Wrote default tagField (%c)",tagField);
+    // init
+    writeToTagComment = false;
+    writeToTagGrouping = false;
+    writeToTagKey = false;
+    settings.setValue("writeToTagComment",false);
+    settings.setValue("writeToTagGrouping",false);
+    settings.setValue("writeToTagKey",false);
+    // check backwards compatible data
+    char oldTagField;
+    if(settings.contains("tagField")){
+      oldTagField = settings.value("tagField").toChar().toAscii();
+      if(oldTagField == 'g'){
+        writeToTagGrouping = true;
+        settings.setValue("writeToTagGrouping",true);
+      }else if(oldTagField == 'k'){
+        writeToTagKey = true;
+        settings.setValue("writeToTagKey",true);
+      }else{
+        writeToTagComment = true;
+        settings.setValue("writeToTagComment",true);
+      }
+      qDebug("Wrote writeToTags from old tagField setting");
+    }else{
+      writeToTagComment = true;
+      settings.setValue("writeToTagComment",true);
+      qDebug("Wrote default writeToTags (Comment)");
+    }
   }
   if(settings.contains("writeTagsAutomatically")){
     writeTagsAutomatically = settings.value("writeTagsAutomatically").toBool();
@@ -365,6 +390,14 @@ Preferences::Preferences(){
     settings.setValue("parallelBatchJobs",defaultVal);
     parallelBatchJobs = defaultVal;
     qDebug("Wrote default parallelBatchJobs (true)");
+  }
+  if(settings.contains("skipFilesWithExistingTags")){
+    skipFilesWithExistingTags = settings.value("skipFilesWithExistingTags").toBool();
+  }else{
+    bool defaultVal = false;
+    settings.setValue("skipFilesWithExistingTags",defaultVal);
+    skipFilesWithExistingTags = defaultVal;
+    qDebug("Wrote default skipFilesWithExistingTags (false)");
   }
   settings.endGroup();
 
@@ -426,8 +459,11 @@ Preferences& Preferences::operator=(const Preferences& that){
 		customToneProfile = that.customToneProfile;
 		customKeyCodes = that.customKeyCodes;
     tagFormat = that.tagFormat;
-    tagField = that.tagField;
+    writeToTagComment = that.writeToTagComment;
+    writeToTagGrouping = that.writeToTagGrouping;
+    writeToTagKey = that.writeToTagKey;
     writeTagsAutomatically = that.writeTagsAutomatically;
+    skipFilesWithExistingTags = that.skipFilesWithExistingTags;
     parallelBatchJobs = that.parallelBatchJobs;
 		generateBinFreqs();
 	}
@@ -453,27 +489,30 @@ bool Preferences::equivalentSpectralAnalysis(const Preferences& that) const{
 	return true;
 }
 
-bool Preferences::getWriteTagsAutomatically()const{return writeTagsAutomatically;}
-bool Preferences::getParallelBatchJobs()const{return parallelBatchJobs;}
-char Preferences::getTemporalWindow()const{return temporalWindow;}
-char Preferences::getHcdf()const{return hcdf;}
-char Preferences::getSimilarityMeasure()const{return similarityMeasure;}
-char Preferences::getTagFormat()const{return tagFormat;}
-char Preferences::getTagField()const{return tagField;}
-int Preferences::getHopSize()const{return hopSize;}
-int Preferences::getFftFrameSize()const{return fftFrameSize;}
-int Preferences::getOctaves()const{return octaves;}
-int Preferences::getBpo()const{return bps * 12;}
-int Preferences::getOctaveOffset()const{return octaveOffset;}
-int Preferences::getDFactor()const{return dFactor;}
-int Preferences::getToneProfile()const{return toneProfile;}
-int Preferences::getTuningMethod()const{return tuningMethod;}
-int Preferences::getHcdfPeakPickingNeighbours()const{return hcdfPeakPickingNeighbours;}
-int Preferences::getHcdfArbitrarySegments()const{return hcdfArbitrarySegments;}
-int Preferences::getHcdfGaussianSize()const{return hcdfGaussianSize;}
-float Preferences::getHcdfGaussianSigma()const{return hcdfGaussianSigma;}
-float Preferences::getDirectSkStretch()const{return directSkStretch;}
-float Preferences::getDetunedBandWeight()const{return detunedBandWeight;}
+bool  Preferences::getWriteTagsAutomatically()    const { return writeTagsAutomatically; }
+bool  Preferences::getParallelBatchJobs()         const { return parallelBatchJobs; }
+bool  Preferences::getWriteToTagComment()         const { return writeToTagComment; }
+bool  Preferences::getWriteToTagGrouping()        const { return writeToTagGrouping; }
+bool  Preferences::getWriteToTagKey()             const { return writeToTagKey; }
+bool  Preferences::getSkipFilesWithExistingTags() const { return skipFilesWithExistingTags; }
+char  Preferences::getTemporalWindow()            const { return temporalWindow; }
+char  Preferences::getHcdf()                      const { return hcdf; }
+char  Preferences::getSimilarityMeasure()         const { return similarityMeasure; }
+char  Preferences::getTagFormat()                 const { return tagFormat; }
+int   Preferences::getHopSize()                   const { return hopSize; }
+int   Preferences::getFftFrameSize()              const { return fftFrameSize; }
+int   Preferences::getOctaves()                   const { return octaves; }
+int   Preferences::getBpo()                       const { return bps * 12; }
+int   Preferences::getOctaveOffset()              const { return octaveOffset; }
+int   Preferences::getDFactor()                   const { return dFactor; }
+int   Preferences::getToneProfile()               const { return toneProfile; }
+int   Preferences::getTuningMethod()              const { return tuningMethod; }
+int   Preferences::getHcdfPeakPickingNeighbours() const { return hcdfPeakPickingNeighbours; }
+int   Preferences::getHcdfArbitrarySegments()     const { return hcdfArbitrarySegments; }
+int   Preferences::getHcdfGaussianSize()          const { return hcdfGaussianSize; }
+float Preferences::getHcdfGaussianSigma()         const { return hcdfGaussianSigma; }
+float Preferences::getDirectSkStretch()           const { return directSkStretch; }
+float Preferences::getDetunedBandWeight()         const { return detunedBandWeight; }
 
 float Preferences::getBinFreq(int n)const{
 	if(n >= octaves*12*bps){

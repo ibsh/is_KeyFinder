@@ -35,7 +35,8 @@ const int COL_KEY = 8;
 // Statuses >= 0 are key codes
 const QString STATUS_NEW = "-1";
 const QString STATUS_TAGSREAD = "-2";
-const QString STATUS_FAILED = "-3";
+const QString STATUS_SKIPPED = "-3";
+const QString STATUS_FAILED = "-4";
 
 BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindow(parent), ui(new Ui::BatchWindow){
   // ASYNC
@@ -53,13 +54,18 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   menuHandler = handler;
   ui->tableWidget->setColumnHidden(COL_STATUS,true);
   ui->tableWidget->setColumnHidden(COL_FILEPATH,true);
+  keyRow = QBrush(QColor(191,255,191));
+  keyAltRow = QBrush(QColor(127,234,127));
+  textDefault = QBrush(QColor(0,0,0));
+  textSuccess = QBrush(QColor(0,128,0));
+  textError = QBrush(QColor(191,0,0));
 
   //relative sizing on Mac only
-  #ifdef Q_OS_MAC
-    QFont smallerFont;
-    smallerFont.setPointSize(smallerFont.pointSize() - 2);
-    ui->tableWidget->setFont(smallerFont);
-  #endif
+#ifdef Q_OS_MAC
+  QFont smallerFont;
+  smallerFont.setPointSize(smallerFont.pointSize() - 2);
+  ui->tableWidget->setFont(smallerFont);
+#endif
 
   // HELP LABEL
   initialHelpLabel = new QLabel("Drag audio files here", ui->tableWidget);
@@ -72,11 +78,11 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   initialHelpLabel->setFont(font);
   // can't seem to derive these magic numbers from any useful size hints
   initialHelpLabel->setGeometry(
-      (676 - initialHelpLabel->sizeHint().width()) / 2,
-      (312 - initialHelpLabel->sizeHint().height()) / 2,
-      initialHelpLabel->sizeHint().width(),
-      initialHelpLabel->sizeHint().height()
-  );
+        (676 - initialHelpLabel->sizeHint().width()) / 2,
+        (312 - initialHelpLabel->sizeHint().height()) / 2,
+        initialHelpLabel->sizeHint().width(),
+        initialHelpLabel->sizeHint().height()
+        );
   initialHelpLabel->show();
 
   // SETUP TABLE WIDGET CONTEXT MENU
@@ -251,9 +257,9 @@ void BatchWindow::addNewRow(QString fileUrl){
   ui->tableWidget->item(newRow,COL_FILENAME)->setText(fileUrl.mid(fileUrl.lastIndexOf(QDir::separator()) + 1));
   ui->tableWidget->setItem(newRow,COL_KEY,new QTableWidgetItem());
   if(newRow % 2 == 0){
-    ui->tableWidget->item(newRow,COL_KEY)->setBackground(QBrush(QColor(191,255,191)));
+    ui->tableWidget->item(newRow,COL_KEY)->setBackground(keyRow);
   }else{
-    ui->tableWidget->item(newRow,COL_KEY)->setBackground(QBrush(QColor(128,234,128)));
+    ui->tableWidget->item(newRow,COL_KEY)->setBackground(keyAltRow);
   }
 }
 
@@ -266,43 +272,41 @@ void BatchWindow::getMetadata(){
 
     ui->progressBar->setValue(i);
 
-		if(ui->tableWidget->item(i,COL_STATUS)->text() != STATUS_NEW)
+    if(ui->tableWidget->item(i,COL_STATUS)->text() != STATUS_NEW)
       continue;
-		ui->tableWidget->item(i,COL_STATUS)->setText(STATUS_TAGSREAD);
+    ui->tableWidget->item(i,COL_STATUS)->setText(STATUS_TAGSREAD);
 
-    TagLibMetadata* md = new TagLibMetadata(ui->tableWidget->item(i,COL_FILEPATH)->text());
+    TagLibMetadata md(ui->tableWidget->item(i,COL_FILEPATH)->text());
 
-		QString tag = md->getArtist();
-		if(tag != ""){
-			ui->tableWidget->setItem(i,COL_TAG_ARTIST,new QTableWidgetItem());
-			ui->tableWidget->item(i,COL_TAG_ARTIST)->setText(tag);
-		}
+    QString tag = md.getArtist();
+    if(tag != ""){
+      ui->tableWidget->setItem(i,COL_TAG_ARTIST,new QTableWidgetItem());
+      ui->tableWidget->item(i,COL_TAG_ARTIST)->setText(tag);
+    }
 
-		tag = md->getTitle();
+    tag = md.getTitle();
     if(tag != ""){
       ui->tableWidget->setItem(i,COL_TAG_TITLE,new QTableWidgetItem());
       ui->tableWidget->item(i,COL_TAG_TITLE)->setText(tag);
     }
 
-    tag = md->getComment();
+    tag = md.getComment();
     if(tag != ""){
       ui->tableWidget->setItem(i,COL_TAG_COMMENT,new QTableWidgetItem());
       ui->tableWidget->item(i,COL_TAG_COMMENT)->setText(tag);
     }
 
-    tag = md->getGrouping();
+    tag = md.getGrouping();
     if(tag != ""){
       ui->tableWidget->setItem(i,COL_TAG_GROUPING,new QTableWidgetItem());
       ui->tableWidget->item(i,COL_TAG_GROUPING)->setText(tag);
     }
 
-    tag = md->getKey();
+    tag = md.getKey();
     if(tag != ""){
       ui->tableWidget->setItem(i,COL_TAG_KEY,new QTableWidgetItem());
       ui->tableWidget->item(i,COL_TAG_KEY)->setText(tag);
     }
-
-    delete md;
   }
 
   ui->progressBar->setValue(0);
@@ -317,8 +321,10 @@ void BatchWindow::fileDropFinished(){
 }
 
 void BatchWindow::on_runBatchButton_clicked(){
-  // get a new preferences object in case they've changed since the last run.
+  // Get a new preferences object in case they've changed since the last run.
   prefs = Preferences();
+
+  checkRowsForSkipping();
   ui->runBatchButton->setEnabled(false);
   ui->cancelBatchButton->setEnabled(true);
   ui->tableWidget->setContextMenuPolicy(Qt::NoContextMenu); // so that no tags can be written while busy
@@ -336,17 +342,66 @@ void BatchWindow::on_runBatchButton_clicked(){
   runAnalysis();
 }
 
-void BatchWindow::runAnalysis(){
-  QList<KeyFinderAnalysisObject> objects;
-  int count = 0;
-  for(int r = 0; r < ui->tableWidget->rowCount(); r++){
-    QString status = ui->tableWidget->item(r,COL_STATUS)->text();
-    if(status == STATUS_NEW || status == STATUS_TAGSREAD){
-      objects.push_back(KeyFinderAnalysisObject(ui->tableWidget->item(r,COL_FILEPATH)->text(),prefs,r));
-      count++;
+void BatchWindow::checkRowsForSkipping(){
+  bool skippingFiles = prefs.getSkipFilesWithExistingTags();
+  bool commentRelevant = prefs.getWriteToTagComment();
+  bool groupingRelevant = prefs.getWriteToTagGrouping();
+  bool keyRelevant = prefs.getWriteToTagKey();
+  int countRelevant = (commentRelevant ? 1 : 0) + (groupingRelevant ? 1 : 0) + (keyRelevant ? 1 : 0);
+  for(int row = 0; row < ui->tableWidget->rowCount(); row++){
+
+    // ignore files that are complete or failed
+    QString status = ui->tableWidget->item(row,COL_STATUS)->text();
+    if(status != STATUS_NEW && status != STATUS_TAGSREAD && status != STATUS_SKIPPED ){
+      continue;
+    }
+
+    // if we're not skipping, or no tags are relevant, analyse everything
+    if(!skippingFiles || (!commentRelevant && !groupingRelevant && !keyRelevant)){
+      markRowSkipped(row,false);
+      continue;
+    }
+
+    // otherwise, skip this file if all the relevant tags have data.
+    // open question: what if tag is n/a?
+    int countSkip = 0;
+    if(commentRelevant && !(ui->tableWidget->item(row,COL_TAG_COMMENT) == 0))
+      countSkip++;
+    if(groupingRelevant && !(ui->tableWidget->item(row,COL_TAG_GROUPING) == 0))
+      countSkip++;
+    if(keyRelevant && !(ui->tableWidget->item(row,COL_TAG_KEY) == 0))
+      countSkip++;
+
+    if(countSkip == countRelevant){
+      markRowSkipped(row,true);
+    }else{
+      markRowSkipped(row,false);
     }
   }
+}
 
+void BatchWindow::markRowSkipped(int row, bool skip){
+  if(skip && ui->tableWidget->item(row,COL_STATUS)->text() != STATUS_SKIPPED){
+    ui->tableWidget->item(row,COL_STATUS)->setText(STATUS_SKIPPED);
+    ui->tableWidget->item(row,COL_KEY)->setText("Skipped");
+    ui->tableWidget->item(row,COL_KEY)->setForeground(textError);
+    return;
+  }
+  if(!skip && ui->tableWidget->item(row,COL_STATUS)->text() == STATUS_SKIPPED){
+    ui->tableWidget->item(row,COL_STATUS)->setText(STATUS_TAGSREAD);
+    ui->tableWidget->item(row,COL_KEY)->setText("");
+    ui->tableWidget->item(row,COL_KEY)->setForeground(textDefault);
+    return;
+  }
+}
+
+void BatchWindow::runAnalysis(){
+  QList<KeyFinderAnalysisObject> objects;
+  for(int row = 0; row < ui->tableWidget->rowCount(); row++){
+    QString status = ui->tableWidget->item(row,COL_STATUS)->text();
+    if(status == STATUS_NEW || status == STATUS_TAGSREAD)
+      objects.push_back(KeyFinderAnalysisObject(ui->tableWidget->item(row,COL_FILEPATH)->text(),prefs,row));
+  }
   analysisFuture = QtConcurrent::mapped(objects, keyFinderProcessObject);
   analysisWatcher.setFuture(analysisFuture);
 }
@@ -394,8 +449,8 @@ void BatchWindow::resultReadyAt(int index){
   }else{
     ui->tableWidget->item(row,COL_STATUS)->setText(STATUS_FAILED);
     ui->tableWidget->item(row,COL_KEY)->setText("Failed: " + error);
-    ui->tableWidget->item(row,COL_KEY)->setForeground(QBrush(qRgb(255,0,0)));
-    ui->tableWidget->item(row,COL_FILENAME)->setForeground(QBrush(qRgb(255,0,0)));
+    ui->tableWidget->item(row,COL_KEY)->setForeground(textError);
+    ui->tableWidget->item(row,COL_FILENAME)->setForeground(textError);
   }
 }
 
@@ -449,20 +504,10 @@ void BatchWindow::writeDetectedToTags(){
     int count = 0;
     for(int r = firstRow; r <= lastRow; r++){
       if(writeToTagsAtRow(r))
-         count++;
+        count++;
     }
     QMessageBox msg;
-    QString msgText = "Data written to ";
-    if(prefs.getTagField() == 'g')
-      msgText += "grouping";
-    else if(prefs.getTagField() == 'k')
-      msgText += "key";
-    else
-      msgText += "comment";
-    msgText += " tag in ";
-    msgText += QString("%1").arg(count);
-    msgText += " files";
-    msg.setText(msgText);
+    msg.setText("Data written to tags in " + QString::number(count) + " files");
     msg.exec();
   }
 }
@@ -473,21 +518,20 @@ bool BatchWindow::writeToTagsAtRow(int row){
   int key = ui->tableWidget->item(row,COL_STATUS)->text().toInt(&toIntOk);
   if(!toIntOk || key < 0)
     return false;
-  TagLibMetadata md(ui->tableWidget->item(row,COL_FILEPATH)->text().toLocal8Bit().data());
-  if(md.writeKeyToMetadata(key,prefs)){
-    // update table as necessary
+  TagLibMetadata md(ui->tableWidget->item(row,COL_FILEPATH)->text());
+  QString written = md.writeKeyToMetadata(key,prefs);
+  if(written.isEmpty())
+    return false;
+  for(int i=0; i<(signed)written.size(); i++){
     int col = COL_TAG_COMMENT; // default
-    if(prefs.getTagField() == 'g')
-      col = COL_TAG_GROUPING;
-    if(prefs.getTagField() == 'g')
-      col = COL_TAG_KEY;
+    if(written[i] == 'g') col = COL_TAG_GROUPING;
+    if(written[i] == 'k') col = COL_TAG_KEY;
     if(ui->tableWidget->item(row,col) == 0)
       ui->tableWidget->setItem(row,col,new QTableWidgetItem());
     ui->tableWidget->item(row,col)->setText(prefs.getKeyCode(key));
-    ui->tableWidget->item(row,col)->setForeground(QBrush(QColor(0,128,0)));
-    return true;
+    ui->tableWidget->item(row,col)->setForeground(textSuccess);
   }
-  return false;
+  return true;
 }
 
 void BatchWindow::clearDetected(){
@@ -499,9 +543,9 @@ void BatchWindow::clearDetected(){
     if(chkRow > lastRow) lastRow = chkRow;
   }
   for(int r = firstRow; r <= lastRow; r++){
-    if(ui->tableWidget->item(r,COL_KEY) != NULL){
+    if(ui->tableWidget->item(r,COL_KEY) != 0){
       ui->tableWidget->item(r,COL_STATUS)->setText(STATUS_TAGSREAD);
-      delete ui->tableWidget->item(r,COL_KEY);
+      ui->tableWidget->item(r,COL_KEY)->setText("");
     }
   }
 }

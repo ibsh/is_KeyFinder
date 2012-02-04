@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>757</width>
-    <height>407</height>
+    <height>439</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1590,40 +1590,56 @@
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="QLabel" name="lbl_tagField">
+          <widget class="QLabel" name="lbl_writeToTagComment">
            <property name="text">
-            <string>Write tag to field</string>
+            <string>Write tag to field(s)</string>
            </property>
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QComboBox" name="tagField">
-           <item>
-            <property name="text">
-             <string>Comment</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Grouping</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Key (limited support)</string>
-            </property>
-           </item>
+          <widget class="QCheckBox" name="writeToTagComment">
+           <property name="text">
+            <string>Comment</string>
+           </property>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="2" column="1">
+          <widget class="QCheckBox" name="writeToTagGrouping">
+           <property name="text">
+            <string>Grouping</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QCheckBox" name="writeToTagKey">
+           <property name="text">
+            <string>Key (limited support)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
           <widget class="QLabel" name="lbl_writeTagsAutomatically">
            <property name="text">
             <string>Write to tags automatically during batch jobs</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
+         <item row="4" column="1">
           <widget class="QCheckBox" name="writeTagsAutomatically">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="lbl_writeToTagGrouping">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="writeToTagKey_2">
            <property name="text">
             <string/>
            </property>
@@ -1665,6 +1681,20 @@
         <widget class="QCheckBox" name="parallelBatchJobs">
          <property name="text">
           <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QCheckBox" name="skipFilesWithExistingTags">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="lbl_skipFilesWithExistingTags">
+         <property name="text">
+          <string>Skip files with existing data in relevant tags</string>
          </property>
         </widget>
        </item>

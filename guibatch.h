@@ -73,6 +73,8 @@ private:
   QList<QUrl> getDirectoryContents(QDir) const;
   QList<QUrl> loadPlaylistM3u(QString) const;
   QList<QUrl> loadPlaylistXml(QString) const;
+  void checkRowsForSkipping();
+  void markRowSkipped(int,bool);
 	void addNewRow(QString);
 	void getMetadata();
 
@@ -86,6 +88,11 @@ private:
 	Ui::BatchWindow* ui;
 	QLabel* initialHelpLabel;
   MainMenuHandler* menuHandler;
+  QBrush keyRow;
+  QBrush keyAltRow;
+  QBrush textDefault;
+  QBrush textSuccess;
+  QBrush textError;
 private slots:
 	void fileDropFinished();
 	void on_runBatchButton_clicked();

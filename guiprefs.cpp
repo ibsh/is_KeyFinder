@@ -33,7 +33,6 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 	temporalWindowComboIndex = "bmn";
 	hcdfComboIndex = "nhca";
 	similarityMeasureComboIndex = "ck";
-  tagFieldComboIndex = "cgk";
   tagFormatComboIndex = "kcb";
 
 	// set preferences from QSettings
@@ -132,12 +131,15 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 
   settings.beginGroup("tags");
   ui->tagFormat->setCurrentIndex(tagFormatComboIndex.indexOf(settings.value("tagFormat").toChar()));
-  ui->tagField->setCurrentIndex(tagFieldComboIndex.indexOf(settings.value("tagField").toChar()));
+  ui->writeToTagComment->setChecked(settings.value(("writeToTagComment")).toBool());
+  ui->writeToTagGrouping->setChecked(settings.value(("writeToTagGrouping")).toBool());
+  ui->writeToTagKey->setChecked(settings.value(("writeToTagKey")).toBool());
   ui->writeTagsAutomatically->setChecked(settings.value(("writeTagsAutomatically")).toBool());
   settings.endGroup();
 
   settings.beginGroup("batch");
   ui->parallelBatchJobs->setChecked(settings.value(("parallelBatchJobs")).toBool());
+  ui->skipFilesWithExistingTags->setChecked(settings.value(("skipFilesWithExistingTags")).toBool());
   settings.endGroup();
 
 	// enable/disable fields as necessary
@@ -266,12 +268,15 @@ void PrefsDialog::on_savePrefsButton_clicked(){
 
   settings.beginGroup("tags");
   settings.setValue("tagFormat",tagFormatComboIndex[ui->tagFormat->currentIndex()].toAscii());
-  settings.setValue("tagField",tagFieldComboIndex[ui->tagField->currentIndex()].toAscii());
+  settings.setValue("writeToTagComment",ui->writeToTagComment->isChecked());
+  settings.setValue("writeToTagGrouping",ui->writeToTagGrouping->isChecked());
+  settings.setValue("writeToTagKey",ui->writeToTagKey->isChecked());
   settings.setValue("writeTagsAutomatically",ui->writeTagsAutomatically->isChecked());
   settings.endGroup();
 
   settings.beginGroup("batch");
   settings.setValue("parallelBatchJobs",ui->parallelBatchJobs->isChecked());
+  settings.setValue("skipFilesWithExistingTags",ui->skipFilesWithExistingTags->isChecked());
   settings.endGroup();
 
 	// CLOSE

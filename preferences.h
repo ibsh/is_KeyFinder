@@ -44,11 +44,14 @@ public:
 	// getters
   bool getWriteTagsAutomatically() const;
   bool getParallelBatchJobs() const;
+  bool getWriteToTagComment() const;
+  bool getWriteToTagGrouping() const;
+  bool getWriteToTagKey() const;
+  bool getSkipFilesWithExistingTags() const;
 	char getTemporalWindow() const;
 	char getHcdf() const;
 	char getSimilarityMeasure() const;
   char getTagFormat() const;
-  char getTagField() const;
 	int getHopSize() const;
 	int getFftFrameSize() const;
 	int getOctaves() const;
@@ -75,11 +78,14 @@ public:
 private:
   bool writeTagsAutomatically;
   bool parallelBatchJobs;
+  bool writeToTagComment;
+  bool writeToTagGrouping;
+  bool writeToTagKey;
+  bool skipFilesWithExistingTags;
 	char temporalWindow;
 	char hcdf;
 	char similarityMeasure;
   char tagFormat;
-  char tagField;
 	int hopSize;
 	int fftFrameSize;
 	int octaves;

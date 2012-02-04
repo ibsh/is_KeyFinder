@@ -63,7 +63,7 @@ public:
   QString getComment() const;
 	QString getGrouping() const;
   QString getKey() const;
-  bool writeKeyToMetadata(int, const Preferences&);
+  QString writeKeyToMetadata(int, const Preferences&);
 private:
   TagLib::File* f;
   int setComment(const QString&);
