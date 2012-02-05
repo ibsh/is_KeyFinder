@@ -314,6 +314,7 @@ void BatchWindow::getMetadata(){
 }
 
 void BatchWindow::fileDropFinished(){
+  qDebug("FDF");
   allowDrops = true;
   ui->runBatchButton->setEnabled(true);
   ui->tableWidget->resizeColumnsToContents();

@@ -26,11 +26,14 @@ KeyFinderResultSet keyFinderProcessObject(const KeyFinderAnalysisObject& object)
   KeyFinderResultSet resultSet;
   resultSet.batchRow = object.batchRow;
 
+  QByteArray encodedPath = QFile::encodeName(object.filePath);
+  const char* filePathCh = encodedPath;
+
   // initialise stream and decode file into it.
   AudioStream* astrm = NULL;
   AudioFileDecoder* dec = NULL;
   try{
-    dec = AudioFileDecoder::getDecoder(object.filePath.toLocal8Bit().data());
+    dec = AudioFileDecoder::getDecoder(filePathCh);
   }catch(Exception){
     delete dec;
     resultSet.errorMessage = "Could not get decoder.";
@@ -38,7 +41,7 @@ KeyFinderResultSet keyFinderProcessObject(const KeyFinderAnalysisObject& object)
   }
 
   try{
-    astrm = dec->decodeFile(object.filePath.toLocal8Bit().data());
+    astrm = dec->decodeFile(filePathCh);
     delete dec;
   }catch(Exception){
     delete astrm;

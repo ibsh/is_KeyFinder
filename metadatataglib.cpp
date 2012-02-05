@@ -30,8 +30,14 @@
 TagLibMetadata::TagLibMetadata(const QString& filePath){
 
   QString fileExt = filePath.mid(filePath.lastIndexOf(".") + 1).toLower();
+
+#ifdef Q_OS_WIN
+  const wchar_t* filePathCh = reinterpret_cast<const wchar_t *>(filePath.constData());
+#else
   QByteArray encodedPath = QFile::encodeName(filePath);
   const char* filePathCh = encodedPath;
+#endif
+
   f = NULL;
 
   if(fileExt == "mp3")

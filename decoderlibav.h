@@ -40,7 +40,7 @@ extern "C"{
 class LibAvDecoder : public AudioFileDecoder{
 public:
 	LibAvDecoder();
-  virtual AudioStream* decodeFile(char*);
+  virtual AudioStream* decodeFile(const char*);
 private:
   int decodePacket(AVCodecContext*, AVPacket*, AudioStream*);
 	static int libAv_mutexManager(void**, enum AVLockOp);

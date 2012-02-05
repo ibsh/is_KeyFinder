@@ -22,6 +22,7 @@
 #ifndef KEYFINDERMODEL_H
 #define KEYFINDERMODEL_H
 
+#include <QFile>
 #include <QString>
 
 #include <vector>
