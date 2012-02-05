@@ -19,10 +19,18 @@
 
 *************************************************************************/
 
-#include "keyfinderanalysisobject.h"
+#ifndef KeyDetectionObject_H
+#define KeyDetectionObject_H
 
-KeyFinderAnalysisObject::KeyFinderAnalysisObject(const QString& f, const Preferences& p, int r){
-  filePath = f;
-  prefs = p;
-  batchRow = r;
-}
+#include <QString>
+#include "preferences.h"
+
+class KeyDetectionObject{
+public:
+  KeyDetectionObject(const QString&, const Preferences&, int);
+  QString filePath;
+  Preferences prefs;
+  int batchRow;
+};
+
+#endif // KeyDetectionObject_H

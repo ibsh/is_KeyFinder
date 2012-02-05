@@ -19,12 +19,12 @@
 
 *************************************************************************/
 
-#include "keyfinderworker.h"
+#include "asynckeyprocess.h"
 
-KeyFinderResultSet keyFinderProcessObject(const KeyFinderAnalysisObject& object){
+KeyDetectionResult keyDetectionProcess(const KeyDetectionObject& object){
 
-  KeyFinderResultSet resultSet;
-  resultSet.batchRow = object.batchRow;
+  KeyDetectionResult result;
+  result.batchRow = object.batchRow;
 
   QByteArray encodedPath = QFile::encodeName(object.filePath);
   const char* filePathCh = encodedPath;
@@ -36,8 +36,8 @@ KeyFinderResultSet keyFinderProcessObject(const KeyFinderAnalysisObject& object)
     dec = AudioFileDecoder::getDecoder(filePathCh);
   }catch(Exception){
     delete dec;
-    resultSet.errorMessage = "Could not get decoder.";
-    return resultSet;
+    result.errorMessage = "Could not get decoder.";
+    return result;
   }
 
   try{
@@ -46,8 +46,8 @@ KeyFinderResultSet keyFinderProcessObject(const KeyFinderAnalysisObject& object)
   }catch(Exception){
     delete astrm;
     delete dec;
-    resultSet.errorMessage = "Could not decode file.";
-    return resultSet;
+    result.errorMessage = "Could not decode file.";
+    return result;
   }
 
   // make audio stream monaural
@@ -61,8 +61,8 @@ KeyFinderResultSet keyFinderProcessObject(const KeyFinderAnalysisObject& object)
     }catch(Exception){
       delete astrm;
       delete ds;
-      resultSet.errorMessage = "Downsampler failed.";
-      return resultSet;
+      result.errorMessage = "Downsampler failed.";
+      return result;
     }
     delete ds;
   }
@@ -75,12 +75,12 @@ KeyFinderResultSet keyFinderProcessObject(const KeyFinderAnalysisObject& object)
   delete astrm; // note we don't delete the spectrum analyser; it stays in the centralised factory for reuse.
   ch->reduceTuningBins(object.prefs);
   if(object.batchRow == -1)
-    resultSet.fullChromagram = Chromagram(*ch);
+    result.fullChromagram = Chromagram(*ch);
 
   // reduce chromagram
   ch->reduceToOneOctave(object.prefs);
   if(object.batchRow == -1)
-    resultSet.oneOctaveChromagram = Chromagram(*ch);
+    result.oneOctaveChromagram = Chromagram(*ch);
 
   // get energy level across track to weight segments
   std::vector<float> loudness(ch->getHops());
@@ -90,16 +90,16 @@ KeyFinderResultSet keyFinderProcessObject(const KeyFinderAnalysisObject& object)
 
   // get harmonic change signal
   Segmentation* hcdf = Segmentation::getSegmentation(object.prefs);
-  resultSet.harmonicChangeSignal = hcdf->getRateOfChange(ch,object.prefs);
+  result.harmonicChangeSignal = hcdf->getRateOfChange(ch,object.prefs);
 
   // get track segmentation
-  std::vector<int> changes = hcdf->getSegments(resultSet.harmonicChangeSignal,object.prefs);
+  std::vector<int> changes = hcdf->getSegments(result.harmonicChangeSignal,object.prefs);
   delete hcdf;
   changes.push_back(ch->getHops()); // It used to be getHops()-1. But this doesn't crash. So we like it.
 
   // get key estimates for segments
   KeyClassifier hc(object.prefs);
-  resultSet.keyEstimates.clear();
+  result.keyEstimates.clear();
   std::vector<float> keyWeights(24);
   for(int i=0; i<(signed)changes.size()-1; i++){
     std::vector<double> chroma(ch->getBins());
@@ -108,22 +108,22 @@ KeyFinderResultSet keyFinderProcessObject(const KeyFinderAnalysisObject& object)
         chroma[k] += ch->getMagnitude(j,k);
     int key = hc.classify(chroma);
     for(int j=changes[i]; j<changes[i+1]; j++){
-      resultSet.keyEstimates.push_back(key);
+      result.keyEstimates.push_back(key);
       if(key < 24) // ignore parts that were classified as silent
         keyWeights[key] += loudness[j];
     }
   }
-  resultSet.keyEstimates.push_back(resultSet.keyEstimates[resultSet.keyEstimates.size()-1]); // put last key on again to match length of track
+  result.keyEstimates.push_back(result.keyEstimates[result.keyEstimates.size()-1]); // put last key on again to match length of track
 
   // get global key
-  resultSet.globalKeyEstimate = 24;
+  result.globalKeyEstimate = 24;
   float mostCommonKeyWeight = 0.0;
   for(int i=0; i<(signed)keyWeights.size(); i++){
     if(keyWeights[i] > mostCommonKeyWeight){
       mostCommonKeyWeight = keyWeights[i];
-      resultSet.globalKeyEstimate = i;
+      result.globalKeyEstimate = i;
     }
   }
 
-  return resultSet;
+  return result;
 }

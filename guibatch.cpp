@@ -40,17 +40,21 @@ const QString STATUS_FAILED = "-4";
 
 BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindow(parent), ui(new Ui::BatchWindow){
   // ASYNC
-  connect(&addFileWatcher, SIGNAL(finished()), this, SLOT(fileDropFinished()));
+  connect(&addFilesWatcher, SIGNAL(finished()), this, SLOT(addFilesFinished()));
 
+  connect(&metadataReadWatcher, SIGNAL(resultReadyAt(int)), this, SLOT(metadataReadResultReadyAt(int)));
+  connect(&metadataReadWatcher, SIGNAL(finished()), this, SLOT(metadataReadFinished()));
+  connect(&metadataReadWatcher, SIGNAL(progressRangeChanged(int, int)), this, SLOT(progressRangeChanged(int,int)));
+  connect(&metadataReadWatcher, SIGNAL(progressValueChanged(int)), this, SLOT(progressValueChanged(int)));
+
+  connect(&analysisWatcher, SIGNAL(resultReadyAt(int)), this, SLOT(analysisResultReadyAt(int)));
   connect(&analysisWatcher, SIGNAL(finished()), this, SLOT(analysisFinished()));
   connect(&analysisWatcher, SIGNAL(canceled()), this, SLOT(analysisCancelled()));
   connect(&analysisWatcher, SIGNAL(progressRangeChanged(int, int)), this, SLOT(progressRangeChanged(int,int)));
   connect(&analysisWatcher, SIGNAL(progressValueChanged(int)), this, SLOT(progressValueChanged(int)));
-  connect(&analysisWatcher, SIGNAL(resultReadyAt(int)), this, SLOT(resultReadyAt(int)));
 
   // SETUP UI
   ui->setupUi(this);
-  allowDrops = true;
   menuHandler = handler;
   ui->tableWidget->setColumnHidden(COL_STATUS,true);
   ui->tableWidget->setColumnHidden(COL_FILEPATH,true);
@@ -104,16 +108,37 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
 }
 
 BatchWindow::~BatchWindow(){
-  addFileWatcher.cancel();
+  addFilesWatcher.cancel();
+  metadataReadWatcher.cancel();
   analysisWatcher.cancel();
-  addFileWatcher.waitForFinished();
+  addFilesWatcher.waitForFinished();
+  metadataReadWatcher.waitForFinished();
   analysisWatcher.waitForFinished();
   delete ui;
 }
 
+void BatchWindow::setThreadCount(){
+  int numThreads = QThread::idealThreadCount();
+  if(numThreads == -1 || prefs.getParallelBatchJobs() == false){
+    QThreadPool::globalInstance()->setMaxThreadCount(1);
+  }else{
+    QThreadPool::globalInstance()->setMaxThreadCount(numThreads);
+  }
+}
+
+void BatchWindow::setGuiDefaults(){
+  ui->progressBar->setMaximum(1);
+  ui->progressBar->setValue(0);
+  ui->statusLabel->setText("Ready");
+  ui->runBatchButton->setEnabled(true);
+  ui->cancelBatchButton->setEnabled(false);
+  ui->tableWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
+  ui->tableWidget->resizeColumnsToContents();
+  ui->tableWidget->resizeRowsToContents();
+}
 
 void BatchWindow::dragEnterEvent(QDragEnterEvent *e){
-  if(allowDrops && e->mimeData()->hasUrls()){
+  if(e->mimeData()->hasUrls()){
     e->acceptProposedAction();
   }
 }
@@ -123,37 +148,44 @@ void BatchWindow::dropEvent(QDropEvent *e){
 }
 
 bool BatchWindow::receiveUrls(const QList<QUrl>& urls){
-  if(analysisWatcher.isRunning())
+  if(metadataReadWatcher.isRunning() || analysisWatcher.isRunning())
     return false;
   droppedFiles << urls;
-  if(!addFileWatcher.isRunning()){
-    allowDrops = false;
+  if(!addFilesWatcher.isRunning()){
+    // Get a new preferences object in case they've changed since the last run.
+    prefs = Preferences();
+    setThreadCount();
     ui->runBatchButton->setEnabled(false);
     ui->statusLabel->setText("Loading files...");
-    QFuture<void> future = QtConcurrent::run(this,&BatchWindow::addDroppedFiles);
-    addFileWatcher.setFuture(future);
+    QFuture<void>addFileFuture = QtConcurrent::run(this,&BatchWindow::addDroppedFiles);
+    addFilesWatcher.setFuture(addFileFuture);
   }
   return true;
 }
 
 void BatchWindow::addDroppedFiles(){
   while(!droppedFiles.isEmpty()){
-    QString filePath = droppedFiles.first().toLocalFile();
+
     // check URL resolves to local file
+    QString filePath = droppedFiles.first().toLocalFile();
+    droppedFiles.removeFirst();
     if(filePath.isEmpty())
       continue;
+
+    // check for directory
     QFileInfo fileInfo(filePath);
-    droppedFiles.removeFirst();
-    // check if url is a directory; if so, get contents rather than adding
     if(fileInfo.isDir()){
       droppedFiles << getDirectoryContents(QDir(filePath));
       continue;
     }
-    // check if url is a symlink (.isSymLink doesn't seem to work on Lion)
+
+    // check for symlink (.isSymLink doesn't seem to work on Lion)
     if(fileInfo.isSymLink() || fileInfo.symLinkTarget() != ""){
       droppedFiles.push_back(QUrl(fileInfo.symLinkTarget()));
       continue;
     }
+
+    // check for playlist
     QString fileExt = filePath.right(3);
     if(fileExt == "m3u"){
       droppedFiles << loadPlaylistM3u(filePath);
@@ -162,20 +194,21 @@ void BatchWindow::addDroppedFiles(){
       droppedFiles << loadPlaylistXml(filePath);
       continue;
     }
-    // check if path is already in the list
+
+    // check for duplicate
     bool isNew = true;
-    for(int j=0; j<ui->tableWidget->rowCount(); j++){
+    for(int j=0; j<(signed)ui->tableWidget->rowCount(); j++){
       if(ui->tableWidget->item(j,COL_FILEPATH)->text() == filePath){
         isNew = false;
         break;
       }
     }
-    if(isNew){
+
+    if(isNew)
       addNewRow(filePath);
-    }
+
   }
   this->setWindowTitle("KeyFinder - Batch Analysis - " + QString::number(ui->tableWidget->rowCount()) + " files");
-  getMetadata();
 }
 
 QList<QUrl> BatchWindow::getDirectoryContents(QDir dir) const{
@@ -263,62 +296,47 @@ void BatchWindow::addNewRow(QString fileUrl){
   }
 }
 
-void BatchWindow::getMetadata(){
-
-  ui->progressBar->setMaximum(ui->tableWidget->rowCount());
-  ui->statusLabel->setText("Reading tags...");
-
-  for(int i=0; i<(signed)ui->tableWidget->rowCount(); i++){
-
-    ui->progressBar->setValue(i);
-
-    if(ui->tableWidget->item(i,COL_STATUS)->text() != STATUS_NEW)
-      continue;
-    ui->tableWidget->item(i,COL_STATUS)->setText(STATUS_TAGSREAD);
-
-    TagLibMetadata md(ui->tableWidget->item(i,COL_FILEPATH)->text());
-
-    QString tag = md.getArtist();
-    if(tag != ""){
-      ui->tableWidget->setItem(i,COL_TAG_ARTIST,new QTableWidgetItem());
-      ui->tableWidget->item(i,COL_TAG_ARTIST)->setText(tag);
-    }
-
-    tag = md.getTitle();
-    if(tag != ""){
-      ui->tableWidget->setItem(i,COL_TAG_TITLE,new QTableWidgetItem());
-      ui->tableWidget->item(i,COL_TAG_TITLE)->setText(tag);
-    }
-
-    tag = md.getComment();
-    if(tag != ""){
-      ui->tableWidget->setItem(i,COL_TAG_COMMENT,new QTableWidgetItem());
-      ui->tableWidget->item(i,COL_TAG_COMMENT)->setText(tag);
-    }
-
-    tag = md.getGrouping();
-    if(tag != ""){
-      ui->tableWidget->setItem(i,COL_TAG_GROUPING,new QTableWidgetItem());
-      ui->tableWidget->item(i,COL_TAG_GROUPING)->setText(tag);
-    }
-
-    tag = md.getKey();
-    if(tag != ""){
-      ui->tableWidget->setItem(i,COL_TAG_KEY,new QTableWidgetItem());
-      ui->tableWidget->item(i,COL_TAG_KEY)->setText(tag);
-    }
-  }
-
-  ui->progressBar->setValue(0);
-  ui->statusLabel->setText("Ready");
+void BatchWindow::addFilesFinished(){
+  readMetadata();
 }
 
-void BatchWindow::fileDropFinished(){
-  qDebug("FDF");
-  allowDrops = true;
-  ui->runBatchButton->setEnabled(true);
-  ui->tableWidget->resizeColumnsToContents();
-  ui->tableWidget->resizeRowsToContents();
+void BatchWindow::readMetadata(){
+  ui->statusLabel->setText("Reading tags...");
+  QList<MetadataReadObject> objects;
+  for(int row = 0; row < (signed)ui->tableWidget->rowCount(); row++){
+    if(ui->tableWidget->item(row,COL_STATUS)->text() == STATUS_NEW)
+      objects.push_back(MetadataReadObject(ui->tableWidget->item(row,COL_FILEPATH)->text(),prefs,row));
+  }
+  QFuture<MetadataReadResult> metadataReadFuture = QtConcurrent::mapped(objects, metadataReadProcess);
+  metadataReadWatcher.setFuture(metadataReadFuture);
+}
+
+void BatchWindow::metadataReadResultReadyAt(int index){
+  int row = metadataReadWatcher.resultAt(index).batchRow;
+  if(metadataReadWatcher.resultAt(index).artist != ""){
+    ui->tableWidget->setItem(row,COL_TAG_ARTIST,new QTableWidgetItem());
+    ui->tableWidget->item(row,COL_TAG_ARTIST)->setText(metadataReadWatcher.resultAt(index).artist);
+  }
+  if(metadataReadWatcher.resultAt(index).title != ""){
+    ui->tableWidget->setItem(row,COL_TAG_TITLE,new QTableWidgetItem());
+    ui->tableWidget->item(row,COL_TAG_TITLE)->setText(metadataReadWatcher.resultAt(index).title);
+  }
+  if(metadataReadWatcher.resultAt(index).comment != ""){
+    ui->tableWidget->setItem(row,COL_TAG_COMMENT,new QTableWidgetItem());
+    ui->tableWidget->item(row,COL_TAG_COMMENT)->setText(metadataReadWatcher.resultAt(index).comment);
+  }
+  if(metadataReadWatcher.resultAt(index).grouping != ""){
+    ui->tableWidget->setItem(row,COL_TAG_GROUPING,new QTableWidgetItem());
+    ui->tableWidget->item(row,COL_TAG_GROUPING)->setText(metadataReadWatcher.resultAt(index).grouping);
+  }
+  if(metadataReadWatcher.resultAt(index).key != ""){
+    ui->tableWidget->setItem(row,COL_TAG_KEY,new QTableWidgetItem());
+    ui->tableWidget->item(row,COL_TAG_KEY)->setText(metadataReadWatcher.resultAt(index).key);
+  }
+}
+
+void BatchWindow::metadataReadFinished(){
+  setGuiDefaults();
 }
 
 void BatchWindow::on_runBatchButton_clicked(){
@@ -329,16 +347,9 @@ void BatchWindow::on_runBatchButton_clicked(){
   ui->runBatchButton->setEnabled(false);
   ui->cancelBatchButton->setEnabled(true);
   ui->tableWidget->setContextMenuPolicy(Qt::NoContextMenu); // so that no tags can be written while busy
-  allowDrops = false;
 
-  int numThreads = QThread::idealThreadCount();
-  if(numThreads == -1 || prefs.getParallelBatchJobs() == false){
-    QThreadPool::globalInstance()->setMaxThreadCount(1);
-    ui->statusLabel->setText("Analysing (single thread)...");
-  }else{
-    QThreadPool::globalInstance()->setMaxThreadCount(numThreads);
-    ui->statusLabel->setText("Analysing (" + QString::number(numThreads) + " threads)...");
-  }
+  setThreadCount();
+  ui->statusLabel->setText("Analysing (" + QString::number(QThreadPool::globalInstance()->maxThreadCount()) + " threads)...");
 
   runAnalysis();
 }
@@ -397,13 +408,13 @@ void BatchWindow::markRowSkipped(int row, bool skip){
 }
 
 void BatchWindow::runAnalysis(){
-  QList<KeyFinderAnalysisObject> objects;
+  QList<KeyDetectionObject> objects;
   for(int row = 0; row < ui->tableWidget->rowCount(); row++){
     QString status = ui->tableWidget->item(row,COL_STATUS)->text();
     if(status == STATUS_NEW || status == STATUS_TAGSREAD)
-      objects.push_back(KeyFinderAnalysisObject(ui->tableWidget->item(row,COL_FILEPATH)->text(),prefs,row));
+      objects.push_back(KeyDetectionObject(ui->tableWidget->item(row,COL_FILEPATH)->text(),prefs,row));
   }
-  analysisFuture = QtConcurrent::mapped(objects, keyFinderProcessObject);
+  QFuture<KeyDetectionResult> analysisFuture = QtConcurrent::mapped(objects, keyDetectionProcess);
   analysisWatcher.setFuture(analysisFuture);
 }
 
@@ -411,34 +422,9 @@ void BatchWindow::on_cancelBatchButton_clicked(){
   ui->statusLabel->setText("Cancelling...");
   ui->cancelBatchButton->setEnabled(false);
   analysisWatcher.cancel();
-
 }
 
-void BatchWindow::analysisCancelled(){
-  cleanUpAfterRun();
-}
-
-void BatchWindow::cleanUpAfterRun(){
-  allowDrops = true;
-  ui->progressBar->setMaximum(1);
-  ui->progressBar->setValue(0);
-  ui->statusLabel->setText("Ready");
-  ui->runBatchButton->setEnabled(true);
-  ui->cancelBatchButton->setEnabled(false);
-  ui->tableWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
-  ui->tableWidget->resizeColumnsToContents();
-}
-
-void BatchWindow::progressRangeChanged(int minimum, int maximum){
-  ui->progressBar->setMinimum(minimum);
-  ui->progressBar->setMaximum(maximum);
-}
-
-void BatchWindow::progressValueChanged(int progressValue){
-  ui->progressBar->setValue(progressValue);
-}
-
-void BatchWindow::resultReadyAt(int index){
+void BatchWindow::analysisResultReadyAt(int index){
   QString error = analysisWatcher.resultAt(index).errorMessage;
   int row = analysisWatcher.resultAt(index).batchRow;
   if(error == ""){
@@ -455,62 +441,39 @@ void BatchWindow::resultReadyAt(int index){
   }
 }
 
+void BatchWindow::analysisCancelled(){
+  setGuiDefaults();
+}
+
 void BatchWindow::analysisFinished(){
-  cleanUpAfterRun();
+  setGuiDefaults();
   QApplication::beep();
 }
 
-void BatchWindow::copySelectedFromTableWidget(){
-  QByteArray copyArray;
+void BatchWindow::writeDetectedToTags(){
+  if(addFilesWatcher.isRunning() || metadataReadWatcher.isRunning() || analysisWatcher.isRunning()){
+    QApplication::beep();
+    return;
+  }
+  // get a new preferences object in case they've changed since the last run.
+  prefs = Preferences();
+  // which files to write to
   int firstRow = INT_MAX;
   int lastRow = 0;
-  int firstCol = INT_MAX;
-  int lastCol = 0;
   foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()){
     int chkRow = selectedIndex.row();
-    int chkCol = selectedIndex.column();
     if(chkRow < firstRow) firstRow = chkRow;
     if(chkRow > lastRow) lastRow = chkRow;
-    if(chkCol < firstCol) firstCol = chkCol;
-    if(chkCol > lastCol) lastCol = chkCol;
   }
+  // write
+  int count = 0;
   for(int r = firstRow; r <= lastRow; r++){
-    for(int c = firstCol; c <= lastCol; c++){
-      QTableWidgetItem* item = ui->tableWidget->item(r,c);
-      if(item != NULL && item->isSelected())
-        copyArray.append(item->text());
-      if(c != lastCol)
-        copyArray.append("\t");
-    }
-    copyArray.append("\r\n");
+    if(writeToTagsAtRow(r))
+      count++;
   }
-  QMimeData mimeData;
-  mimeData.setData("text/plain",copyArray);
-  QApplication::clipboard()->setMimeData(&mimeData);
-}
-
-void BatchWindow::writeDetectedToTags(){
-  if(allowDrops){ // not an ideal check semantically, but it stops the user Cmd+T-ing during a batch run.
-    // get a new preferences object in case they've changed since the last run.
-    prefs = Preferences();
-    // which files to write to
-    int firstRow = INT_MAX;
-    int lastRow = 0;
-    foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()){
-      int chkRow = selectedIndex.row();
-      if(chkRow < firstRow) firstRow = chkRow;
-      if(chkRow > lastRow) lastRow = chkRow;
-    }
-    // write
-    int count = 0;
-    for(int r = firstRow; r <= lastRow; r++){
-      if(writeToTagsAtRow(r))
-        count++;
-    }
-    QMessageBox msg;
-    msg.setText("Data written to tags in " + QString::number(count) + " files");
-    msg.exec();
-  }
+  QMessageBox msg;
+  msg.setText("Data written to tags in " + QString::number(count) + " files");
+  msg.exec();
 }
 
 bool BatchWindow::writeToTagsAtRow(int row){
@@ -551,6 +514,35 @@ void BatchWindow::clearDetected(){
   }
 }
 
+void BatchWindow::copySelectedFromTableWidget(){
+  QByteArray copyArray;
+  int firstRow = INT_MAX;
+  int lastRow = 0;
+  int firstCol = INT_MAX;
+  int lastCol = 0;
+  foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()){
+    int chkRow = selectedIndex.row();
+    int chkCol = selectedIndex.column();
+    if(chkRow < firstRow) firstRow = chkRow;
+    if(chkRow > lastRow) lastRow = chkRow;
+    if(chkCol < firstCol) firstCol = chkCol;
+    if(chkCol > lastCol) lastCol = chkCol;
+  }
+  for(int r = firstRow; r <= lastRow; r++){
+    for(int c = firstCol; c <= lastCol; c++){
+      QTableWidgetItem* item = ui->tableWidget->item(r,c);
+      if(item != NULL && item->isSelected())
+        copyArray.append(item->text());
+      if(c != lastCol)
+        copyArray.append("\t");
+    }
+    copyArray.append("\r\n");
+  }
+  QMimeData mimeData;
+  mimeData.setData("text/plain",copyArray);
+  QApplication::clipboard()->setMimeData(&mimeData);
+}
+
 void BatchWindow::runDetailedAnalysis(){
   int firstRow = INT_MAX;
   int lastRow = 0;
@@ -561,10 +553,18 @@ void BatchWindow::runDetailedAnalysis(){
   }
   if(firstRow != lastRow){
     QMessageBox msg;
-    QString msgText = "Please select a single row for detailed analysis";
-    msg.setText(msgText);
+    msg.setText("Please select a single row for detailed analysis");
     msg.exec();
     return;
   }
   menuHandler->new_Detail_Window(ui->tableWidget->item(firstRow,COL_FILEPATH)->text());
+}
+
+void BatchWindow::progressRangeChanged(int minimum, int maximum){
+  ui->progressBar->setMinimum(minimum);
+  ui->progressBar->setMaximum(maximum);
+}
+
+void BatchWindow::progressValueChanged(int progressValue){
+  ui->progressBar->setValue(progressValue);
 }

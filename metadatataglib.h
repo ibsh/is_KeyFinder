@@ -25,6 +25,7 @@
 #include <QString>
 #include <QFile>
 #include <QDebug>
+#include <QMutex>
 
 #include <tag.h>
 #include <taglib.h>

@@ -74,8 +74,8 @@ int main(int argc, char* argv[]){
     }
     if(!filePath.isEmpty()){
       Preferences prefs;
-      KeyFinderAnalysisObject object(filePath, prefs, 0);
-      KeyFinderResultSet result = keyFinderProcessObject(object);
+      KeyDetectionObject object(filePath, prefs, 0);
+      KeyDetectionResult result = keyDetectionProcess(object);
       if(result.errorMessage == ""){
         std::cout << prefs.getKeyCode(result.globalKeyEstimate).toLocal8Bit().data();
         if(writeToTags){

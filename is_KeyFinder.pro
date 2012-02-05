@@ -52,9 +52,11 @@ SOURCES += \
     guidetail.cpp \
     guimenuhandler.cpp \
     guiprefs.cpp \
-    keyfinderworker.cpp \
-    keyfinderanalysisobject.cpp \
-    keyfinderapplication.cpp
+    keyfinderapplication.cpp \
+    asynckeyobject.cpp \
+    asynckeyprocess.cpp \
+    asyncmetadatareadobject.cpp \
+    asyncmetadatareadprocess.cpp
 
 HEADERS  += \
     decoderlibav.h \
@@ -85,10 +87,13 @@ HEADERS  += \
     guidetail.h \
     guimenuhandler.h \
     guiprefs.h \
-    keyfinderworker.h \
-    keyfinderanalysisobject.h \
-    keyfinderresultset.h \
-    keyfinderapplication.h
+    keyfinderapplication.h \
+    asynckeyobject.h \
+    asynckeyprocess.h \
+    asynckeyresult.h \
+    asyncmetadatareadobject.h \
+    asyncmetadatareadprocess.h \
+    asyncmetadatareadresult.h
 
 FORMS += \
     detailwindow.ui \

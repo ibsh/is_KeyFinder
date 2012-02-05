@@ -45,14 +45,13 @@ class MainMenuHandler;
 #endif
 #include <QXmlResultItems>
 
-#include <vector>
-
 #include "guidetail.h"
-#include "preferences.h"
-#include "keyfinderworker.h"
-#include "keyfinderresultset.h"
-#include "metadatataglib.h"
 #include "guimenuhandler.h"
+#include "preferences.h"
+#include "asynckeyprocess.h"
+#include "asyncmetadatareadprocess.h"
+#include "metadatataglib.h"
+
 
 namespace Ui {
 	class BatchWindow;
@@ -65,30 +64,30 @@ public:
   bool receiveUrls(const QList<QUrl>&);
 	~BatchWindow();
 private:
-	// analysis
 	Preferences prefs;
-	// batch processing
-	bool allowDrops;
+  void setThreadCount();
+  void setGuiDefaults();
+
 	void dragEnterEvent(QDragEnterEvent*);
 	void dropEvent(QDropEvent*);
   QList<QUrl> droppedFiles;
   void addDroppedFiles();
-  QFutureWatcher<void> addFileWatcher;
-
+  QFutureWatcher<void> addFilesWatcher;
   QList<QUrl> getDirectoryContents(QDir) const;
   QList<QUrl> loadPlaylistM3u(QString) const;
   QList<QUrl> loadPlaylistXml(QString) const;
+
+  void addNewRow(QString);
+  QFutureWatcher<MetadataReadResult> metadataReadWatcher;
+  void readMetadata();
+
+  QFutureWatcher<KeyDetectionResult> analysisWatcher;
   void checkRowsForSkipping();
   void markRowSkipped(int,bool);
-	void addNewRow(QString);
-	void getMetadata();
-
-  QFuture<KeyFinderResultSet> analysisFuture;
-  QFutureWatcher<KeyFinderResultSet> analysisWatcher;
   void runAnalysis();
-  void cleanUpAfterRun();
 
   bool writeToTagsAtRow(int);
+
 	// UI
 	Ui::BatchWindow* ui;
 	QLabel* initialHelpLabel;
@@ -99,7 +98,7 @@ private:
   QBrush textSuccess;
   QBrush textError;
 private slots:
-	void fileDropFinished();
+  void addFilesFinished();
 	void on_runBatchButton_clicked();
   void on_cancelBatchButton_clicked();
 	void copySelectedFromTableWidget();
@@ -109,9 +108,14 @@ private slots:
 
   void analysisFinished();
   void analysisCancelled();
+  void analysisResultReadyAt(int);
+
+  void metadataReadFinished();
+  void metadataReadResultReadyAt(int);
+
   void progressRangeChanged(int, int);
   void progressValueChanged(int);
-  void resultReadyAt(int);
+
 };
 
 #endif

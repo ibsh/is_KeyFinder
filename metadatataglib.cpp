@@ -27,7 +27,11 @@
   many edge cases, though they should at least fail gracefully.
 */
 
+QMutex constructor_mutex; // global mutex to stop first few analysis threads failing
+
 TagLibMetadata::TagLibMetadata(const QString& filePath){
+
+  QMutexLocker locker(&constructor_mutex); // mutex the constructor
 
   QString fileExt = filePath.mid(filePath.lastIndexOf(".") + 1).toLower();
 
@@ -75,6 +79,8 @@ TagLibMetadata::TagLibMetadata(const QString& filePath){
     f = new TagLib::ASF::File(filePathCh);
 #endif
 
+  locker.~QMutexLocker(); // unlock mutex
+
   if(f != NULL && f->isValid())
     return; // everything's fine.
 
@@ -85,6 +91,7 @@ TagLibMetadata::TagLibMetadata(const QString& filePath){
 #else
   qDebug("TagLib returned NULL File for %s",filePathCh);
 #endif
+
   return;
 }
 

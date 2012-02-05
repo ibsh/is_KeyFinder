@@ -19,21 +19,20 @@
 
 *************************************************************************/
 
-#ifndef KEYFINDERRESULTSET_H
-#define KEYFINDERRESULTSET_H
+#ifndef ASYNCMETADATAREADRESULT_H
+#define ASYNCMETADATAREADRESULT_H
 
-#include <QObject>
-#include "chromagram.h"
+#include <QString>
 
-class KeyFinderResultSet{
+class MetadataReadResult{
 public:
   int batchRow;
-  Chromagram fullChromagram;
-  Chromagram oneOctaveChromagram;
-  std::vector<double> harmonicChangeSignal;
-  std::vector<int> keyEstimates;
-  int globalKeyEstimate;
-  QString errorMessage;
+  QString artist;
+  QString title;
+  QString comment;
+  QString grouping;
+  QString key;
 };
 
-#endif // KEYFINDERRESULTSET_H
+
+#endif // ASYNCMETADATAREADRESULT_H

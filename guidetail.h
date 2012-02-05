@@ -33,10 +33,9 @@
 #include <vector>
 
 #include "preferences.h"
-#include "keyfinderworker.h"
-#include "keyfinderresultset.h"
+#include "asynckeyprocess.h"
+#include "asyncmetadatareadprocess.h"
 #include "chromagram.h"
-#include "metadatataglib.h"
 
 namespace Ui {
 	class DetailWindow;
@@ -51,8 +50,8 @@ private:
 	Preferences prefs;
 	QString filePath;
 
-  QFuture<KeyFinderResultSet> analysisFuture;
-  QFutureWatcher<KeyFinderResultSet> analysisWatcher;
+  QFuture<KeyDetectionResult> analysisFuture;
+  QFutureWatcher<KeyDetectionResult> analysisWatcher;
 
 	bool allowDrops;
 	void dragEnterEvent(QDragEnterEvent*);
