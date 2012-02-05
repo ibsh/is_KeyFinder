@@ -69,7 +69,7 @@ private:
 	QImage colourScaleImage;
 	int chromaScaleV;
 	int chromaScaleH;
-	QImage imageFromChromagram(const Chromagram*);
+  QImage imageFromChromagram(const Chromagram&);
 private slots:
 	// interaction with model thread
   void analysisFinished();

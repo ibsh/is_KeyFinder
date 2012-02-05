@@ -38,11 +38,11 @@ void MacLoggingHandler(QtMsgType type, const char *msg) {
   case QtDebugMsg:
     logfile << "Debug: " << msg << "\n";
     break;
-  case QtCriticalMsg:
-    logfile << "Critical: " << msg << "\n";
-    break;
   case QtWarningMsg:
     logfile << "Warning: " << msg << "\n";
+    break;
+  case QtCriticalMsg:
+    logfile << "Critical: " << msg << "\n";
     break;
   case QtFatalMsg:
     logfile << "Fatal: " << msg << "\n";
@@ -61,18 +61,34 @@ int main(int argc, char* argv[]){
   qInstallMsgHandler(MacLoggingHandler);
 #endif
 
-  // very primitive command line use
+  // primitive command line use
   if(argc > 2){
-    if(std::strcmp(argv[1], "-f") == 0){
-    Preferences p;
-    QString filePath = argv[2];
-    KeyFinderAnalysisObject object(filePath, p, 0);
-    KeyFinderResultSet result = keyFinderProcessObject(object);
+    QString filePath = "";
+    bool writeToTags = false;
+    for(int i = 1; i < argc; i++){
+      if(std::strcmp(argv[i], "-f") == 0 && i+1 < argc){
+        filePath = argv[++i];
+      }else if (std::strcmp(argv[i], "-w") == 0){
+        writeToTags = true;
+      }
+    }
+    if(!filePath.isEmpty()){
+      Preferences prefs;
+      KeyFinderAnalysisObject object(filePath, prefs, 0);
+      KeyFinderResultSet result = keyFinderProcessObject(object);
       if(result.errorMessage == ""){
-        std::cout << p.getKeyCode(result.globalKeyEstimate).toLocal8Bit().data();
+        std::cout << prefs.getKeyCode(result.globalKeyEstimate).toLocal8Bit().data();
+        if(writeToTags){
+          TagLibMetadata md(filePath);
+          QString written = md.writeKeyToMetadata(result.globalKeyEstimate,prefs);
+          if(written.isEmpty()){
+            std::cerr << "Could not write to tags" << std::endl;
+            return 2;
+          }
+        }
         return 0;
       }else{
-        std::cout << result.errorMessage.toLocal8Bit().data();
+        std::cerr << result.errorMessage.toLocal8Bit().data();
         return 1;
       }
     }

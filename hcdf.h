@@ -37,6 +37,7 @@ public:
 	static Segmentation* getSegmentation(const Preferences&);
 	virtual std::vector<double> getRateOfChange(Chromagram*, const Preferences&) = 0;
 	virtual std::vector<int> getSegments(const std::vector<double>&, const Preferences&) = 0;
+  virtual ~Segmentation();
 };
 
 #endif

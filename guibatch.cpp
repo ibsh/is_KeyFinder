@@ -151,7 +151,7 @@ void BatchWindow::addDroppedFiles(){
     }
     // check if url is a symlink (.isSymLink doesn't seem to work on Lion)
     if(fileInfo.isSymLink() || fileInfo.symLinkTarget() != ""){
-      droppedFiles.push_back(QUrl(QFileInfo(filePath).symLinkTarget()));
+      droppedFiles.push_back(QUrl(fileInfo.symLinkTarget()));
       continue;
     }
     QString fileExt = filePath.right(3);

@@ -32,6 +32,7 @@ class SpectrumAnalyser{
 public:
 	SpectrumAnalyser(int, const Preferences&);
 	virtual Chromagram* chromagram(AudioStream*) = 0;
+  virtual ~SpectrumAnalyser();
 protected:
 	mutable QMutex mutex; // used to make chromagram functions thread-safe
 	int bins;

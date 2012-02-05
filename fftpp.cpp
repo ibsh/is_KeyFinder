@@ -32,3 +32,5 @@ FftPostProcessor::FftPostProcessor(int f, const Preferences& prefs){
 	bins = prefs.getOctaves() * prefs.getBpo();
 	fftFrameSize = prefs.getFftFrameSize();
 }
+
+FftPostProcessor::~FftPostProcessor(){ }

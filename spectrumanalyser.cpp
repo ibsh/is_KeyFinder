@@ -26,3 +26,5 @@ SpectrumAnalyser::SpectrumAnalyser(int f, const Preferences& prefs){
 	hopSize = prefs.getHopSize();
 	frameRate = f;
 }
+
+SpectrumAnalyser::~SpectrumAnalyser(){ }

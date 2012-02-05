@@ -109,12 +109,12 @@ void DetailWindow::analysisFinished(){
     shortName = filePath.mid(filePath.lastIndexOf("/") + 1);
   this->setWindowTitle("KeyFinder - Detailed Analysis - " + shortName);
   // full chromagram
-  chromagramImage = imageFromChromagram(&analysisWatcher.result().fullChromagram);
+  chromagramImage = imageFromChromagram(analysisWatcher.result().fullChromagram);
   ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
   ui->chromagramLabel->setMinimumHeight(analysisWatcher.result().fullChromagram.getBins()+2);
   ui->chromagramLabel->setMinimumWidth(analysisWatcher.result().fullChromagram.getHops()+2);
   // one octave chromagram
-  miniChromagramImage = imageFromChromagram(&analysisWatcher.result().oneOctaveChromagram);
+  miniChromagramImage = imageFromChromagram(analysisWatcher.result().oneOctaveChromagram);
   ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
   ui->miniChromagramLabel->setToolTip("This is the same chromagram data,\nreduced to a single octave.");
   // harmonic change signal
@@ -175,28 +175,28 @@ void DetailWindow::cleanUpAfterRun(){
   allowDrops = true;
 }
 
-QImage DetailWindow::imageFromChromagram(const Chromagram* ch){
+QImage DetailWindow::imageFromChromagram(const Chromagram& ch){
 	// 64 colours (plus black at index 0)
 	// don't draw individual pixels; draw blocks of chromaScaleV*chromaScaleH. Sharpens image.
-	QImage img = QImage(ch->getHops()*chromaScaleH,ch->getBins()*chromaScaleV,QImage::Format_Indexed8);
+  QImage img = QImage(ch.getHops()*chromaScaleH,ch.getBins()*chromaScaleV,QImage::Format_Indexed8);
   prefs.setImageColours(img,ui->chromaColourCombo->currentIndex());
 	// get max to normalise
 	float max = 0;
-	for(int h=0; h<ch->getHops(); h++){
-		for(int b=0; b<ch->getBins(); b++){
-			float mag = ch->getMagnitude(h,b);
+  for(int h=0; h<ch.getHops(); h++){
+    for(int b=0; b<ch.getBins(); b++){
+      float mag = ch.getMagnitude(h,b);
 			if(mag>max) max = mag;
 		}
 	}
 	// set pixels
-	for(int h=0; h<ch->getHops(); h++){
-		for(int b=0; b<ch->getBins(); b++){
-			int pixVal = ch->getMagnitude(h,b) / max * img.colorCount() - 1;
+  for(int h=0; h<ch.getHops(); h++){
+    for(int b=0; b<ch.getBins(); b++){
+      int pixVal = ch.getMagnitude(h,b) / max * img.colorCount() - 1;
 			if(pixVal<1)
 				pixVal = 1;
 			for(int x=0; x<chromaScaleH; x++)
 				for(int y=0; y<chromaScaleV; y++)
-					img.setPixel(h*chromaScaleH+x, (ch->getBins()-1-b)*chromaScaleV+y, pixVal);
+          img.setPixel(h*chromaScaleH+x, (ch.getBins()-1-b)*chromaScaleV+y, pixVal);
 		}
 	}
 	return img;

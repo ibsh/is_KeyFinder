@@ -31,6 +31,7 @@ public:
 	FftPostProcessor(int, const Preferences&);
 	virtual std::vector<float> chromaVector(fftw_complex*) const = 0;
 	virtual void printKernel() const = 0;
+  virtual ~FftPostProcessor();
 protected:
 	int bins;
 	int fftFrameSize;

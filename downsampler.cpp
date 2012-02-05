@@ -31,3 +31,5 @@ Downsampler* Downsampler::getDownsampler(int /* downsampleFactor */, int frameRa
 		return new SecretRabbitDownsampler();
 	}
 }
+
+Downsampler::~Downsampler(){ }

@@ -30,3 +30,5 @@ AudioFileDecoder* AudioFileDecoder::getDecoder(const char* /*filePath*/){
     throw e;
   }
 }
+
+AudioFileDecoder::~AudioFileDecoder(){ }

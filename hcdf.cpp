@@ -36,3 +36,5 @@ Segmentation* Segmentation::getSegmentation(const Preferences& prefs){
 	else
 		return new HarteHcdf();
 }
+
+Segmentation::~Segmentation(){ }
