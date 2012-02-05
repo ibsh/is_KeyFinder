@@ -26,9 +26,6 @@ KeyDetectionResult keyDetectionProcess(const KeyDetectionObject& object){
   KeyDetectionResult result;
   result.batchRow = object.batchRow;
 
-  QByteArray encodedPath = QFile::encodeName(object.filePath);
-  const char* filePathCh = encodedPath;
-
   // initialise stream and decode file into it.
   AudioStream* astrm = NULL;
   AudioFileDecoder* dec = NULL;
@@ -41,7 +38,7 @@ KeyDetectionResult keyDetectionProcess(const KeyDetectionObject& object){
   }
 
   try{
-    astrm = dec->decodeFile(filePathCh);
+    astrm = dec->decodeFile(object.filePath);
     delete dec;
   }catch(Exception){
     delete astrm;
