@@ -28,7 +28,7 @@
 class AudioFileDecoder{
 public:
   virtual AudioStream* decodeFile(const char*) = 0;
-	static AudioFileDecoder* getDecoder(const char*);
+  static AudioFileDecoder* getDecoder();
   virtual ~AudioFileDecoder();
 };
 

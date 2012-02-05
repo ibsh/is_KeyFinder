@@ -27,7 +27,7 @@
   many edge cases, though they should at least fail gracefully.
 */
 
-QMutex constructor_mutex; // global mutex to stop first few analysis threads failing
+QMutex constructor_mutex; // global mutex on file resolution
 
 TagLibMetadata::TagLibMetadata(const QString& filePath){
 

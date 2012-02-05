@@ -84,7 +84,7 @@ AudioStream* LibAvDecoder::decodeFile(const char* fileName){
     throw Exception();
   }
 	if(av_find_stream_info(fCtx) < 0){
-		qCritical("Failed to find stream information in file: %s", fileName);
+    qCritical("Failed to find stream information in file: %s", fileName);
 		throw Exception();
   }
 	int audioStream = -1;
@@ -95,14 +95,14 @@ AudioStream* LibAvDecoder::decodeFile(const char* fileName){
 		}
   }
 	if(audioStream == -1){
-		qCritical("Failed to find an audio stream in file: %s", fileName);
+    qCritical("Failed to find an audio stream in file: %s", fileName);
 		throw Exception();
   }
 	// Determine stream codec
 	cCtx = fCtx->streams[audioStream]->codec;
 	codec = avcodec_find_decoder(cCtx->codec_id);
 	if(codec == NULL){
-		qCritical("Audio stream has unsupported codec in file: %s", fileName);
+    qCritical("Audio stream has unsupported codec in file: %s", fileName);
 		throw Exception();
   }
 	if(avcodec_open2(cCtx, codec, &opts) < 0){

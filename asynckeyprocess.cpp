@@ -33,7 +33,7 @@ KeyDetectionResult keyDetectionProcess(const KeyDetectionObject& object){
   AudioStream* astrm = NULL;
   AudioFileDecoder* dec = NULL;
   try{
-    dec = AudioFileDecoder::getDecoder(filePathCh);
+    dec = AudioFileDecoder::getDecoder();
   }catch(Exception){
     delete dec;
     result.errorMessage = "Could not get decoder.";
