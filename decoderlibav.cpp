@@ -66,7 +66,7 @@ int LibAvDecoder::libAv_mutexManager(void** av_mutex, enum AVLockOp op){
 
 QMutex decoder_mutex; // global mutex to stop first few analysis threads failing
 
-AudioStream* LibAvDecoder::decodeFile(const char* fileName){
+AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
 
   QMutexLocker locker(&decoder_mutex); // mutex the preparatory section of this method
 
@@ -78,13 +78,17 @@ AudioStream* LibAvDecoder::decodeFile(const char* fileName){
 	AVDictionary* opts = NULL;
   av_dict_set(&opts, "b", "2.5M", 0);
 
+  // convert filepath
+  QByteArray encodedPath = QFile::encodeName(filePath);
+  const char* filePathCh = encodedPath;
+
   // open file
-  if(avformat_open_input(&fCtx, fileName, NULL, NULL) != 0){
-    qCritical("Failed to open audio file: %s", fileName);
+  if(avformat_open_input(&fCtx, filePathCh, NULL, NULL) != 0){
+    qCritical("Failed to open audio file: %s", filePathCh);
     throw Exception();
   }
 	if(av_find_stream_info(fCtx) < 0){
-    qCritical("Failed to find stream information in file: %s", fileName);
+    qCritical("Failed to find stream information in file: %s", filePathCh);
 		throw Exception();
   }
 	int audioStream = -1;
@@ -95,14 +99,14 @@ AudioStream* LibAvDecoder::decodeFile(const char* fileName){
 		}
   }
 	if(audioStream == -1){
-    qCritical("Failed to find an audio stream in file: %s", fileName);
+    qCritical("Failed to find an audio stream in file: %s", filePathCh);
 		throw Exception();
   }
 	// Determine stream codec
 	cCtx = fCtx->streams[audioStream]->codec;
 	codec = avcodec_find_decoder(cCtx->codec_id);
 	if(codec == NULL){
-    qCritical("Audio stream has unsupported codec in file: %s", fileName);
+    qCritical("Audio stream has unsupported codec in file: %s", filePathCh);
 		throw Exception();
   }
 	if(avcodec_open2(cCtx, codec, &opts) < 0){
@@ -128,7 +132,7 @@ AudioStream* LibAvDecoder::decodeFile(const char* fileName){
           if(badPacketCount < 100){
             badPacketCount++;
           }else{
-            qCritical("100 bad packets, may be DRM or corruption in file: %s", fileName);
+            qCritical("100 bad packets, may be DRM or corruption in file: %s", filePathCh);
             throw Exception();
           }
         }

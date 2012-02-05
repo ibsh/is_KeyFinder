@@ -36,11 +36,12 @@ extern "C"{
 }
 
 #include <QMutex>
+#include <QFile>
 
 class LibAvDecoder : public AudioFileDecoder{
 public:
 	LibAvDecoder();
-  virtual AudioStream* decodeFile(const char*);
+  virtual AudioStream* decodeFile(const QString&);
 private:
   int decodePacket(AVCodecContext*, AVPacket*, AudioStream*);
 	static int libAv_mutexManager(void**, enum AVLockOp);

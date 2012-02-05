@@ -22,12 +22,14 @@
 #ifndef AUDIOFILEDECODER_H
 #define AUDIOFILEDECODER_H
 
+#include <QString>
+
 #include "exception.h"
 #include "audiostream.h"
 
 class AudioFileDecoder{
 public:
-  virtual AudioStream* decodeFile(const char*) = 0;
+  virtual AudioStream* decodeFile(const QString&) = 0;
   static AudioFileDecoder* getDecoder();
   virtual ~AudioFileDecoder();
 };
