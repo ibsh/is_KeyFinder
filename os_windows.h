@@ -22,8 +22,12 @@
 #ifndef OS_WINDOWS_H
 #define OS_WINDOWS_H
 
+#ifdef Q_OS_WIN
+
 #include <windows.h>
 
 char* utf16_to_utf8(const wchar_t*);
+
+#endif
 
 #endif // OS_WINDOWS_H
