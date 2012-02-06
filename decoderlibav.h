@@ -38,6 +38,10 @@ extern "C"{
 #include <QMutex>
 #include <QFile>
 
+#ifdef Q_OS_WIN
+  #include "os_windows.h"
+#endif
+
 class LibAvDecoder : public AudioFileDecoder{
 public:
 	LibAvDecoder();

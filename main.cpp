@@ -29,9 +29,13 @@
 
 #include <fstream>
 
-void MacLoggingHandler(QtMsgType type, const char *msg) {
+void LoggingHandler(QtMsgType type, const char *msg) {
   std::ofstream logfile;
+#ifdef Q_OS_MAC
   logfile.open(QDir::homePath().toLocal8Bit() + "/Library/Logs/KeyFinder.log",std::ios::app);
+#else
+  logfile.open("KeyFinder_log.txt",std::ios::app);
+#endif
   logfile << QDate::currentDate().toString("yyyy-MM-dd").toLocal8Bit().data() << " ";
   logfile << QTime::currentTime().toString("hh:mm:ss.zzz").toLocal8Bit().data() << " ";
   switch (type) {
@@ -51,48 +55,57 @@ void MacLoggingHandler(QtMsgType type, const char *msg) {
   logfile.close();
 }
 
+int commandLineInterface(int argc, char* argv[]){
+
+  QString filePath = "";
+  bool writeToTags = false;
+
+  for(int i = 1; i < argc; i++){
+    if(std::strcmp(argv[i], "-f") == 0 && i+1 < argc)
+      filePath = argv[++i];
+    else if (std::strcmp(argv[i], "-w") == 0)
+      writeToTags = true;
+  }
+  if(filePath.isEmpty())
+    return -1; // not a valid CLI attempt, launch GUI
+
+  Preferences prefs;
+  KeyDetectionObject object(filePath, prefs, 0);
+  KeyDetectionResult result = keyDetectionProcess(object);
+  if(!result.errorMessage.isEmpty()){
+    std::cerr << result.errorMessage.toLocal8Bit().data();
+    return 1;
+  }
+
+  std::cout << prefs.getKeyCode(result.globalKeyEstimate).toLocal8Bit().data();
+
+  if(writeToTags){
+    TagLibMetadata md(filePath);
+    QString written = md.writeKeyToMetadata(result.globalKeyEstimate,prefs);
+    if(written.isEmpty()){
+      std::cerr << "Could not write to tags" << std::endl;
+      return 2;
+    }
+  }
+
+  return 0;
+
+}
+
 int main(int argc, char* argv[]){
 
   QCoreApplication::setOrganizationName("Ibrahim Sha'ath");
   QCoreApplication::setOrganizationDomain("ibrahimshaath.co.uk");
   QCoreApplication::setApplicationName("KeyFinder");
 
-#ifdef Q_OS_MAC
-  qInstallMsgHandler(MacLoggingHandler);
-#endif
-
   // primitive command line use
   if(argc > 2){
-    QString filePath = "";
-    bool writeToTags = false;
-    for(int i = 1; i < argc; i++){
-      if(std::strcmp(argv[i], "-f") == 0 && i+1 < argc){
-        filePath = argv[++i];
-      }else if (std::strcmp(argv[i], "-w") == 0){
-        writeToTags = true;
-      }
-    }
-    if(!filePath.isEmpty()){
-      Preferences prefs;
-      KeyDetectionObject object(filePath, prefs, 0);
-      KeyDetectionResult result = keyDetectionProcess(object);
-      if(result.errorMessage == ""){
-        std::cout << prefs.getKeyCode(result.globalKeyEstimate).toLocal8Bit().data();
-        if(writeToTags){
-          TagLibMetadata md(filePath);
-          QString written = md.writeKeyToMetadata(result.globalKeyEstimate,prefs);
-          if(written.isEmpty()){
-            std::cerr << "Could not write to tags" << std::endl;
-            return 2;
-          }
-        }
-        return 0;
-      }else{
-        std::cerr << result.errorMessage.toLocal8Bit().data();
-        return 1;
-      }
-    }
+    int cliResult = commandLineInterface(argc,argv);
+    if(cliResult >= 0)
+      return cliResult;
   }
+
+  qInstallMsgHandler(LoggingHandler);
 
   KeyFinderApplication a(argc, argv);
 

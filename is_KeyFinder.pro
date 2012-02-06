@@ -56,7 +56,8 @@ SOURCES += \
     asynckeyobject.cpp \
     asynckeyprocess.cpp \
     asyncmetadatareadobject.cpp \
-    asyncmetadatareadprocess.cpp
+    asyncmetadatareadprocess.cpp \
+    os_windows.cpp
 
 HEADERS  += \
     decoderlibav.h \
@@ -93,7 +94,8 @@ HEADERS  += \
     asynckeyresult.h \
     asyncmetadatareadobject.h \
     asyncmetadatareadprocess.h \
-    asyncmetadatareadresult.h
+    asyncmetadatareadresult.h \
+    os_windows.h
 
 FORMS += \
     detailwindow.ui \

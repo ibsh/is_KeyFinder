@@ -79,8 +79,13 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
   av_dict_set(&opts, "b", "2.5M", 0);
 
   // convert filepath
+#ifdef Q_OS_WIN
+  const wchar_t* filePathWc = reinterpret_cast<const wchar_t *>(filePath.constData());
+  const char* filePathCh = utf16_to_utf8(filePathWc);
+#else
   QByteArray encodedPath = QFile::encodeName(filePath);
   const char* filePathCh = encodedPath;
+#endif
 
   // open file
   if(avformat_open_input(&fCtx, filePathCh, NULL, NULL) != 0){

@@ -53,6 +53,10 @@
 #include <trueaudiofile.h>
 #include <wavpackfile.h>
 
+#ifdef Q_OS_WIN
+  #include "os_windows.h"
+#endif
+
 #include "preferences.h"
 
 class TagLibMetadata{

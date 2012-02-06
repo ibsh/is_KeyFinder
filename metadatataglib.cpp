@@ -86,8 +86,9 @@ TagLibMetadata::TagLibMetadata(const QString& filePath){
 
   // or else...
   f = NULL;
+
 #ifdef Q_OS_WIN
-  qDebug("TagLib returned NULL File");
+  qDebug("TagLib returned NULL File for %s",utf16_to_utf8(filePathCh));
 #else
   qDebug("TagLib returned NULL File for %s",filePathCh);
 #endif
@@ -211,7 +212,7 @@ QString TagLibMetadata::getGrouping() const{
   }
 
 #ifdef Q_OS_WIN
-  qDebug("Grouping tag read failed all tests");
+  qDebug("Grouping tag read failed all tests on %s",utf16_to_utf8(f->name()));
 #else
   qDebug("Grouping tag read failed all tests on %s",f->name());
 #endif
@@ -287,7 +288,7 @@ QString TagLibMetadata::getKey() const{
   }
 
 #ifdef Q_OS_WIN
-  qDebug("Key tag read failed all tests");
+  qDebug("Key tag read failed all tests on %s",utf16_to_utf8(f->name()));
 #else
   qDebug("Key tag read failed all tests on %s",f->name());
 #endif
@@ -357,7 +358,7 @@ int TagLibMetadata::setGrouping(const QString& grp){
       TagLib::ID3v1::Tag* tagTestId3v1 = fileTestMpeg->ID3v1Tag();
       if(tagTestId3v1 != NULL){
 #ifdef Q_OS_WIN
-        qDebug("ID3v1 does not support the Grouping tag");
+        qDebug("ID3v1 does not support the Grouping tag (%s)",utf16_to_utf8(f->name()));
 #else
         qDebug("ID3v1 does not support the Grouping tag (%s)",f->name());
 #endif
@@ -416,7 +417,7 @@ int TagLibMetadata::setGrouping(const QString& grp){
   }
 
 #ifdef Q_OS_WIN
-  qDebug("Grouping tag write failed all tests");
+  qDebug("Grouping tag write failed all tests on %s",utf16_to_utf8(f->name()));
 #else
   qDebug("Grouping tag write failed all tests on %s",f->name());
 #endif
@@ -444,7 +445,7 @@ int TagLibMetadata::setKey(const QString& key){
       TagLib::ID3v1::Tag* tagTestId3v1 = fileTestMpeg->ID3v1Tag();
       if(tagTestId3v1 != NULL){
 #ifdef Q_OS_WIN
-        qDebug("ID3v1 does not support the Key tag");
+        qDebug("ID3v1 does not support the Key tag (%s)",utf16_to_utf8(f->name()));
 #else
         qDebug("ID3v1 does not support the Key tag (%s)",f->name());
 #endif
@@ -482,7 +483,7 @@ int TagLibMetadata::setKey(const QString& key){
   TagLib::MP4::Tag* tagTestMp4 = dynamic_cast<TagLib::MP4::Tag*>(f->tag());
   if(tagTestMp4 != NULL){
 #ifdef Q_OS_WIN
-    qDebug("iTunes metadata does not support the Key tag");
+    qDebug("iTunes metadata does not support the Key tag (%s)",utf16_to_utf8(f->name()));
 #else
     qDebug("iTunes metadata does not support the Key tag (%s)",f->name());
 #endif
@@ -499,7 +500,7 @@ int TagLibMetadata::setKey(const QString& key){
   TagLib::APE::Tag* tagTestApe = dynamic_cast<TagLib::APE::Tag*>(f->tag());
   if(tagTestApe != NULL){
 #ifdef Q_OS_WIN
-    qDebug("APE metadata does not support the Key tag");
+    qDebug("APE metadata does not support the Key tag (%s)",utf16_to_utf8(f->name()));
 #else
     qDebug("APE metadata does not support the Key tag (%s)",f->name());
 #endif
@@ -507,7 +508,7 @@ int TagLibMetadata::setKey(const QString& key){
   }
 
 #ifdef Q_OS_WIN
-  qDebug("Key tag write failed all tests");
+  qDebug("Key tag write failed all tests on %s",utf16_to_utf8(f->name()));
 #else
   qDebug("Key tag write failed all tests on %s",f->name());
 #endif
