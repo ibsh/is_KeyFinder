@@ -140,11 +140,10 @@ win32{
 	LIBS += -lavformat
 	LIBS += -lavutil
 
-	INCLUDEPATH += $$PWD/../Desktop/libsamplerate-0.1.8
 	INCLUDEPATH += $$PWD/../Desktop/libsamplerate-0.1.8/src
-	DEPENDPATH += $$PWD/../Desktop/libsamplerate-0.1.8
-	LIBS += -L$$PWD/../Desktop/libsamplerate-0.1.8/ -llibsamplerate-0
-
+	INCLUDEPATH += $$PWD/../Desktop/libsamplerate-0.1.8/src/.libs
+	DEPENDPATH += $$PWD/../Desktop/libsamplerate-0.1.8/src/.libs
+	LIBS += -L$$PWD/../Desktop/libsamplerate-0.1.8/src/.libs -llibsamplerate-0
 
 	INCLUDEPATH += $$PWD/../Desktop/taglib-1.7
 	INCLUDEPATH += $$PWD/../Desktop/taglib-1.7/include
