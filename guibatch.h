@@ -44,6 +44,7 @@ class MainMenuHandler;
   #include <Qt/QtXmlPatterns>
 #endif
 #include <QXmlResultItems>
+#include <QtNetwork/QNetworkReply>
 
 #include "guidetail.h"
 #include "guimenuhandler.h"
@@ -51,6 +52,7 @@ class MainMenuHandler;
 #include "asynckeyprocess.h"
 #include "asyncmetadatareadprocess.h"
 #include "metadatataglib.h"
+#include "_VERSION.h"
 
 
 namespace Ui {
@@ -63,6 +65,8 @@ public:
   explicit BatchWindow(MainMenuHandler* handler, QWidget* parent = 0);
   bool receiveUrls(const QList<QUrl>&);
 	~BatchWindow();
+public slots:
+  void checkForNewVersion();
 private:
 	Preferences prefs;
   void setThreadCount();
@@ -116,6 +120,7 @@ private slots:
   void progressRangeChanged(int, int);
   void progressValueChanged(int);
 
+  void receiveNetworkReply(QNetworkReply*);
 };
 
 #endif

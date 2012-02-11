@@ -26,7 +26,7 @@ AboutDialog::AboutDialog(QWidget *parent): QDialog(parent),ui(new Ui::AboutDialo
 	ui->setupUi(this);
   this->setWindowFlags(Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::CustomizeWindowHint);
 
-  ui->label_1_vn->setText("KeyFinder\nv1.10");
+  ui->label_1_vn->setText("KeyFinder\nv" + QString::number(VERSION_MAJOR) + "." + QString::number(VERSION_MINOR));
 
   ui->label_2_cp->setText("Copyright 2011-" + QString::number(QDate::currentDate().year()) + "\nIbrahim Sha'ath");
 

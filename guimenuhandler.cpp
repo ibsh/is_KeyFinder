@@ -33,10 +33,12 @@ void MainMenuHandler::preferences(){
   prefs->show();
 }
 
-void MainMenuHandler::new_Batch_Window(){
+void MainMenuHandler::new_Batch_Window(bool firstWindow){
   BatchWindow* newWin = new BatchWindow(this,0);
   newWin->setMenuBar(newMenuBar());
   newWin->show();
+  if(firstWindow)
+    newWin->checkForNewVersion();
 }
 
 void MainMenuHandler::new_Detail_Window(QString path){

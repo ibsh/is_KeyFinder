@@ -19,31 +19,10 @@
 
 *************************************************************************/
 
-#ifndef MAINMENUHANDLER_H
-#define MAINMENUHANDLER_H
+#ifndef _VERSION_H
+#define _VERSION_H
 
-// forward declaration for circular dependency
-class BatchWindow;
+const int VERSION_MAJOR = 1;
+const int VERSION_MINOR = 10;
 
-#include <QtGui>
-#include <QObject>
-
-#include "guibatch.h"
-#include "guidetail.h"
-#include "guiabout.h"
-#include "guiprefs.h"
-
-class MainMenuHandler : public QObject{
-Q_OBJECT
-public:
-  explicit MainMenuHandler(QObject *parent = 0);
-public slots:
-  void about();
-  void preferences();
-  void new_Batch_Window(bool firstWindow = false);
-  void new_Detail_Window(QString path = "");
-  void close_Window();
-  QMenuBar* newMenuBar();
-};
-
-#endif // MAINMENUHANDLER_H
+#endif // _VERSION_H

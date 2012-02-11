@@ -568,3 +568,33 @@ void BatchWindow::progressRangeChanged(int minimum, int maximum){
 void BatchWindow::progressValueChanged(int progressValue){
   ui->progressBar->setValue(progressValue);
 }
+
+void BatchWindow::checkForNewVersion(){
+  QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+  connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(receiveNetworkReply(QNetworkReply*)));
+  manager->get(QNetworkRequest(QUrl("http://www.ibrahimshaath.co.uk/keyfinder/kf.xml")));
+}
+
+void BatchWindow::receiveNetworkReply(QNetworkReply* reply){
+  QString newVersion = "";
+  if(reply->error() == QNetworkReply::NoError){
+    QXmlQuery xmlQuery;
+    xmlQuery.setFocus(reply->readAll());
+    xmlQuery.setQuery("//KeyFinder/version/@*/string(.)");
+    QStringList xmlContents;
+    xmlQuery.evaluateTo(&xmlContents);
+    if(!xmlContents.isEmpty()){
+      int latest_major = xmlContents[0].toInt();
+      int latest_minor = xmlContents[1].toInt();
+      if(latest_major > VERSION_MAJOR || latest_minor > VERSION_MINOR)
+        newVersion = xmlContents[0] + "." + xmlContents[1];
+    }
+  }
+  reply->deleteLater();
+  if(!newVersion.isEmpty()){
+    newVersion = "A new version, v" + newVersion + ", is available on <a href='http://www.ibrahimshaath.co.uk/keyfinder/'>the KeyFinder website</a>!";
+    QMessageBox msg;
+    msg.setText(newVersion);
+    msg.exec();
+  }
+}

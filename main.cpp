@@ -111,7 +111,7 @@ int main(int argc, char* argv[]){
 
   MainMenuHandler* menuHandler = new MainMenuHandler(0);
 
-  menuHandler->new_Batch_Window();
+  menuHandler->new_Batch_Window(true);
 
   return a.exec();
 }

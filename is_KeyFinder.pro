@@ -20,6 +20,7 @@ QT += core
 QT += gui
 QT += xml
 QT += xmlpatterns
+QT += network
 TEMPLATE = app
 TARGET = KeyFinder
 
@@ -95,7 +96,8 @@ HEADERS  += \
     asyncmetadatareadobject.h \
     asyncmetadatareadprocess.h \
     asyncmetadatareadresult.h \
-    os_windows.h
+    os_windows.h \
+    _VERSION.h
 
 FORMS += \
     detailwindow.ui \
