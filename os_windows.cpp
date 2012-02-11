@@ -1,7 +1,5 @@
 #include "os_windows.h"
 
-#ifdef Q_OS_WIN
-
 char* utf16_to_utf8(const wchar_t* input){
   char* buffer;
   int buffSize, result;
@@ -10,5 +8,3 @@ char* utf16_to_utf8(const wchar_t* input){
   result = WideCharToMultiByte(CP_UTF8, 0, input, -1, buffer, buffSize, NULL, NULL);
   return (result > 0 && result <= buffSize) ? buffer : NULL;
 }
-
-#endif

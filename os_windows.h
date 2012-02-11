@@ -22,12 +22,10 @@
 #ifndef OS_WINDOWS_H
 #define OS_WINDOWS_H
 
-#ifdef Q_OS_WIN
-
 #include <windows.h>
 
-char* utf16_to_utf8(const wchar_t*);
+// This file should only ever be loaded on Windows
 
-#endif
+char* utf16_to_utf8(const wchar_t*);
 
 #endif // OS_WINDOWS_H
