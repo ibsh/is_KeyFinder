@@ -26,6 +26,8 @@ KeyDetectionResult keyDetectionProcess(const AsyncFileObject& object){
   KeyDetectionResult result;
   result.batchRow = object.batchRow;
 
+  qDebug("Analysing %s", object.filePath.toLocal8Bit().data());
+
   // initialise stream and decode file into it.
   AudioStream* astrm = NULL;
   AudioFileDecoder* dec = NULL;
