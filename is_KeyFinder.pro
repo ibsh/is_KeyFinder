@@ -140,17 +140,14 @@ win32{
 	LIBS += -lavformat
 	LIBS += -lavutil
 
-	INCLUDEPATH += $$PWD/../Desktop/libsamplerate-0.1.8/src
-	INCLUDEPATH += $$PWD/../Desktop/libsamplerate-0.1.8/src/.libs
-	DEPENDPATH += $$PWD/../Desktop/libsamplerate-0.1.8/src/.libs
-	LIBS += -L$$PWD/../Desktop/libsamplerate-0.1.8/src/.libs -llibsamplerate-0
+	# same paths as libav
+	LIBS += -llibsamplerate-0
 
 	INCLUDEPATH += $$PWD/../Desktop/taglib-1.7
 	INCLUDEPATH += $$PWD/../Desktop/taglib-1.7/include
 	DEPENDPATH += $$PWD/../Desktop/taglib-1.7/taglib
 	LIBS += -L$$PWD/../Desktop/taglib-1.7/taglib -llibtag
 
-	OTHER_FILES += \
-		is_KeyFinder.ico
+	OTHER_FILES += is_KeyFinder.ico
 	RC_FILE = win32.rc
 }
