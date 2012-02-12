@@ -37,10 +37,10 @@
 #include "hcdf.h"
 #include "keyclassifier.h"
 
-#include "asynckeyobject.h"
+#include "asyncfileobject.h"
 #include "asynckeyresult.h"
 
 // trying this as a global function rather than an object...
-KeyDetectionResult keyDetectionProcess(const KeyDetectionObject&);
+KeyDetectionResult keyDetectionProcess(const AsyncFileObject&);
 
 #endif // KEYFINDERMODEL_H

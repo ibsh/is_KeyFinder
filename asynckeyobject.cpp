@@ -19,9 +19,9 @@
 
 *************************************************************************/
 
-#include "asynckeyobject.h"
+#include "asyncfileobject.h"
 
-KeyDetectionObject::KeyDetectionObject(const QString& f, const Preferences& p, int r){
+AsyncFileObject::AsyncFileObject(const QString& f, const Preferences& p, int r){
   filePath = f;
   prefs = p;
   batchRow = r;

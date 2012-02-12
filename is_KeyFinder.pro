@@ -56,7 +56,6 @@ SOURCES += \
     keyfinderapplication.cpp \
     asynckeyobject.cpp \
     asynckeyprocess.cpp \
-    asyncmetadatareadobject.cpp \
     asyncmetadatareadprocess.cpp \
     os_windows.cpp
 
@@ -90,14 +89,13 @@ HEADERS  += \
     guimenuhandler.h \
     guiprefs.h \
     keyfinderapplication.h \
-    asynckeyobject.h \
     asynckeyprocess.h \
     asynckeyresult.h \
-    asyncmetadatareadobject.h \
     asyncmetadatareadprocess.h \
     asyncmetadatareadresult.h \
     os_windows.h \
-    _VERSION.h
+    _VERSION.h \
+    asyncfileobject.h
 
 FORMS += \
     detailwindow.ui \

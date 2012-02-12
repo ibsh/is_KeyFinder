@@ -21,7 +21,7 @@
 
 #include "asynckeyprocess.h"
 
-KeyDetectionResult keyDetectionProcess(const KeyDetectionObject& object){
+KeyDetectionResult keyDetectionProcess(const AsyncFileObject& object){
 
   KeyDetectionResult result;
   result.batchRow = object.batchRow;

@@ -287,7 +287,8 @@ void BatchWindow::addNewRow(QString fileUrl){
   ui->tableWidget->setItem(newRow,COL_FILEPATH,new QTableWidgetItem());
   ui->tableWidget->item(newRow,COL_FILEPATH)->setText(fileUrl);
   ui->tableWidget->setItem(newRow,COL_FILENAME,new QTableWidgetItem());
-  ui->tableWidget->item(newRow,COL_FILENAME)->setText(fileUrl.mid(fileUrl.lastIndexOf(QDir::separator()) + 1));
+  // note forward slash not QDir::separator here
+  ui->tableWidget->item(newRow,COL_FILENAME)->setText(fileUrl.mid(fileUrl.lastIndexOf("/") + 1));
   ui->tableWidget->setItem(newRow,COL_KEY,new QTableWidgetItem());
   if(newRow % 2 == 0){
     ui->tableWidget->item(newRow,COL_KEY)->setBackground(keyRow);
@@ -302,10 +303,10 @@ void BatchWindow::addFilesFinished(){
 
 void BatchWindow::readMetadata(){
   ui->statusLabel->setText("Reading tags...");
-  QList<MetadataReadObject> objects;
+  QList<AsyncFileObject> objects;
   for(int row = 0; row < (signed)ui->tableWidget->rowCount(); row++){
     if(ui->tableWidget->item(row,COL_STATUS)->text() == STATUS_NEW)
-      objects.push_back(MetadataReadObject(ui->tableWidget->item(row,COL_FILEPATH)->text(),prefs,row));
+      objects.push_back(AsyncFileObject(ui->tableWidget->item(row,COL_FILEPATH)->text(),prefs,row));
   }
   QFuture<MetadataReadResult> metadataReadFuture = QtConcurrent::mapped(objects, metadataReadProcess);
   metadataReadWatcher.setFuture(metadataReadFuture);
@@ -408,11 +409,11 @@ void BatchWindow::markRowSkipped(int row, bool skip){
 }
 
 void BatchWindow::runAnalysis(){
-  QList<KeyDetectionObject> objects;
+  QList<AsyncFileObject> objects;
   for(int row = 0; row < ui->tableWidget->rowCount(); row++){
     QString status = ui->tableWidget->item(row,COL_STATUS)->text();
     if(status == STATUS_NEW || status == STATUS_TAGSREAD)
-      objects.push_back(KeyDetectionObject(ui->tableWidget->item(row,COL_FILEPATH)->text(),prefs,row));
+      objects.push_back(AsyncFileObject(ui->tableWidget->item(row,COL_FILEPATH)->text(),prefs,row));
   }
   QFuture<KeyDetectionResult> analysisFuture = QtConcurrent::mapped(objects, keyDetectionProcess);
   analysisWatcher.setFuture(analysisFuture);

@@ -153,18 +153,17 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
 }
 
 int LibAvDecoder::decodePacket(AVCodecContext* cCtx, AVPacket* avpkt, AudioStream* ab){
-  //int16_t outputBuffer[AVCODEC_MAX_AUDIO_FRAME_SIZE];
-  DECLARE_ALIGNED(16,int16_t,outputBuffer)[AVCODEC_MAX_AUDIO_FRAME_SIZE];
+  // doubled buffer size, has helped avoid apparent segfaults
+  DECLARE_ALIGNED(16, int16_t, outputBuffer)[AVCODEC_MAX_AUDIO_FRAME_SIZE * 2];
 	int16_t *samples = (int16_t*)outputBuffer;
-	int outputBufferSize, bytesConsumed;
-	while (avpkt->size > 0) {
-    outputBufferSize = sizeof(outputBuffer);
-    bytesConsumed = avcodec_decode_audio3(cCtx, samples, &outputBufferSize, avpkt);
+  while(avpkt->size > 0){
+    int outputBufferSize = sizeof(outputBuffer);
+    int bytesConsumed = avcodec_decode_audio3(cCtx, samples, &outputBufferSize, avpkt);
     if(bytesConsumed <= 0){ // < 0 for an error, == 0 for no frame data decompressed
       avpkt->size = 0;
 			return 1;
 		}else{
-			int newSamplesDecoded = outputBufferSize/sizeof(int16_t);
+      int newSamplesDecoded = outputBufferSize / sizeof(int16_t);
 			int oldSampleCount = ab->getSampleCount();
       try{
         ab->addToSampleCount(newSamplesDecoded);
@@ -172,7 +171,7 @@ int LibAvDecoder::decodePacket(AVCodecContext* cCtx, AVPacket* avpkt, AudioStrea
 				throw e;
 			}
 			for(int i=0; i<newSamplesDecoded; i++)
-				ab->setSample(oldSampleCount+i,(float)samples[i]); // can divide samples[i] by 32768 if you want unity values. Makes no difference.
+        ab->setSample(oldSampleCount+i,(float)samples[i]);
     }
 		if(bytesConsumed < avpkt->size){
       size_t newLength = avpkt->size - bytesConsumed;

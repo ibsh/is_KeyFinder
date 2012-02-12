@@ -88,8 +88,8 @@ void DetailWindow::runAnalysis(){
   ui->chromaColourCombo->setEnabled(false);
   ui->runButton->setEnabled(false);
 	// and proceed
-  QList<KeyDetectionObject> objects;
-  objects.push_back(KeyDetectionObject(filePath,prefs,-1));
+  QList<AsyncFileObject> objects;
+  objects.push_back(AsyncFileObject(filePath,prefs,-1));
 
   analysisFuture = QtConcurrent::mapped(objects, keyDetectionProcess);
   analysisWatcher.setFuture(analysisFuture);

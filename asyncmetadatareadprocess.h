@@ -25,9 +25,9 @@
 #include "preferences.h"
 #include "metadatataglib.h"
 
-#include "asyncmetadatareadobject.h"
+#include "asyncfileobject.h"
 #include "asyncmetadatareadresult.h"
 
-MetadataReadResult metadataReadProcess(const MetadataReadObject&);
+MetadataReadResult metadataReadProcess(const AsyncFileObject&);
 
 #endif // ASYNCMETADATAREADPROCESS_H

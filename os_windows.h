@@ -22,9 +22,11 @@
 #ifndef OS_WINDOWS_H
 #define OS_WINDOWS_H
 
-#include <windows.h>
+#include <QtGlobal> // to get access to Q_OS_WIN macro
 
-// This file should only ever be loaded on Windows
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
 
 char* utf16_to_utf8(const wchar_t*);
 

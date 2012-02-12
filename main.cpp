@@ -70,7 +70,7 @@ int commandLineInterface(int argc, char* argv[]){
     return -1; // not a valid CLI attempt, launch GUI
 
   Preferences prefs;
-  KeyDetectionObject object(filePath, prefs, 0);
+  AsyncFileObject object(filePath, prefs, 0);
   KeyDetectionResult result = keyDetectionProcess(object);
   if(!result.errorMessage.isEmpty()){
     std::cerr << result.errorMessage.toLocal8Bit().data();

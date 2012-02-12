@@ -19,10 +19,18 @@
 
 *************************************************************************/
 
-#include "asyncmetadatareadobject.h"
+#ifndef ASYNCFILEOBJECT_H
+#define ASYNCFILEOBJECT_H
 
-MetadataReadObject::MetadataReadObject(const QString& f, const Preferences& p, int r){
-  filePath = f;
-  prefs = p;
-  batchRow = r;
-}
+#include <QString>
+#include "preferences.h"
+
+class AsyncFileObject{
+public:
+  AsyncFileObject(const QString&, const Preferences&, int);
+  QString filePath;
+  Preferences prefs;
+  int batchRow;
+};
+
+#endif // ASYNCFILEOBJECT_H
