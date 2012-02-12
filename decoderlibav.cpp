@@ -148,13 +148,19 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
     av_free_packet(&avpkt);
 	}
 	avcodec_close(cCtx);
-	av_close_input_file(fCtx);
+  av_close_input_file(fCtx);
 	return astrm;
 }
 
 int LibAvDecoder::decodePacket(AVCodecContext* cCtx, AVPacket* avpkt, AudioStream* ab){
   // doubled buffer size, has helped avoid apparent segfaults
-  DECLARE_ALIGNED(16, int16_t, outputBuffer)[AVCODEC_MAX_AUDIO_FRAME_SIZE * 2];
+  // on Windows, but introduced them on Mac.
+#ifdef Q_OS_WIN
+  int bufferSize = AVCODEC_MAX_AUDIO_FRAME_SIZE * 2;
+#else
+  int bufferSize = AVCODEC_MAX_AUDIO_FRAME_SIZE;
+#endif
+  DECLARE_ALIGNED(16, int16_t, outputBuffer)[bufferSize];
 	int16_t *samples = (int16_t*)outputBuffer;
   while(avpkt->size > 0){
     int outputBufferSize = sizeof(outputBuffer);
@@ -162,22 +168,21 @@ int LibAvDecoder::decodePacket(AVCodecContext* cCtx, AVPacket* avpkt, AudioStrea
     if(bytesConsumed <= 0){ // < 0 for an error, == 0 for no frame data decompressed
       avpkt->size = 0;
 			return 1;
-		}else{
-      int newSamplesDecoded = outputBufferSize / sizeof(int16_t);
-			int oldSampleCount = ab->getSampleCount();
-      try{
-        ab->addToSampleCount(newSamplesDecoded);
-			}catch(Exception& e){
-				throw e;
-			}
-			for(int i=0; i<newSamplesDecoded; i++)
-        ab->setSample(oldSampleCount+i,(float)samples[i]);
     }
-		if(bytesConsumed < avpkt->size){
+    int newSamplesDecoded = outputBufferSize / sizeof(int16_t);
+    int oldSampleCount = ab->getSampleCount();
+    try{
+      ab->addToSampleCount(newSamplesDecoded);
+    }catch(Exception& e){
+      throw e;
+    }
+    for(int i=0; i<newSamplesDecoded; i++)
+      ab->setSample(oldSampleCount+i, (float)samples[i]);
+    if(bytesConsumed < avpkt->size){
       size_t newLength = avpkt->size - bytesConsumed;
 			uint8_t* datacopy = avpkt->data;
       avpkt->data = (uint8_t*)av_malloc(newLength);
-			memcpy(avpkt->data,datacopy + bytesConsumed,newLength);
+      memcpy(avpkt->data, datacopy + bytesConsumed, newLength);
 			av_free(datacopy);
     }
 		avpkt->size -= bytesConsumed;
