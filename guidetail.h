@@ -1,21 +1,21 @@
 /*************************************************************************
 
-	Copyright 2011 Ibrahim Sha'ath
+  Copyright 2011 Ibrahim Sha'ath
 
-	This file is part of KeyFinder.
+  This file is part of KeyFinder.
 
-	KeyFinder is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+  KeyFinder is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-	KeyFinder is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+  KeyFinder is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with KeyFinder.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License
+  along with KeyFinder.  If not, see <http://www.gnu.org/licenses/>.
 
 *************************************************************************/
 
@@ -38,50 +38,50 @@
 #include "chromagram.h"
 
 namespace Ui {
-	class DetailWindow;
+  class DetailWindow;
 }
 
 class DetailWindow : public QMainWindow{
-	Q_OBJECT
+  Q_OBJECT
 public:
-	explicit DetailWindow(QWidget *parent = 0, QString path = "");
-	~DetailWindow();
+  explicit DetailWindow(QWidget *parent = 0, QString path = "");
+  ~DetailWindow();
 private:
-	Preferences prefs;
-	QString filePath;
+  Preferences prefs;
+  QString filePath;
 
   QFuture<KeyDetectionResult> analysisFuture;
   QFutureWatcher<KeyDetectionResult> analysisWatcher;
 
-	bool allowDrops;
-	void dragEnterEvent(QDragEnterEvent*);
-	void dropEvent(QDropEvent*);
+  bool allowDrops;
+  void dragEnterEvent(QDragEnterEvent*);
+  void dropEvent(QDropEvent*);
   void runAnalysis();
   void cleanUpAfterRun();
 
-	// UI
-	Ui::DetailWindow* ui;
-	std::vector<QLabel*> keyLabels;
-	QImage chromagramImage;
-	QImage miniChromagramImage;
-	QImage harmonicChangeImage;
-	QImage colourScaleImage;
-	int chromaScaleV;
-	int chromaScaleH;
+  // UI
+  Ui::DetailWindow* ui;
+  std::vector<QLabel*> keyLabels;
+  QImage chromagramImage;
+  QImage miniChromagramImage;
+  QImage harmonicChangeImage;
+  QImage colourScaleImage;
+  int chromaScaleV;
+  int chromaScaleH;
   QImage imageFromChromagram(const Chromagram&);
 private slots:
-	// interaction with model thread
+  // interaction with model thread
   void analysisFinished();
-	// UI
-	void say(const QString&);
-	void on_chromaColourCombo_currentIndexChanged(int index);
-	void on_runButton_clicked();
-	void layoutScaling();
-	void blankVisualisations();
-	void deleteKeyLabels();
-	void blankKeyLabel();
-	void drawPianoKeys();
-	void drawColourScale();
+  // UI
+  void say(const QString&);
+  void on_chromaColourCombo_currentIndexChanged(int index);
+  void on_runButton_clicked();
+  void layoutScaling();
+  void blankVisualisations();
+  void deleteKeyLabels();
+  void blankKeyLabel();
+  void drawPianoKeys();
+  void drawColourScale();
 };
 
 #endif

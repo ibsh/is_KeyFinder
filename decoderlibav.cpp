@@ -36,30 +36,30 @@ int LibAvDecoder::libAv_mutexManager(void** av_mutex, enum AVLockOp op){
   QMutexLocker locker(&meta_mutex);
   QMutex* kf_mutex;
   switch(op){
-    case AV_LOCK_CREATE:
-      try{
-        kf_mutex = new QMutex();
-        *av_mutex = kf_mutex;
-      }catch(...){
-        return 1;
-      }
+  case AV_LOCK_CREATE:
+    try{
+    kf_mutex = new QMutex();
+    *av_mutex = kf_mutex;
+  }catch(...){
+    return 1;
+  }
+    return 0;
+  case AV_LOCK_OBTAIN:
+    kf_mutex = (QMutex*)*av_mutex;
+    if(kf_mutex->tryLock()){
       return 0;
-    case AV_LOCK_OBTAIN:
-      kf_mutex = (QMutex*)*av_mutex;
-      if(kf_mutex->tryLock()){
-        return 0;
-      }else{
-        return 1;
-      }
-    case AV_LOCK_RELEASE:
-      kf_mutex = (QMutex*)*av_mutex;
-      kf_mutex->unlock();
-      return 0;
-    case AV_LOCK_DESTROY:
-      kf_mutex = (QMutex*)*av_mutex;
-      delete kf_mutex;
-      *av_mutex = NULL;
-      return 0;
+    }else{
+      return 1;
+    }
+  case AV_LOCK_RELEASE:
+    kf_mutex = (QMutex*)*av_mutex;
+    kf_mutex->unlock();
+    return 0;
+  case AV_LOCK_DESTROY:
+    kf_mutex = (QMutex*)*av_mutex;
+    delete kf_mutex;
+    *av_mutex = NULL;
+    return 0;
   }
   return 1;
 }

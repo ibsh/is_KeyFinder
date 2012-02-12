@@ -34,7 +34,7 @@ class BatchWindow;
 #include "guiprefs.h"
 
 class MainMenuHandler : public QObject{
-Q_OBJECT
+  Q_OBJECT
 public:
   explicit MainMenuHandler(QObject *parent = 0);
 public slots:

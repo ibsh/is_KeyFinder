@@ -1,21 +1,21 @@
 /*************************************************************************
 
-	Copyright 2011 Ibrahim Sha'ath
+  Copyright 2011 Ibrahim Sha'ath
 
-	This file is part of KeyFinder.
+  This file is part of KeyFinder.
 
-	KeyFinder is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+  KeyFinder is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-	KeyFinder is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+  KeyFinder is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with KeyFinder.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License
+  along with KeyFinder.  If not, see <http://www.gnu.org/licenses/>.
 
 *************************************************************************/
 
@@ -34,44 +34,44 @@ The filter coefficients are all magic numbers, so this downsampler is only for 4
 
 class Binode{
 public:	
-	Binode(float x = 0): l(NULL), r(NULL), n(x){}
-	Binode* l, *r;
-	float n;
+  Binode(float x = 0): l(NULL), r(NULL), n(x){}
+  Binode* l, *r;
+  float n;
 };
 
 AudioStream* PrimaryDownsampler::downsample(AudioStream* instrm, int factor){
-	if(factor == 1) return instrm;
-	// prep output buffer
-	AudioStream* outstrm = new AudioStream();
-	outstrm->setFrameRate(instrm->getFrameRate() / factor);
-	outstrm->setChannels(instrm->getChannels());
-	int c = instrm->getChannels();
-	int ns = instrm->getSampleCount() / factor;
-	while(ns%c != 0) ns++;
-	if(instrm->getSampleCount() % factor > 0) ns += c;
-	try{
-		outstrm->addToSampleCount(ns);
-	}catch(const Exception& e){
-		throw e;
-	}
+  if(factor == 1) return instrm;
+  // prep output buffer
+  AudioStream* outstrm = new AudioStream();
+  outstrm->setFrameRate(instrm->getFrameRate() / factor);
+  outstrm->setChannels(instrm->getChannels());
+  int c = instrm->getChannels();
+  int ns = instrm->getSampleCount() / factor;
+  while(ns%c != 0) ns++;
+  if(instrm->getSampleCount() % factor > 0) ns += c;
+  try{
+    outstrm->addToSampleCount(ns);
+  }catch(const Exception& e){
+    throw e;
+  }
   // prep filter
   int filterOrder = 160;
   float gain = 11.03969310;
-	int filterDelay = filterOrder/2;
-	// create circular buffer for filter delay
-	Binode* p = new Binode(); // first node
-	Binode* q = p;
-	for(int i=0; i<filterOrder; i++){
-		q->r = new Binode(); // subsequent nodes
-		q->r->l = q;
-		q = q->r;
-	}
-	// join first and last nodes
-	p->l = q;
-	q->r = p;
-	// filter coefficients
+  int filterDelay = filterOrder/2;
+  // create circular buffer for filter delay
+  Binode* p = new Binode(); // first node
+  Binode* q = p;
+  for(int i=0; i<filterOrder; i++){
+    q->r = new Binode(); // subsequent nodes
+    q->r->l = q;
+    q = q->r;
+  }
+  // join first and last nodes
+  p->l = q;
+  q->r = p;
+  // filter coefficients
   float b[] = {
-		// 2000, 0, 161, sqrt, hamming.
+    // 2000, 0, 161, sqrt, hamming.
     -0.0022979864, -0.0014851155, -0.0005276345, +0.0005287637,
     +0.0016288105, +0.0027066298, +0.0036859262, +0.0044820600,
     +0.0050064517, +0.0051734225, +0.0049091760, +0.0041622026,
@@ -113,47 +113,47 @@ AudioStream* PrimaryDownsampler::downsample(AudioStream* instrm, int factor){
     +0.0050064517, +0.0044820600, +0.0036859262, +0.0027066298,
     +0.0016288105, +0.0005287637, -0.0005276345, -0.0014851155,
     -0.0022979864
-	};
+  };
 
-	// for each channel (should be mono by this point but just in case)
-	for(int i=0; i<c; i++){
-		q = p;
-		// clear delay buffer
-		for(int k=0; k<=filterOrder; k++){
-			q->n = 0.0;
-			q = q->r;
-		}
-		// for each frame (running off the end of the file by filterDelay)
-		for(int j=i; j<instrm->getSampleCount()+filterDelay; j+=c){
+  // for each channel (should be mono by this point but just in case)
+  for(int i=0; i<c; i++){
+    q = p;
+    // clear delay buffer
+    for(int k=0; k<=filterOrder; k++){
+      q->n = 0.0;
+      q = q->r;
+    }
+    // for each frame (running off the end of the file by filterDelay)
+    for(int j=i; j<instrm->getSampleCount()+filterDelay; j+=c){
 
-			// shuffle old samples along delay buffer
-			p = p->r;
+      // shuffle old samples along delay buffer
+      p = p->r;
 
-			// load new sample into delay buffer
-			if (j < instrm->getSampleCount())
-				p->l->n = instrm->getSample(j) / gain;
-			else
-				p->l->n = 0.0; // zero pad once we're into the delay at the end of the file
+      // load new sample into delay buffer
+      if (j < instrm->getSampleCount())
+        p->l->n = instrm->getSample(j) / gain;
+      else
+        p->l->n = 0.0; // zero pad once we're into the delay at the end of the file
 
-			if((j % (factor * c)) < c){ // only do the maths for the useful samples
-				float sum = 0.0;
-				q = p;
-				for(int k=0; k<=filterOrder; k++){
-					sum += b[k] * q->n;
-					q = q->r;
-				}
-				// don't try and set samples during the warm-up, only once we've passed filterDelay samples
-				if(j-filterDelay >= 0)
-					outstrm->setSample(((j-filterDelay) / factor) + i, sum);
-			}
-		}
-	}
-	// delete delay buffer
-	for(int k=0; k<=filterOrder; k++){
-		q = p;
-		p = p->r;
-		delete q;
-	}
-	delete instrm;
-	return outstrm;
+      if((j % (factor * c)) < c){ // only do the maths for the useful samples
+        float sum = 0.0;
+        q = p;
+        for(int k=0; k<=filterOrder; k++){
+          sum += b[k] * q->n;
+          q = q->r;
+        }
+        // don't try and set samples during the warm-up, only once we've passed filterDelay samples
+        if(j-filterDelay >= 0)
+          outstrm->setSample(((j-filterDelay) / factor) + i, sum);
+      }
+    }
+  }
+  // delete delay buffer
+  for(int k=0; k<=filterOrder; k++){
+    q = p;
+    p = p->r;
+    delete q;
+  }
+  delete instrm;
+  return outstrm;
 }

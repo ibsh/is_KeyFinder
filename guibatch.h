@@ -1,21 +1,21 @@
 /*************************************************************************
 
-	Copyright 2011 Ibrahim Sha'ath
+  Copyright 2011 Ibrahim Sha'ath
 
-	This file is part of KeyFinder.
+  This file is part of KeyFinder.
 
-	KeyFinder is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+  KeyFinder is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-	KeyFinder is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+  KeyFinder is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with KeyFinder.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License
+  along with KeyFinder.  If not, see <http://www.gnu.org/licenses/>.
 
 *************************************************************************/
 
@@ -37,11 +37,11 @@ class MainMenuHandler;
 #include <QMessageBox>
 #include <QLabel>
 #ifdef Q_OS_WIN
-  #include <QtXml/QtXml>
-  #include <QtXmlPatterns/QtXmlPatterns>
+#include <QtXml/QtXml>
+#include <QtXmlPatterns/QtXmlPatterns>
 #else
-  #include <Qt/QtXml>
-  #include <Qt/QtXmlPatterns>
+#include <Qt/QtXml>
+#include <Qt/QtXmlPatterns>
 #endif
 #include <QXmlResultItems>
 #include <QtNetwork/QNetworkReply>
@@ -56,24 +56,24 @@ class MainMenuHandler;
 
 
 namespace Ui {
-	class BatchWindow;
+  class BatchWindow;
 }
 
 class BatchWindow : public QMainWindow{
-	Q_OBJECT
+  Q_OBJECT
 public:
   explicit BatchWindow(MainMenuHandler* handler, QWidget* parent = 0);
   bool receiveUrls(const QList<QUrl>&);
-	~BatchWindow();
+  ~BatchWindow();
 public slots:
   void checkForNewVersion();
 private:
-	Preferences prefs;
+  Preferences prefs;
   void setThreadCount();
   void setGuiDefaults();
 
-	void dragEnterEvent(QDragEnterEvent*);
-	void dropEvent(QDropEvent*);
+  void dragEnterEvent(QDragEnterEvent*);
+  void dropEvent(QDropEvent*);
   QList<QUrl> droppedFiles;
   void addDroppedFiles();
   QFutureWatcher<void> addFilesWatcher;
@@ -92,9 +92,9 @@ private:
 
   bool writeToTagsAtRow(int);
 
-	// UI
-	Ui::BatchWindow* ui;
-	QLabel* initialHelpLabel;
+  // UI
+  Ui::BatchWindow* ui;
+  QLabel* initialHelpLabel;
   MainMenuHandler* menuHandler;
   QBrush keyRow;
   QBrush keyAltRow;
@@ -103,12 +103,12 @@ private:
   QBrush textError;
 private slots:
   void addFilesFinished();
-	void on_runBatchButton_clicked();
+  void on_runBatchButton_clicked();
   void on_cancelBatchButton_clicked();
-	void copySelectedFromTableWidget();
-	void writeDetectedToTags();
-	void clearDetected();
-	void runDetailedAnalysis();
+  void copySelectedFromTableWidget();
+  void writeDetectedToTags();
+  void clearDetected();
+  void runDetailedAnalysis();
 
   void analysisFinished();
   void analysisCancelled();

@@ -10,7 +10,7 @@
 #include "guibatch.h"
 
 class KeyFinderApplication : public QApplication{
-Q_OBJECT
+  Q_OBJECT
 public:
   KeyFinderApplication(int&,char**&);
 protected:
