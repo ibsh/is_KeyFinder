@@ -54,10 +54,10 @@ SOURCES += \
     guimenuhandler.cpp \
     guiprefs.cpp \
     keyfinderapplication.cpp \
-    asynckeyobject.cpp \
     asynckeyprocess.cpp \
     asyncmetadatareadprocess.cpp \
-    os_windows.cpp
+    os_windows.cpp \
+    asyncfileobject.cpp
 
 HEADERS  += \
     decoderlibav.h \
