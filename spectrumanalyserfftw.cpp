@@ -44,9 +44,6 @@ FftwAnalyser::~FftwAnalyser(){
   fftw_free(fftResult);
 }
 
-//#include <QFile>
-//#include <QTextStream>
-
 Chromagram* FftwAnalyser::chromagram(AudioStream* ab){
   QMutexLocker locker(&mutex); // Mutex this function
   Chromagram* ch = new Chromagram((ab->getSampleCount()/hopSize) + 1,bins);

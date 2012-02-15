@@ -153,13 +153,13 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
 }
 
 int LibAvDecoder::decodePacket(AVCodecContext* cCtx, AVPacket* avpkt, AudioStream* ab){
-  DECLARE_ALIGNED(16, uint8_t, outputBuffer)[(AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2];
   while(avpkt->size > 0){
-    int16_t *samples = (int16_t*)outputBuffer;
-    int outputBufferSize = sizeof(outputBuffer);
-    int bytesConsumed = avcodec_decode_audio3(cCtx, samples, &outputBufferSize, avpkt);
-    if(bytesConsumed <= 0){ // < 0 for an error, == 0 for no frame data decompressed
+    int outputBufferSize = ((AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2) * sizeof(int16_t);
+    int16_t* outputBuffer = (int16_t*)av_malloc(outputBufferSize);
+    int bytesConsumed = avcodec_decode_audio3(cCtx, outputBuffer, &outputBufferSize, avpkt);
+    if(bytesConsumed <= 0){
       avpkt->size = 0;
+      av_free(outputBuffer);
       return 1;
     }
     int newSamplesDecoded = outputBufferSize / sizeof(int16_t);
@@ -167,10 +167,11 @@ int LibAvDecoder::decodePacket(AVCodecContext* cCtx, AVPacket* avpkt, AudioStrea
     try{
       ab->addToSampleCount(newSamplesDecoded);
     }catch(Exception& e){
+      av_free(outputBuffer);
       throw e;
     }
     for(int i = 0; i < newSamplesDecoded; i++)
-      ab->setSample(oldSampleCount+i, (float)samples[i]);
+      ab->setSample(oldSampleCount+i, (float)outputBuffer[i]);
     if(bytesConsumed < avpkt->size){
       size_t newLength = avpkt->size - bytesConsumed;
       uint8_t* datacopy = avpkt->data;
@@ -179,6 +180,7 @@ int LibAvDecoder::decodePacket(AVCodecContext* cCtx, AVPacket* avpkt, AudioStrea
       av_free(datacopy);
     }
     avpkt->size -= bytesConsumed;
+    av_free(outputBuffer);
   }
   return 0;
 }
