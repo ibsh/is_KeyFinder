@@ -47,6 +47,7 @@ public:
   LibAvDecoder();
   virtual AudioStream* decodeFile(const QString&);
 private:
+  AVPacket avpkt;
   int decodePacket(AVCodecContext*, AVPacket*, AudioStream*);
   static int libAv_mutexManager(void**, enum AVLockOp);
 };

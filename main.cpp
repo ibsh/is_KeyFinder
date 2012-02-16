@@ -22,6 +22,9 @@
 #include <QtGui/QApplication>
 #include <QMenuBar>
 #include <QKeySequence>
+
+#include "decoderlibav.h"
+
 #include "keyfinderapplication.h"
 #include "guidetail.h"
 #include "guibatch.h"
@@ -97,6 +100,9 @@ int main(int argc, char* argv[]){
   QCoreApplication::setOrganizationName("Ibrahim Sha'ath");
   QCoreApplication::setOrganizationDomain("ibrahimshaath.co.uk");
   QCoreApplication::setApplicationName("KeyFinder");
+
+  // register av codecs and devices
+  av_register_all();
 
   // primitive command line use
   if(argc > 2){

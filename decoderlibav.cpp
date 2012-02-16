@@ -22,6 +22,8 @@
 #include "decoderlibav.h"
 
 // Thread safety is a bit more complex here, see av_lockmgr_register documentation
+QMutex openCodecMutex; // global mutex for avcodec_open2 (and surrounding stuff?)
+QMutex closeCodecMutex; // global mutex for avcodec_close
 
 LibAvDecoder::LibAvDecoder(){
   if(av_lockmgr_register(libAv_mutexManager)){
@@ -30,10 +32,7 @@ LibAvDecoder::LibAvDecoder(){
   }
 }
 
-QMutex meta_mutex; // global mutex to stop mutex manager freaking (?)
-
 int LibAvDecoder::libAv_mutexManager(void** av_mutex, enum AVLockOp op){
-  QMutexLocker locker(&meta_mutex);
   QMutex* kf_mutex;
   switch(op){
   case AV_LOCK_CREATE:
@@ -64,23 +63,18 @@ int LibAvDecoder::libAv_mutexManager(void** av_mutex, enum AVLockOp op){
   return 1;
 }
 
-QMutex decoder_mutex; // global mutex to stop first few analysis threads failing
-
 AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
 
-  QMutexLocker locker(&decoder_mutex); // mutex the preparatory section of this method
+  QMutexLocker openLocker(&openCodecMutex);
 
-  av_register_all();
-
-  AVCodec *codec = NULL;
-  AVFormatContext *fCtx = NULL;
-  AVCodecContext *cCtx = NULL;
-  AVDictionary* opts = NULL;
-  av_dict_set(&opts, "b", "2.5M", 0);
+  AVCodec* codec = NULL;
+  AVFormatContext* fCtx = NULL;
+  AVCodecContext* cCtx = NULL;
+  AVDictionary* dict = NULL;
 
   // convert filepath
 #ifdef Q_OS_WIN
-  const wchar_t* filePathWc = reinterpret_cast<const wchar_t *>(filePath.constData());
+  const wchar_t* filePathWc = reinterpret_cast<const wchar_t*>(filePath.constData());
   const char* filePathCh = utf16_to_utf8(filePathWc);
 #else
   QByteArray encodedPath = QFile::encodeName(filePath);
@@ -114,19 +108,18 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
     qCritical("Audio stream has unsupported codec in file: %s", filePathCh);
     throw Exception();
   }
-  if(avcodec_open2(cCtx, codec, &opts) < 0){
+  // Open codec
+  if(avcodec_open2(cCtx, codec, &dict) < 0){
     qCritical("Error opening audio codec: %s", codec->long_name);
     throw Exception();
   }
-
-  locker.~QMutexLocker(); // unlock mutex
+  openLocker.~QMutexLocker();
 
   // Prep buffer
   AudioStream *astrm = new AudioStream();
   astrm->setFrameRate(cCtx->sample_rate);
   astrm->setChannels(cCtx->channels);
   // Decode stream
-  AVPacket avpkt;
   av_init_packet(&avpkt);
   int badPacketCount = 0;
   while(av_read_frame(fCtx, &avpkt) == 0){
@@ -147,7 +140,11 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
     }
     av_free_packet(&avpkt);
   }
+
+  QMutexLocker closeLocker(&closeCodecMutex);
   avcodec_close(cCtx);
+  closeLocker.~QMutexLocker();
+
   av_close_input_file(fCtx);
   return astrm;
 }
