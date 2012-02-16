@@ -42,14 +42,14 @@ extern "C"{
 #include "os_windows.h"
 #endif
 
+int libAvMutexManager(void**, enum AVLockOp);
+
 class LibAvDecoder : public AudioFileDecoder{
 public:
-  LibAvDecoder();
   virtual AudioStream* decodeFile(const QString&);
 private:
   AVPacket avpkt;
   int decodePacket(AVCodecContext*, AVPacket*, AudioStream*);
-  static int libAv_mutexManager(void**, enum AVLockOp);
 };
 
 #endif

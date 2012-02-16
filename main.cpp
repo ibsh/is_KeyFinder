@@ -101,7 +101,9 @@ int main(int argc, char* argv[]){
   QCoreApplication::setOrganizationDomain("ibrahimshaath.co.uk");
   QCoreApplication::setApplicationName("KeyFinder");
 
-  // register av codecs and devices
+  // libav setup
+  if(av_lockmgr_register(libAvMutexManager))
+    qCritical("Failed to register LibAV concurrency manager");
   av_register_all();
 
   // primitive command line use

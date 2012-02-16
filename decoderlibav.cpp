@@ -21,51 +21,7 @@
 
 #include "decoderlibav.h"
 
-// Thread safety is a bit more complex here, see av_lockmgr_register documentation
-QMutex openCodecMutex; // global mutex for avcodec_open2 (and surrounding stuff?)
-QMutex closeCodecMutex; // global mutex for avcodec_close
-
-LibAvDecoder::LibAvDecoder(){
-  if(av_lockmgr_register(libAv_mutexManager)){
-    qCritical("Failed to register LibAV concurrency manager");
-    throw Exception();
-  }
-}
-
-int LibAvDecoder::libAv_mutexManager(void** av_mutex, enum AVLockOp op){
-  QMutex* kf_mutex;
-  switch(op){
-  case AV_LOCK_CREATE:
-    try{
-    kf_mutex = new QMutex();
-    *av_mutex = kf_mutex;
-  }catch(...){
-    return 1;
-  }
-    return 0;
-  case AV_LOCK_OBTAIN:
-    kf_mutex = (QMutex*)*av_mutex;
-    if(kf_mutex->tryLock()){
-      return 0;
-    }else{
-      return 1;
-    }
-  case AV_LOCK_RELEASE:
-    kf_mutex = (QMutex*)*av_mutex;
-    kf_mutex->unlock();
-    return 0;
-  case AV_LOCK_DESTROY:
-    kf_mutex = (QMutex*)*av_mutex;
-    delete kf_mutex;
-    *av_mutex = NULL;
-    return 0;
-  }
-  return 1;
-}
-
 AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
-
-  QMutexLocker openLocker(&openCodecMutex);
 
   AVCodec* codec = NULL;
   AVFormatContext* fCtx = NULL;
@@ -113,7 +69,6 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
     qCritical("Error opening audio codec: %s", codec->long_name);
     throw Exception();
   }
-  openLocker.~QMutexLocker();
 
   // Prep buffer
   AudioStream *astrm = new AudioStream();
@@ -141,10 +96,7 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
     av_free_packet(&avpkt);
   }
 
-  QMutexLocker closeLocker(&closeCodecMutex);
   avcodec_close(cCtx);
-  closeLocker.~QMutexLocker();
-
   av_close_input_file(fCtx);
   return astrm;
 }
@@ -180,4 +132,36 @@ int LibAvDecoder::decodePacket(AVCodecContext* cCtx, AVPacket* avpkt, AudioStrea
     av_free(outputBuffer);
   }
   return 0;
+}
+
+// Thread safety is a bit more complex here, see av_lockmgr_register documentation
+int libAvMutexManager(void** av_mutex, enum AVLockOp op){
+  QMutex* libAvMutex;
+  switch(op){
+  case AV_LOCK_CREATE:
+    try{
+      libAvMutex = new QMutex();
+      *av_mutex = libAvMutex;
+    }catch(...){
+      return 1;
+    }
+    return 0;
+  case AV_LOCK_OBTAIN:
+    libAvMutex = (QMutex*)*av_mutex;
+    if(libAvMutex->tryLock()){
+      return 0;
+    }else{
+      return 1;
+    }
+  case AV_LOCK_RELEASE:
+    libAvMutex = (QMutex*)*av_mutex;
+    libAvMutex->unlock();
+    return 0;
+  case AV_LOCK_DESTROY:
+    libAvMutex = (QMutex*)*av_mutex;
+    delete libAvMutex;
+    *av_mutex = NULL;
+    return 0;
+  }
+  return 1;
 }
