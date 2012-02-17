@@ -48,8 +48,7 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   connect(&metadataReadWatcher, SIGNAL(progressValueChanged(int)), this, SLOT(progressValueChanged(int)));
 
   connect(&analysisWatcher, SIGNAL(resultReadyAt(int)), this, SLOT(analysisResultReadyAt(int)));
-  connect(&analysisWatcher, SIGNAL(finished()), this, SLOT(analysisFinished()));
-  connect(&analysisWatcher, SIGNAL(canceled()), this, SLOT(analysisCancelled()));
+  connect(&analysisWatcher, SIGNAL(finished()), this, SLOT(analysisFinished())); // takes care of cancelled too
   connect(&analysisWatcher, SIGNAL(progressRangeChanged(int, int)), this, SLOT(progressRangeChanged(int,int)));
   connect(&analysisWatcher, SIGNAL(progressValueChanged(int)), this, SLOT(progressValueChanged(int)));
 
@@ -440,10 +439,6 @@ void BatchWindow::analysisResultReadyAt(int index){
     ui->tableWidget->item(row,COL_KEY)->setForeground(textError);
     ui->tableWidget->item(row,COL_FILENAME)->setForeground(textError);
   }
-}
-
-void BatchWindow::analysisCancelled(){
-  setGuiDefaults();
 }
 
 void BatchWindow::analysisFinished(){

@@ -111,7 +111,6 @@ private slots:
   void runDetailedAnalysis();
 
   void analysisFinished();
-  void analysisCancelled();
   void analysisResultReadyAt(int);
 
   void metadataReadFinished();

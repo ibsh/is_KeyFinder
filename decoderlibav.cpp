@@ -65,8 +65,9 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
     throw Exception();
   }
   // Open codec
-  if(avcodec_open2(cCtx, codec, &dict) < 0){
-    qCritical("Error opening audio codec: %s", codec->long_name);
+  int codecOpenResult = avcodec_open2(cCtx, codec, &dict);
+  if(codecOpenResult < 0){
+    qCritical("Error opening audio codec: %s (%d)", codec->long_name, codecOpenResult);
     throw Exception();
   }
 
@@ -96,7 +97,11 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
     av_free_packet(&avpkt);
   }
 
-  avcodec_close(cCtx);
+  int codecCloseResult = avcodec_close(cCtx);
+  if(codecCloseResult < 0){
+    qCritical("Error closing audio codec: %s (%d)", codec->long_name, codecCloseResult);
+  }
+
   av_close_input_file(fCtx);
   return astrm;
 }

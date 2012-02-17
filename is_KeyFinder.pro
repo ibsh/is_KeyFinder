@@ -117,7 +117,13 @@ QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS
 RESOURCES += resources.qrc
 
 mac{
-	LIBS += -lfftw3 -lavcodec -lavformat -lsamplerate -ltag -lavutil
+  LIBS += -lavutil
+  LIBS += -lavcodec
+  LIBS += -lavformat
+  LIBS += -lfftw3
+  LIBS += -lsamplerate
+  LIBS += -ltag
+
   DEPENDPATH += /usr/local/lib
   INCLUDEPATH += /usr/local/include
 	INCLUDEPATH += /usr/local/include/taglib

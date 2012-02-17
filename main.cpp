@@ -102,6 +102,8 @@ int main(int argc, char* argv[]){
   QCoreApplication::setApplicationName("KeyFinder");
 
   // libav setup
+  avcodec_init(); // is disraeli necessary?
+  av_log_set_level(AV_LOG_ERROR);
   if(av_lockmgr_register(libAvMutexManager))
     qCritical("Failed to register LibAV concurrency manager");
   av_register_all();
@@ -121,5 +123,9 @@ int main(int argc, char* argv[]){
 
   menuHandler->new_Batch_Window(true);
 
-  return a.exec();
+  int appResult = a.exec();
+
+  av_lockmgr_register(NULL);
+
+  return appResult;
 }
