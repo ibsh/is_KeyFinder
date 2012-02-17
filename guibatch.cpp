@@ -421,6 +421,8 @@ void BatchWindow::runAnalysis(){
 void BatchWindow::on_cancelBatchButton_clicked(){
   ui->statusLabel->setText("Cancelling...");
   ui->cancelBatchButton->setEnabled(false);
+  ui->progressBar->setMaximum(0);
+  ui->progressBar->setValue(0);
   analysisWatcher.cancel();
 }
 
