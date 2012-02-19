@@ -43,8 +43,6 @@ extern "C"{
 #include "os_windows.h"
 #endif
 
-int libAvMutexManager(void**, enum AVLockOp);
-
 class LibAvDecoder : public AudioFileDecoder{
 public:
   LibAvDecoder();
