@@ -26,8 +26,6 @@ KeyDetectionResult keyDetectionProcess(const AsyncFileObject& object){
   KeyDetectionResult result;
   result.batchRow = object.batchRow;
 
-  qDebug("Analysing %s", object.filePath.toLocal8Bit().data());
-
   // initialise stream and decode file into it.
   AudioStream* astrm = NULL;
   AudioFileDecoder* dec = NULL;
@@ -113,6 +111,8 @@ KeyDetectionResult keyDetectionProcess(const AsyncFileObject& object){
     }
   }
   result.keyEstimates.push_back(result.keyEstimates[result.keyEstimates.size()-1]); // put last key on again to match length of track
+
+  delete ch;
 
   // get global key
   result.globalKeyEstimate = 24;

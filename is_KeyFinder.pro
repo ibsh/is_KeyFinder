@@ -128,10 +128,9 @@ mac{
   INCLUDEPATH += /usr/local/include
 	INCLUDEPATH += /usr/local/include/taglib
 	ICON = is_KeyFinder.icns
-	QMAKE_MAC_SDK = /Developer/SDKs/MacOSX10.6.sdk
   QMAKE_INFO_PLIST = Info.plist
-#	CONFIG -= x86_64 ppc ppc64
-#	CONFIG += x86
+  CONFIG -= ppc ppc64
+  CONFIG += x86 x86_64
 }
 
 win32{

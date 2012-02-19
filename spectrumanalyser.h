@@ -34,7 +34,7 @@ public:
   virtual Chromagram* chromagram(AudioStream*) = 0;
   virtual ~SpectrumAnalyser();
 protected:
-  mutable QMutex mutex; // used to make chromagram functions thread-safe
+  mutable QMutex mutex; // used to make chromagram generation thread-safe
   int bins;
   int hopSize;
   int frameRate;

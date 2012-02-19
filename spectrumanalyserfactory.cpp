@@ -23,8 +23,8 @@
 
 SpectrumAnalyserWrapper::SpectrumAnalyserWrapper(int f, const Preferences& p, SpectrumAnalyser* s){
   frate = f;
-  sa = s;
   prefs = p;
+  sa = s;
 }
 
 SpectrumAnalyserWrapper::~SpectrumAnalyserWrapper(){
@@ -61,13 +61,12 @@ SpectrumAnalyserFactory::~SpectrumAnalyserFactory(){
   inst = NULL;
 }
 
-SpectrumAnalyser* SpectrumAnalyserFactory::getSpectrumAnalyser(int frameRate, const Preferences& prefs){
+SpectrumAnalyser* SpectrumAnalyserFactory::getSpectrumAnalyser(int f, const Preferences& p){
   QMutexLocker locker(&mutex); // This function should be accessed by only one thread at a time
-  for(int i=0; i<(signed)analysers.size(); i++){
-    if(analysers[i]->chkFrameRate() == frameRate && prefs.equivalentSpectralAnalysis(analysers[i]->chkPrefs()))
+  for(int i=0; i<(signed)analysers.size(); i++)
+    if(analysers[i]->chkFrameRate() == f && p.equivalentSpectralAnalysis(analysers[i]->chkPrefs()))
       return analysers[i]->getSpectrumAnalyser();
-  }
   // no match found, build a new spectrum analyser
-  analysers.push_back(new SpectrumAnalyserWrapper(frameRate, prefs, new FftwAnalyser(frameRate,prefs)));
+  analysers.push_back(new SpectrumAnalyserWrapper(f, p, new FftwAnalyser(f,p)));
   return analysers[analysers.size()-1]->getSpectrumAnalyser();
 }

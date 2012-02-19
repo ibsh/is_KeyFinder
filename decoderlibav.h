@@ -47,10 +47,14 @@ int libAvMutexManager(void**, enum AVLockOp);
 
 class LibAvDecoder : public AudioFileDecoder{
 public:
+  LibAvDecoder();
+  ~LibAvDecoder();
   virtual AudioStream* decodeFile(const QString&);
 private:
-  AVPacket avpkt;
-  int decodePacket(AVCodecContext*, AVPacket*, AudioStream*);
+  uint8_t* frameBuffer;
+  uint8_t* frameBufferConverted;
+  int frameBufferSize;
+  int decodePacket(AVCodecContext*, ReSampleContext*, AVPacket*, AudioStream*);
 };
 
 #endif

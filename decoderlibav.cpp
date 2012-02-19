@@ -21,11 +21,15 @@
 
 #include "decoderlibav.h"
 
+QMutex codecMutex; // I don't think this should be necessary if I get the lock manager right.
+
 AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
 
-  AVCodec* codec = NULL;
-  AVFormatContext* fCtx = NULL;
-  AVCodecContext* cCtx = NULL;
+  QMutexLocker codecMutexLocker(&codecMutex); // mutex the preparatory section of this method
+
+  AVCodec *codec = NULL;
+  AVFormatContext *fCtx = NULL;
+  AVCodecContext *cCtx = NULL;
   AVDictionary* dict = NULL;
 
   // convert filepath
@@ -38,10 +42,12 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
 #endif
 
   // open file
-  if(avformat_open_input(&fCtx, filePathCh, NULL, NULL) != 0){
-    qCritical("Failed to open audio file: %s", filePathCh);
+  int openInputResult = avformat_open_input(&fCtx, filePathCh, NULL, NULL);
+  if(openInputResult != 0){
+    qCritical("Failed to open audio file: %s (%d)", filePathCh, openInputResult);
     throw Exception();
   }
+
   if(av_find_stream_info(fCtx) < 0){
     qCritical("Failed to find stream information in file: %s", filePathCh);
     throw Exception();
@@ -57,6 +63,7 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
     qCritical("Failed to find an audio stream in file: %s", filePathCh);
     throw Exception();
   }
+
   // Determine stream codec
   cCtx = fCtx->streams[audioStream]->codec;
   codec = avcodec_find_decoder(cCtx->codec_id);
@@ -64,6 +71,7 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
     qCritical("Audio stream has unsupported codec in file: %s", filePathCh);
     throw Exception();
   }
+
   // Open codec
   int codecOpenResult = avcodec_open2(cCtx, codec, &dict);
   if(codecOpenResult < 0){
@@ -71,17 +79,34 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
     throw Exception();
   }
 
+  ReSampleContext* rsCtx = av_audio_resample_init(
+        cCtx->channels, cCtx->channels,
+        cCtx->sample_rate, cCtx->sample_rate,
+        AV_SAMPLE_FMT_S16, cCtx->sample_fmt,
+        0, 0, 0, 0);
+  if(rsCtx == NULL){
+    qCritical("Failed to create ReSampleContext for file: %s", filePathCh);
+    throw Exception();
+  }
+
+  qDebug("Decoding %s (%s, %d)", filePathCh, av_get_sample_fmt_name(cCtx->sample_fmt), cCtx->sample_rate);
+
+  codecMutexLocker.unlock();
+
   // Prep buffer
   AudioStream *astrm = new AudioStream();
   astrm->setFrameRate(cCtx->sample_rate);
   astrm->setChannels(cCtx->channels);
   // Decode stream
-  av_init_packet(&avpkt);
+  AVPacket avpkt;
   int badPacketCount = 0;
-  while(av_read_frame(fCtx, &avpkt) == 0){
+  while(true){
+    av_init_packet(&avpkt);
+    if(av_read_frame(fCtx, &avpkt) < 0)
+      break;
     if(avpkt.stream_index == audioStream){
       try{
-        int result = decodePacket(cCtx, &avpkt, astrm);
+        int result = decodePacket(cCtx, rsCtx, &avpkt, astrm);
         if(result != 0){
           if(badPacketCount < 100){
             badPacketCount++;
@@ -97,76 +122,66 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
     av_free_packet(&avpkt);
   }
 
+  codecMutexLocker.relock();
+  audio_resample_close(rsCtx);
   int codecCloseResult = avcodec_close(cCtx);
   if(codecCloseResult < 0){
     qCritical("Error closing audio codec: %s (%d)", codec->long_name, codecCloseResult);
   }
+  codecMutexLocker.unlock();
 
   av_close_input_file(fCtx);
   return astrm;
 }
 
-int LibAvDecoder::decodePacket(AVCodecContext* cCtx, AVPacket* avpkt, AudioStream* ab){
-  while(avpkt->size > 0){
-    int outputBufferSize = ((AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2) * sizeof(int16_t);
-    int16_t* outputBuffer = (int16_t*)av_malloc(outputBufferSize);
-    int bytesConsumed = avcodec_decode_audio3(cCtx, outputBuffer, &outputBufferSize, avpkt);
-    if(bytesConsumed <= 0){
-      avpkt->size = 0;
-      av_free(outputBuffer);
+LibAvDecoder::LibAvDecoder(){
+  frameBufferSize = ((AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2) * sizeof(uint8_t);
+  frameBuffer = (uint8_t*)av_malloc(frameBufferSize);
+  frameBufferConverted = (uint8_t*)av_malloc(frameBufferSize);
+}
+
+LibAvDecoder::~LibAvDecoder(){
+  av_free(frameBuffer);
+  av_free(frameBufferConverted);
+}
+
+int LibAvDecoder::decodePacket(AVCodecContext* cCtx, ReSampleContext* rsCtx, AVPacket* originalPacket, AudioStream* ab){
+  // copy packet so we can shift data pointer about without endangering garbage collection
+  AVPacket tempPacket;
+  tempPacket.size = originalPacket->size;
+  tempPacket.data = originalPacket->data;
+  // loop in case audio packet contains multiple frames
+  while(tempPacket.size > 0){
+    int dataSize = frameBufferSize;
+    int16_t* dataBuffer = (int16_t*)frameBuffer;
+    int bytesConsumed = avcodec_decode_audio3(cCtx, dataBuffer, &dataSize, &tempPacket);
+    if(bytesConsumed < 0){ // error
+      tempPacket.size = 0;
       return 1;
     }
-    int newSamplesDecoded = outputBufferSize / sizeof(int16_t);
+    tempPacket.data += bytesConsumed;
+    tempPacket.size -= bytesConsumed;
+    if(dataSize <= 0)
+      continue; // nothing decoded
+    int newSamplesDecoded = dataSize / av_get_bytes_per_sample(cCtx->sample_fmt);
+    // Resample if necessary
+    if(cCtx->sample_fmt != AV_SAMPLE_FMT_S16){
+      int resampleResult = audio_resample(rsCtx, (short*)frameBufferConverted, (short*)frameBuffer, newSamplesDecoded);
+      if(resampleResult < 0){
+        qCritical("Failed to resample");
+        throw Exception();
+      }
+      dataBuffer = (int16_t*)frameBufferConverted;
+    }
     int oldSampleCount = ab->getSampleCount();
     try{
       ab->addToSampleCount(newSamplesDecoded);
     }catch(Exception& e){
-      av_free(outputBuffer);
       throw e;
     }
-    for(int i = 0; i < newSamplesDecoded; i++)
-      ab->setSample(oldSampleCount+i, (float)outputBuffer[i]);
-    if(bytesConsumed < avpkt->size){
-      size_t newLength = avpkt->size - bytesConsumed;
-      uint8_t* datacopy = avpkt->data;
-      avpkt->data = (uint8_t*)av_malloc(newLength);
-      memcpy(avpkt->data, datacopy + bytesConsumed, newLength);
-      av_free(datacopy);
+    for(int i = 0; i < newSamplesDecoded; i++){
+      ab->setSample(oldSampleCount+i, (float)dataBuffer[i]);
     }
-    avpkt->size -= bytesConsumed;
-    av_free(outputBuffer);
   }
   return 0;
-}
-
-// Thread safety is a bit more complex here, see av_lockmgr_register documentation
-int libAvMutexManager(void** av_mutex, enum AVLockOp op){
-  QMutex* libAvMutex;
-  switch(op){
-  case AV_LOCK_CREATE:
-    try{
-      libAvMutex = new QMutex();
-      *av_mutex = libAvMutex;
-    }catch(...){
-      return 1;
-    }
-    return 0;
-  case AV_LOCK_OBTAIN:
-    libAvMutex = (QMutex*)*av_mutex;
-    if(libAvMutex->tryLock()){
-      return 0;
-    }else{
-      return 1;
-    }
-  case AV_LOCK_RELEASE:
-    libAvMutex = (QMutex*)*av_mutex;
-    libAvMutex->unlock();
-    return 0;
-  case AV_LOCK_DESTROY:
-    libAvMutex = (QMutex*)*av_mutex;
-    delete libAvMutex;
-    *av_mutex = NULL;
-    return 0;
-  }
-  return 1;
 }

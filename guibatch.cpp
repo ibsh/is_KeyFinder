@@ -126,8 +126,8 @@ void BatchWindow::setThreadCount(){
 }
 
 void BatchWindow::setGuiDefaults(){
-  ui->progressBar->setMaximum(1);
-  ui->progressBar->setValue(0);
+  progressRangeChanged(0,100);
+  progressValueChanged(0);
   ui->statusLabel->setText("Ready");
   ui->runBatchButton->setEnabled(true);
   ui->cancelBatchButton->setEnabled(false);
@@ -421,8 +421,8 @@ void BatchWindow::runAnalysis(){
 void BatchWindow::on_cancelBatchButton_clicked(){
   ui->statusLabel->setText("Cancelling...");
   ui->cancelBatchButton->setEnabled(false);
-  ui->progressBar->setMaximum(0);
-  ui->progressBar->setValue(0);
+  progressRangeChanged(0,0);
+  progressValueChanged(-1);
   analysisWatcher.cancel();
 }
 

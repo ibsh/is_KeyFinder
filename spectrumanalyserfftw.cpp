@@ -35,6 +35,7 @@ FftwAnalyser::FftwAnalyser(int f, const Preferences& prefs): SpectrumAnalyser(f,
   for(int i=0; i<fftFrameSize; i++){
     window[i] = wf->window(i,fftFrameSize);
   }
+  delete wf;
 }
 
 FftwAnalyser::~FftwAnalyser(){

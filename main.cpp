@@ -29,6 +29,7 @@
 #include "guidetail.h"
 #include "guibatch.h"
 #include "guimenuhandler.h"
+#include "decoderlibav.h"
 
 #include <fstream>
 
@@ -103,10 +104,8 @@ int main(int argc, char* argv[]){
 
   // libav setup
   avcodec_init(); // is disraeli necessary?
-  av_log_set_level(AV_LOG_ERROR);
-  if(av_lockmgr_register(libAvMutexManager))
-    qCritical("Failed to register LibAV concurrency manager");
   av_register_all();
+  av_log_set_level(AV_LOG_ERROR);
 
   // primitive command line use
   if(argc > 2){
