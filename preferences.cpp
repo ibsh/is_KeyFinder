@@ -380,7 +380,7 @@ Preferences::Preferences(){
   }
   settings.endGroup();
 
-  // ========================= Batch jobs ==============================
+  // =========================== Batch jobs ================================
 
   settings.beginGroup("batch");
   if(settings.contains("parallelBatchJobs")){
@@ -398,6 +398,32 @@ Preferences::Preferences(){
     settings.setValue("skipFilesWithExistingTags",defaultVal);
     skipFilesWithExistingTags = defaultVal;
     qDebug("Wrote default skipFilesWithExistingTags (false)");
+  }
+  settings.endGroup();
+
+  // ============================== iTunes ===================================
+
+  settings.beginGroup("itunes");
+  if(settings.contains("readITunesLibrary")){
+    readITunesLibrary = settings.value("readITunesLibrary").toBool();
+  }else{
+    bool defaultVal = true;
+    settings.setValue("readITunesLibrary",defaultVal);
+    readITunesLibrary = defaultVal;
+    qDebug("Wrote default readITunesLibrary (true)");
+  }
+  if(settings.contains("iTunesLibraryPath")){
+    iTunesLibraryPath = settings.value("iTunesLibraryPath").toString();
+  }else{
+    QString defaultVal;
+#ifdef Q_OS_WIN
+    defaultVal = QDir::homePath() + "/My Music/iTunes Music Library.xml";
+#else
+    defaultVal = QDir::homePath() + "/Music/iTunes/iTunes Music Library.xml";
+#endif
+    settings.setValue("iTunesLibraryPath",defaultVal);
+    iTunesLibraryPath = defaultVal;
+    qDebug("Wrote default iTunesLibraryPath");
   }
   settings.endGroup();
 
@@ -465,6 +491,8 @@ Preferences& Preferences::operator=(const Preferences& that){
     writeTagsAutomatically = that.writeTagsAutomatically;
     skipFilesWithExistingTags = that.skipFilesWithExistingTags;
     parallelBatchJobs = that.parallelBatchJobs;
+    readITunesLibrary = that.readITunesLibrary;
+    iTunesLibraryPath = that.iTunesLibraryPath;
     generateBinFreqs();
   }
   return *this;
@@ -489,30 +517,32 @@ bool Preferences::equivalentSpectralAnalysis(const Preferences& that) const{
   return true;
 }
 
-bool  Preferences::getWriteTagsAutomatically()    const { return writeTagsAutomatically; }
-bool  Preferences::getParallelBatchJobs()         const { return parallelBatchJobs; }
-bool  Preferences::getWriteToTagComment()         const { return writeToTagComment; }
-bool  Preferences::getWriteToTagGrouping()        const { return writeToTagGrouping; }
-bool  Preferences::getWriteToTagKey()             const { return writeToTagKey; }
-bool  Preferences::getSkipFilesWithExistingTags() const { return skipFilesWithExistingTags; }
-char  Preferences::getTemporalWindow()            const { return temporalWindow; }
-char  Preferences::getHcdf()                      const { return hcdf; }
-char  Preferences::getSimilarityMeasure()         const { return similarityMeasure; }
-char  Preferences::getTagFormat()                 const { return tagFormat; }
-int   Preferences::getHopSize()                   const { return hopSize; }
-int   Preferences::getFftFrameSize()              const { return fftFrameSize; }
-int   Preferences::getOctaves()                   const { return octaves; }
-int   Preferences::getBpo()                       const { return bps * 12; }
-int   Preferences::getOctaveOffset()              const { return octaveOffset; }
-int   Preferences::getDFactor()                   const { return dFactor; }
-int   Preferences::getToneProfile()               const { return toneProfile; }
-int   Preferences::getTuningMethod()              const { return tuningMethod; }
-int   Preferences::getHcdfPeakPickingNeighbours() const { return hcdfPeakPickingNeighbours; }
-int   Preferences::getHcdfArbitrarySegments()     const { return hcdfArbitrarySegments; }
-int   Preferences::getHcdfGaussianSize()          const { return hcdfGaussianSize; }
-float Preferences::getHcdfGaussianSigma()         const { return hcdfGaussianSigma; }
-float Preferences::getDirectSkStretch()           const { return directSkStretch; }
-float Preferences::getDetunedBandWeight()         const { return detunedBandWeight; }
+bool    Preferences::getWriteTagsAutomatically()    const { return writeTagsAutomatically; }
+bool    Preferences::getParallelBatchJobs()         const { return parallelBatchJobs; }
+bool    Preferences::getWriteToTagComment()         const { return writeToTagComment; }
+bool    Preferences::getWriteToTagGrouping()        const { return writeToTagGrouping; }
+bool    Preferences::getWriteToTagKey()             const { return writeToTagKey; }
+bool    Preferences::getSkipFilesWithExistingTags() const { return skipFilesWithExistingTags; }
+bool    Preferences::getReadITunesLibrary()         const { return readITunesLibrary; }
+char    Preferences::getTemporalWindow()            const { return temporalWindow; }
+char    Preferences::getHcdf()                      const { return hcdf; }
+char    Preferences::getSimilarityMeasure()         const { return similarityMeasure; }
+char    Preferences::getTagFormat()                 const { return tagFormat; }
+int     Preferences::getHopSize()                   const { return hopSize; }
+int     Preferences::getFftFrameSize()              const { return fftFrameSize; }
+int     Preferences::getOctaves()                   const { return octaves; }
+int     Preferences::getBpo()                       const { return bps * 12; }
+int     Preferences::getOctaveOffset()              const { return octaveOffset; }
+int     Preferences::getDFactor()                   const { return dFactor; }
+int     Preferences::getToneProfile()               const { return toneProfile; }
+int     Preferences::getTuningMethod()              const { return tuningMethod; }
+int     Preferences::getHcdfPeakPickingNeighbours() const { return hcdfPeakPickingNeighbours; }
+int     Preferences::getHcdfArbitrarySegments()     const { return hcdfArbitrarySegments; }
+int     Preferences::getHcdfGaussianSize()          const { return hcdfGaussianSize; }
+float   Preferences::getHcdfGaussianSigma()         const { return hcdfGaussianSigma; }
+float   Preferences::getDirectSkStretch()           const { return directSkStretch; }
+float   Preferences::getDetunedBandWeight()         const { return detunedBandWeight; }
+QString Preferences::getITunesLibraryPath()         const { return iTunesLibraryPath; }
 
 float Preferences::getBinFreq(int n)const{
   if(n >= octaves*12*bps){

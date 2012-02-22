@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>806</width>
+    <width>807</width>
     <height>463</height>
    </rect>
   </property>
@@ -26,7 +26,7 @@
       <attribute name="title">
        <string>Basic</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_7">
+      <layout class="QVBoxLayout" name="basicTabVerticalLayout">
        <property name="leftMargin">
         <number>12</number>
        </property>
@@ -969,11 +969,85 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab_iTunes">
+      <attribute name="title">
+       <string>iTunes Library</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="iTunesTabVerticalLayout">
+       <property name="leftMargin">
+        <number>12</number>
+       </property>
+       <property name="rightMargin">
+        <number>12</number>
+       </property>
+       <property name="bottomMargin">
+        <number>12</number>
+       </property>
+       <item>
+        <layout class="QFormLayout" name="formLayout">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::FieldsStayAtSizeHint</enum>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="lbl_readiTunesLibrary">
+           <property name="text">
+            <string>Read iTunes Library</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="readITunesLibrary">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="lbl_iTunesLibraryPath">
+           <property name="text">
+            <string>Library location</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="iTunesLibraryPath">
+           <property name="minimumSize">
+            <size>
+             <width>300</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="frame">
+            <bool>true</bool>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QPushButton" name="findITunesLibraryButton">
+           <property name="text">
+            <string>Browse</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="lbl_findITunesLibrary">
+           <property name="text">
+            <string>Change location</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tab_advanced">
       <attribute name="title">
        <string>Advanced</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QVBoxLayout" name="advancedTabVerticalLayout">
        <property name="topMargin">
         <number>8</number>
        </property>
@@ -987,7 +1061,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>719</width>
+            <width>720</width>
             <height>919</height>
            </rect>
           </property>

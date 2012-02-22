@@ -63,6 +63,9 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   textSuccess = QBrush(QColor(0,128,0));
   textError = QBrush(QColor(191,0,0));
 
+  playlistComboBoxOldIndex = 0;
+  loadITunesPlaylistsIntoComboBox();
+
   //relative sizing on Mac only
 #ifdef Q_OS_MAC
   QFont smallerFont;
@@ -136,6 +139,102 @@ void BatchWindow::setGuiDefaults(){
   ui->tableWidget->resizeRowsToContents();
 }
 
+void BatchWindow::loadITunesPlaylistsIntoComboBox(){
+  if(!prefs.getReadITunesLibrary())
+    return;
+
+  QStringList playLists;
+  QFile xmlFile(prefs.getITunesLibraryPath());
+  if (!xmlFile.open(QIODevice::ReadOnly))
+    return;
+
+  QXmlQuery xmlQuery;
+  xmlQuery.bindVariable("inputDocument", &xmlFile);
+
+  QString xPath;
+  xPath += "doc($inputDocument)/plist/dict";
+  xPath += "/array[preceding-sibling::key[1]='Playlists']";
+  xPath += "/dict/string[preceding-sibling::key[1]='Name']/string(text())";
+
+  xmlQuery.setQuery(xPath);
+
+  xmlQuery.evaluateTo(&playLists);
+  xmlFile.close();
+
+  if(playLists.isEmpty())
+    return;
+
+  ui->playlistComboBox->addItems(playLists);
+  ui->playlistComboBox->setEnabled(true);
+}
+
+void BatchWindow::loadITunesPlaylistIntoTableWidget(QString playList){
+
+  QStringList trackIds;
+  QList<QUrl> results;
+
+  QFile xmlFile(prefs.getITunesLibraryPath());
+  if (!xmlFile.open(QIODevice::ReadOnly))
+    return;
+  QXmlQuery xmlQuery;
+  xmlQuery.bindVariable("inputDocument", &xmlFile);
+
+  QString xPath;
+  xPath += "doc($inputDocument)/plist/dict";
+  xPath += "/array[preceding-sibling::key[1]='Playlists']";
+  xPath += "/dict[child::string[preceding-sibling::key[1]='Name'][1]='";
+  xPath +=  playList;
+  xPath += "']";
+  xPath += "/array/dict/integer[preceding-sibling::key[1]='Track ID']";
+  xPath += "/string(text())";
+
+  xmlQuery.setQuery(xPath);
+  xmlQuery.evaluateTo(&trackIds);
+
+  for(int i = 0; i < (signed)trackIds.size(); i++){
+
+    QStringList resultStrings; // if you use a single string it breaks, for some reason
+
+    xPath = "";
+    xPath += "doc($inputDocument)/plist/dict";
+    xPath += "/dict[preceding-sibling::key[1]='Tracks']";
+    xPath += "/dict[preceding-sibling::key[1]='";
+    xPath += trackIds[i];
+    xPath += "']";
+    xPath += "/string[preceding-sibling::key[1]='Location']/string(text())";
+
+    xmlQuery.setQuery(xPath);
+    if(xmlQuery.evaluateTo(&resultStrings)){
+      // replace iTunes' localhost addressing.
+      results.push_back(QUrl(resultStrings[0].replace(QString("//localhost"),QString("")).toLocal8Bit()));
+    }
+  }
+
+  xmlFile.close();
+  receiveUrls(results);
+}
+
+void BatchWindow::on_playlistComboBox_activated(int index){
+  if(index == playlistComboBoxOldIndex)
+    return;
+  if(playlistComboBoxOldIndex == 0 && ui->tableWidget->rowCount() > 0){
+    QMessageBox msgBox;
+    msgBox.setText("The drag and drop list will not be saved.");
+    msgBox.setInformativeText("Are you sure you want to view another playlist?");
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::No);
+    int ret = msgBox.exec();
+    if(ret == QMessageBox::No){
+      ui->playlistComboBox->setCurrentIndex(playlistComboBoxOldIndex);
+      return;
+    }
+  }
+  ui->tableWidget->setRowCount(0);
+  playlistComboBoxOldIndex = index;
+  if(playlistComboBoxOldIndex != 0)
+    loadITunesPlaylistIntoTableWidget(ui->playlistComboBox->currentText());
+}
+
 void BatchWindow::dragEnterEvent(QDragEnterEvent *e){
   if(e->mimeData()->hasUrls()){
     e->acceptProposedAction();
@@ -143,6 +242,12 @@ void BatchWindow::dragEnterEvent(QDragEnterEvent *e){
 }
 
 void BatchWindow::dropEvent(QDropEvent *e){
+  if(ui->playlistComboBox->currentIndex() != 0){
+    QMessageBox msg;
+    msg.setText("Cannot change an iTunes playlist from KeyFinder");
+    msg.exec();
+    return;
+  }
   receiveUrls(e->mimeData()->urls());
 }
 
@@ -250,7 +355,6 @@ QList<QUrl> BatchWindow::loadPlaylistM3u(QString m3uUrl) const{
 }
 
 QList<QUrl> BatchWindow::loadPlaylistXml(QString xmlFileUrl) const{
-  // Here be more ugly.
   QStringList resultStrings;
   QList<QUrl> results;
   QFile xmlFile(xmlFileUrl);
@@ -260,8 +364,6 @@ QList<QUrl> BatchWindow::loadPlaylistXml(QString xmlFileUrl) const{
   QXmlQuery xmlQuery;
   xmlQuery.bindVariable("inputDocument", &xmlFile);
   xmlQuery.setQuery("doc($inputDocument)/plist/dict/dict[preceding-sibling::key[1]='Tracks']/dict/string[preceding-sibling::key[1]='Location']/string(text())");
-  if (!xmlQuery.isValid())
-    return results;
 
   xmlQuery.evaluateTo(&resultStrings);
   xmlFile.close();

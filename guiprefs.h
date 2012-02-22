@@ -25,6 +25,7 @@
 #include <QDialog>
 #include <QString>
 #include <QSettings>
+#include <QFileDialog>
 
 #include "preferences.h"
 
@@ -42,6 +43,7 @@ private:
   void binAdaptiveTuningEnabled();
   void hcdfEnabled();
   void customProfileEnabled();
+  void readITunesProfileEnabled();
   QString temporalWindowComboIndex;
   QString hcdfComboIndex;
   QString similarityMeasureComboIndex;
@@ -53,6 +55,8 @@ private slots:
   void on_hcdf_currentIndexChanged(int index);
   void on_toneProfile_currentIndexChanged(int index);
   void on_tuningMethod_currentIndexChanged(int index);
+  void on_readITunesLibrary_toggled(bool checked);
+  void on_findITunesLibraryButton_clicked();
 private:
   Ui::PrefsDialog *ui;
 };

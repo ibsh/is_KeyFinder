@@ -142,11 +142,17 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   ui->skipFilesWithExistingTags->setChecked(settings.value(("skipFilesWithExistingTags")).toBool());
   settings.endGroup();
 
+  settings.beginGroup("itunes");
+  ui->readITunesLibrary->setChecked(settings.value(("readITunesLibrary")).toBool());
+  ui->iTunesLibraryPath->setText(settings.value(("iTunesLibraryPath")).toString());
+  settings.endGroup();
+
   // enable/disable fields as necessary
   tuningEnabled();
   binAdaptiveTuningEnabled();
   hcdfEnabled();
   customProfileEnabled();
+  readITunesProfileEnabled();
 
   //relative sizing on Mac only
 #ifdef Q_OS_MAC
@@ -279,6 +285,11 @@ void PrefsDialog::on_savePrefsButton_clicked(){
   settings.setValue("skipFilesWithExistingTags",ui->skipFilesWithExistingTags->isChecked());
   settings.endGroup();
 
+  settings.beginGroup("itunes");
+  settings.setValue("readITunesLibrary",ui->readITunesLibrary->isChecked());
+  settings.setValue("iTunesLibraryPath",ui->iTunesLibraryPath->text());
+  settings.endGroup();
+
   // CLOSE
   this->close();
 }
@@ -334,6 +345,10 @@ void PrefsDialog::customProfileEnabled(){
   ui->min11->setEnabled(e);
 }
 
+void PrefsDialog::readITunesProfileEnabled(){
+  ui->findITunesLibraryButton->setEnabled(ui->readITunesLibrary->isChecked());
+}
+
 void PrefsDialog::on_bps_valueChanged(int /*arg1*/){
   tuningEnabled();
 }
@@ -348,4 +363,21 @@ void PrefsDialog::on_hcdf_currentIndexChanged(int /*index*/){
 
 void PrefsDialog::on_toneProfile_currentIndexChanged(int /*index*/){
   customProfileEnabled();
+}
+
+void PrefsDialog::on_readITunesLibrary_toggled(bool /*checked*/){
+  readITunesProfileEnabled();
+}
+
+void PrefsDialog::on_findITunesLibraryButton_clicked(){
+  QString initDir;
+#ifdef Q_OS_WIN
+  initDir = QDir::homePath() + "/My Music";
+#else
+  initDir = QDir::homePath() + "/Music/iTunes";
+#endif
+  QString iTunesPath = QFileDialog::getOpenFileName(this,tr("Choose iTunes Library XML"), initDir, tr("iTunes XML (*.xml)"));
+  if(iTunesPath.isEmpty())
+    return;
+  ui->iTunesLibraryPath->setText(iTunesPath);
 }

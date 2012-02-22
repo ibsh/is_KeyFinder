@@ -72,6 +72,10 @@ private:
   void setThreadCount();
   void setGuiDefaults();
 
+  int playlistComboBoxOldIndex;
+  void loadITunesPlaylistsIntoComboBox();
+  void loadITunesPlaylistIntoTableWidget(QString);
+
   void dragEnterEvent(QDragEnterEvent*);
   void dropEvent(QDropEvent*);
   QList<QUrl> droppedFiles;
@@ -102,6 +106,9 @@ private:
   QBrush textSuccess;
   QBrush textError;
 private slots:
+
+  void on_playlistComboBox_activated(int);
+
   void addFilesFinished();
   void on_runBatchButton_clicked();
   void on_cancelBatchButton_clicked();

@@ -27,6 +27,7 @@
 #include <QString>
 #include <QImage>
 #include <QColor>
+#include <QDir>
 
 #include <math.h>
 #include <iostream>
@@ -48,6 +49,7 @@ public:
   bool getWriteToTagGrouping() const;
   bool getWriteToTagKey() const;
   bool getSkipFilesWithExistingTags() const;
+  bool getReadITunesLibrary() const;
   char getTemporalWindow() const;
   char getHcdf() const;
   char getSimilarityMeasure() const;
@@ -68,6 +70,7 @@ public:
   float getLastFreq() const;
   float getDirectSkStretch() const;
   float getDetunedBandWeight() const;
+  QString getITunesLibraryPath() const;
   std::vector<float> getCustomToneProfile() const;
   std::vector<QString> getCustomKeyCodes() const;
   // not necessarily related to user preferences, here for convenience
@@ -82,6 +85,7 @@ private:
   bool writeToTagGrouping;
   bool writeToTagKey;
   bool skipFilesWithExistingTags;
+  bool readITunesLibrary;
   char temporalWindow;
   char hcdf;
   char similarityMeasure;
@@ -101,6 +105,7 @@ private:
   float stFreq;
   float directSkStretch;
   float detunedBandWeight;
+  QString iTunesLibraryPath;
   std::vector<float> customToneProfile;
   std::vector<QString> customKeyCodes;
   std::vector<float> binFreqs;
