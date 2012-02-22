@@ -69,9 +69,9 @@ void DetailWindow::dropEvent(QDropEvent *e){
 void DetailWindow::runAnalysis(){
   // get latest preferences and redraw variable UI elements if they've changed since the last run.
   int chkOctaves = prefs.getOctaves();
-  int chkOffset = prefs.getOctaveOffset();
+  int chkOffset = prefs.getOffsetToC();
   prefs = Preferences();
-  if(chkOctaves != prefs.getOctaves() || chkOffset != prefs.getOctaveOffset()){
+  if(chkOctaves != prefs.getOctaves() || chkOffset != prefs.getOffsetToC()){
     layoutScaling();
     drawPianoKeys();
     // Chromagram tooltip
@@ -290,9 +290,8 @@ void DetailWindow::drawPianoKeys(){
   miniPianoImage.setColor(2,qRgb(127,127,127));
   // reverse of octave for visual representation (ending at A by default)
   QString octaveRev = "bwbwwbwbwwbw";
-  int off = prefs.getOctaveOffset();
-  if(off > 0)
-    octaveRev = octaveRev.right(off) + octaveRev.left(12-off);
+  if(prefs.getOffsetToC())
+    octaveRev = octaveRev.right(3) + octaveRev.left(9);
   for(int o=0; o<prefs.getOctaves(); o++){
     for(int s=0; s<12; s++){
       for(int px=0; px<scale-1; px++){

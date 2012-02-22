@@ -26,126 +26,94 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   ui->setupUi(this);
   this->setWindowFlags(Qt::WindowTitleHint | Qt::CustomizeWindowHint);
 
-  // initialise Preferences object to ensure initial QSettings is written
-  Preferences prefsObj;
-
   // these strings store the chars relating to each index of their dropdowns
   temporalWindowComboIndex = "bmn";
   hcdfComboIndex = "nhca";
   similarityMeasureComboIndex = "ck";
   tagFormatComboIndex = "kcb";
 
-  // set preferences from QSettings
-  QSettings settings;
+  // get values from preferences
+  Preferences p;
+  ui->writeTagsAutomatically->setChecked(p.getWriteTagsAutomatically());
+  ui->parallelBatchJobs->setChecked(p.getParallelBatchJobs());
+  ui->writeToTagComment->setChecked(p.getWriteToTagComment());
+  ui->writeToTagGrouping->setChecked(p.getWriteToTagGrouping());
+  ui->writeToTagKey->setChecked(p.getWriteToTagKey());
+  ui->skipFilesWithExistingTags->setChecked(p.getSkipFilesWithExistingTags());
+  ui->readITunesLibrary->setChecked(p.getReadITunesLibrary());
+  ui->temporalWindow->setCurrentIndex(temporalWindowComboIndex.indexOf(p.getTemporalWindow()));
+  ui->hcdf->setCurrentIndex(hcdfComboIndex.indexOf(p.getHcdf()));
+  ui->similarityMeasure->setCurrentIndex(similarityMeasureComboIndex.indexOf(p.getSimilarityMeasure()));
+  ui->tagFormat->setCurrentIndex(tagFormatComboIndex.indexOf(p.getTagFormat()));
+  ui->hopSize->setCurrentIndex(log2(p.getHopSize()/128));
+  ui->fftFrameSize->setCurrentIndex(log2(p.getFftFrameSize()/512));
+  ui->octaves->setValue(p.getOctaves());
+  ui->bps->setValue(p.getBpo()/12);
+  ui->octaveOffset->setChecked(p.getOffsetToC());
+  ui->dFactor->setValue(p.getDFactor());
+  ui->toneProfile->setCurrentIndex(p.getToneProfile());
+  ui->hcdfPeakPickingNeighbours->setValue(p.getHcdfPeakPickingNeighbours());
+  ui->hcdfArbitrarySegments->setValue(p.getHcdfArbitrarySegments());
+  ui->hcdfGaussianSize->setValue(p.getHcdfGaussianSize());
+  ui->tuningMethod->setCurrentIndex(p.getTuningMethod());
+  ui->hcdfGaussianSigma->setValue(p.getHcdfGaussianSigma());
+  ui->stFreq->setCurrentIndex(log2(p.getStartingFreqA()/27.5));
+  ui->directSkStretch->setValue(p.getDirectSkStretch());
+  ui->detunedBandWeight->setValue(p.getDetunedBandWeight());
+  ui->iTunesLibraryPath->setText(p.getITunesLibraryPath());
 
-  settings.beginGroup("analysisFrequencies");
-  ui->stFreq->setCurrentIndex(log2(settings.value("startingFrequencyA").toFloat()/27.5));
-  ui->octaves->setValue(settings.value("numOctaves").toInt());
-  ui->octaveOffset->setChecked(settings.value("octaveBeginOffset").toInt() > 0);
-  ui->bps->setValue(settings.value("bandsPerSemitone").toInt());
-  settings.endGroup();
+  QList<float> ctp = p.getCustomToneProfile();
+  ui->maj0->setValue(ctp[0]);
+  ui->maj1->setValue(ctp[1]);
+  ui->maj2->setValue(ctp[2]);
+  ui->maj3->setValue(ctp[3]);
+  ui->maj4->setValue(ctp[4]);
+  ui->maj5->setValue(ctp[5]);
+  ui->maj6->setValue(ctp[6]);
+  ui->maj7->setValue(ctp[7]);
+  ui->maj8->setValue(ctp[8]);
+  ui->maj9->setValue(ctp[9]);
+  ui->maj10->setValue(ctp[10]);
+  ui->maj11->setValue(ctp[11]);
+  ui->min0->setValue(ctp[12]);
+  ui->min1->setValue(ctp[13]);
+  ui->min2->setValue(ctp[14]);
+  ui->min3->setValue(ctp[15]);
+  ui->min4->setValue(ctp[16]);
+  ui->min5->setValue(ctp[17]);
+  ui->min6->setValue(ctp[18]);
+  ui->min7->setValue(ctp[19]);
+  ui->min8->setValue(ctp[20]);
+  ui->min9->setValue(ctp[21]);
+  ui->min10->setValue(ctp[22]);
+  ui->min11->setValue(ctp[23]);
 
-  settings.beginGroup("spectralAnalysis");
-  ui->temporalWindow->setCurrentIndex(temporalWindowComboIndex.indexOf(settings.value("temporalWindow").toChar()));
-  ui->fftFrameSize->setCurrentIndex(log2(settings.value("fftFrameSize").toInt()/512));
-  ui->hopSize->setCurrentIndex(log2(settings.value("hopSize").toInt()/128));
-  ui->directSkStretch->setValue(settings.value("directSkStretch").toFloat());
-  settings.endGroup();
-
-  settings.beginGroup("downsampling");
-  ui->dFactor->setValue(settings.value("dFactor").toInt());
-  settings.endGroup();
-
-  settings.beginGroup("tuning");
-  ui->tuningMethod->setCurrentIndex(settings.value("tuningMethod").toInt());
-  ui->detunedBandWeight->setValue(settings.value("detunedBandWeight").toFloat());
-  settings.endGroup();
-
-  settings.beginGroup("harmonicChangeDetectionFunction");
-  ui->hcdf->setCurrentIndex(hcdfComboIndex.indexOf(settings.value("hcdf").toChar()));
-  ui->hcdfGaussianSize->setValue(settings.value("hcdfGaussianSize").toInt());
-  ui->hcdfGaussianSigma->setValue(settings.value("hcdfGaussianSigma").toFloat());
-  ui->hcdfPeakPickingNeighbours->setValue(settings.value("hcdfPeakPickingNeighbours").toInt());
-  ui->hcdfArbitrarySegments->setValue(settings.value("hcdfArbitrarySegments").toInt());
-  settings.endGroup();
-
-  settings.beginGroup("keyClassification");
-  ui->toneProfile->setCurrentIndex(settings.value("toneProfile").toInt());
-  ui->similarityMeasure->setCurrentIndex(similarityMeasureComboIndex.indexOf(settings.value("similarityMeasure").toChar()));
-  settings.endGroup();
-
-  settings.beginGroup("customToneProfile");
-  ui->maj0->setValue(settings.value("maj0").toFloat());
-  ui->maj1->setValue(settings.value("maj1").toFloat());
-  ui->maj2->setValue(settings.value("maj2").toFloat());
-  ui->maj3->setValue(settings.value("maj3").toFloat());
-  ui->maj4->setValue(settings.value("maj4").toFloat());
-  ui->maj5->setValue(settings.value("maj5").toFloat());
-  ui->maj6->setValue(settings.value("maj6").toFloat());
-  ui->maj7->setValue(settings.value("maj7").toFloat());
-  ui->maj8->setValue(settings.value("maj8").toFloat());
-  ui->maj9->setValue(settings.value("maj9").toFloat());
-  ui->maj10->setValue(settings.value("maj10").toFloat());
-  ui->maj11->setValue(settings.value("maj11").toFloat());
-  ui->min0->setValue(settings.value("min0").toFloat());
-  ui->min1->setValue(settings.value("min1").toFloat());
-  ui->min2->setValue(settings.value("min2").toFloat());
-  ui->min3->setValue(settings.value("min3").toFloat());
-  ui->min4->setValue(settings.value("min4").toFloat());
-  ui->min5->setValue(settings.value("min5").toFloat());
-  ui->min6->setValue(settings.value("min6").toFloat());
-  ui->min7->setValue(settings.value("min7").toFloat());
-  ui->min8->setValue(settings.value("min8").toFloat());
-  ui->min9->setValue(settings.value("min9").toFloat());
-  ui->min10->setValue(settings.value("min10").toFloat());
-  ui->min11->setValue(settings.value("min11").toFloat());
-  settings.endGroup();
-
-  settings.beginGroup("customKeyCodes");
-  ui->majKey0->setText(settings.value("majKey0").toString());
-  ui->majKey1->setText(settings.value("majKey1").toString());
-  ui->majKey2->setText(settings.value("majKey2").toString());
-  ui->majKey3->setText(settings.value("majKey3").toString());
-  ui->majKey4->setText(settings.value("majKey4").toString());
-  ui->majKey5->setText(settings.value("majKey5").toString());
-  ui->majKey6->setText(settings.value("majKey6").toString());
-  ui->majKey7->setText(settings.value("majKey7").toString());
-  ui->majKey8->setText(settings.value("majKey8").toString());
-  ui->majKey9->setText(settings.value("majKey9").toString());
-  ui->majKey10->setText(settings.value("majKey10").toString());
-  ui->majKey11->setText(settings.value("majKey11").toString());
-  ui->minKey0->setText(settings.value("minKey0").toString());
-  ui->minKey1->setText(settings.value("minKey1").toString());
-  ui->minKey2->setText(settings.value("minKey2").toString());
-  ui->minKey3->setText(settings.value("minKey3").toString());
-  ui->minKey4->setText(settings.value("minKey4").toString());
-  ui->minKey5->setText(settings.value("minKey5").toString());
-  ui->minKey6->setText(settings.value("minKey6").toString());
-  ui->minKey7->setText(settings.value("minKey7").toString());
-  ui->minKey8->setText(settings.value("minKey8").toString());
-  ui->minKey9->setText(settings.value("minKey9").toString());
-  ui->minKey10->setText(settings.value("minKey10").toString());
-  ui->minKey11->setText(settings.value("minKey11").toString());
-  ui->silence->setText(settings.value("silence").toString());
-  settings.endGroup();
-
-  settings.beginGroup("tags");
-  ui->tagFormat->setCurrentIndex(tagFormatComboIndex.indexOf(settings.value("tagFormat").toChar()));
-  ui->writeToTagComment->setChecked(settings.value(("writeToTagComment")).toBool());
-  ui->writeToTagGrouping->setChecked(settings.value(("writeToTagGrouping")).toBool());
-  ui->writeToTagKey->setChecked(settings.value(("writeToTagKey")).toBool());
-  ui->writeTagsAutomatically->setChecked(settings.value(("writeTagsAutomatically")).toBool());
-  settings.endGroup();
-
-  settings.beginGroup("batch");
-  ui->parallelBatchJobs->setChecked(settings.value(("parallelBatchJobs")).toBool());
-  ui->skipFilesWithExistingTags->setChecked(settings.value(("skipFilesWithExistingTags")).toBool());
-  settings.endGroup();
-
-  settings.beginGroup("itunes");
-  ui->readITunesLibrary->setChecked(settings.value(("readITunesLibrary")).toBool());
-  ui->iTunesLibraryPath->setText(settings.value(("iTunesLibraryPath")).toString());
-  settings.endGroup();
+  QStringList ckc = p.getCustomKeyCodes();
+  ui->majKey0->setText(ckc[0]);
+  ui->majKey1->setText(ckc[2]);
+  ui->majKey2->setText(ckc[4]);
+  ui->majKey3->setText(ckc[6]);
+  ui->majKey4->setText(ckc[8]);
+  ui->majKey5->setText(ckc[10]);
+  ui->majKey6->setText(ckc[12]);
+  ui->majKey7->setText(ckc[14]);
+  ui->majKey8->setText(ckc[16]);
+  ui->majKey9->setText(ckc[18]);
+  ui->majKey10->setText(ckc[20]);
+  ui->majKey11->setText(ckc[22]);
+  ui->minKey0->setText(ckc[1]);
+  ui->minKey1->setText(ckc[3]);
+  ui->minKey2->setText(ckc[5]);
+  ui->minKey3->setText(ckc[7]);
+  ui->minKey4->setText(ckc[9]);
+  ui->minKey5->setText(ckc[11]);
+  ui->minKey6->setText(ckc[13]);
+  ui->minKey7->setText(ckc[15]);
+  ui->minKey8->setText(ckc[17]);
+  ui->minKey9->setText(ckc[19]);
+  ui->minKey10->setText(ckc[21]);
+  ui->minKey11->setText(ckc[23]);
+  ui->silence->setText(ckc[24]);
 
   // enable/disable fields as necessary
   tuningEnabled();
@@ -178,119 +146,56 @@ PrefsDialog::~PrefsDialog(){
 }
 
 void PrefsDialog::on_savePrefsButton_clicked(){
-  // SAVE TO QSETTINGS
-  QSettings settings;
+  Preferences p;
+  p.setWriteTagsAutomatically(ui->writeTagsAutomatically->isChecked());
+  p.setParallelBatchJobs(ui->parallelBatchJobs->isChecked());
+  p.setWriteToTagComment(ui->writeToTagComment->isChecked());
+  p.setWriteToTagGrouping(ui->writeToTagGrouping->isChecked());
+  p.setWriteToTagKey(ui->writeToTagKey->isChecked());
+  p.setSkipFilesWithExistingTags(ui->skipFilesWithExistingTags->isChecked());
+  p.setReadITunesLibrary(ui->readITunesLibrary->isChecked());
+  p.setTemporalWindow(temporalWindowComboIndex[ui->temporalWindow->currentIndex()].toAscii());
+  p.setHcdf(hcdfComboIndex[ui->hcdf->currentIndex()].toAscii());
+  p.setSimilarityMeasure(similarityMeasureComboIndex[ui->similarityMeasure->currentIndex()].toAscii());
+  p.setTagFormat(tagFormatComboIndex[ui->tagFormat->currentIndex()].toAscii());
+  p.setHopSize(pow(2,ui->hopSize->currentIndex())*128);
+  p.setFftFrameSize(pow(2,ui->fftFrameSize->currentIndex())*512);
+  p.setOctaves(ui->octaves->value());
+  p.setBps(ui->bps->value());
+  p.setOffsetToC(ui->octaveOffset->isChecked());
+  p.setDFactor(ui->dFactor->value());
+  p.setToneProfile(ui->toneProfile->currentIndex());
+  p.setHcdfPeakPickingNeighbours(ui->hcdfPeakPickingNeighbours->value());
+  p.setHcdfArbitrarySegments(ui->hcdfArbitrarySegments->value());
+  p.setHcdfGaussianSize(ui->hcdfGaussianSize->value());
+  p.setTuningMethod(ui->tuningMethod->currentIndex());
+  p.setHcdfGaussianSigma(ui->hcdfGaussianSigma->value());
+  p.setStartingFreqA(pow(2,ui->stFreq->currentIndex())*27.5);
+  p.setDirectSkStretch(ui->directSkStretch->value());
+  p.setDetunedBandWeight(ui->detunedBandWeight->value());
+  p.setITunesLibraryPath(ui->iTunesLibraryPath->text());
 
-  settings.beginGroup("analysisFrequencies");
-  settings.setValue("startingFrequencyA",pow(2,ui->stFreq->currentIndex())*27.5);
-  settings.setValue("numOctaves",ui->octaves->value());
-  settings.setValue("octaveBeginOffset",(ui->octaveOffset->isChecked() ? 3 : 0));
-  settings.setValue("bandsPerSemitone",ui->bps->value());
-  settings.endGroup();
+  QList<float> ctp;
+  ctp << ui->maj0->value() << ui->maj1->value() << ui->maj2->value() << ui->maj3->value();
+  ctp << ui->maj4->value() << ui->maj5->value() << ui->maj6->value() << ui->maj7->value();
+  ctp << ui->maj8->value() << ui->maj9->value() << ui->maj10->value() << ui->maj11->value();
+  ctp << ui->min0->value() << ui->min1->value() << ui->min2->value() << ui->min3->value();
+  ctp << ui->min4->value() << ui->min5->value() << ui->min6->value() << ui->min7->value();
+  ctp << ui->min8->value() << ui->min9->value() << ui->min10->value() << ui->min11->value();
+  p.setCustomToneProfile(ctp);
 
-  settings.beginGroup("spectralAnalysis");
-  settings.setValue("temporalWindow",temporalWindowComboIndex[ui->temporalWindow->currentIndex()].toAscii());
-  settings.setValue("fftFrameSize",pow(2,ui->fftFrameSize->currentIndex())*512);
-  settings.setValue("hopSize",pow(2,ui->hopSize->currentIndex())*128);
-  settings.setValue("directSkStretch",ui->directSkStretch->value());
-  settings.endGroup();
+  QStringList ckc;
+  ckc << ui->majKey0->text() << ui->majKey1->text() << ui->majKey2->text() << ui->majKey3->text();
+  ckc << ui->majKey4->text() << ui->majKey5->text() << ui->majKey6->text() << ui->majKey7->text();
+  ckc << ui->majKey8->text() << ui->majKey9->text() << ui->majKey10->text() << ui->majKey11->text();
+  ckc << ui->minKey0->text() << ui->minKey1->text() << ui->minKey2->text() << ui->minKey3->text();
+  ckc << ui->minKey4->text() << ui->minKey5->text() << ui->minKey6->text() << ui->minKey7->text();
+  ckc << ui->minKey8->text() << ui->minKey9->text() << ui->minKey10->text() << ui->minKey11->text();
+  ckc << ui->silence->text();
+  p.setCustomKeyCodes(ckc);
 
-  settings.beginGroup("downsampling");
-  settings.setValue("dFactor",ui->dFactor->value());
-  settings.endGroup();
-
-  settings.beginGroup("tuning");
-  settings.setValue("tuningMethod",ui->tuningMethod->currentIndex());
-  settings.setValue("detunedBandWeight",ui->detunedBandWeight->value());
-  settings.endGroup();
-
-  settings.beginGroup("harmonicChangeDetectionFunction");
-  settings.setValue("hcdf",hcdfComboIndex[ui->hcdf->currentIndex()].toAscii());
-  settings.setValue("hcdfGaussianSize",ui->hcdfGaussianSize->value());
-  settings.setValue("hcdfGaussianSigma",ui->hcdfGaussianSigma->value());
-  settings.setValue("hcdfPeakPickingNeighbours",ui->hcdfPeakPickingNeighbours->value());
-  settings.setValue("hcdfArbitrarySegments",ui->hcdfArbitrarySegments->value());
-  settings.endGroup();
-
-  settings.beginGroup("keyClassification");
-  settings.setValue("toneProfile",ui->toneProfile->currentIndex());
-  settings.setValue("similarityMeasure",similarityMeasureComboIndex[ui->similarityMeasure->currentIndex()].toAscii());
-  settings.endGroup();
-
-  settings.beginGroup("customToneProfile");
-  settings.setValue("maj0",ui->maj0->value());
-  settings.setValue("maj1",ui->maj1->value());
-  settings.setValue("maj2",ui->maj2->value());
-  settings.setValue("maj3",ui->maj3->value());
-  settings.setValue("maj4",ui->maj4->value());
-  settings.setValue("maj5",ui->maj5->value());
-  settings.setValue("maj6",ui->maj6->value());
-  settings.setValue("maj7",ui->maj7->value());
-  settings.setValue("maj8",ui->maj8->value());
-  settings.setValue("maj9",ui->maj9->value());
-  settings.setValue("maj10",ui->maj10->value());
-  settings.setValue("maj11",ui->maj11->value());
-  settings.setValue("min0",ui->min0->value());
-  settings.setValue("min1",ui->min1->value());
-  settings.setValue("min2",ui->min2->value());
-  settings.setValue("min3",ui->min3->value());
-  settings.setValue("min4",ui->min4->value());
-  settings.setValue("min5",ui->min5->value());
-  settings.setValue("min6",ui->min6->value());
-  settings.setValue("min7",ui->min7->value());
-  settings.setValue("min8",ui->min8->value());
-  settings.setValue("min9",ui->min9->value());
-  settings.setValue("min10",ui->min10->value());
-  settings.setValue("min11",ui->min11->value());
-  settings.endGroup();
-
-  settings.beginGroup("customKeyCodes");
-  settings.setValue("majKey0",ui->majKey0->text());
-  settings.setValue("majKey1",ui->majKey1->text());
-  settings.setValue("majKey2",ui->majKey2->text());
-  settings.setValue("majKey3",ui->majKey3->text());
-  settings.setValue("majKey4",ui->majKey4->text());
-  settings.setValue("majKey5",ui->majKey5->text());
-  settings.setValue("majKey6",ui->majKey6->text());
-  settings.setValue("majKey7",ui->majKey7->text());
-  settings.setValue("majKey8",ui->majKey8->text());
-  settings.setValue("majKey9",ui->majKey9->text());
-  settings.setValue("majKey10",ui->majKey10->text());
-  settings.setValue("majKey11",ui->majKey11->text());
-  settings.setValue("minKey0",ui->minKey0->text());
-  settings.setValue("minKey1",ui->minKey1->text());
-  settings.setValue("minKey2",ui->minKey2->text());
-  settings.setValue("minKey3",ui->minKey3->text());
-  settings.setValue("minKey4",ui->minKey4->text());
-  settings.setValue("minKey5",ui->minKey5->text());
-  settings.setValue("minKey6",ui->minKey6->text());
-  settings.setValue("minKey7",ui->minKey7->text());
-  settings.setValue("minKey8",ui->minKey8->text());
-  settings.setValue("minKey9",ui->minKey9->text());
-  settings.setValue("minKey10",ui->minKey10->text());
-  settings.setValue("minKey11",ui->minKey11->text());
-  settings.setValue("silence",ui->silence->text());
-  settings.endGroup();
-
-  settings.beginGroup("tags");
-  settings.setValue("tagFormat",tagFormatComboIndex[ui->tagFormat->currentIndex()].toAscii());
-  settings.setValue("writeToTagComment",ui->writeToTagComment->isChecked());
-  settings.setValue("writeToTagGrouping",ui->writeToTagGrouping->isChecked());
-  settings.setValue("writeToTagKey",ui->writeToTagKey->isChecked());
-  settings.setValue("writeTagsAutomatically",ui->writeTagsAutomatically->isChecked());
-  settings.endGroup();
-
-  settings.beginGroup("batch");
-  settings.setValue("parallelBatchJobs",ui->parallelBatchJobs->isChecked());
-  settings.setValue("skipFilesWithExistingTags",ui->skipFilesWithExistingTags->isChecked());
-  settings.endGroup();
-
-  settings.beginGroup("itunes");
-  settings.setValue("readITunesLibrary",ui->readITunesLibrary->isChecked());
-  settings.setValue("iTunesLibraryPath",ui->iTunesLibraryPath->text());
-  settings.endGroup();
-
-  // CLOSE
+  // save to QSettings and close window
+  p.save();
   this->close();
 }
 

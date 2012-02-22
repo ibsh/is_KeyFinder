@@ -24,7 +24,6 @@
 
 #include <QDialog>
 #include <QString>
-#include <QSettings>
 #include <QFileDialog>
 
 #include "preferences.h"

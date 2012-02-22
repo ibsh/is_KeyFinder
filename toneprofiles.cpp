@@ -85,13 +85,13 @@ ToneProfile::ToneProfile(int whichProfile, bool majorScale, const Preferences& p
       p[10]=4.3; p[11]=3.2;
     }
   }else if(whichProfile == 4){ // Custom profiles
-    std::vector<float> ctp = prefs.getCustomToneProfile();
+    QList<float> ctp = prefs.getCustomToneProfile();
     if(majorScale){
       for(int i=0; i<12; i++)
-        p[i] = ctp[i];
+        p[i] = (double)ctp[i];
     }else{
       for(int i=0; i<12; i++)
-        p[i] = ctp[i+12];
+        p[i] = (double)ctp[i+12];
     }
   }else{ // Krumhansl profiles
     if(majorScale){
@@ -121,9 +121,11 @@ ToneProfile::ToneProfile(int whichProfile, bool majorScale, const Preferences& p
   }
   q->r = tonic;
   tonic->l = q;
-  // offset by number of semitones specified in preferences
-  for(int i=0; i<prefs.getOctaveOffset(); i++)
-    tonic = tonic->r;
+  // offset from A to C (3 semitones) if specified in preferences
+  if(prefs.getOffsetToC()){
+    for(int i=0; i<3; i++)
+      tonic = tonic->r;
+  }
   // get mean in preparation for correlation
   profileMean = 0.0;
   for(int i=0; i<12; i++)

@@ -50,6 +50,7 @@ public:
   bool getWriteToTagKey() const;
   bool getSkipFilesWithExistingTags() const;
   bool getReadITunesLibrary() const;
+  bool getOffsetToC() const;
   char getTemporalWindow() const;
   char getHcdf() const;
   char getSimilarityMeasure() const;
@@ -58,7 +59,6 @@ public:
   int getFftFrameSize() const;
   int getOctaves() const;
   int getBpo() const;
-  int getOctaveOffset() const;
   int getDFactor() const;
   int getToneProfile() const;
   int getHcdfPeakPickingNeighbours() const;
@@ -66,13 +66,48 @@ public:
   int getHcdfGaussianSize() const;
   int getTuningMethod() const;
   float getHcdfGaussianSigma() const;
+  float getStartingFreqA() const;
   float getBinFreq(int) const;
   float getLastFreq() const;
   float getDirectSkStretch() const;
   float getDetunedBandWeight() const;
   QString getITunesLibraryPath() const;
-  std::vector<float> getCustomToneProfile() const;
-  std::vector<QString> getCustomKeyCodes() const;
+  QList<float> getCustomToneProfile() const;
+  QStringList getCustomKeyCodes() const;
+
+  // setters
+  void setWriteTagsAutomatically(bool);
+  void setParallelBatchJobs(bool);
+  void setWriteToTagComment(bool);
+  void setWriteToTagGrouping(bool);
+  void setWriteToTagKey(bool);
+  void setSkipFilesWithExistingTags(bool);
+  void setReadITunesLibrary(bool);
+  void setOffsetToC(bool);
+  void setTemporalWindow(char);
+  void setHcdf(char);
+  void setSimilarityMeasure(char);
+  void setTagFormat(char);
+  void setHopSize(int);
+  void setFftFrameSize(int);
+  void setOctaves(int);
+  void setBps(int);
+  void setDFactor(int);
+  void setToneProfile(int);
+  void setHcdfPeakPickingNeighbours(int);
+  void setHcdfArbitrarySegments(int);
+  void setHcdfGaussianSize(int);
+  void setTuningMethod(int);
+  void setHcdfGaussianSigma(float);
+  void setStartingFreqA(float);
+  void setDirectSkStretch(float);
+  void setDetunedBandWeight(float);
+  void setITunesLibraryPath(const QString&);
+  void setCustomToneProfile(const QList<float>&);
+  void setCustomKeyCodes(const QStringList&);
+
+  void save();
+
   // not necessarily related to user preferences, here for convenience
   QString getKeyCode(int) const;
   QColor getKeyColour(int) const;
@@ -86,6 +121,7 @@ private:
   bool writeToTagKey;
   bool skipFilesWithExistingTags;
   bool readITunesLibrary;
+  bool offsetToC;
   char temporalWindow;
   char hcdf;
   char similarityMeasure;
@@ -94,7 +130,6 @@ private:
   int fftFrameSize;
   int octaves;
   int bps;
-  int octaveOffset;
   int dFactor;
   int toneProfile;
   int hcdfPeakPickingNeighbours;
@@ -106,11 +141,11 @@ private:
   float directSkStretch;
   float detunedBandWeight;
   QString iTunesLibraryPath;
-  std::vector<float> customToneProfile;
-  std::vector<QString> customKeyCodes;
-  std::vector<float> binFreqs;
-  std::vector<QString> defaultKeyCodes;
-  std::vector<QColor> keyColours;
+  QList<float> customToneProfile;
+  QStringList customKeyCodes;
+  QList<float> binFreqs;
+  QStringList defaultKeyCodes;
+  QList<QColor> keyColours;
   void generateBinFreqs();
 };
 
