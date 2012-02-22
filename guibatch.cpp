@@ -257,11 +257,9 @@ QList<QUrl> BatchWindow::loadPlaylistXml(QString xmlFileUrl) const{
   if (!xmlFile.open(QIODevice::ReadOnly))
     return results;
 
-  // I want the text contents of the <string> node following a sibling <key> node of value "Location"
-  // but for the moment the last string node seems to do it...
   QXmlQuery xmlQuery;
   xmlQuery.bindVariable("inputDocument", &xmlFile);
-  xmlQuery.setQuery("doc($inputDocument)/plist/dict/dict/dict/string[last()]/string(text())");
+  xmlQuery.setQuery("doc($inputDocument)/plist/dict/dict[preceding-sibling::key[1]='Tracks']/dict/string[preceding-sibling::key[1]='Location']/string(text())");
   if (!xmlQuery.isValid())
     return results;
 
