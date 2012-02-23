@@ -72,7 +72,7 @@ private:
   void setThreadCount();
   void setGuiDefaults();
 
-  int playlistOldIndex;
+  int libraryOldIndex;
   void loadITunesPlaylistsIntoListWidget();
   void loadITunesPlaylistIntoTableWidget(QString);
 
@@ -100,14 +100,17 @@ private:
   Ui::BatchWindow* ui;
   QLabel* initialHelpLabel;
   MainMenuHandler* menuHandler;
-  QBrush keyGreenRow;
-  QBrush keyAltGreenRow;
+  QBrush keyFinderRow;
+  QBrush keyFinderAltRow;
+  QBrush iTunesRow;
+  QBrush traktorRow;
+  QBrush seratoRow;
   QBrush textDefault;
   QBrush textSuccess;
   QBrush textError;
 private slots:
 
-  void on_libraryWidget_currentRowChanged(int);
+  void on_libraryWidget_cellClicked(int,int);
 
   void addFilesFinished();
   void on_runBatchButton_clicked();

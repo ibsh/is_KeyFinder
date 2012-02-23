@@ -57,14 +57,21 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   menuHandler = handler;
   ui->tableWidget->setColumnHidden(COL_STATUS,true);
   ui->tableWidget->setColumnHidden(COL_FILEPATH,true);
-  keyGreenRow = QBrush(QColor(191,255,191));
-  keyAltGreenRow = QBrush(QColor(127,234,127));
+  keyFinderRow = QBrush(QColor(191,255,191));
+  keyFinderAltRow = QBrush(QColor(127,234,127));
+  iTunesRow = QBrush(QColor(223,223,255));
+  traktorRow = QBrush(QColor(191,191,191));
+  seratoRow = QBrush(QColor(255,191,191));
   textDefault = QBrush(QColor(0,0,0));
   textSuccess = QBrush(QColor(0,128,0));
   textError = QBrush(QColor(191,0,0));
-  ui->libraryWidget->setCurrentRow(0);
-  ui->libraryWidget->item(0)->setBackground(keyAltGreenRow);
-  playlistOldIndex = 0;
+
+  ui->libraryWidget->insertRow(0);
+  ui->libraryWidget->setItem(0,0,new QTableWidgetItem());
+  ui->libraryWidget->item(0,0)->setText("KeyFinder drag and drop");
+  ui->libraryWidget->item(0,0)->setBackground(keyFinderRow);
+  ui->libraryWidget->setColumnWidth(0,170);
+  libraryOldIndex = 0;
   loadITunesPlaylistsIntoListWidget();
 
   //relative sizing on Mac only
@@ -72,6 +79,7 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   QFont smallerFont;
   smallerFont.setPointSize(smallerFont.pointSize() - 2);
   ui->tableWidget->setFont(smallerFont);
+  ui->libraryWidget->setFont(smallerFont);
 #endif
 
   // HELP LABEL
@@ -163,13 +171,20 @@ void BatchWindow::loadITunesPlaylistsIntoListWidget(){
   if(playLists.isEmpty())
     return;
 
-  ui->libraryWidget->addItems(playLists);
+  for(int i=0; i<(signed)playLists.size(); i++){
+    int newRow = ui->libraryWidget->rowCount();
+    ui->libraryWidget->insertRow(newRow);
+    ui->libraryWidget->setItem(newRow,0,new QTableWidgetItem());
+    ui->libraryWidget->item(newRow,0)->setText(playLists[i]);
+    ui->libraryWidget->item(newRow,0)->setBackground(iTunesRow);
+  }
+  ui->libraryWidget->resizeRowsToContents();
 }
 
-void BatchWindow::on_libraryWidget_currentRowChanged(int index){
-  if(index == playlistOldIndex)
+void BatchWindow::on_libraryWidget_cellClicked(int row, int col){
+  if(row == libraryOldIndex)
     return;
-  if(playlistOldIndex == 0 && ui->tableWidget->rowCount() > 0){
+  if(libraryOldIndex == 0 && ui->tableWidget->rowCount() > 0){
     QMessageBox msgBox;
     msgBox.setText("The drag and drop list will not be saved.");
     msgBox.setInformativeText("Are you sure you want to view another playlist?");
@@ -177,15 +192,15 @@ void BatchWindow::on_libraryWidget_currentRowChanged(int index){
     msgBox.setDefaultButton(QMessageBox::No);
     int ret = msgBox.exec();
     if(ret == QMessageBox::No){
-      ui->libraryWidget->setCurrentRow(playlistOldIndex);
+      ui->libraryWidget->selectRow(0);
       return;
     }
   }
   ui->tableWidget->setRowCount(0);
   this->setWindowTitle("KeyFinder - Batch Analysis");
-  playlistOldIndex = index;
-  if(playlistOldIndex != 0)
-    loadITunesPlaylistIntoTableWidget(ui->libraryWidget->currentItem()->text());
+  libraryOldIndex = row;
+  if(libraryOldIndex != 0)
+    loadITunesPlaylistIntoTableWidget(ui->libraryWidget->item(row,col)->text());
 }
 
 void BatchWindow::loadITunesPlaylistIntoTableWidget(QString playList){
@@ -386,13 +401,12 @@ void BatchWindow::addNewRow(QString fileUrl){
   ui->tableWidget->setItem(newRow,COL_FILEPATH,new QTableWidgetItem());
   ui->tableWidget->item(newRow,COL_FILEPATH)->setText(fileUrl);
   ui->tableWidget->setItem(newRow,COL_FILENAME,new QTableWidgetItem());
-  // note forward slash not QDir::separator here
-  ui->tableWidget->item(newRow,COL_FILENAME)->setText(fileUrl.mid(fileUrl.lastIndexOf("/") + 1));
+  ui->tableWidget->item(newRow,COL_FILENAME)->setText(fileUrl.mid(fileUrl.lastIndexOf("/") + 1)); // note forwardslash not QDir::separator
   ui->tableWidget->setItem(newRow,COL_KEY,new QTableWidgetItem());
   if(newRow % 2 == 0){
-    ui->tableWidget->item(newRow,COL_KEY)->setBackground(keyGreenRow);
+    ui->tableWidget->item(newRow,COL_KEY)->setBackground(keyFinderRow);
   }else{
-    ui->tableWidget->item(newRow,COL_KEY)->setBackground(keyAltGreenRow);
+    ui->tableWidget->item(newRow,COL_KEY)->setBackground(keyFinderAltRow);
   }
 }
 
