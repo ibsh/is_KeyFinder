@@ -134,6 +134,7 @@ void BatchWindow::setGuiDefaults(){
   ui->statusLabel->setText("Ready");
   ui->runBatchButton->setEnabled(true);
   ui->cancelBatchButton->setEnabled(false);
+  ui->playlistComboBox->setEnabled(true);
   ui->tableWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
   ui->tableWidget->resizeColumnsToContents();
   ui->tableWidget->resizeRowsToContents();
@@ -165,7 +166,6 @@ void BatchWindow::loadITunesPlaylistsIntoComboBox(){
     return;
 
   ui->playlistComboBox->addItems(playLists);
-  ui->playlistComboBox->setEnabled(true);
 }
 
 void BatchWindow::on_playlistComboBox_activated(int index){
@@ -262,6 +262,7 @@ bool BatchWindow::receiveUrls(const QList<QUrl>& urls){
     prefs = Preferences();
     setThreadCount();
     ui->runBatchButton->setEnabled(false);
+    ui->playlistComboBox->setEnabled(false);
     ui->statusLabel->setText("Loading files...");
     QFuture<void>addFileFuture = QtConcurrent::run(this,&BatchWindow::addDroppedFiles);
     addFilesWatcher.setFuture(addFileFuture);
@@ -448,6 +449,7 @@ void BatchWindow::on_runBatchButton_clicked(){
   checkRowsForSkipping();
   ui->runBatchButton->setEnabled(false);
   ui->cancelBatchButton->setEnabled(true);
+  ui->playlistComboBox->setEnabled(false);
   ui->tableWidget->setContextMenuPolicy(Qt::NoContextMenu); // so that no tags can be written while busy
 
   setThreadCount();

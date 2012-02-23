@@ -35,9 +35,6 @@
       </item>
       <item>
        <widget class="QComboBox" name="playlistComboBox">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
         <item>
          <property name="text">
           <string>KeyFinder drag and drop</string>
