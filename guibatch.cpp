@@ -168,6 +168,29 @@ void BatchWindow::loadITunesPlaylistsIntoComboBox(){
   ui->playlistComboBox->setEnabled(true);
 }
 
+void BatchWindow::on_playlistComboBox_activated(int index){
+  if(index == playlistComboBoxOldIndex)
+    return;
+  if(playlistComboBoxOldIndex == 0 && ui->tableWidget->rowCount() > 0){
+    QMessageBox msgBox;
+    msgBox.setText("The drag and drop list will not be saved.");
+    msgBox.setInformativeText("Are you sure you want to view another playlist?");
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::No);
+    int ret = msgBox.exec();
+    if(ret == QMessageBox::No){
+      ui->playlistComboBox->setCurrentIndex(playlistComboBoxOldIndex);
+      return;
+    }
+  }
+  ui->tableWidget->setRowCount(0);
+  this->setWindowTitle("KeyFinder - Batch Analysis");
+  playlistComboBoxOldIndex = index;
+  if(playlistComboBoxOldIndex != 0)
+    loadITunesPlaylistIntoTableWidget(ui->playlistComboBox->currentText());
+}
+
+
 void BatchWindow::loadITunesPlaylistIntoTableWidget(QString playList){
 
   QStringList trackIds;
@@ -212,27 +235,6 @@ void BatchWindow::loadITunesPlaylistIntoTableWidget(QString playList){
 
   xmlFile.close();
   receiveUrls(results);
-}
-
-void BatchWindow::on_playlistComboBox_activated(int index){
-  if(index == playlistComboBoxOldIndex)
-    return;
-  if(playlistComboBoxOldIndex == 0 && ui->tableWidget->rowCount() > 0){
-    QMessageBox msgBox;
-    msgBox.setText("The drag and drop list will not be saved.");
-    msgBox.setInformativeText("Are you sure you want to view another playlist?");
-    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    msgBox.setDefaultButton(QMessageBox::No);
-    int ret = msgBox.exec();
-    if(ret == QMessageBox::No){
-      ui->playlistComboBox->setCurrentIndex(playlistComboBoxOldIndex);
-      return;
-    }
-  }
-  ui->tableWidget->setRowCount(0);
-  playlistComboBoxOldIndex = index;
-  if(playlistComboBoxOldIndex != 0)
-    loadITunesPlaylistIntoTableWidget(ui->playlistComboBox->currentText());
 }
 
 void BatchWindow::dragEnterEvent(QDragEnterEvent *e){
