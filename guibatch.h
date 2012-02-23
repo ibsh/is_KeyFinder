@@ -72,8 +72,8 @@ private:
   void setThreadCount();
   void setGuiDefaults();
 
-  int playlistComboBoxOldIndex;
-  void loadITunesPlaylistsIntoComboBox();
+  int playlistOldIndex;
+  void loadITunesPlaylistsIntoListWidget();
   void loadITunesPlaylistIntoTableWidget(QString);
 
   void dragEnterEvent(QDragEnterEvent*);
@@ -100,14 +100,14 @@ private:
   Ui::BatchWindow* ui;
   QLabel* initialHelpLabel;
   MainMenuHandler* menuHandler;
-  QBrush keyRow;
-  QBrush keyAltRow;
+  QBrush keyGreenRow;
+  QBrush keyAltGreenRow;
   QBrush textDefault;
   QBrush textSuccess;
   QBrush textError;
 private slots:
 
-  void on_playlistComboBox_activated(int);
+  void on_libraryWidget_currentRowChanged(int);
 
   void addFilesFinished();
   void on_runBatchButton_clicked();

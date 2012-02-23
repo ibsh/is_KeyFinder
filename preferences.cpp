@@ -402,15 +402,7 @@ Preferences::Preferences(){
 
   // ============================== iTunes ===================================
 
-  settings.beginGroup("itunes");
-  if(settings.contains("readITunesLibrary")){
-    readITunesLibrary = settings.value("readITunesLibrary").toBool();
-  }else{
-    bool defaultVal = true;
-    settings.setValue("readITunesLibrary",defaultVal);
-    readITunesLibrary = defaultVal;
-    qDebug("Wrote default readITunesLibrary (true)");
-  }
+  settings.beginGroup("library");
   if(settings.contains("iTunesLibraryPath")){
     iTunesLibraryPath = settings.value("iTunesLibraryPath").toString();
   }else{
@@ -567,8 +559,7 @@ void Preferences::save(){
   settings.setValue("skipFilesWithExistingTags", skipFilesWithExistingTags);
   settings.endGroup();
 
-  settings.beginGroup("itunes");
-  settings.setValue("readITunesLibrary", readITunesLibrary);
+  settings.beginGroup("library");
   settings.setValue("iTunesLibraryPath", iTunesLibraryPath);
   settings.endGroup();
 
@@ -603,7 +594,6 @@ Preferences& Preferences::operator=(const Preferences& that){
     writeTagsAutomatically = that.writeTagsAutomatically;
     skipFilesWithExistingTags = that.skipFilesWithExistingTags;
     parallelBatchJobs = that.parallelBatchJobs;
-    readITunesLibrary = that.readITunesLibrary;
     iTunesLibraryPath = that.iTunesLibraryPath;
     generateBinFreqs();
   }
@@ -635,7 +625,6 @@ bool         Preferences::getWriteToTagComment()         const { return writeToT
 bool         Preferences::getWriteToTagGrouping()        const { return writeToTagGrouping; }
 bool         Preferences::getWriteToTagKey()             const { return writeToTagKey; }
 bool         Preferences::getSkipFilesWithExistingTags() const { return skipFilesWithExistingTags; }
-bool         Preferences::getReadITunesLibrary()         const { return readITunesLibrary; }
 bool         Preferences::getOffsetToC()                 const { return offsetToC; }
 char         Preferences::getTemporalWindow()            const { return temporalWindow; }
 char         Preferences::getHcdf()                      const { return hcdf; }
@@ -665,7 +654,6 @@ void Preferences::setWriteToTagComment(bool cmt)                    { writeToTag
 void Preferences::setWriteToTagGrouping(bool grp)                   { writeToTagGrouping = grp; }
 void Preferences::setWriteToTagKey(bool key)                        { writeToTagKey = key; }
 void Preferences::setSkipFilesWithExistingTags(bool skip)           { skipFilesWithExistingTags = skip; }
-void Preferences::setReadITunesLibrary(bool readLib)                { readITunesLibrary = readLib; }
 void Preferences::setOffsetToC(bool off)                            { offsetToC = off; }
 void Preferences::setTemporalWindow(char window)                    { temporalWindow = window; }
 void Preferences::setHcdf(char f)                                   { hcdf = f; }

@@ -57,14 +57,15 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   menuHandler = handler;
   ui->tableWidget->setColumnHidden(COL_STATUS,true);
   ui->tableWidget->setColumnHidden(COL_FILEPATH,true);
-  keyRow = QBrush(QColor(191,255,191));
-  keyAltRow = QBrush(QColor(127,234,127));
+  keyGreenRow = QBrush(QColor(191,255,191));
+  keyAltGreenRow = QBrush(QColor(127,234,127));
   textDefault = QBrush(QColor(0,0,0));
   textSuccess = QBrush(QColor(0,128,0));
   textError = QBrush(QColor(191,0,0));
-
-  playlistComboBoxOldIndex = 0;
-  loadITunesPlaylistsIntoComboBox();
+  ui->libraryWidget->setCurrentRow(0);
+  ui->libraryWidget->item(0)->setBackground(keyAltGreenRow);
+  playlistOldIndex = 0;
+  loadITunesPlaylistsIntoListWidget();
 
   //relative sizing on Mac only
 #ifdef Q_OS_MAC
@@ -84,8 +85,8 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   initialHelpLabel->setFont(font);
   // can't seem to derive these magic numbers from any useful size hints
   initialHelpLabel->setGeometry(
-        (676 - initialHelpLabel->sizeHint().width()) / 2,
-        (312 - initialHelpLabel->sizeHint().height()) / 2,
+        (494 - initialHelpLabel->sizeHint().width()) / 2,
+        (334 - initialHelpLabel->sizeHint().height()) / 2,
         initialHelpLabel->sizeHint().width(),
         initialHelpLabel->sizeHint().height()
         );
@@ -134,16 +135,13 @@ void BatchWindow::setGuiDefaults(){
   ui->statusLabel->setText("Ready");
   ui->runBatchButton->setEnabled(true);
   ui->cancelBatchButton->setEnabled(false);
-  ui->playlistComboBox->setEnabled(true);
+  ui->libraryWidget->setEnabled(true);
   ui->tableWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
   ui->tableWidget->resizeColumnsToContents();
   ui->tableWidget->resizeRowsToContents();
 }
 
-void BatchWindow::loadITunesPlaylistsIntoComboBox(){
-  if(!prefs.getReadITunesLibrary())
-    return;
-
+void BatchWindow::loadITunesPlaylistsIntoListWidget(){
   QStringList playLists;
   QFile xmlFile(prefs.getITunesLibraryPath());
   if (!xmlFile.open(QIODevice::ReadOnly))
@@ -165,13 +163,13 @@ void BatchWindow::loadITunesPlaylistsIntoComboBox(){
   if(playLists.isEmpty())
     return;
 
-  ui->playlistComboBox->addItems(playLists);
+  ui->libraryWidget->addItems(playLists);
 }
 
-void BatchWindow::on_playlistComboBox_activated(int index){
-  if(index == playlistComboBoxOldIndex)
+void BatchWindow::on_libraryWidget_currentRowChanged(int index){
+  if(index == playlistOldIndex)
     return;
-  if(playlistComboBoxOldIndex == 0 && ui->tableWidget->rowCount() > 0){
+  if(playlistOldIndex == 0 && ui->tableWidget->rowCount() > 0){
     QMessageBox msgBox;
     msgBox.setText("The drag and drop list will not be saved.");
     msgBox.setInformativeText("Are you sure you want to view another playlist?");
@@ -179,17 +177,16 @@ void BatchWindow::on_playlistComboBox_activated(int index){
     msgBox.setDefaultButton(QMessageBox::No);
     int ret = msgBox.exec();
     if(ret == QMessageBox::No){
-      ui->playlistComboBox->setCurrentIndex(playlistComboBoxOldIndex);
+      ui->libraryWidget->setCurrentRow(playlistOldIndex);
       return;
     }
   }
   ui->tableWidget->setRowCount(0);
   this->setWindowTitle("KeyFinder - Batch Analysis");
-  playlistComboBoxOldIndex = index;
-  if(playlistComboBoxOldIndex != 0)
-    loadITunesPlaylistIntoTableWidget(ui->playlistComboBox->currentText());
+  playlistOldIndex = index;
+  if(playlistOldIndex != 0)
+    loadITunesPlaylistIntoTableWidget(ui->libraryWidget->currentItem()->text());
 }
-
 
 void BatchWindow::loadITunesPlaylistIntoTableWidget(QString playList){
 
@@ -244,7 +241,7 @@ void BatchWindow::dragEnterEvent(QDragEnterEvent *e){
 }
 
 void BatchWindow::dropEvent(QDropEvent *e){
-  if(ui->playlistComboBox->currentIndex() != 0){
+  if(ui->libraryWidget->currentIndex().row() != 0){
     QMessageBox msg;
     msg.setText("Cannot change an iTunes playlist from KeyFinder");
     msg.exec();
@@ -262,7 +259,7 @@ bool BatchWindow::receiveUrls(const QList<QUrl>& urls){
     prefs = Preferences();
     setThreadCount();
     ui->runBatchButton->setEnabled(false);
-    ui->playlistComboBox->setEnabled(false);
+    ui->libraryWidget->setEnabled(false);
     ui->statusLabel->setText("Loading files...");
     QFuture<void>addFileFuture = QtConcurrent::run(this,&BatchWindow::addDroppedFiles);
     addFilesWatcher.setFuture(addFileFuture);
@@ -393,9 +390,9 @@ void BatchWindow::addNewRow(QString fileUrl){
   ui->tableWidget->item(newRow,COL_FILENAME)->setText(fileUrl.mid(fileUrl.lastIndexOf("/") + 1));
   ui->tableWidget->setItem(newRow,COL_KEY,new QTableWidgetItem());
   if(newRow % 2 == 0){
-    ui->tableWidget->item(newRow,COL_KEY)->setBackground(keyRow);
+    ui->tableWidget->item(newRow,COL_KEY)->setBackground(keyGreenRow);
   }else{
-    ui->tableWidget->item(newRow,COL_KEY)->setBackground(keyAltRow);
+    ui->tableWidget->item(newRow,COL_KEY)->setBackground(keyAltGreenRow);
   }
 }
 
@@ -449,7 +446,7 @@ void BatchWindow::on_runBatchButton_clicked(){
   checkRowsForSkipping();
   ui->runBatchButton->setEnabled(false);
   ui->cancelBatchButton->setEnabled(true);
-  ui->playlistComboBox->setEnabled(false);
+  ui->libraryWidget->setEnabled(false);
   ui->tableWidget->setContextMenuPolicy(Qt::NoContextMenu); // so that no tags can be written while busy
 
   setThreadCount();

@@ -49,7 +49,6 @@ public:
   bool getWriteToTagGrouping() const;
   bool getWriteToTagKey() const;
   bool getSkipFilesWithExistingTags() const;
-  bool getReadITunesLibrary() const;
   bool getOffsetToC() const;
   char getTemporalWindow() const;
   char getHcdf() const;
@@ -82,7 +81,6 @@ public:
   void setWriteToTagGrouping(bool);
   void setWriteToTagKey(bool);
   void setSkipFilesWithExistingTags(bool);
-  void setReadITunesLibrary(bool);
   void setOffsetToC(bool);
   void setTemporalWindow(char);
   void setHcdf(char);
@@ -120,7 +118,6 @@ private:
   bool writeToTagGrouping;
   bool writeToTagKey;
   bool skipFilesWithExistingTags;
-  bool readITunesLibrary;
   bool offsetToC;
   char temporalWindow;
   char hcdf;

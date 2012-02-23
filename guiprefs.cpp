@@ -40,7 +40,6 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   ui->writeToTagGrouping->setChecked(p.getWriteToTagGrouping());
   ui->writeToTagKey->setChecked(p.getWriteToTagKey());
   ui->skipFilesWithExistingTags->setChecked(p.getSkipFilesWithExistingTags());
-  ui->readITunesLibrary->setChecked(p.getReadITunesLibrary());
   ui->temporalWindow->setCurrentIndex(temporalWindowComboIndex.indexOf(p.getTemporalWindow()));
   ui->hcdf->setCurrentIndex(hcdfComboIndex.indexOf(p.getHcdf()));
   ui->similarityMeasure->setCurrentIndex(similarityMeasureComboIndex.indexOf(p.getSimilarityMeasure()));
@@ -120,7 +119,6 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   binAdaptiveTuningEnabled();
   hcdfEnabled();
   customProfileEnabled();
-  readITunesProfileEnabled();
 
   //relative sizing on Mac only
 #ifdef Q_OS_MAC
@@ -153,7 +151,6 @@ void PrefsDialog::on_savePrefsButton_clicked(){
   p.setWriteToTagGrouping(ui->writeToTagGrouping->isChecked());
   p.setWriteToTagKey(ui->writeToTagKey->isChecked());
   p.setSkipFilesWithExistingTags(ui->skipFilesWithExistingTags->isChecked());
-  p.setReadITunesLibrary(ui->readITunesLibrary->isChecked());
   p.setTemporalWindow(temporalWindowComboIndex[ui->temporalWindow->currentIndex()].toAscii());
   p.setHcdf(hcdfComboIndex[ui->hcdf->currentIndex()].toAscii());
   p.setSimilarityMeasure(similarityMeasureComboIndex[ui->similarityMeasure->currentIndex()].toAscii());
@@ -250,10 +247,6 @@ void PrefsDialog::customProfileEnabled(){
   ui->min11->setEnabled(e);
 }
 
-void PrefsDialog::readITunesProfileEnabled(){
-  ui->findITunesLibraryButton->setEnabled(ui->readITunesLibrary->isChecked());
-}
-
 void PrefsDialog::on_bps_valueChanged(int /*arg1*/){
   tuningEnabled();
 }
@@ -268,10 +261,6 @@ void PrefsDialog::on_hcdf_currentIndexChanged(int /*index*/){
 
 void PrefsDialog::on_toneProfile_currentIndexChanged(int /*index*/){
   customProfileEnabled();
-}
-
-void PrefsDialog::on_readITunesLibrary_toggled(bool /*checked*/){
-  readITunesProfileEnabled();
 }
 
 void PrefsDialog::on_findITunesLibraryButton_clicked(){
