@@ -109,7 +109,7 @@ OTHER_FILES += \
     win32.rc \
     Info.plist
 
-UI_DIR = ../is_KeyFinder-build-desktop/
+UI_DIR = ui
 
 # for libav
 QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS
