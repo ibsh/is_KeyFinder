@@ -116,7 +116,7 @@ QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS
 
 RESOURCES += resources.qrc
 
-mac{
+unix|macx{
   LIBS += -lavutil
   LIBS += -lavcodec
   LIBS += -lavformat
@@ -124,10 +124,13 @@ mac{
   LIBS += -lsamplerate
   LIBS += -ltag
 
+  ICON = is_KeyFinder.icns
+  QMAKE_INFO_PLIST = Info.plist
+}
+
+macx{
   DEPENDPATH += /usr/local/lib
   INCLUDEPATH += /usr/local/include
-	ICON = is_KeyFinder.icns
-  QMAKE_INFO_PLIST = Info.plist
   CONFIG -= ppc ppc64
   CONFIG += x86 x86_64
 }
