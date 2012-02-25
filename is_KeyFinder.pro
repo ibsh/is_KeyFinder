@@ -126,7 +126,6 @@ mac{
 
   DEPENDPATH += /usr/local/lib
   INCLUDEPATH += /usr/local/include
-	INCLUDEPATH += /usr/local/include/taglib
 	ICON = is_KeyFinder.icns
   QMAKE_INFO_PLIST = Info.plist
   CONFIG -= ppc ppc64
