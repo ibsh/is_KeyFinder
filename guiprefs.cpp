@@ -60,6 +60,8 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   ui->directSkStretch->setValue(p.getDirectSkStretch());
   ui->detunedBandWeight->setValue(p.getDetunedBandWeight());
   ui->iTunesLibraryPath->setText(p.getITunesLibraryPath());
+  ui->traktorLibraryPath->setText(p.getTraktorLibraryPath());
+  ui->seratoLibraryPath->setText(p.getSeratoLibraryPath());
 
   QList<float> ctp = p.getCustomToneProfile();
   ui->maj0->setValue(ctp[0]);
@@ -171,6 +173,8 @@ void PrefsDialog::on_savePrefsButton_clicked(){
   p.setDirectSkStretch(ui->directSkStretch->value());
   p.setDetunedBandWeight(ui->detunedBandWeight->value());
   p.setITunesLibraryPath(ui->iTunesLibraryPath->text());
+  p.setTraktorLibraryPath(ui->traktorLibraryPath->text());
+  p.setSeratoLibraryPath(ui->seratoLibraryPath->text());
 
   QList<float> ctp;
   ctp << ui->maj0->value() << ui->maj1->value() << ui->maj2->value() << ui->maj3->value();
@@ -270,8 +274,34 @@ void PrefsDialog::on_findITunesLibraryButton_clicked(){
 #else
   initDir = QDir::homePath() + "/Music/iTunes";
 #endif
-  QString iTunesPath = QFileDialog::getOpenFileName(this,tr("Choose iTunes Library XML"), initDir, tr("iTunes XML (*.xml)"));
-  if(iTunesPath.isEmpty())
+  QString iTunesLibraryPath = QFileDialog::getOpenFileName(this,tr("Choose iTunes Library XML"), initDir, tr("iTunes XML (*.xml)"));
+  if(iTunesLibraryPath.isEmpty())
     return;
-  ui->iTunesLibraryPath->setText(iTunesPath);
+  ui->iTunesLibraryPath->setText(iTunesLibraryPath);
+}
+
+void PrefsDialog::on_findTraktorLibraryButton_clicked(){
+  QString initDir;
+#ifdef Q_OS_WIN
+  initDir = QDir::homePath() + "/My Music";
+#else
+  initDir = QDir::homePath() + "/Documents/Native Instruments/Traktor 2.1.2";
+#endif
+  QString traktorLibraryPath = QFileDialog::getOpenFileName(this,tr("Choose Traktor Library NML"), initDir, tr("Traktor NML (*.nml)"));
+  if(traktorLibraryPath.isEmpty())
+    return;
+  ui->traktorLibraryPath->setText(traktorLibraryPath);
+}
+
+void PrefsDialog::on_findSeratoLibraryButton_clicked(){
+  QString initDir;
+#ifdef Q_OS_WIN
+  initDir = QDir::homePath() + "/My Music";
+#else
+  initDir = QDir::homePath() + "/Music/_Serato_";
+#endif
+  QString seratoLibraryPath = QFileDialog::getOpenFileName(this,tr("Choose Serato database"), initDir, tr("Serato database (*)"));
+  if(seratoLibraryPath.isEmpty())
+    return;
+  ui->seratoLibraryPath->setText(seratoLibraryPath);
 }

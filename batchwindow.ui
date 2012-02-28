@@ -25,7 +25,7 @@
      <widget class="QTableWidget" name="libraryWidget">
       <property name="minimumSize">
        <size>
-        <width>170</width>
+        <width>190</width>
         <height>0</height>
        </size>
       </property>
@@ -38,6 +38,12 @@
       <property name="editTriggers">
        <set>QAbstractItemView::NoEditTriggers</set>
       </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::SingleSelection</enum>
+      </property>
+      <property name="wordWrap">
+       <bool>false</bool>
+      </property>
       <property name="cornerButtonEnabled">
        <bool>false</bool>
       </property>
@@ -47,6 +53,11 @@
       <attribute name="verticalHeaderVisible">
        <bool>false</bool>
       </attribute>
+      <column>
+       <property name="text">
+        <string>Source (Hidden)</string>
+       </property>
+      </column>
       <column>
        <property name="text">
         <string>Library</string>

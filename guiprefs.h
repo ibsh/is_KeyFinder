@@ -54,6 +54,8 @@ private slots:
   void on_toneProfile_currentIndexChanged(int index);
   void on_tuningMethod_currentIndexChanged(int index);
   void on_findITunesLibraryButton_clicked();
+  void on_findTraktorLibraryButton_clicked();
+  void on_findSeratoLibraryButton_clicked();
 private:
   Ui::PrefsDialog *ui;
 };

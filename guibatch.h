@@ -52,6 +52,7 @@ class MainMenuHandler;
 #include "asynckeyprocess.h"
 #include "asyncmetadatareadprocess.h"
 #include "metadatataglib.h"
+#include "externalplaylist.h"
 #include "_VERSION.h"
 
 
@@ -69,12 +70,11 @@ public slots:
   void checkForNewVersion();
 private:
   Preferences prefs;
-  void setThreadCount();
   void setGuiDefaults();
 
   int libraryOldIndex;
-  void loadITunesPlaylistsIntoListWidget();
-  void loadITunesPlaylistIntoTableWidget(QString);
+  QFutureWatcher<QList<ExternalPlaylistObject> > readLibraryWatcher;
+  QFutureWatcher<QList<QUrl> > loadPlaylistWatcher;
 
   void dragEnterEvent(QDragEnterEvent*);
   void dropEvent(QDropEvent*);
@@ -82,8 +82,6 @@ private:
   void addDroppedFiles();
   QFutureWatcher<void> addFilesWatcher;
   QList<QUrl> getDirectoryContents(QDir) const;
-  QList<QUrl> loadPlaylistM3u(QString) const;
-  QList<QUrl> loadPlaylistXml(QString) const;
 
   void addNewRow(QString);
   QFutureWatcher<MetadataReadResult> metadataReadWatcher;
@@ -102,15 +100,15 @@ private:
   MainMenuHandler* menuHandler;
   QBrush keyFinderRow;
   QBrush keyFinderAltRow;
-  QBrush iTunesRow;
-  QBrush traktorRow;
-  QBrush seratoRow;
   QBrush textDefault;
   QBrush textSuccess;
   QBrush textError;
 private slots:
 
   void on_libraryWidget_cellClicked(int,int);
+
+  void readLibraryFinished();
+  void loadPlaylistFinished();
 
   void addFilesFinished();
   void on_runBatchButton_clicked();

@@ -18,9 +18,8 @@ void KeyFinderApplication::loadFile(const QUrl& fileUrl){
   foreach (QWidget *widget, QApplication::topLevelWidgets()) {
     if(QString(widget->metaObject()->className()) == "BatchWindow"){
       if (static_cast<BatchWindow*>(widget)->receiveUrls(urls) == false)
-        QApplication::beep();
-      else
         return;
     }
   }
+  QApplication::beep();
 }

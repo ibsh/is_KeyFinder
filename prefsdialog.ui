@@ -90,7 +90,7 @@
          <item row="0" column="0">
           <widget class="QLabel" name="lbl_iTunesLibrary">
            <property name="text">
-            <string>iTunes library location</string>
+            <string>iTunes XML</string>
            </property>
           </widget>
          </item>
@@ -112,6 +112,66 @@
          </item>
          <item row="0" column="2">
           <widget class="QPushButton" name="findITunesLibraryButton">
+           <property name="text">
+            <string>Browse</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="lbl_traktorLibrary">
+           <property name="text">
+            <string>Traktor NML</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="traktorLibraryPath">
+           <property name="minimumSize">
+            <size>
+             <width>300</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="frame">
+            <bool>true</bool>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QPushButton" name="findTraktorLibraryButton">
+           <property name="text">
+            <string>Browse</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="lbl_seratoLibrary">
+           <property name="text">
+            <string>Serato database</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="seratoLibraryPath">
+           <property name="minimumSize">
+            <size>
+             <width>300</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="frame">
+            <bool>true</bool>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QPushButton" name="findSeratoLibraryButton">
            <property name="text">
             <string>Browse</string>
            </property>

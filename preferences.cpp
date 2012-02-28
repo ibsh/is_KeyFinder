@@ -400,7 +400,7 @@ Preferences::Preferences(){
   }
   settings.endGroup();
 
-  // ============================== iTunes ===================================
+  // ============================= Library ==================================
 
   settings.beginGroup("library");
   if(settings.contains("iTunesLibraryPath")){
@@ -415,6 +415,32 @@ Preferences::Preferences(){
     settings.setValue("iTunesLibraryPath",defaultVal);
     iTunesLibraryPath = defaultVal;
     qDebug("Wrote default iTunesLibraryPath");
+  }
+  if(settings.contains("traktorLibraryPath")){
+    traktorLibraryPath = settings.value("traktorLibraryPath").toString();
+  }else{
+    QString defaultVal;
+#ifdef Q_OS_WIN
+    defaultVal = QDir::homePath();
+#else
+    defaultVal = QDir::homePath() + "/Documents/Native Instruments/Traktor 2.1.2/collection.nml";
+#endif
+    settings.setValue("traktorLibraryPath",defaultVal);
+    traktorLibraryPath = defaultVal;
+    qDebug("Wrote default traktorLibraryPath");
+  }
+  if(settings.contains("seratoLibraryPath")){
+    seratoLibraryPath = settings.value("seratoLibraryPath").toString();
+  }else{
+    QString defaultVal;
+#ifdef Q_OS_WIN
+    defaultVal = QDir::homePath();
+#else
+    defaultVal = QDir::homePath() + "/Music/_Serato_/database V2";
+#endif
+    settings.setValue("seratoLibraryPath",defaultVal);
+    seratoLibraryPath = defaultVal;
+    qDebug("Wrote default seratoLibraryPath");
   }
   settings.endGroup();
 
@@ -561,6 +587,8 @@ void Preferences::save(){
 
   settings.beginGroup("library");
   settings.setValue("iTunesLibraryPath", iTunesLibraryPath);
+  settings.setValue("traktorLibraryPath", traktorLibraryPath);
+  settings.setValue("seratoLibraryPath", seratoLibraryPath);
   settings.endGroup();
 
 }
@@ -595,6 +623,8 @@ Preferences& Preferences::operator=(const Preferences& that){
     skipFilesWithExistingTags = that.skipFilesWithExistingTags;
     parallelBatchJobs = that.parallelBatchJobs;
     iTunesLibraryPath = that.iTunesLibraryPath;
+    traktorLibraryPath = that.traktorLibraryPath;
+    seratoLibraryPath = that.seratoLibraryPath;
     generateBinFreqs();
   }
   return *this;
@@ -645,11 +675,12 @@ float        Preferences::getStartingFreqA()             const { return stFreq; 
 float        Preferences::getDirectSkStretch()           const { return directSkStretch; }
 float        Preferences::getDetunedBandWeight()         const { return detunedBandWeight; }
 QString      Preferences::getITunesLibraryPath()         const { return iTunesLibraryPath; }
+QString      Preferences::getTraktorLibraryPath()        const { return traktorLibraryPath; }
+QString      Preferences::getSeratoLibraryPath()         const { return seratoLibraryPath; }
 QList<float> Preferences::getCustomToneProfile()         const { return customToneProfile;}
 QStringList  Preferences::getCustomKeyCodes()            const { return customKeyCodes;}
 
 void Preferences::setWriteTagsAutomatically(bool autoTags)          { writeTagsAutomatically = autoTags; }
-void Preferences::setParallelBatchJobs(bool parallel)               { parallelBatchJobs = parallel; }
 void Preferences::setWriteToTagComment(bool cmt)                    { writeToTagComment = cmt; }
 void Preferences::setWriteToTagGrouping(bool grp)                   { writeToTagGrouping = grp; }
 void Preferences::setWriteToTagKey(bool key)                        { writeToTagKey = key; }
@@ -674,8 +705,20 @@ void Preferences::setStartingFreqA(float a)                         { stFreq = a
 void Preferences::setDirectSkStretch(float stretch)                 { directSkStretch = stretch; }
 void Preferences::setDetunedBandWeight(float weight)                { detunedBandWeight = weight; }
 void Preferences::setITunesLibraryPath(const QString& path)         { iTunesLibraryPath = path; }
+void Preferences::setTraktorLibraryPath(const QString& path)        { traktorLibraryPath = path; }
+void Preferences::setSeratoLibraryPath(const QString& path)         { seratoLibraryPath = path; }
 void Preferences::setCustomToneProfile(const QList<float>& profile) { customToneProfile = profile; }
 void Preferences::setCustomKeyCodes(const QStringList& codes)       { customKeyCodes = codes; }
+
+void Preferences::setParallelBatchJobs(bool parallel){
+  parallelBatchJobs = parallel;
+  int numThreads = QThread::idealThreadCount();
+  if(numThreads == -1 || parallel == false){
+    QThreadPool::globalInstance()->setMaxThreadCount(1);
+  }else{
+    QThreadPool::globalInstance()->setMaxThreadCount(numThreads);
+  }
+}
 
 float Preferences::getBinFreq(int n)const{
   if(n >= octaves*12*bps){

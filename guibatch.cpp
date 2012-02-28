@@ -22,6 +22,9 @@
 #include "guibatch.h"
 #include "ui_batchwindow.h"
 
+const int COL_PLAYLIST_SOURCE = 0;
+const int COL_PLAYLIST_NAME = 1;
+
 const int COL_STATUS = 0;
 const int COL_FILEPATH = 1;
 const int COL_FILENAME = 2;
@@ -31,7 +34,6 @@ const int COL_TAG_COMMENT = 5;
 const int COL_TAG_GROUPING = 6;
 const int COL_TAG_KEY = 7;
 const int COL_KEY = 8;
-
 // Statuses >= 0 are key codes
 const QString STATUS_NEW = "-1";
 const QString STATUS_TAGSREAD = "-2";
@@ -40,6 +42,8 @@ const QString STATUS_FAILED = "-4";
 
 BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindow(parent), ui(new Ui::BatchWindow){
   // ASYNC
+  connect(&readLibraryWatcher, SIGNAL(finished()), this, SLOT(readLibraryFinished()));
+  connect(&loadPlaylistWatcher, SIGNAL(finished()), this, SLOT(loadPlaylistFinished()));
   connect(&addFilesWatcher, SIGNAL(finished()), this, SLOT(addFilesFinished()));
 
   connect(&metadataReadWatcher, SIGNAL(resultReadyAt(int)), this, SLOT(metadataReadResultReadyAt(int)));
@@ -55,24 +59,28 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   // SETUP UI
   ui->setupUi(this);
   menuHandler = handler;
-  ui->tableWidget->setColumnHidden(COL_STATUS,true);
-  ui->tableWidget->setColumnHidden(COL_FILEPATH,true);
-  keyFinderRow = QBrush(QColor(191,255,191));
-  keyFinderAltRow = QBrush(QColor(127,234,127));
-  iTunesRow = QBrush(QColor(223,223,255));
-  traktorRow = QBrush(QColor(191,191,191));
-  seratoRow = QBrush(QColor(255,191,191));
-  textDefault = QBrush(QColor(0,0,0));
-  textSuccess = QBrush(QColor(0,128,0));
-  textError = QBrush(QColor(191,0,0));
+  ui->libraryWidget->setColumnHidden(COL_PLAYLIST_SOURCE, true);
+  ui->tableWidget->setColumnHidden(COL_FILEPATH, true);
+  ui->tableWidget->setColumnHidden(COL_STATUS, true);
+  ui->tableWidget->setColumnHidden(COL_FILEPATH, true);
+  keyFinderRow =    QBrush(QColor(191, 255, 191));
+  keyFinderAltRow = QBrush(QColor(127, 234, 127));
+  textDefault =     QBrush(QColor(0, 0, 0));
+  textSuccess =     QBrush(QColor(0, 128, 0));
+  textError =       QBrush(QColor(191, 0, 0));
 
+  // Read music library
   ui->libraryWidget->insertRow(0);
-  ui->libraryWidget->setItem(0,0,new QTableWidgetItem());
-  ui->libraryWidget->item(0,0)->setText("KeyFinder drag and drop");
-  ui->libraryWidget->item(0,0)->setBackground(keyFinderRow);
+  ui->libraryWidget->setItem(0, COL_PLAYLIST_SOURCE, new QTableWidgetItem());
+  ui->libraryWidget->setItem(0,COL_PLAYLIST_NAME, new QTableWidgetItem());
+  ui->libraryWidget->item(0, COL_PLAYLIST_SOURCE)->setText(SOURCE_KEYFINDER);
+  ui->libraryWidget->item(0, COL_PLAYLIST_NAME)->setText("KeyFinder drag and drop");
+  ui->libraryWidget->item(0,COL_PLAYLIST_NAME)->setIcon(QIcon(":/KeyFinder/images/icon-18.png"));
+  ui->libraryWidget->item(0, COL_PLAYLIST_NAME)->setBackground(keyFinderRow);
   ui->libraryWidget->setColumnWidth(0,170);
   libraryOldIndex = 0;
-  loadITunesPlaylistsIntoListWidget();
+  QFuture<QList<ExternalPlaylistObject> > readLibraryFuture = QtConcurrent::run(ExternalPlaylist::readLibrary, prefs);
+  readLibraryWatcher.setFuture(readLibraryFuture);
 
   //relative sizing on Mac only
 #ifdef Q_OS_MAC
@@ -128,15 +136,6 @@ BatchWindow::~BatchWindow(){
   delete ui;
 }
 
-void BatchWindow::setThreadCount(){
-  int numThreads = QThread::idealThreadCount();
-  if(numThreads == -1 || prefs.getParallelBatchJobs() == false){
-    QThreadPool::globalInstance()->setMaxThreadCount(1);
-  }else{
-    QThreadPool::globalInstance()->setMaxThreadCount(numThreads);
-  }
-}
-
 void BatchWindow::setGuiDefaults(){
   progressRangeChanged(0,100);
   progressValueChanged(0);
@@ -149,42 +148,32 @@ void BatchWindow::setGuiDefaults(){
   ui->tableWidget->resizeRowsToContents();
 }
 
-void BatchWindow::loadITunesPlaylistsIntoListWidget(){
-  QStringList playLists;
-  QFile xmlFile(prefs.getITunesLibraryPath());
-  if (!xmlFile.open(QIODevice::ReadOnly))
-    return;
-
-  QXmlQuery xmlQuery;
-  xmlQuery.bindVariable("inputDocument", &xmlFile);
-
-  QString xPath;
-  xPath += "doc($inputDocument)/plist/dict";
-  xPath += "/array[preceding-sibling::key[1]='Playlists']";
-  xPath += "/dict/string[preceding-sibling::key[1]='Name']/string(text())";
-
-  xmlQuery.setQuery(xPath);
-
-  xmlQuery.evaluateTo(&playLists);
-  xmlFile.close();
-
-  if(playLists.isEmpty())
-    return;
-
-  for(int i=0; i<(signed)playLists.size(); i++){
+void BatchWindow::readLibraryFinished(){
+  QList<ExternalPlaylistObject> libraryPlaylists = readLibraryWatcher.result();
+  for(int i=0; i<(signed)libraryPlaylists.size(); i++){
     int newRow = ui->libraryWidget->rowCount();
     ui->libraryWidget->insertRow(newRow);
-    ui->libraryWidget->setItem(newRow,0,new QTableWidgetItem());
-    ui->libraryWidget->item(newRow,0)->setText(playLists[i]);
-    ui->libraryWidget->item(newRow,0)->setBackground(iTunesRow);
+    ui->libraryWidget->setItem(newRow,COL_PLAYLIST_SOURCE, new QTableWidgetItem());
+    ui->libraryWidget->setItem(newRow,COL_PLAYLIST_NAME, new QTableWidgetItem());
+    ui->libraryWidget->item(newRow,COL_PLAYLIST_SOURCE)->setText(libraryPlaylists[i].source);
+    ui->libraryWidget->item(newRow,COL_PLAYLIST_NAME)->setText(libraryPlaylists[i].name);
+    QString iconPath = ":/KeyFinder/images/";
+    if(libraryPlaylists[i].source == SOURCE_ITUNES){
+      iconPath += "iTunes-18.png";
+    }else if(libraryPlaylists[i].source == SOURCE_TRAKTOR){
+      iconPath += "Traktor-18.png";
+    }else if(libraryPlaylists[i].source == SOURCE_SERATO){
+      iconPath += "Serato-18.png";
+    }
+    ui->libraryWidget->item(newRow,COL_PLAYLIST_NAME)->setIcon(QIcon(iconPath));
   }
   ui->libraryWidget->resizeRowsToContents();
 }
 
-void BatchWindow::on_libraryWidget_cellClicked(int row, int col){
+void BatchWindow::on_libraryWidget_cellClicked(int row, int /*col*/){
   if(row == libraryOldIndex)
     return;
-  if(libraryOldIndex == 0 && ui->tableWidget->rowCount() > 0){
+  if(ui->libraryWidget->item(libraryOldIndex, COL_PLAYLIST_SOURCE)->text() == SOURCE_KEYFINDER && ui->tableWidget->rowCount() > 0){
     QMessageBox msgBox;
     msgBox.setText("The drag and drop list will not be saved.");
     msgBox.setInformativeText("Are you sure you want to view another playlist?");
@@ -192,61 +181,29 @@ void BatchWindow::on_libraryWidget_cellClicked(int row, int col){
     msgBox.setDefaultButton(QMessageBox::No);
     int ret = msgBox.exec();
     if(ret == QMessageBox::No){
-      ui->libraryWidget->selectRow(0);
+      ui->libraryWidget->clearSelection();
       return;
     }
   }
   ui->tableWidget->setRowCount(0);
   this->setWindowTitle("KeyFinder - Batch Analysis");
   libraryOldIndex = row;
-  if(libraryOldIndex != 0)
-    loadITunesPlaylistIntoTableWidget(ui->libraryWidget->item(row,col)->text());
+  if(ui->libraryWidget->item(row, COL_PLAYLIST_SOURCE)->text() == SOURCE_KEYFINDER)
+    return;
+
+  ui->libraryWidget->setEnabled(false);
+  ui->statusLabel->setText("Loading playlist...");
+
+  QString playlistName = ui->libraryWidget->item(row,COL_PLAYLIST_NAME)->text();
+  QString playlistSource = ui->libraryWidget->item(row,COL_PLAYLIST_SOURCE)->text();
+  receiveUrls(ExternalPlaylist::readLibraryPlaylist(playlistName, playlistSource, prefs));
+
+//  QFuture<QList<QUrl> > loadPlaylistFuture = QtConcurrent::run(ExternalPlaylist::readLibraryPlaylist, playlistName, playlistSource, prefs);
+//  loadPlaylistWatcher.setFuture(loadPlaylistFuture);
 }
 
-void BatchWindow::loadITunesPlaylistIntoTableWidget(QString playList){
-
-  QStringList trackIds;
-  QList<QUrl> results;
-
-  QFile xmlFile(prefs.getITunesLibraryPath());
-  if (!xmlFile.open(QIODevice::ReadOnly))
-    return;
-  QXmlQuery xmlQuery;
-  xmlQuery.bindVariable("inputDocument", &xmlFile);
-
-  QString xPath;
-  xPath += "doc($inputDocument)/plist/dict";
-  xPath += "/array[preceding-sibling::key[1]='Playlists']";
-  xPath += "/dict[child::string[preceding-sibling::key[1]='Name'][1]='";
-  xPath +=  playList;
-  xPath += "']";
-  xPath += "/array/dict/integer[preceding-sibling::key[1]='Track ID']";
-  xPath += "/string(text())";
-
-  xmlQuery.setQuery(xPath);
-  xmlQuery.evaluateTo(&trackIds);
-
-  for(int i = 0; i < (signed)trackIds.size(); i++){
-
-    QStringList resultStrings; // if you use a single string it breaks, for some reason
-
-    xPath = "";
-    xPath += "doc($inputDocument)/plist/dict";
-    xPath += "/dict[preceding-sibling::key[1]='Tracks']";
-    xPath += "/dict[preceding-sibling::key[1]='";
-    xPath += trackIds[i];
-    xPath += "']";
-    xPath += "/string[preceding-sibling::key[1]='Location']/string(text())";
-
-    xmlQuery.setQuery(xPath);
-    if(xmlQuery.evaluateTo(&resultStrings)){
-      // replace iTunes' localhost addressing.
-      results.push_back(QUrl(resultStrings[0].replace(QString("//localhost"),QString("")).toLocal8Bit()));
-    }
-  }
-
-  xmlFile.close();
-  receiveUrls(results);
+void BatchWindow::loadPlaylistFinished(){
+  receiveUrls(loadPlaylistWatcher.result());
 }
 
 void BatchWindow::dragEnterEvent(QDragEnterEvent *e){
@@ -258,7 +215,7 @@ void BatchWindow::dragEnterEvent(QDragEnterEvent *e){
 void BatchWindow::dropEvent(QDropEvent *e){
   if(ui->libraryWidget->currentIndex().row() != 0){
     QMessageBox msg;
-    msg.setText("Cannot change an iTunes playlist from KeyFinder");
+    msg.setText("Cannot change an external playlist from KeyFinder");
     msg.exec();
     return;
   }
@@ -270,9 +227,6 @@ bool BatchWindow::receiveUrls(const QList<QUrl>& urls){
     return false;
   droppedFiles << urls;
   if(!addFilesWatcher.isRunning()){
-    // Get a new preferences object in case they've changed since the last run.
-    prefs = Preferences();
-    setThreadCount();
     ui->runBatchButton->setEnabled(false);
     ui->libraryWidget->setEnabled(false);
     ui->statusLabel->setText("Loading files...");
@@ -307,10 +261,10 @@ void BatchWindow::addDroppedFiles(){
     // check for playlist
     QString fileExt = filePath.right(3);
     if(fileExt == "m3u"){
-      droppedFiles << loadPlaylistM3u(filePath);
+      droppedFiles << ExternalPlaylist::readM3uStandalonePlaylist(filePath);
       continue;
     }else if(fileExt == "xml"){
-      droppedFiles << loadPlaylistXml(filePath);
+      droppedFiles << ExternalPlaylist::readITunesStandalonePlaylist(filePath);
       continue;
     }
 
@@ -343,52 +297,6 @@ QList<QUrl> BatchWindow::getDirectoryContents(QDir dir) const{
   return results;
 }
 
-QList<QUrl> BatchWindow::loadPlaylistM3u(QString m3uUrl) const{
-  // Here be ugly.
-  QList<QUrl> results;
-  QFile m3uFile(m3uUrl);
-  if(!m3uFile.open(QIODevice::ReadOnly))
-    return results;
-  QTextStream m3uTextStream(&m3uFile);
-  QString m3uChar;
-  QString m3uLine;
-  // M3U files break with ch10/13, and comment with ch35.
-  // QTextStream.readLine doesn't work, so we do it a char at a time
-  while(!(m3uChar = m3uTextStream.read(1)).isNull()){
-    int chVal = int(m3uChar[0].toAscii());
-    if(chVal == 13 || chVal == 10){
-      //std::cerr << "Line (length " << m3uLine.length() << "): " << m3uLine.toLocal8Bit().data() << std::endl;
-      if(m3uLine.length() > 0 && int(m3uLine[0].toAscii()) != 35){
-        results.push_back(QUrl(m3uLine));
-      }
-      m3uLine = "";
-    }else{
-      m3uLine += m3uChar;
-    }
-  }
-  return results;
-}
-
-QList<QUrl> BatchWindow::loadPlaylistXml(QString xmlFileUrl) const{
-  QStringList resultStrings;
-  QList<QUrl> results;
-  QFile xmlFile(xmlFileUrl);
-  if (!xmlFile.open(QIODevice::ReadOnly))
-    return results;
-
-  QXmlQuery xmlQuery;
-  xmlQuery.bindVariable("inputDocument", &xmlFile);
-  xmlQuery.setQuery("doc($inputDocument)/plist/dict/dict[preceding-sibling::key[1]='Tracks']/dict/string[preceding-sibling::key[1]='Location']/string(text())");
-
-  xmlQuery.evaluateTo(&resultStrings);
-  xmlFile.close();
-
-  // replace iTunes' localhost addressing.
-  for(int i=0; i<(signed)resultStrings.size(); i++)
-    results.push_back(QUrl(resultStrings[i].replace(QString("//localhost"),QString("")).toLocal8Bit()));
-  return results;
-}
-
 void BatchWindow::addNewRow(QString fileUrl){
   if(initialHelpLabel != NULL){
     delete initialHelpLabel;
@@ -416,6 +324,7 @@ void BatchWindow::addFilesFinished(){
 
 void BatchWindow::readMetadata(){
   ui->statusLabel->setText("Reading tags...");
+  ui->cancelBatchButton->setEnabled(true);
   QList<AsyncFileObject> objects;
   for(int row = 0; row < (signed)ui->tableWidget->rowCount(); row++){
     if(ui->tableWidget->item(row,COL_STATUS)->text() == STATUS_NEW)
@@ -462,8 +371,6 @@ void BatchWindow::on_runBatchButton_clicked(){
   ui->cancelBatchButton->setEnabled(true);
   ui->libraryWidget->setEnabled(false);
   ui->tableWidget->setContextMenuPolicy(Qt::NoContextMenu); // so that no tags can be written while busy
-
-  setThreadCount();
   ui->statusLabel->setText("Analysing (" + QString::number(QThreadPool::globalInstance()->maxThreadCount()) + " threads)...");
 
   runAnalysis();
@@ -538,6 +445,7 @@ void BatchWindow::on_cancelBatchButton_clicked(){
   ui->cancelBatchButton->setEnabled(false);
   progressRangeChanged(0,0);
   progressValueChanged(-1);
+  metadataReadWatcher.cancel();
   analysisWatcher.cancel();
 }
 

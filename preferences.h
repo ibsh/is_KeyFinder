@@ -23,6 +23,7 @@
 #define PREFERENCES_H
 
 #include <QtGlobal>
+#include <QThreadPool>
 #include <QSettings>
 #include <QString>
 #include <QImage>
@@ -71,6 +72,8 @@ public:
   float getDirectSkStretch() const;
   float getDetunedBandWeight() const;
   QString getITunesLibraryPath() const;
+  QString getTraktorLibraryPath() const;
+  QString getSeratoLibraryPath() const;
   QList<float> getCustomToneProfile() const;
   QStringList getCustomKeyCodes() const;
 
@@ -101,6 +104,8 @@ public:
   void setDirectSkStretch(float);
   void setDetunedBandWeight(float);
   void setITunesLibraryPath(const QString&);
+  void setTraktorLibraryPath(const QString&);
+  void setSeratoLibraryPath(const QString&);
   void setCustomToneProfile(const QList<float>&);
   void setCustomKeyCodes(const QStringList&);
 
@@ -138,6 +143,8 @@ private:
   float directSkStretch;
   float detunedBandWeight;
   QString iTunesLibraryPath;
+  QString traktorLibraryPath;
+  QString seratoLibraryPath;
   QList<float> customToneProfile;
   QStringList customKeyCodes;
   QList<float> binFreqs;
