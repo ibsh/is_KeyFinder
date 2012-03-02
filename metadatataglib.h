@@ -27,6 +27,8 @@
 #include <QDebug>
 #include <QMutex>
 
+#ifdef Q_OS_WIN
+#include "os_windows.h"
 #include <tag.h>
 #include <taglib.h>
 #include <fileref.h>
@@ -52,9 +54,32 @@
 #include <wavfile.h>
 #include <trueaudiofile.h>
 #include <wavpackfile.h>
-
-#ifdef Q_OS_WIN
-#include "os_windows.h"
+#else
+#include <taglib/tag.h>
+#include <taglib/taglib.h>
+#include <taglib/fileref.h>
+#include <taglib/tfile.h>
+#include <taglib/id3v1tag.h>
+#include <taglib/id3v2tag.h>
+#include <taglib/textidentificationframe.h>
+#include <taglib/asftag.h>
+#include <taglib/apetag.h>
+#include <taglib/mp4tag.h>
+#include <taglib/apefile.h>
+#include <taglib/asffile.h>
+#include <taglib/flacfile.h>
+#include <taglib/mp4file.h>
+#include <taglib/mpcfile.h>
+#include <taglib/mpegfile.h>
+#include <taglib/oggfile.h>
+#include <taglib/oggflacfile.h>
+#include <taglib/speexfile.h>
+#include <taglib/vorbisfile.h>
+#include <taglib/rifffile.h>
+#include <taglib/aifffile.h>
+#include <taglib/wavfile.h>
+#include <taglib/trueaudiofile.h>
+#include <taglib/wavpackfile.h>
 #endif
 
 #include "preferences.h"
