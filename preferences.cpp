@@ -408,7 +408,7 @@ Preferences::Preferences(){
   }else{
     QString defaultVal;
 #ifdef Q_OS_WIN
-    defaultVal = QDir::homePath() + "/My Music/iTunes Music Library.xml";
+    defaultVal = QDir::homePath() + "/My Music/iTunes/iTunes Music Library.xml";
 #else
     defaultVal = QDir::homePath() + "/Music/iTunes/iTunes Music Library.xml";
 #endif
@@ -421,7 +421,7 @@ Preferences::Preferences(){
   }else{
     QString defaultVal;
 #ifdef Q_OS_WIN
-    defaultVal = QDir::homePath();
+    defaultVal = QDir::homePath() + "/My Documents/Native Instruments/Traktor 2.1.2/collection.nml";
 #else
     defaultVal = QDir::homePath() + "/Documents/Native Instruments/Traktor 2.1.2/collection.nml";
 #endif
@@ -434,7 +434,7 @@ Preferences::Preferences(){
   }else{
     QString defaultVal;
 #ifdef Q_OS_WIN
-    defaultVal = QDir::homePath();
+    defaultVal = QDir::homePath() + "/My Music/_Serato_/database V2";
 #else
     defaultVal = QDir::homePath() + "/Music/_Serato_/database V2";
 #endif

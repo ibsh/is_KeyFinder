@@ -125,6 +125,8 @@ unix|macx{
   LIBS += -lfftw3
   LIBS += -lsamplerate
   LIBS += -ltag
+  LIBS += -lxerces-c
+  LIBS += -lxqilla
 
   ICON = is_KeyFinder.icns
   QMAKE_INFO_PLIST = Info.plist

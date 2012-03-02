@@ -193,13 +193,13 @@ void BatchWindow::on_libraryWidget_cellClicked(int row, int /*col*/){
 
   ui->libraryWidget->setEnabled(false);
   ui->statusLabel->setText("Loading playlist...");
+  progressRangeChanged(0,0);
+  progressValueChanged(-1);
 
   QString playlistName = ui->libraryWidget->item(row,COL_PLAYLIST_NAME)->text();
   QString playlistSource = ui->libraryWidget->item(row,COL_PLAYLIST_SOURCE)->text();
-  receiveUrls(ExternalPlaylist::readLibraryPlaylist(playlistName, playlistSource, prefs));
-
-//  QFuture<QList<QUrl> > loadPlaylistFuture = QtConcurrent::run(ExternalPlaylist::readLibraryPlaylist, playlistName, playlistSource, prefs);
-//  loadPlaylistWatcher.setFuture(loadPlaylistFuture);
+  QFuture<QList<QUrl> > loadPlaylistFuture = QtConcurrent::run(ExternalPlaylist::readLibraryPlaylist, playlistName, playlistSource, prefs);
+  loadPlaylistWatcher.setFuture(loadPlaylistFuture);
 }
 
 void BatchWindow::loadPlaylistFinished(){

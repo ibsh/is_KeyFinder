@@ -31,6 +31,7 @@
 #include <Qt/QtXml>
 #include <Qt/QtXmlPatterns>
 #endif
+#include <xqilla/xqilla-simple.hpp>
 
 #include "preferences.h"
 
