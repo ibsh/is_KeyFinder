@@ -49,9 +49,8 @@ public:
   ~LibAvDecoder();
   virtual AudioStream* decodeFile(const QString&);
 private:
-  uint8_t* frameBuffer;
+  AVFrame* frameBuffer;
   uint8_t* frameBufferConverted;
-  int frameBufferSize;
   int decodePacket(AVCodecContext*, ReSampleContext*, AVPacket*, AudioStream*);
 };
 
