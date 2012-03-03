@@ -48,7 +48,7 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
     throw Exception();
   }
 
-  if(av_find_stream_info(fCtx) < 0){
+  if(avformat_find_stream_info(fCtx, 0) < 0){
     qCritical("Failed to find stream information in file: %s", filePathCh);
     throw Exception();
   }
