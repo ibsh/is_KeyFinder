@@ -41,10 +41,14 @@ QList<ExternalPlaylistObject> ExternalPlaylist::readPlaylistsFromITunesLibrary(c
   defaultPlaylists << "Library";
   defaultPlaylists << "Music";
   defaultPlaylists << "Movies";
+  defaultPlaylists << "Films";
   defaultPlaylists << "TV Shows";
+  defaultPlaylists << "TV Programmes";
   defaultPlaylists << "Podcasts";
   defaultPlaylists << "Books";
   defaultPlaylists << "Purchased";
+  defaultPlaylists << "Genius";
+  defaultPlaylists << "iTunes DJ";
 
   QMutexLocker locker(&externalPlaylistMutex);
   QStringList resultStrings;
@@ -150,9 +154,41 @@ QList<QUrl> ExternalPlaylist::readLibraryPlaylist(const QString& name, const QSt
 }
 
 QList<QUrl> ExternalPlaylist::readITunesLibraryPlaylist(const QString& playlistName, const Preferences& prefs){
+  // TODO. Obviously using XQilla, in all its slowness, for this, is suboptimal.
+  // Find out why recursive QXmlQueries don't like being subthreaded on the Mac.
   QMutexLocker locker(&externalPlaylistMutex);
   QList<QUrl> results;
 
+#ifdef Q_OS_WIN
+  // QXmlQuery on Windows
+  QStringList resultStrings;
+
+  QFile xmlFile(prefs.getITunesLibraryPath());
+  if (!xmlFile.open(QIODevice::ReadOnly))
+    return results;
+
+  QXmlQuery xmlQuery;
+  xmlQuery.bindVariable("inputDocument", &xmlFile);
+  xmlQuery.bindVariable("playlistName", QVariant(playlistName));
+
+  QString xPath;
+  xPath += "let $d := doc($inputDocument)/plist/dict ";
+  xPath += "for $track in $d/array[preceding-sibling::key[1]='Playlists']";
+  xPath += "/dict[child::string[preceding-sibling::key[1]='Name'][1]=($playlistName)]";
+  xPath += "/array/dict/integer[preceding-sibling::key[1]='Track ID'] ";
+  xPath += "return $d/dict[preceding-sibling::key[1]='Tracks']";
+  xPath += "/dict[preceding-sibling::key[1]=$track]";
+  xPath += "/string[preceding-sibling::key[1]='Location']/string(text())";
+
+  xmlQuery.setQuery(xPath);
+  if(xmlQuery.evaluateTo(&resultStrings)){
+    for(int i=0; i<(signed)resultStrings.size(); i++)
+      results.push_back(fixITunesAddressing(resultStrings[i]));
+  }
+
+  xmlFile.close();
+#else
+  // XQilla on Mac
   std::string xPath;
   xPath += "let $d := plist/dict ";
   xPath += "for $track in $d/array[preceding-sibling::key[1]='Playlists']";
@@ -179,41 +215,9 @@ QList<QUrl> ExternalPlaylist::readITunesLibraryPlaylist(const QString& playlistN
   while(item = xQueryResults->next(xQueryContext)) {
     results.push_back(fixITunesAddressing(QString::fromUtf8(UTF8(item->asString(xQueryContext)))));
   }
+#endif
+
   return results;
-
-/*
-  // TODO. Obviously using XQilla, in all its slowness, for this, is suboptimal.
-  // Find out why recursive QXmlQueries don't like being subthreaded on the Mac.
-  QMutexLocker locker(&externalPlaylistMutex);
-  QStringList resultStrings;
-  QList<QUrl> results;
-
-  QFile xmlFile(prefs.getITunesLibraryPath());
-  if (!xmlFile.open(QIODevice::ReadOnly))
-    return results;
-
-  QXmlQuery xmlQuery;
-  xmlQuery.bindVariable("inputDocument", &xmlFile);
-  xmlQuery.bindVariable("playlistName", QVariant(playlistName));
-
-  QString xPath;
-  xPath += "let $d := doc($inputDocument)/plist/dict ";
-  xPath += "for $track in $d/array[preceding-sibling::key[1]='Playlists']";
-  xPath += "/dict[child::string[preceding-sibling::key[1]='Name'][1]=($playlistName)]";
-  xPath += "/array/dict/integer[preceding-sibling::key[1]='Track ID'] ";
-  xPath += "return $d/dict[preceding-sibling::key[1]='Tracks']";
-  xPath += "/dict[preceding-sibling::key[1]=$track]";
-  xPath += "/string[preceding-sibling::key[1]='Location']/string(text())";
-
-  xmlQuery.setQuery(xPath);
-  if(xmlQuery.evaluateTo(&resultStrings)){
-    for(int i=0; i<(signed)resultStrings.size(); i++)
-      results.push_back(fixITunesAddressing(resultStrings[i]));
-  }
-
-  xmlFile.close();
-  return results;
-  */
 }
 
 QList<QUrl> ExternalPlaylist::readTraktorLibraryPlaylist(const QString& playlistName, const Preferences& prefs){
@@ -321,9 +325,8 @@ QList<QUrl> ExternalPlaylist::readM3uStandalonePlaylist(const QString& m3uPath){
 
 QUrl ExternalPlaylist::fixITunesAddressing(const QString& address){
   QString addressCopy = address;
-  addressCopy = addressCopy.replace(QString("//localhost"), QString(""));
-  addressCopy = addressCopy.replace(QString("file:"), QString(""));
-  addressCopy = addressCopy.replace(QString("%20"), QString(" "));
+  addressCopy = addressCopy.replace(QString("file://localhost"), QString(""));
+  addressCopy = QUrl::fromPercentEncoding(addressCopy.toLocal8Bit().data());
   return QUrl(QUrl::fromLocalFile(addressCopy));
 }
 
@@ -356,7 +359,7 @@ QStringList SeratoDataStream::readCrate(QIODevice* device, CrateType ctype){
   }
   // open stream and read necessary headers
   strm = new QDataStream(device);
-  readSingleByteString(4); // vrsn
+  readSingleByteString(4).toLocal8Bit().data();
   skipBytes(2);
   readDoubleByteString(version.size() * 2);
   readDoubleByteString(type.size() * 2);
@@ -364,7 +367,7 @@ QStringList SeratoDataStream::readCrate(QIODevice* device, CrateType ctype){
     QString entryName = readSingleByteString(4);
     int length = readInt(4);
     QString entryData;
-    if(entryName == "otrk"){
+    if(entryName.left(4) == "otrk"){ // bizarre lengthening in Windows
       skipBytes(8);
       entryData = readDoubleByteString(length - 8);
       results.push_back(entryData);

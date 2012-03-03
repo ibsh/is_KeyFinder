@@ -140,19 +140,14 @@ macx{
 }
 
 win32{
-	INCLUDEPATH += $$PWD/../Desktop/fftw-3.3-dll32
-	DEPENDPATH += $$PWD/../Desktop/fftw-3.3-dll32
-	LIBS += -L$$PWD/../Desktop/fftw-3.3-dll32 -llibfftw3-3
-
 	INCLUDEPATH += C:/MSYS/local/include
 	DEPENDPATH += C:/MSYS/local/bin
 	LIBS += -LC:/MSYS/local/bin
 	LIBS += -lavcodec
 	LIBS += -lavformat
 	LIBS += -lavutil
-
-	# same paths as libav
-	LIBS += -llibsamplerate-0
+	LIBS += -lsamplerate-0
+	LIBS += -lfftw3-3
 
 	INCLUDEPATH += $$PWD/../Desktop/taglib-1.7
 	INCLUDEPATH += $$PWD/../Desktop/taglib-1.7/include

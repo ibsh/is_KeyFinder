@@ -116,6 +116,7 @@ private slots:
   void copySelectedFromTableWidget();
   void writeDetectedToTags();
   void clearDetected();
+  void deleteSelectedRows();
   void runDetailedAnalysis();
 
   void analysisFinished();

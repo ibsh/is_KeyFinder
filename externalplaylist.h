@@ -30,8 +30,8 @@
 #else
 #include <Qt/QtXml>
 #include <Qt/QtXmlPatterns>
-#endif
 #include <xqilla/xqilla-simple.hpp>
+#endif
 
 #include "preferences.h"
 

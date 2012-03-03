@@ -71,7 +71,7 @@ void DetailWindow::runAnalysis(){
   int chkOctaves = prefs.getOctaves();
   int chkOffset = prefs.getOffsetToC();
   prefs = Preferences();
-  if(chkOctaves != prefs.getOctaves() || chkOffset != prefs.getOffsetToC()){
+  if(chkOctaves != prefs.getOctaves() || chkOffset != prefs.getOffsetToC() || ui->chromagramLabel->toolTip().left(4) == "Drag"){
     layoutScaling();
     drawPianoKeys();
     // Chromagram tooltip
@@ -79,7 +79,7 @@ void DetailWindow::runAnalysis(){
     QString tooltip = "This chromagram spans " + numbers[prefs.getOctaves()] + ".\n";
     tooltip += "The vertical axis represents musical frequencies\nas indicated by the piano keyboard.\n";
     tooltip += "The horizontal axis splits the track into analysis\nwindows of about " + QString::number((44100.0/prefs.getDFactor())/prefs.getHopSize()).left(4) + " seconds each.\n";
-    tooltip += "The brighter the colour, the higher the energy\nfound at that frequency.";
+    tooltip += "The brighter the colour, the higher the energy\nfound at that frequency during that window.";
     ui->chromagramLabel->setToolTip(tooltip);
   }
   // visuals

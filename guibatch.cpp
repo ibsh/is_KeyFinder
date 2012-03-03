@@ -62,7 +62,6 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   ui->libraryWidget->setColumnHidden(COL_PLAYLIST_SOURCE, true);
   ui->tableWidget->setColumnHidden(COL_FILEPATH, true);
   ui->tableWidget->setColumnHidden(COL_STATUS, true);
-  ui->tableWidget->setColumnHidden(COL_FILEPATH, true);
   keyFinderRow =    QBrush(QColor(191, 255, 191));
   keyFinderAltRow = QBrush(QColor(127, 234, 127));
   textDefault =     QBrush(QColor(0, 0, 0));
@@ -121,6 +120,10 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   runDetailedAction->setShortcut(QKeySequence("Ctrl+D"));
   connect(runDetailedAction, SIGNAL(triggered()), this, SLOT(runDetailedAnalysis()));
   ui->tableWidget->addAction(runDetailedAction);
+  QAction* deleteSelectedRowsAction = new QAction(tr("Delete selected rows"),this);
+  deleteSelectedRowsAction->setShortcut(QKeySequence::Delete);
+  connect(deleteSelectedRowsAction, SIGNAL(triggered()), this, SLOT(deleteSelectedRows()));
+  ui->tableWidget->addAction(deleteSelectedRowsAction);
   QAction* clearDetectedAction = new QAction(tr("Clear detected keys"),this);
   connect(clearDetectedAction, SIGNAL(triggered()), this, SLOT(clearDetected()));
   ui->tableWidget->addAction(clearDetectedAction);
@@ -203,7 +206,10 @@ void BatchWindow::on_libraryWidget_cellClicked(int row, int /*col*/){
 }
 
 void BatchWindow::loadPlaylistFinished(){
-  receiveUrls(loadPlaylistWatcher.result());
+  if(loadPlaylistWatcher.result().size() > 0)
+    receiveUrls(loadPlaylistWatcher.result());
+  else
+    setGuiDefaults();
 }
 
 void BatchWindow::dragEnterEvent(QDragEnterEvent *e){
@@ -532,6 +538,25 @@ void BatchWindow::clearDetected(){
       ui->tableWidget->item(r,COL_STATUS)->setText(STATUS_TAGSREAD);
       ui->tableWidget->item(r,COL_KEY)->setText("");
     }
+  }
+}
+
+void BatchWindow::deleteSelectedRows(){
+  if(ui->libraryWidget->currentIndex().row() != 0){
+    QMessageBox msg;
+    msg.setText("Cannot change an external playlist from KeyFinder");
+    msg.exec();
+    return;
+  }
+  int firstRow = INT_MAX;
+  int lastRow = 0;
+  foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()){
+    int chkRow = selectedIndex.row();
+    if(chkRow < firstRow) firstRow = chkRow;
+    if(chkRow > lastRow) lastRow = chkRow;
+  }
+  for(int r = firstRow; r <= lastRow; r++){
+    ui->tableWidget->removeRow(r);
   }
 }
 
