@@ -130,7 +130,7 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
   }
   codecMutexLocker.unlock();
 
-  av_close_input_file(fCtx);
+  avformat_close_input(&fCtx);
   return astrm;
 }
 
