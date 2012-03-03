@@ -134,10 +134,15 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
   return astrm;
 }
 
-LibAvDecoder::LibAvDecoder(){
-  frameBufferSize = ((AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2) * sizeof(uint8_t);
-  frameBuffer = (uint8_t*)av_malloc(frameBufferSize);
-  frameBufferConverted = (uint8_t*)av_malloc(frameBufferSize);
+namespace
+{
+  int const FRAME_BUFFER_CONVERTED_SIZE = ((AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2) * sizeof(uint8_t);
+}
+
+LibAvDecoder::LibAvDecoder()
+  : frameBuffer(avcodec_alloc_frame())
+  , frameBufferConverted((uint8_t*)av_malloc(FRAME_BUFFER_CONVERTED_SIZE))
+{
 }
 
 LibAvDecoder::~LibAvDecoder(){
@@ -146,27 +151,34 @@ LibAvDecoder::~LibAvDecoder(){
 }
 
 int LibAvDecoder::decodePacket(AVCodecContext* cCtx, ReSampleContext* rsCtx, AVPacket* originalPacket, AudioStream* ab){
+  // reset internal frame buffer
+  avcodec_get_frame_defaults(frameBuffer);
   // copy packet so we can shift data pointer about without endangering garbage collection
   AVPacket tempPacket;
   tempPacket.size = originalPacket->size;
   tempPacket.data = originalPacket->data;
   // loop in case audio packet contains multiple frames
   while(tempPacket.size > 0){
-    int dataSize = frameBufferSize;
-    int16_t* dataBuffer = (int16_t*)frameBuffer;
-    int bytesConsumed = avcodec_decode_audio3(cCtx, dataBuffer, &dataSize, &tempPacket);
+    int got_frame = 0;
+    int bytesConsumed = avcodec_decode_audio4(cCtx, frameBuffer, &got_frame, &tempPacket);
     if(bytesConsumed < 0){ // error
       tempPacket.size = 0;
       return 1;
     }
     tempPacket.data += bytesConsumed;
     tempPacket.size -= bytesConsumed;
-    if(dataSize <= 0)
+    if (!got_frame) {
       continue; // nothing decoded
+    }
+    int16_t* dataBuffer = (int16_t*)frameBuffer->data;
+    int dataSize = av_samples_get_buffer_size(
+      NULL, cCtx->channels,
+      frameBuffer->nb_samples,
+      cCtx->sample_fmt, 1);
     int newSamplesDecoded = dataSize / av_get_bytes_per_sample(cCtx->sample_fmt);
     // Resample if necessary
     if(cCtx->sample_fmt != AV_SAMPLE_FMT_S16){
-      int resampleResult = audio_resample(rsCtx, (short*)frameBufferConverted, (short*)frameBuffer, newSamplesDecoded);
+      int resampleResult = audio_resample(rsCtx, (short*)frameBufferConverted, (short*)frameBuffer->data, newSamplesDecoded);
       if(resampleResult < 0){
         qCritical("Failed to resample");
         throw Exception();
@@ -182,6 +194,8 @@ int LibAvDecoder::decodePacket(AVCodecContext* cCtx, ReSampleContext* rsCtx, AVP
     for(int i = 0; i < newSamplesDecoded; i++){
       ab->setSample(oldSampleCount+i, (float)dataBuffer[i]);
     }
+    // reset internal frame buffer for next frame
+    avcodec_get_frame_defaults(frameBuffer);
   }
   return 0;
 }
