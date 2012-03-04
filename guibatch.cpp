@@ -196,6 +196,8 @@ void BatchWindow::on_libraryWidget_cellClicked(int row, int /*col*/){
 
   ui->libraryWidget->setEnabled(false);
   ui->statusLabel->setText("Loading playlist...");
+  ui->runBatchButton->setEnabled(false);
+  ui->cancelBatchButton->setEnabled(false);
   progressRangeChanged(0,0);
   progressValueChanged(-1);
 
