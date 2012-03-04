@@ -37,6 +37,9 @@ QList<ExternalPlaylistObject> ExternalPlaylist::readLibrary(const Preferences& p
 }
 
 QList<ExternalPlaylistObject> ExternalPlaylist::readPlaylistsFromITunesLibrary(const Preferences& prefs){
+  QMutexLocker locker(&externalPlaylistMutex);
+  QList<ExternalPlaylistObject> results;
+
   QStringList defaultPlaylists;
   defaultPlaylists << "Library";
   defaultPlaylists << "Music";
@@ -50,9 +53,9 @@ QList<ExternalPlaylistObject> ExternalPlaylist::readPlaylistsFromITunesLibrary(c
   defaultPlaylists << "Genius";
   defaultPlaylists << "iTunes DJ";
 
-  QMutexLocker locker(&externalPlaylistMutex);
+#ifdef Q_OS_WIN
+  // QXmlQuery on Windows
   QStringList resultStrings;
-  QList<ExternalPlaylistObject> results;
 
   QFile xmlFile(prefs.getITunesLibraryPath());
   if (!xmlFile.open(QIODevice::ReadOnly))
@@ -76,6 +79,34 @@ QList<ExternalPlaylistObject> ExternalPlaylist::readPlaylistsFromITunesLibrary(c
     ExternalPlaylistObject o(resultStrings[i], SOURCE_ITUNES);
     results.push_back(o);
   }
+#else
+  // XQilla on Mac
+  std::string xPath;
+  xPath += "plist/dict";
+  xPath += "/array[preceding-sibling::key[1]='Playlists']";
+  xPath += "/dict/string[preceding-sibling::key[1]='Name']/string(text())";
+
+  XQilla xqilla;
+  AutoDelete<XQQuery> xQuery(xqilla.parse(X(xPath.c_str())));
+
+  AutoDelete<DynamicContext> xQueryContext(xQuery->createDynamicContext());
+  Sequence seq = xQueryContext->resolveDocument(X(prefs.getITunesLibraryPath().toLocal8Bit().data()));
+  if(!seq.isEmpty() && seq.first()->isNode()) {
+    xQueryContext->setContextItem(seq.first());
+    xQueryContext->setContextPosition(1);
+    xQueryContext->setContextSize(1);
+  }
+
+  Result xQueryResults = xQuery->execute(xQueryContext);
+  Item::Ptr item;
+  while(item = xQueryResults->next(xQueryContext)) {
+    QString name = QString::fromUtf8(UTF8(item->asString(xQueryContext)));
+    if(defaultPlaylists.contains(name))
+      continue;
+    ExternalPlaylistObject o(name, SOURCE_ITUNES);
+    results.push_back(o);
+  }
+#endif
   return results;
 }
 
