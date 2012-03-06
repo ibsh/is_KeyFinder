@@ -82,15 +82,25 @@ QList<ExternalPlaylistObject> ExternalPlaylist::readPlaylistsFromITunesLibrary(c
 #else
   // XQilla on Mac
   std::string xPath;
-  xPath += "plist/dict";
-  xPath += "/array[preceding-sibling::key[1]='Playlists']";
+  xPath += "plist/dict/array[preceding-sibling::key[1]='Playlists']";
   xPath += "/dict/string[preceding-sibling::key[1]='Name']/string(text())";
 
   XQilla xqilla;
   AutoDelete<XQQuery> xQuery(xqilla.parse(X(xPath.c_str())));
 
   AutoDelete<DynamicContext> xQueryContext(xQuery->createDynamicContext());
-  Sequence seq = xQueryContext->resolveDocument(X(prefs.getITunesLibraryPath().toLocal8Bit().data()));
+  /*
+   * Alright, this is bullshit.
+   * Something in the sequence allocation crashes without network access, presumably
+   * due to schema validation which I cannot apparently disable
+   * So get QXmlQuery working in subthreads asap.
+   */
+  Sequence seq;
+  try{
+    seq = xQueryContext->resolveDocument(X(prefs.getITunesLibraryPath().toLocal8Bit().data()));
+  }catch(...){
+    return results;
+  }
   if(!seq.isEmpty() && seq.first()->isNode()) {
     xQueryContext->setContextItem(seq.first());
     xQueryContext->setContextPosition(1);
@@ -234,7 +244,12 @@ QList<QUrl> ExternalPlaylist::readITunesLibraryPlaylist(const QString& playlistN
   AutoDelete<XQQuery> xQuery(xqilla.parse(X(xPath.c_str())));
 
   AutoDelete<DynamicContext> xQueryContext(xQuery->createDynamicContext());
-  Sequence seq = xQueryContext->resolveDocument(X(prefs.getITunesLibraryPath().toLocal8Bit().data()));
+  Sequence seq;
+  try{
+    seq = xQueryContext->resolveDocument(X(prefs.getITunesLibraryPath().toLocal8Bit().data()));
+  }catch(...){
+    return results;
+  }
   if(!seq.isEmpty() && seq.first()->isNode()) {
     xQueryContext->setContextItem(seq.first());
     xQueryContext->setContextPosition(1);
