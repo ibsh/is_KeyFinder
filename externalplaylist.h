@@ -61,7 +61,7 @@ private:
   // Serato
   static QList<ExternalPlaylistObject> readPlaylistsFromSeratoLibrary(const Preferences&);
   static QList<QUrl> readSeratoLibraryPlaylist(const QString&, const Preferences&);
-  static QUrl fixSeratoAddressing(const QString&);
+  static QUrl fixSeratoAddressing(const QString&, const QString&);
   // Traktor
   static QList<ExternalPlaylistObject> readPlaylistsFromTraktorLibrary(const Preferences&);
   static QList<QUrl> readTraktorLibraryPlaylist(const QString&, const Preferences&);

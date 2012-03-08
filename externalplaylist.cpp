@@ -307,11 +307,16 @@ QList<QUrl> ExternalPlaylist::readSeratoLibraryPlaylist(const QString& playlistN
     crate = new QFile(path + QString("SmartCrates/") + playlistNameCopy + QString(".scrate"));
     sub = false;
   }
+  // Serato path stuff
+  QString pathPrefix = "/";
+  #ifdef Q_OS_WIN
+    pathPrefix = prefs.getSeratoLibraryPath().left(3);
+  #endif
   if(crate->open(QIODevice::ReadOnly)){
     SeratoDataStream instr;
     QStringList resultStrings = instr.readCrate(crate, (sub ? SeratoDataStream::SUBCRATE : SeratoDataStream::SMARTCRATE));
     for(int i = 0; i < (signed)resultStrings.size(); i++){
-      results.push_back(fixSeratoAddressing(resultStrings[i]));
+      results.push_back(QUrl::fromLocalFile(pathPrefix + resultStrings[i]));
     }
     crate->close();
   }
@@ -380,12 +385,6 @@ QUrl ExternalPlaylist::fixTraktorAddressing(const QString& address){
   QString addressCopy = address;
   addressCopy = addressCopy.replace(QString("/:"), QString("/"));
   addressCopy = addressCopy.replace(QString("Macintosh HD"), QString(""));
-  return QUrl(QUrl::fromLocalFile(addressCopy));
-}
-
-QUrl ExternalPlaylist::fixSeratoAddressing(const QString& address){
-  QString addressCopy = "/";
-  addressCopy.append(address);
   return QUrl(QUrl::fromLocalFile(addressCopy));
 }
 
