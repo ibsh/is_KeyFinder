@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>360</width>
-    <height>480</height>
+    <height>490</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,13 +19,13 @@
   <property name="minimumSize">
    <size>
     <width>360</width>
-    <height>480</height>
+    <height>490</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>360</width>
-    <height>480</height>
+    <height>490</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -42,14 +42,13 @@ KeyFinder is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with KeyFinder. If not, see http://www.gnu.org/licenses/.
 
 KeyFinder includes library code from:
-FFTW (http://www.fftw.org)
-LibAV (http://www.libav.org)
-Secret Rabbit Code (http://www.mega-nerd.com/SRC/)
-TagLib (http://developer.kde.org/~wheeler/taglib.html)
-Qt (http://qt.nokia.com)</string>
-     </property>
-     <property name="textFormat">
-      <enum>Qt::PlainText</enum>
+Qt (qt.nokia.com)
+FFTW (www.fftw.org)
+LibAV (www.libav.org)
+Secret Rabbit Code (www.mega-nerd.com/SRC)
+TagLib (developer.kde.org/~wheeler/taglib.html)
+XQilla (xqilla.sourceforge.net)
+Xerces-C++ (xerces.apache.org)</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

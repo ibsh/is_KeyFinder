@@ -381,20 +381,19 @@ QStringList ExternalPlaylist::xQillaReadLibrary(const QString& libraryPath, cons
   try{
     XQillaPlatformUtils::initialize();
   }catch (const xercesc_3_1::XMLException& eXerces){
-    qDebug("Xerces exception message: %s",UTF8(eXerces.getMessage()));
+    qDebug("Xerces exception message: %s", UTF8(eXerces.getMessage()));
     return results;
   }
   // Get the XQilla DOMImplementation object
   xercesc_3_1::DOMImplementation *xqillaImplementation = xercesc_3_1::DOMImplementationRegistry::getDOMImplementation(X("XPath2 3.0"));
   try{
     // Create a DOMLSParser object
-    AutoRelease<xercesc_3_1::DOMLSParser> parser(xqillaImplementation->createLSParser(xercesc_3_1::DOMImplementationLS::MODE_SYNCHRONOUS, 0));
+    AutoDelete<xercesc_3_1::DOMLSParser> parser(xqillaImplementation->createLSParser(xercesc_3_1::DOMImplementationLS::MODE_SYNCHRONOUS, 0));
     parser->getDomConfig()->setParameter(xercesc_3_1::XMLUni::fgXercesLoadExternalDTD, false);
     // Parse a DOMDocument
     xercesc_3_1::DOMDocument *document = parser->parseURI(X(libraryPath.toLocal8Bit().data()));
     if(document == 0) {
-      XQillaPlatformUtils::terminate();
-      return results;
+      throw XQillaException(99,X("No library file found"));
     }
     // Parse XPath
     AutoRelease<xercesc_3_1::DOMXPathExpression> expression(document->createExpression(X(xPath.toLocal8Bit().data()), 0));
@@ -405,7 +404,9 @@ QStringList ExternalPlaylist::xQillaReadLibrary(const QString& libraryPath, cons
       results.push_back(QString::fromUtf8(UTF8(result->getNodeValue()->getTextContent())));
 
   }catch(XQillaException &e){
-    qDebug("XQillaException: %s",UTF8(e.getString()));
+    qDebug("XQillaException: %s", UTF8(e.getString()));
+  }catch(...){
+    qDebug("Unspecified exception with XQilla");
   }
 
   // Terminate Xerces-C and XQilla using XQillaPlatformUtils
@@ -421,7 +422,7 @@ QStringList ExternalPlaylist::xQillaReadLibraryPlaylist(const QString& libraryPa
   try{
     XQillaPlatformUtils::initialize();
   }catch (const xercesc_3_1::XMLException& eXerces){
-    qDebug("Xerces exception message: %s",UTF8(eXerces.getMessage()));
+    qDebug("Xerces exception message: %s", UTF8(eXerces.getMessage()));
     return results;
   }
 
@@ -430,16 +431,14 @@ QStringList ExternalPlaylist::xQillaReadLibraryPlaylist(const QString& libraryPa
 
   try{
     // Create a DOMLSParser object
-    AutoRelease<xercesc_3_1::DOMLSParser> parser(xqillaImplementation->createLSParser(xercesc_3_1::DOMImplementationLS::MODE_SYNCHRONOUS, 0));
+    AutoDelete<xercesc_3_1::DOMLSParser> parser(xqillaImplementation->createLSParser(xercesc_3_1::DOMImplementationLS::MODE_SYNCHRONOUS, 0));
     // disable remote DTD resolution
     parser->getDomConfig()->setParameter(xercesc_3_1::XMLUni::fgXercesLoadExternalDTD, false);
     // Parse the XML document
     xercesc_3_1::DOMDocument *document = parser->parseURI(X(libraryPath.toLocal8Bit().data()));
     if(document == 0) {
-      XQillaPlatformUtils::terminate();
-      return results;
+      throw XQillaException(99,X("No library file found"));
     }
-
     // now set up a simple API query and context to evaluate the parsed document
     XQilla xqilla;
     AutoDelete<XQQuery> xQuery(xqilla.parse(X(xPath.toLocal8Bit().data())));
@@ -465,12 +464,11 @@ QStringList ExternalPlaylist::xQillaReadLibraryPlaylist(const QString& libraryPa
     }
   }catch(XQillaException &e){
     // DOM3 (xerces) API
-    qDebug("XQillaException: %s",UTF8(e.getString()));
+    qDebug("XQillaException: %s", UTF8(e.getString()));
   }catch(XQException &e){
     // Simple API
-    qDebug("XQillaException: %s",UTF8(e.getError()));
+    qDebug("XQillaException: %s", UTF8(e.getError()));
   }catch(...){
-    // Just in case
     qDebug("Unspecified exception with XQilla");
   }
   XQillaPlatformUtils::terminate();
