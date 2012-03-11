@@ -365,7 +365,7 @@ QStringList ExternalPlaylist::qXmlQueryReadLibraryPlaylist(const QString& librar
   xmlQuery.bindVariable("playlistName", QVariant(playlistName));
 
   xmlQuery.setQuery(xPath);
-  xmlQuery.evaluateTo(&resultStrings);
+  xmlQuery.evaluateTo(&results);
 
   xmlFile.close();
   return results;
