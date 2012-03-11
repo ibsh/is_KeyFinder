@@ -58,7 +58,8 @@ SOURCES += \
     asyncmetadatareadprocess.cpp \
     os_windows.cpp \
     asyncfileobject.cpp \
-    externalplaylist.cpp
+    externalplaylist.cpp \
+    externalplaylistserato.cpp
 
 HEADERS  += \
     decoderlibav.h \
@@ -97,7 +98,8 @@ HEADERS  += \
     os_windows.h \
     _VERSION.h \
     asyncfileobject.h \
-    externalplaylist.h
+    externalplaylist.h \
+    externalplaylistserato.h
 
 FORMS += \
     detailwindow.ui \

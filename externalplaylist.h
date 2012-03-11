@@ -28,12 +28,17 @@
 #include <QtXml/QtXml>
 #include <QtXmlPatterns/QtXmlPatterns>
 #else
+// these two currently necessary for iTunes standalone... maybe rewrite that.
 #include <Qt/QtXml>
 #include <Qt/QtXmlPatterns>
+// XQilla
 #include <xqilla/xqilla-simple.hpp>
+#include <xercesc/dom/DOM.hpp>
+#include <xqilla/xqilla-dom3.hpp>
 #endif
 
 #include "preferences.h"
+#include "externalplaylistserato.h"
 
 const QString SOURCE_KEYFINDER = "KeyFinder";
 const QString SOURCE_ITUNES = "iTunes";
@@ -66,22 +71,15 @@ private:
   static QList<ExternalPlaylistObject> readPlaylistsFromTraktorLibrary(const Preferences&);
   static QList<QUrl> readTraktorLibraryPlaylist(const QString&, const Preferences&);
   static QUrl fixTraktorAddressing(const QString&);
-};
-
-// composition rather than inheritance
-class SeratoDataStream{
-public:
-  enum CrateType {
-    SUBCRATE = 0,
-    SMARTCRATE
-  };
-  QStringList readCrate(QIODevice*, CrateType);
-private:
-  QDataStream* strm;
-  QString readSingleByteString(int);
-  QString readDoubleByteString(int);
-  int readInt(int);
-  void skipBytes(int);
+#ifdef Q_OS_WIN
+  // QXmlQuery
+  static QStringList qXmlQueryReadLibrary(const QString&, const QString&);
+  static QStringList qXmlQueryReadLibraryPlaylist(const QString&, const QString&, const QString&);
+#else
+  // XQilla
+  static QStringList xQillaReadLibrary(const QString&, const QString&);
+  static QStringList xQillaReadLibraryPlaylist(const QString&, const QString&, const QString&);
+#endif
 };
 
 #endif // EXTERNALPLAYLIST_H

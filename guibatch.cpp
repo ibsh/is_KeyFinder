@@ -240,7 +240,7 @@ bool BatchWindow::receiveUrls(const QList<QUrl>& urls){
     progressRangeChanged(0,0);
     progressValueChanged(-1);
     ui->statusLabel->setText("Loading files...");
-    QFuture<void>addFileFuture = QtConcurrent::run(this,&BatchWindow::addDroppedFiles);
+    QFuture<void> addFileFuture = QtConcurrent::run(this,&BatchWindow::addDroppedFiles);
     addFilesWatcher.setFuture(addFileFuture);
   }
   return true;

@@ -19,10 +19,26 @@
 
 *************************************************************************/
 
-#ifndef _VERSION_H
-#define _VERSION_H
+#ifndef EXTERNALPLAYLISTSERATO_H
+#define EXTERNALPLAYLISTSERATO_H
 
-const int VERSION_MAJOR = 1;
-const int VERSION_MINOR = 13;
+#include <QString>
+#include <QStringList>
+#include <QIODevice>
 
-#endif // _VERSION_H
+class SeratoDataStream{
+public:
+  enum CrateType {
+    SUBCRATE = 0,
+    SMARTCRATE
+  };
+  QStringList readCrate(QIODevice*, CrateType);
+private:
+  QDataStream* strm; // composition rather than inheritance
+  QString readSingleByteString(int);
+  QString readDoubleByteString(int);
+  int readInt(int);
+  void skipBytes(int);
+};
+
+#endif // EXTERNALPLAYLISTSERATO_H
