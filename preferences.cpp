@@ -444,6 +444,26 @@ Preferences::Preferences(){
   }
   settings.endGroup();
 
+  // ============================= UIState ==================================
+
+  settings.beginGroup("uistate");
+  if(settings.contains("batchWindowState")){
+    batchWindowState = settings.value("batchWindowState").toByteArray();
+  }else{
+    batchWindowState = QByteArray();
+  }
+  if(settings.contains("batchWindowGeometry")){
+    batchWindowGeometry = settings.value("batchWindowGeometry").toByteArray();
+  }else{
+    batchWindowGeometry = QByteArray();
+  }
+  if(settings.contains("batchWindowSplitterState")){
+    batchWindowSplitterState = settings.value("batchWindowSplitterState").toByteArray();
+  }else{
+    batchWindowSplitterState = QByteArray();
+  }
+  settings.endGroup();
+
   // ================================ End ======================================
 
   generateBinFreqs();
@@ -591,6 +611,12 @@ void Preferences::save(){
   settings.setValue("seratoLibraryPath", seratoLibraryPath);
   settings.endGroup();
 
+  settings.beginGroup("uistate");
+  settings.setValue("batchWindowState", batchWindowState);
+  settings.setValue("batchWindowGeometry", batchWindowGeometry);
+  settings.setValue("batchWindowSplitterState", batchWindowSplitterState);
+  settings.endGroup();
+
 }
 
 Preferences& Preferences::operator=(const Preferences& that){
@@ -625,6 +651,9 @@ Preferences& Preferences::operator=(const Preferences& that){
     iTunesLibraryPath = that.iTunesLibraryPath;
     traktorLibraryPath = that.traktorLibraryPath;
     seratoLibraryPath = that.seratoLibraryPath;
+    batchWindowState = that.batchWindowState;
+    batchWindowGeometry = that.batchWindowGeometry;
+    batchWindowSplitterState = that.batchWindowSplitterState;
     generateBinFreqs();
   }
   return *this;
@@ -677,8 +706,11 @@ float        Preferences::getDetunedBandWeight()         const { return detunedB
 QString      Preferences::getITunesLibraryPath()         const { return iTunesLibraryPath; }
 QString      Preferences::getTraktorLibraryPath()        const { return traktorLibraryPath; }
 QString      Preferences::getSeratoLibraryPath()         const { return seratoLibraryPath; }
-QList<float> Preferences::getCustomToneProfile()         const { return customToneProfile;}
-QStringList  Preferences::getCustomKeyCodes()            const { return customKeyCodes;}
+QList<float> Preferences::getCustomToneProfile()         const { return customToneProfile; }
+QStringList  Preferences::getCustomKeyCodes()            const { return customKeyCodes; }
+QByteArray   Preferences::getBatchWindowState()          const { return batchWindowState; }
+QByteArray   Preferences::getBatchWindowGeometry()       const { return batchWindowGeometry; }
+QByteArray   Preferences::getBatchWindowSplitterState()  const { return batchWindowSplitterState; }
 
 void Preferences::setWriteTagsAutomatically(bool autoTags)          { writeTagsAutomatically = autoTags; }
 void Preferences::setWriteToTagComment(bool cmt)                    { writeToTagComment = cmt; }
@@ -709,6 +741,9 @@ void Preferences::setTraktorLibraryPath(const QString& path)        { traktorLib
 void Preferences::setSeratoLibraryPath(const QString& path)         { seratoLibraryPath = path; }
 void Preferences::setCustomToneProfile(const QList<float>& profile) { customToneProfile = profile; }
 void Preferences::setCustomKeyCodes(const QStringList& codes)       { customKeyCodes = codes; }
+void Preferences::setBatchWindowState(const QByteArray& a)          { batchWindowState = a; }
+void Preferences::setBatchWindowGeometry(const QByteArray& a)       { batchWindowGeometry = a; }
+void Preferences::setBatchWindowSplitterState(const QByteArray& a)  { batchWindowSplitterState = a; }
 
 void Preferences::setParallelBatchJobs(bool parallel){
   parallelBatchJobs = parallel;

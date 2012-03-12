@@ -76,6 +76,9 @@ public:
   QString getSeratoLibraryPath() const;
   QList<float> getCustomToneProfile() const;
   QStringList getCustomKeyCodes() const;
+  QByteArray getBatchWindowState() const;
+  QByteArray getBatchWindowGeometry() const;
+  QByteArray getBatchWindowSplitterState() const;
 
   // setters
   void setWriteTagsAutomatically(bool);
@@ -108,6 +111,9 @@ public:
   void setSeratoLibraryPath(const QString&);
   void setCustomToneProfile(const QList<float>&);
   void setCustomKeyCodes(const QStringList&);
+  void setBatchWindowState(const QByteArray&);
+  void setBatchWindowGeometry(const QByteArray&);
+  void setBatchWindowSplitterState(const QByteArray&);
 
   void save();
 
@@ -150,6 +156,9 @@ private:
   QList<float> binFreqs;
   QStringList defaultKeyCodes;
   QList<QColor> keyColours;
+  QByteArray batchWindowState;
+  QByteArray batchWindowGeometry;
+  QByteArray batchWindowSplitterState;
   void generateBinFreqs();
 };
 

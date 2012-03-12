@@ -62,11 +62,21 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   ui->libraryWidget->setColumnHidden(COL_PLAYLIST_SOURCE, true);
   ui->tableWidget->setColumnHidden(COL_FILEPATH, true);
   ui->tableWidget->setColumnHidden(COL_STATUS, true);
-  keyFinderRow =    QBrush(QColor(191, 255, 191));
+  ui->splitter->setStretchFactor(0, 1);
+  ui->splitter->setStretchFactor(1, 3);
+  ui->splitter->setCollapsible(0, true);
+  ui->splitter->setCollapsible(1, false);
+  if(prefs.getBatchWindowState() != QByteArray())
+    this->restoreState(prefs.getBatchWindowState());
+  if(prefs.getBatchWindowGeometry() != QByteArray())
+    this->restoreGeometry(prefs.getBatchWindowGeometry());
+  if(prefs.getBatchWindowSplitterState() != QByteArray())
+    ui->splitter->restoreState(prefs.getBatchWindowSplitterState());
+  keyFinderRow    = QBrush(QColor(191, 255, 191));
   keyFinderAltRow = QBrush(QColor(127, 234, 127));
-  textDefault =     QBrush(QColor(0, 0, 0));
-  textSuccess =     QBrush(QColor(0, 128, 0));
-  textError =       QBrush(QColor(191, 0, 0));
+  textDefault     = QBrush(QColor(  0,   0,   0));
+  textSuccess     = QBrush(QColor(  0, 128,   0));
+  textError       = QBrush(QColor(191,   0,   0));
 
   // Read music library
   ui->libraryWidget->insertRow(0);
@@ -100,11 +110,11 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   initialHelpLabel->setFont(font);
   // can't seem to derive these magic numbers from any useful size hints
   initialHelpLabel->setGeometry(
-        (494 - initialHelpLabel->sizeHint().width()) / 2,
-        (334 - initialHelpLabel->sizeHint().height()) / 2,
-        initialHelpLabel->sizeHint().width(),
-        initialHelpLabel->sizeHint().height()
-        );
+    (494 - initialHelpLabel->sizeHint().width()) / 2,
+    (334 - initialHelpLabel->sizeHint().height()) / 2,
+    initialHelpLabel->sizeHint().width(),
+    initialHelpLabel->sizeHint().height()
+  );
   initialHelpLabel->show();
 
   // SETUP TABLE WIDGET CONTEXT MENU
@@ -137,6 +147,15 @@ BatchWindow::~BatchWindow(){
   metadataReadWatcher.waitForFinished();
   analysisWatcher.waitForFinished();
   delete ui;
+}
+
+void BatchWindow::closeEvent(QCloseEvent* e){
+  // save ui settings
+  prefs.setBatchWindowState(this->saveState());
+  prefs.setBatchWindowGeometry(this->saveGeometry());
+  prefs.setBatchWindowSplitterState(ui->splitter->saveState());
+  prefs.save();
+  QMainWindow::closeEvent(e);
 }
 
 void BatchWindow::setGuiDefaults(){

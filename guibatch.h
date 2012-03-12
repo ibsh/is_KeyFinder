@@ -69,6 +69,7 @@ public:
 public slots:
   void checkForNewVersion();
 private:
+  void closeEvent(QCloseEvent*);
   Preferences prefs;
   void setGuiDefaults();
 
