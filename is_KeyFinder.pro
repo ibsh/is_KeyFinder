@@ -108,7 +108,6 @@ FORMS += \
     prefsdialog.ui
 
 OTHER_FILES += \
-		is_KeyFinder.pro.user \
 		README \
     win32.rc \
     Info.plist
