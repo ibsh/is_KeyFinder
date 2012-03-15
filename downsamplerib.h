@@ -26,7 +26,7 @@
 
 class PrimaryDownsampler : public Downsampler{
 public:
-  virtual AudioStream* downsample(AudioStream*,int);
+  virtual KeyFinder::AudioData* downsample(KeyFinder::AudioData*, unsigned int);
 };
 
 #endif

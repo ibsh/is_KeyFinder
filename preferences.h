@@ -36,10 +36,17 @@
 #include <vector>
 #include <cstring>
 
-// No longer a singleton once GUI implemented; made sense to keep one per window
+#include "libkeyfinder/parameters.h"
+
+enum tag_format_t{
+  TAG_FORMAT_KEYS,
+  TAG_FORMAT_CUSTOM,
+  TAG_FORMAT_BOTH
+};
 
 class Preferences{
 public:
+  KeyFinder::Parameters core;
   Preferences();
   Preferences& operator=(const Preferences&);
   bool equivalentSpectralAnalysis(const Preferences&) const;
@@ -50,31 +57,11 @@ public:
   bool getWriteToTagGrouping() const;
   bool getWriteToTagKey() const;
   bool getSkipFilesWithExistingTags() const;
-  bool getOffsetToC() const;
-  char getTemporalWindow() const;
-  char getHcdf() const;
-  char getSimilarityMeasure() const;
-  char getTagFormat() const;
-  int getHopSize() const;
-  int getFftFrameSize() const;
-  int getOctaves() const;
-  int getBpo() const;
+  tag_format_t getTagFormat() const;
   int getDFactor() const;
-  int getToneProfile() const;
-  int getHcdfPeakPickingNeighbours() const;
-  int getHcdfArbitrarySegments() const;
-  int getHcdfGaussianSize() const;
-  int getTuningMethod() const;
-  float getHcdfGaussianSigma() const;
-  float getStartingFreqA() const;
-  float getBinFreq(int) const;
-  float getLastFreq() const;
-  float getDirectSkStretch() const;
-  float getDetunedBandWeight() const;
   QString getITunesLibraryPath() const;
   QString getTraktorLibraryPath() const;
   QString getSeratoLibraryPath() const;
-  QList<float> getCustomToneProfile() const;
   QStringList getCustomKeyCodes() const;
   QByteArray getBatchWindowState() const;
   QByteArray getBatchWindowGeometry() const;
@@ -87,29 +74,11 @@ public:
   void setWriteToTagGrouping(bool);
   void setWriteToTagKey(bool);
   void setSkipFilesWithExistingTags(bool);
-  void setOffsetToC(bool);
-  void setTemporalWindow(char);
-  void setHcdf(char);
-  void setSimilarityMeasure(char);
-  void setTagFormat(char);
-  void setHopSize(int);
-  void setFftFrameSize(int);
-  void setOctaves(int);
-  void setBps(int);
+  void setTagFormat(tag_format_t);
   void setDFactor(int);
-  void setToneProfile(int);
-  void setHcdfPeakPickingNeighbours(int);
-  void setHcdfArbitrarySegments(int);
-  void setHcdfGaussianSize(int);
-  void setTuningMethod(int);
-  void setHcdfGaussianSigma(float);
-  void setStartingFreqA(float);
-  void setDirectSkStretch(float);
-  void setDetunedBandWeight(float);
   void setITunesLibraryPath(const QString&);
   void setTraktorLibraryPath(const QString&);
   void setSeratoLibraryPath(const QString&);
-  void setCustomToneProfile(const QList<float>&);
   void setCustomKeyCodes(const QStringList&);
   void setBatchWindowState(const QByteArray&);
   void setBatchWindowGeometry(const QByteArray&);
@@ -117,7 +86,7 @@ public:
 
   void save();
 
-  // not necessarily related to user preferences, here for convenience
+  // not necessarily related to user preferences, just here for convenience
   QString getKeyCode(int) const;
   QColor getKeyColour(int) const;
   void setImageColours(QImage&, int) const;
@@ -129,37 +98,17 @@ private:
   bool writeToTagGrouping;
   bool writeToTagKey;
   bool skipFilesWithExistingTags;
-  bool offsetToC;
-  char temporalWindow;
-  char hcdf;
-  char similarityMeasure;
-  char tagFormat;
-  int hopSize;
-  int fftFrameSize;
-  int octaves;
-  int bps;
+  tag_format_t tagFormat;
   int dFactor;
-  int toneProfile;
-  int hcdfPeakPickingNeighbours;
-  int hcdfArbitrarySegments;
-  int hcdfGaussianSize;
-  int tuningMethod;
-  float hcdfGaussianSigma;
-  float stFreq;
-  float directSkStretch;
-  float detunedBandWeight;
   QString iTunesLibraryPath;
   QString traktorLibraryPath;
   QString seratoLibraryPath;
-  QList<float> customToneProfile;
   QStringList customKeyCodes;
-  QList<float> binFreqs;
   QStringList defaultKeyCodes;
   QList<QColor> keyColours;
   QByteArray batchWindowState;
   QByteArray batchWindowGeometry;
   QByteArray batchWindowSplitterState;
-  void generateBinFreqs();
 };
 
 #endif

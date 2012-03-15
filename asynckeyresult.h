@@ -23,16 +23,12 @@
 #define KeyDetectionResult_H
 
 #include <QObject>
-#include "chromagram.h"
+#include "libkeyfinder/keyfinderresult.h"
 
-class KeyDetectionResult{
+class KeyFinderResultWrapper{
 public:
+  KeyFinder::KeyDetectionResult core;
   int batchRow;
-  Chromagram fullChromagram;
-  Chromagram oneOctaveChromagram;
-  std::vector<double> harmonicChangeSignal;
-  std::vector<int> keyEstimates;
-  int globalKeyEstimate;
   QString errorMessage;
 };
 

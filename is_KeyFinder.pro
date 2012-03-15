@@ -26,12 +26,8 @@ TARGET = KeyFinder
 
 SOURCES += \
     decoderlibav.cpp \
-    chromagram.cpp \
     downsamplerlibsrc.cpp \
     downsamplerib.cpp \
-    windowfunctions.cpp \
-    toneprofiles.cpp \
-    spectrumanalyser.cpp \
     preferences.cpp \
     spectrumanalyserfactory.cpp \
     decoder.cpp \

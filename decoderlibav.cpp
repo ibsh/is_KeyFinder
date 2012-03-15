@@ -23,7 +23,7 @@
 
 QMutex codecMutex; // I don't think this should be necessary if I get the lock manager right.
 
-AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
+KeyFinder::AudioData* LibAvDecoder::decodeFile(const QString& filePath){
 
   QMutexLocker codecMutexLocker(&codecMutex); // mutex the preparatory section of this method
 
@@ -44,13 +44,13 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
   // open file
   int openInputResult = avformat_open_input(&fCtx, filePathCh, NULL, NULL);
   if(openInputResult != 0){
-    qCritical("Failed to open audio file: %s (%d)", filePathCh, openInputResult);
-    throw Exception();
+    std::ostringstream ss;
+    ss << "Failed to open audio file (" << openInputResult << ")";
+    throw KeyFinder::Exception(ss.str());
   }
 
   if(av_find_stream_info(fCtx) < 0){
-    qCritical("Failed to find stream information in file: %s", filePathCh);
-    throw Exception();
+    throw KeyFinder::Exception("Failed to find stream information");
   }
   int audioStream = -1;
   for(int i=0; i<(signed)fCtx->nb_streams; i++){
@@ -60,23 +60,22 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
     }
   }
   if(audioStream == -1){
-    qCritical("Failed to find an audio stream in file: %s", filePathCh);
-    throw Exception();
+    throw KeyFinder::Exception("Failed to find an audio stream");
   }
 
   // Determine stream codec
   cCtx = fCtx->streams[audioStream]->codec;
   codec = avcodec_find_decoder(cCtx->codec_id);
   if(codec == NULL){
-    qCritical("Audio stream has unsupported codec in file: %s", filePathCh);
-    throw Exception();
+    throw KeyFinder::Exception("Audio stream has unsupported codec");
   }
 
   // Open codec
   int codecOpenResult = avcodec_open2(cCtx, codec, &dict);
   if(codecOpenResult < 0){
-    qCritical("Error opening audio codec: %s (%d)", codec->long_name, codecOpenResult);
-    throw Exception();
+    std::ostringstream ss;
+    ss << "Error opening audio codec: " << codec->long_name << " (" << codecOpenResult << ")";
+    throw KeyFinder::Exception(ss.str());
   }
 
   ReSampleContext* rsCtx = av_audio_resample_init(
@@ -85,18 +84,17 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
         AV_SAMPLE_FMT_S16, cCtx->sample_fmt,
         0, 0, 0, 0);
   if(rsCtx == NULL){
-    qCritical("Failed to create ReSampleContext for file: %s", filePathCh);
-    throw Exception();
+    throw KeyFinder::Exception("Failed to create ReSampleContext");
   }
 
-  qDebug("Decoding %s (%s, %d)", filePathCh, av_get_sample_fmt_name(cCtx->sample_fmt), cCtx->sample_rate);
+  qDebug("Decoding %s (%s, %d)", filePathCh, av_get_sample_fmt_name(cCtx->sample_fmt), cCtx->sample_rate); // really?
 
   codecMutexLocker.unlock();
 
   // Prep buffer
-  AudioStream *astrm = new AudioStream();
-  astrm->setFrameRate(cCtx->sample_rate);
-  astrm->setChannels(cCtx->channels);
+  KeyFinder::AudioData *audio = new KeyFinder::AudioData();
+  audio->setFrameRate(cCtx->sample_rate);
+  audio->setChannels(cCtx->channels);
   // Decode stream
   AVPacket avpkt;
   int badPacketCount = 0;
@@ -106,16 +104,15 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
       break;
     if(avpkt.stream_index == audioStream){
       try{
-        int result = decodePacket(cCtx, rsCtx, &avpkt, astrm);
+        int result = decodePacket(cCtx, rsCtx, &avpkt, audio);
         if(result != 0){
           if(badPacketCount < 100){
             badPacketCount++;
           }else{
-            qCritical("100 bad packets, may be DRM or corruption in file: %s", filePathCh);
-            throw Exception();
+            throw KeyFinder::Exception("100 bad packets, may be DRM or corruption");
           }
         }
-      }catch(Exception& e){
+      }catch(KeyFinder::Exception& e){
         throw e;
       }
     }
@@ -131,7 +128,7 @@ AudioStream* LibAvDecoder::decodeFile(const QString& filePath){
   codecMutexLocker.unlock();
 
   av_close_input_file(fCtx);
-  return astrm;
+  return audio;
 }
 
 LibAvDecoder::LibAvDecoder(){
@@ -145,7 +142,7 @@ LibAvDecoder::~LibAvDecoder(){
   av_free(frameBufferConverted);
 }
 
-int LibAvDecoder::decodePacket(AVCodecContext* cCtx, ReSampleContext* rsCtx, AVPacket* originalPacket, AudioStream* ab){
+int LibAvDecoder::decodePacket(AVCodecContext* cCtx, ReSampleContext* rsCtx, AVPacket* originalPacket, KeyFinder::AudioData* audio){
   // copy packet so we can shift data pointer about without endangering garbage collection
   AVPacket tempPacket;
   tempPacket.size = originalPacket->size;
@@ -168,19 +165,18 @@ int LibAvDecoder::decodePacket(AVCodecContext* cCtx, ReSampleContext* rsCtx, AVP
     if(cCtx->sample_fmt != AV_SAMPLE_FMT_S16){
       int resampleResult = audio_resample(rsCtx, (short*)frameBufferConverted, (short*)frameBuffer, newSamplesDecoded);
       if(resampleResult < 0){
-        qCritical("Failed to resample");
-        throw Exception();
+        throw KeyFinder::Exception("Failed to resample");
       }
       dataBuffer = (int16_t*)frameBufferConverted;
     }
-    int oldSampleCount = ab->getSampleCount();
+    int oldSampleCount = audio->getSampleCount();
     try{
-      ab->addToSampleCount(newSamplesDecoded);
-    }catch(Exception& e){
+      audio->addToSampleCount(newSamplesDecoded);
+    }catch(KeyFinder::Exception& e){
       throw e;
     }
     for(int i = 0; i < newSamplesDecoded; i++){
-      ab->setSample(oldSampleCount+i, (float)dataBuffer[i]);
+      audio->setSample(oldSampleCount+i, (float)dataBuffer[i]);
     }
   }
   return 0;

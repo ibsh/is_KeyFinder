@@ -39,29 +39,29 @@ public:
   float n;
 };
 
-AudioStream* PrimaryDownsampler::downsample(AudioStream* instrm, int factor){
-  if(factor == 1) return instrm;
+KeyFinder::AudioData* PrimaryDownsampler::downsample(KeyFinder::AudioData* audioIn, unsigned int factor){
+  if(factor == 1) return audioIn;
   // prep output buffer
-  AudioStream* outstrm = new AudioStream();
-  outstrm->setFrameRate(instrm->getFrameRate() / factor);
-  outstrm->setChannels(instrm->getChannels());
-  int c = instrm->getChannels();
-  int ns = instrm->getSampleCount() / factor;
+  KeyFinder::AudioData* audioOut = new KeyFinder::AudioData();
+  audioOut->setFrameRate(audioIn->getFrameRate() / factor);
+  audioOut->setChannels(audioIn->getChannels());
+  unsigned int c = audioIn->getChannels();
+  unsigned int ns = audioIn->getSampleCount() / factor;
   while(ns%c != 0) ns++;
-  if(instrm->getSampleCount() % factor > 0) ns += c;
+  if(audioIn->getSampleCount() % factor > 0) ns += c;
   try{
-    outstrm->addToSampleCount(ns);
-  }catch(const Exception& e){
+    audioOut->addToSampleCount(ns);
+  }catch(const KeyFinder::Exception& e){
     throw e;
   }
   // prep filter
-  int filterOrder = 160;
+  unsigned int filterOrder = 160;
   float gain = 11.03969310;
-  int filterDelay = filterOrder/2;
+  unsigned int filterDelay = filterOrder/2;
   // create circular buffer for filter delay
   Binode* p = new Binode(); // first node
   Binode* q = p;
-  for(int i=0; i<filterOrder; i++){
+  for(unsigned int i=0; i<filterOrder; i++){
     q->r = new Binode(); // subsequent nodes
     q->r->l = q;
     q = q->r;
@@ -116,44 +116,44 @@ AudioStream* PrimaryDownsampler::downsample(AudioStream* instrm, int factor){
   };
 
   // for each channel (should be mono by this point but just in case)
-  for(int i=0; i<c; i++){
+  for(unsigned int i = 0; i < c; i++){
     q = p;
     // clear delay buffer
-    for(int k=0; k<=filterOrder; k++){
+    for(unsigned int k = 0; k <= filterOrder; k++){
       q->n = 0.0;
       q = q->r;
     }
     // for each frame (running off the end of the file by filterDelay)
-    for(int j=i; j<instrm->getSampleCount()+filterDelay; j+=c){
+    for(int j = i; j < (signed)(audioIn->getSampleCount() + filterDelay); j += c){
 
       // shuffle old samples along delay buffer
       p = p->r;
 
       // load new sample into delay buffer
-      if (j < instrm->getSampleCount())
-        p->l->n = instrm->getSample(j) / gain;
+      if (j < (signed)audioIn->getSampleCount())
+        p->l->n = audioIn->getSample(j) / gain;
       else
         p->l->n = 0.0; // zero pad once we're into the delay at the end of the file
 
       if((j % (factor * c)) < c){ // only do the maths for the useful samples
         float sum = 0.0;
         q = p;
-        for(int k=0; k<=filterOrder; k++){
+        for(unsigned int k = 0; k <= filterOrder; k++){
           sum += b[k] * q->n;
           q = q->r;
         }
         // don't try and set samples during the warm-up, only once we've passed filterDelay samples
-        if(j-filterDelay >= 0)
-          outstrm->setSample(((j-filterDelay) / factor) + i, sum);
+        if(j - (signed)filterDelay >= 0)
+          audioOut->setSample(((j-filterDelay) / factor) + i, sum);
       }
     }
   }
   // delete delay buffer
-  for(int k=0; k<=filterOrder; k++){
+  for(unsigned int k = 0; k <= filterOrder; k++){
     q = p;
     p = p->r;
     delete q;
   }
-  delete instrm;
-  return outstrm;
+  delete audioIn;
+  return audioOut;
 }

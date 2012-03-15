@@ -22,30 +22,29 @@
 #include "downsamplerlibsrc.h"
 #include <samplerate.h>
 
-AudioStream* SecretRabbitDownsampler::downsample(AudioStream* instrm, int factor){
-  if(factor == 1) return instrm;
-  AudioStream* outstrm = new AudioStream();
-  outstrm->setFrameRate(instrm->getFrameRate() / factor);
-  outstrm->setChannels(instrm->getChannels());
+KeyFinder::AudioData* SecretRabbitDownsampler::downsample(KeyFinder::AudioData* audioIn, int factor){
+  if(factor == 1) return audioIn;
+  KeyFinder::AudioData* audioOut = new KeyFinder::AudioData();
+  audioOut->setFrameRate(audioIn->getFrameRate() / factor);
+  audioOut->setChannels(audioIn->getChannels());
   try{
-    outstrm->addToSampleCount(instrm->getSampleCount() / factor);
-  }catch(const Exception& e){
+    audioOut->addToSampleCount(audioIn->getSampleCount() / factor);
+  }catch(const KeyFinder::Exception& e){
     throw e;
   }
   SRC_DATA srcData;
-  srcData.data_in = &instrm->stream.front();
-  srcData.data_out = &outstrm->stream.front();
-  srcData.input_frames = (long)(instrm->getSampleCount() / instrm->getChannels());
-  srcData.output_frames = (long)(outstrm->getSampleCount() / outstrm->getChannels());
+  srcData.data_in = &audioIn->getSamples().front();
+  srcData.data_out = &audioOut->getSamples().front();
+  srcData.input_frames = (long)(audioIn->getSampleCount() / audioIn->getChannels());
+  srcData.output_frames = (long)(audioOut->getSampleCount() / audioOut->getChannels());
   srcData.src_ratio = 1.0/factor;
   // second parameter = converter type.
   // 0-2 quite slow but they anti-alias roughly the same amount, based on a visual inspection.
   // 3-4 super fast but the aliasing is worse than a simple discard. Don't use.
-  int result = src_simple(&srcData,2,instrm->getChannels());
+  int result = src_simple(&srcData,2,audioIn->getChannels());
   if(result != 0){
-    qCritical("Error in LibSRC sample rate conversion");
-    throw Exception();
+    throw KeyFinder::Exception("Error in LibSRC sample rate conversion");
   }
-  delete instrm;
-  return outstrm;
+  delete audioIn;
+  return audioOut;
 }

@@ -24,12 +24,12 @@
 
 #include <QString>
 
-#include "exception.h"
-#include "audiostream.h"
+#include "libkeyfinder/exception.h"
+#include "libkeyfinder/audiodata.h"
 
 class AudioFileDecoder{
 public:
-  virtual AudioStream* decodeFile(const QString&) = 0;
+  virtual KeyFinder::AudioData* decodeFile(const QString&) = 0;
   static AudioFileDecoder* getDecoder();
   virtual ~AudioFileDecoder();
 };

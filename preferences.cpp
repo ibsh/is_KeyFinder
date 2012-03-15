@@ -27,39 +27,20 @@ Preferences::Preferences(){
 
   // ======================= Musical frequencies ===============================
 
+  // Bear in mind that KeyFinder params object has built in defaults
+
   settings.beginGroup("analysisFrequencies");
   if(settings.contains("startingFrequencyA")){
-    stFreq = settings.value("startingFrequencyA").toFloat();
-  }else{
-    float defaultVal = 27.5;
-    settings.setValue("startingFrequencyA",defaultVal);
-    stFreq = defaultVal;
-    qDebug("Wrote default startingFrequencyA (%f)",stFreq);
+    core.setStartingFreqA(settings.value("startingFrequencyA").toFloat());
   }
   if(settings.contains("numOctaves")){
-    octaves = settings.value("numOctaves").toInt();
-  }else{
-    int defaultVal = 6;
-    settings.setValue("numOctaves",defaultVal);
-    octaves = defaultVal;
-    qDebug("Wrote default numOctaves (%d)",octaves);
+    core.setOctaves((unsigned)settings.value("numOctaves").toInt());
   }
   if(settings.contains("offsetToC")){
-    offsetToC = settings.value("offsetToC").toBool();
-  }else{
-    bool defaultVal = true;
-    settings.setValue("offsetToC",defaultVal);
-    offsetToC = defaultVal;
-    qDebug("Wrote default offsetToC (true)");
+    core.setOffsetToC(settings.value("offsetToC").toBool());
   }
-  // >1 bps has only reduced accuracy, all other things being equal. default 1.
   if(settings.contains("bandsPerSemitone")){
-    bps = settings.value("bandsPerSemitone").toInt();
-  }else{
-    int defaultVal = 1;
-    settings.setValue("bandsPerSemitone",defaultVal);
-    bps = defaultVal;
-    qDebug("Wrote default bandsPerSemitone (%d)",bps);
+    core.setBps((unsigned)settings.value("bandsPerSemitone").toInt());
   }
   settings.endGroup();
 
@@ -67,36 +48,22 @@ Preferences::Preferences(){
 
   settings.beginGroup("spectralAnalysis");
   if(settings.contains("temporalWindow")){
-    temporalWindow = settings.value("temporalWindow").toChar().toAscii();
-  }else{
-    char defaultVal = 'b';
-    settings.setValue("temporalWindow",defaultVal);
-    temporalWindow = defaultVal;
-    qDebug("Wrote default temporalWindow (%c)",temporalWindow);
+    QVariant val = settings.value("temporalWindow");
+    if(strcmp(val.typeName(),"QChar") == 0){
+      // backward compatibility; used to be stored as char before libKeyFinder
+      // TODO
+    }else{
+      core.setTemporalWindow((KeyFinder::temporal_window_t)val.toInt());
+    }
   }
-  int defFrameSize = 16384;
   if(settings.contains("fftFrameSize")){
-    fftFrameSize = settings.value("fftFrameSize").toInt();
-  }else{
-    settings.setValue("fftFrameSize",defFrameSize);
-    fftFrameSize = defFrameSize;
-    qDebug("Wrote default fftFrameSize (%d)",fftFrameSize);
+    core.setFftFrameSize((unsigned)settings.value("fftFrameSize").toInt());
   }
-  int defHopSize = defFrameSize / 4;
   if(settings.contains("hopSize")){
-    hopSize = settings.value("hopSize").toInt();
-  }else{
-    settings.setValue("hopSize",defHopSize);
-    hopSize = defHopSize;
-    qDebug("Wrote default hopSize (%d)",hopSize);
+    core.setHopSize((unsigned)settings.value("hopSize").toInt());
   }
   if(settings.contains("directSkStretch")){
-    directSkStretch = settings.value("directSkStretch").toFloat();
-  }else{
-    float defaultVal = 0.8;
-    settings.setValue("directSkStretch",defaultVal);
-    directSkStretch = defaultVal;
-    qDebug("Wrote default directSkStretch (%f)",directSkStretch);
+    core.setDirectSkStretch(settings.value("directSkStretch").toFloat());
   }
   settings.endGroup();
 
@@ -117,20 +84,16 @@ Preferences::Preferences(){
 
   settings.beginGroup("tuning");
   if(settings.contains("tuningMethod")){
-    tuningMethod = settings.value("tuningMethod").toInt();
-  }else{
-    int defaultVal = 0;
-    settings.setValue("tuningMethod",defaultVal);
-    tuningMethod = defaultVal;
-    qDebug("Wrote default tuningMethod (%d)",tuningMethod);
+    QVariant val = settings.value("tuningMethod");
+    if(strcmp(val.typeName(),"TODO") == 0){
+      // backward compatibility; used to be stored as int before libKeyFinder
+      // TODO, but may not be necessary if enum in same order
+    }else{
+      core.setTuningMethod((KeyFinder::tuning_method_t)val.toInt());
+    }
   }
   if(settings.contains("detunedBandWeight")){
-    detunedBandWeight = settings.value("detunedBandWeight").toFloat();
-  }else{
-    float defaultVal = 0.2;
-    settings.setValue("detunedBandWeight",defaultVal);
-    detunedBandWeight = defaultVal;
-    qDebug("Wrote default detunedBandWeight (%f)",detunedBandWeight);
+    core.setDetunedBandWeight(settings.value("detunedBandWeight").toFloat());
   }
   settings.endGroup();
 
@@ -138,44 +101,25 @@ Preferences::Preferences(){
 
   settings.beginGroup("harmonicChangeDetectionFunction");
   if(settings.contains("hcdf")){
-    hcdf = settings.value("hcdf").toChar().toAscii();
-  }else{
-    char defaultVal = 'n';
-    settings.setValue("hcdf",defaultVal);
-    hcdf = defaultVal;
-    qDebug("Wrote default hcdf (%c)",hcdf);
+    QVariant val = settings.value("hcdf");
+    if(strcmp(val.typeName(),"QChar") == 0){
+      // backward compatibility; used to be stored as char before libKeyFinder
+      // TODO
+    }else{
+      core.setSegmentation((KeyFinder::segmentation_t)val.toInt());
+    }
   }
   if(settings.contains("hcdfGaussianSize")){
-    hcdfGaussianSize = settings.value("hcdfGaussianSize").toInt();
-  }else{
-    int defaultVal = 35;
-    settings.setValue("hcdfGaussianSize",defaultVal);
-    hcdfGaussianSize = defaultVal;
-    qDebug("Wrote default hcdfGaussianSize (%d)",hcdfGaussianSize);
+    core.setHcdfGaussianSize((unsigned)settings.value("hcdfGaussianSize").toInt());
   }
   if(settings.contains("hcdfGaussianSigma")){
-    hcdfGaussianSigma = settings.value("hcdfGaussianSigma").toFloat();
-  }else{
-    float defaultVal = 8.0;
-    settings.setValue("hcdfGaussianSigma",defaultVal);
-    hcdfGaussianSigma = defaultVal;
-    qDebug("Wrote default hcdfGaussianSigma (%f)",hcdfGaussianSigma);
+    core.setHcdfGaussianSigma(settings.value("hcdfGaussianSigma").toFloat());
   }
   if(settings.contains("hcdfPeakPickingNeighbours")){
-    hcdfPeakPickingNeighbours = settings.value("hcdfPeakPickingNeighbours").toInt();
-  }else{
-    int defaultVal = 4;
-    settings.setValue("hcdfPeakPickingNeighbours",defaultVal);
-    hcdfPeakPickingNeighbours = defaultVal;
-    qDebug("Wrote default hcdfPeakPickingNeighbours (%d)",hcdfPeakPickingNeighbours);
+    core.setHcdfPeakPickingNeighbours((unsigned)settings.value("hcdfPeakPickingNeighbours").toInt());
   }
   if(settings.contains("hcdfArbitrarySegments")){
-    hcdfArbitrarySegments = settings.value("hcdfArbitrarySegments").toInt();
-  }else{
-    int defaultVal = 3;
-    settings.setValue("hcdfArbitrarySegments",defaultVal);
-    hcdfArbitrarySegments = defaultVal;
-    qDebug("Wrote default hcdfArbitrarySegments (%d)",hcdfArbitrarySegments);
+    core.setArbitrarySegments((unsigned)settings.value("hcdfArbitrarySegments").toInt());
   }
   settings.endGroup();
 
@@ -183,20 +127,22 @@ Preferences::Preferences(){
 
   settings.beginGroup("keyClassification");
   if(settings.contains("toneProfile")){
-    toneProfile = settings.value("toneProfile").toInt();
-  }else{
-    int defaultVal = 3;
-    settings.setValue("toneProfile",defaultVal);
-    toneProfile = defaultVal;
-    qDebug("Wrote default toneProfile (%d)",toneProfile);
+    QVariant val = settings.value("toneProfile");
+    if(strcmp(val.typeName(),"TODO") == 0){
+      // backward compatibility; used to be stored as int before libKeyFinder
+      // TODO, but may not be necessary if enum in same order
+    }else{
+      core.setToneProfile((KeyFinder::tone_profile_t)val.toInt());
+    }
   }
   if(settings.contains("similarityMeasure")){
-    similarityMeasure = settings.value("similarityMeasure").toChar().toAscii();
-  }else{
-    char defaultVal = 'c';
-    settings.setValue("similarityMeasure",defaultVal);
-    similarityMeasure = defaultVal;
-    qDebug("Wrote default similarityMeasure (%c)",similarityMeasure);
+    QVariant val = settings.value("similarityMeasure");
+    if(strcmp(val.typeName(),"QChar") == 0){
+      // backward compatibility; used to be stored as char before libKeyFinder
+      // TODO
+    }else{
+      core.setSimilarityMeasure((KeyFinder::similarity_measure_t)val.toInt());
+    }
   }
   settings.endGroup();
 
@@ -204,60 +150,32 @@ Preferences::Preferences(){
 
   settings.beginGroup("customToneProfile");
   if(settings.contains("maj0")){
-    customToneProfile = QList<float>();
-    customToneProfile.push_back(settings.value("maj0").toFloat());
-    customToneProfile.push_back(settings.value("maj1").toFloat());
-    customToneProfile.push_back(settings.value("maj2").toFloat());
-    customToneProfile.push_back(settings.value("maj3").toFloat());
-    customToneProfile.push_back(settings.value("maj4").toFloat());
-    customToneProfile.push_back(settings.value("maj5").toFloat());
-    customToneProfile.push_back(settings.value("maj6").toFloat());
-    customToneProfile.push_back(settings.value("maj7").toFloat());
-    customToneProfile.push_back(settings.value("maj8").toFloat());
-    customToneProfile.push_back(settings.value("maj9").toFloat());
-    customToneProfile.push_back(settings.value("maj10").toFloat());
-    customToneProfile.push_back(settings.value("maj11").toFloat());
-    customToneProfile.push_back(settings.value("min0").toFloat());
-    customToneProfile.push_back(settings.value("min1").toFloat());
-    customToneProfile.push_back(settings.value("min2").toFloat());
-    customToneProfile.push_back(settings.value("min3").toFloat());
-    customToneProfile.push_back(settings.value("min4").toFloat());
-    customToneProfile.push_back(settings.value("min5").toFloat());
-    customToneProfile.push_back(settings.value("min6").toFloat());
-    customToneProfile.push_back(settings.value("min7").toFloat());
-    customToneProfile.push_back(settings.value("min8").toFloat());
-    customToneProfile.push_back(settings.value("min9").toFloat());
-    customToneProfile.push_back(settings.value("min10").toFloat());
-    customToneProfile.push_back(settings.value("min11").toFloat());
-  }else{
-    customToneProfile = QList<float>();
-    customToneProfile << 1 << 0 << 1 << 0 << 1 << 1 << 0 << 1 << 0 << 1 << 0 << 1; // major
-    customToneProfile << 1 << 0 << 1 << 1 << 0 << 1 << 0 << 1 << 1 << 0 << 1 << 0; // minor
-    settings.setValue("maj0",customToneProfile[0]);
-    settings.setValue("maj1",customToneProfile[1]);
-    settings.setValue("maj2",customToneProfile[2]);
-    settings.setValue("maj3",customToneProfile[3]);
-    settings.setValue("maj4",customToneProfile[4]);
-    settings.setValue("maj5",customToneProfile[5]);
-    settings.setValue("maj6",customToneProfile[6]);
-    settings.setValue("maj7",customToneProfile[7]);
-    settings.setValue("maj8",customToneProfile[8]);
-    settings.setValue("maj9",customToneProfile[9]);
-    settings.setValue("maj10",customToneProfile[10]);
-    settings.setValue("maj11",customToneProfile[11]);
-    settings.setValue("min0",customToneProfile[12]);
-    settings.setValue("min1",customToneProfile[13]);
-    settings.setValue("min2",customToneProfile[14]);
-    settings.setValue("min3",customToneProfile[15]);
-    settings.setValue("min4",customToneProfile[16]);
-    settings.setValue("min5",customToneProfile[17]);
-    settings.setValue("min6",customToneProfile[18]);
-    settings.setValue("min7",customToneProfile[19]);
-    settings.setValue("min8",customToneProfile[20]);
-    settings.setValue("min9",customToneProfile[21]);
-    settings.setValue("min10",customToneProfile[22]);
-    settings.setValue("min11",customToneProfile[23]);
-    qDebug("Wrote default customToneProfile");
+    std::vector<float> ctp;
+    ctp.push_back(settings.value("maj0").toFloat());
+    ctp.push_back(settings.value("maj1").toFloat());
+    ctp.push_back(settings.value("maj2").toFloat());
+    ctp.push_back(settings.value("maj3").toFloat());
+    ctp.push_back(settings.value("maj4").toFloat());
+    ctp.push_back(settings.value("maj5").toFloat());
+    ctp.push_back(settings.value("maj6").toFloat());
+    ctp.push_back(settings.value("maj7").toFloat());
+    ctp.push_back(settings.value("maj8").toFloat());
+    ctp.push_back(settings.value("maj9").toFloat());
+    ctp.push_back(settings.value("maj10").toFloat());
+    ctp.push_back(settings.value("maj11").toFloat());
+    ctp.push_back(settings.value("min0").toFloat());
+    ctp.push_back(settings.value("min1").toFloat());
+    ctp.push_back(settings.value("min2").toFloat());
+    ctp.push_back(settings.value("min3").toFloat());
+    ctp.push_back(settings.value("min4").toFloat());
+    ctp.push_back(settings.value("min5").toFloat());
+    ctp.push_back(settings.value("min6").toFloat());
+    ctp.push_back(settings.value("min7").toFloat());
+    ctp.push_back(settings.value("min8").toFloat());
+    ctp.push_back(settings.value("min9").toFloat());
+    ctp.push_back(settings.value("min10").toFloat());
+    ctp.push_back(settings.value("min11").toFloat());
+    core.setCustomToneProfile(ctp);
   }
   settings.endGroup();
 
@@ -329,12 +247,18 @@ Preferences::Preferences(){
 
   settings.beginGroup("tags");
   if(settings.contains("tagFormat")){
-    tagFormat = settings.value("tagFormat").toChar().toAscii();
+    QVariant val = settings.value("tagFormat");
+    if(strcmp(val.typeName(),"QChar") == 0){
+      // backward compatibility; used to be stored as char
+      // TODO
+    }else{
+      tagFormat = (tag_format_t)val.toInt();
+    }
   }else{
-    char defaultVal = 'k';
+    tag_format_t defaultVal = TAG_FORMAT_KEYS;
     settings.setValue("tagFormat",defaultVal);
     tagFormat = defaultVal;
-    qDebug("Wrote default tagFormat (%c)",tagFormat);
+    qDebug("Wrote default tagFormat (Keys)");
   }
   if(settings.contains("writeToTagComment")){
     writeToTagComment = settings.value("writeToTagComment").toBool();
@@ -466,8 +390,6 @@ Preferences::Preferences(){
 
   // ================================ End ======================================
 
-  generateBinFreqs();
-
   // default key codes
   defaultKeyCodes.push_back("A");		defaultKeyCodes.push_back("Am");
   defaultKeyCodes.push_back("Bb");	defaultKeyCodes.push_back("Bbm");
@@ -502,17 +424,17 @@ void Preferences::save(){
   QSettings settings;
 
   settings.beginGroup("analysisFrequencies");
-  settings.setValue("startingFrequencyA", stFreq);
-  settings.setValue("numOctaves", octaves);
-  settings.setValue("offsetToC", offsetToC);
-  settings.setValue("bandsPerSemitone", bps);
+  settings.setValue("startingFrequencyA", core.getStartingFreqA());
+  settings.setValue("numOctaves", core.getOctaves());
+  settings.setValue("offsetToC", core.getOffsetToC());
+  settings.setValue("bandsPerSemitone", core.getBpo() / 12);
   settings.endGroup();
 
   settings.beginGroup("spectralAnalysis");
-  settings.setValue("temporalWindow", temporalWindow);
-  settings.setValue("fftFrameSize", fftFrameSize);
-  settings.setValue("hopSize", hopSize);
-  settings.setValue("directSkStretch", directSkStretch);
+  settings.setValue("temporalWindow", core.getTemporalWindow());
+  settings.setValue("fftFrameSize", core.getFftFrameSize());
+  settings.setValue("hopSize", core.getHopSize());
+  settings.setValue("directSkStretch", core.getDirectSkStretch());
   settings.endGroup();
 
   settings.beginGroup("downsampling");
@@ -520,48 +442,49 @@ void Preferences::save(){
   settings.endGroup();
 
   settings.beginGroup("tuning");
-  settings.setValue("tuningMethod", tuningMethod);
-  settings.setValue("detunedBandWeight", detunedBandWeight);
+  settings.setValue("tuningMethod", core.getTuningMethod());
+  settings.setValue("detunedBandWeight", core.getDetunedBandWeight());
   settings.endGroup();
 
   settings.beginGroup("harmonicChangeDetectionFunction");
-  settings.setValue("hcdf", hcdf);
-  settings.setValue("hcdfGaussianSize", hcdfGaussianSize);
-  settings.setValue("hcdfGaussianSigma", hcdfGaussianSigma);
-  settings.setValue("hcdfPeakPickingNeighbours", hcdfPeakPickingNeighbours);
-  settings.setValue("hcdfArbitrarySegments", hcdfArbitrarySegments);
+  settings.setValue("hcdf", core.getSegmentation());
+  settings.setValue("hcdfGaussianSize", core.getHcdfGaussianSize());
+  settings.setValue("hcdfGaussianSigma", core.getHcdfGaussianSigma());
+  settings.setValue("hcdfPeakPickingNeighbours", core.getHcdfPeakPickingNeighbours());
+  settings.setValue("hcdfArbitrarySegments", core.getArbitrarySegments());
   settings.endGroup();
 
   settings.beginGroup("keyClassification");
-  settings.setValue("toneProfile", toneProfile);
-  settings.setValue("similarityMeasure", similarityMeasure);
+  settings.setValue("toneProfile", core.getToneProfile());
+  settings.setValue("similarityMeasure", core.getSimilarityMeasure());
   settings.endGroup();
 
   settings.beginGroup("customToneProfile");
-  settings.setValue("maj0", customToneProfile[0]);
-  settings.setValue("maj1", customToneProfile[1]);
-  settings.setValue("maj2", customToneProfile[2]);
-  settings.setValue("maj3", customToneProfile[3]);
-  settings.setValue("maj4", customToneProfile[4]);
-  settings.setValue("maj5", customToneProfile[5]);
-  settings.setValue("maj6", customToneProfile[6]);
-  settings.setValue("maj7", customToneProfile[7]);
-  settings.setValue("maj8", customToneProfile[8]);
-  settings.setValue("maj9", customToneProfile[9]);
-  settings.setValue("maj10", customToneProfile[10]);
-  settings.setValue("maj11", customToneProfile[11]);
-  settings.setValue("min0", customToneProfile[12]);
-  settings.setValue("min1", customToneProfile[13]);
-  settings.setValue("min2", customToneProfile[14]);
-  settings.setValue("min3", customToneProfile[15]);
-  settings.setValue("min4", customToneProfile[16]);
-  settings.setValue("min5", customToneProfile[17]);
-  settings.setValue("min6", customToneProfile[18]);
-  settings.setValue("min7", customToneProfile[19]);
-  settings.setValue("min8", customToneProfile[20]);
-  settings.setValue("min9", customToneProfile[21]);
-  settings.setValue("min10", customToneProfile[22]);
-  settings.setValue("min11", customToneProfile[23]);
+  std::vector<float> ctp = core.getCustomToneProfile();
+  settings.setValue("maj0", ctp[0]);
+  settings.setValue("maj1", ctp[1]);
+  settings.setValue("maj2", ctp[2]);
+  settings.setValue("maj3", ctp[3]);
+  settings.setValue("maj4", ctp[4]);
+  settings.setValue("maj5", ctp[5]);
+  settings.setValue("maj6", ctp[6]);
+  settings.setValue("maj7", ctp[7]);
+  settings.setValue("maj8", ctp[8]);
+  settings.setValue("maj9", ctp[9]);
+  settings.setValue("maj10", ctp[10]);
+  settings.setValue("maj11", ctp[11]);
+  settings.setValue("min0", ctp[12]);
+  settings.setValue("min1", ctp[13]);
+  settings.setValue("min2", ctp[14]);
+  settings.setValue("min3", ctp[15]);
+  settings.setValue("min4", ctp[16]);
+  settings.setValue("min5", ctp[17]);
+  settings.setValue("min6", ctp[18]);
+  settings.setValue("min7", ctp[19]);
+  settings.setValue("min8", ctp[20]);
+  settings.setValue("min9", ctp[21]);
+  settings.setValue("min10", ctp[22]);
+  settings.setValue("min11", ctp[23]);
   settings.endGroup();
 
   settings.beginGroup("customKeyCodes");
@@ -621,25 +544,8 @@ void Preferences::save(){
 
 Preferences& Preferences::operator=(const Preferences& that){
   if(this != &that){
-    temporalWindow = that.temporalWindow;
-    hcdf = that.hcdf;
-    hopSize = that.hopSize;
-    fftFrameSize = that.fftFrameSize;
-    octaves = that.octaves;
-    bps = that.bps;
-    offsetToC = that.offsetToC;
+    core = that.core;
     dFactor = that.dFactor;
-    toneProfile = that.toneProfile;
-    similarityMeasure = that.similarityMeasure;
-    hcdfPeakPickingNeighbours = that.hcdfPeakPickingNeighbours;
-    hcdfArbitrarySegments = that.hcdfArbitrarySegments;
-    hcdfGaussianSize = that.hcdfGaussianSize;
-    tuningMethod = that.tuningMethod;
-    hcdfGaussianSigma = that.hcdfGaussianSigma;
-    stFreq = that.stFreq;
-    directSkStretch = that.directSkStretch;
-    detunedBandWeight = that.detunedBandWeight;
-    customToneProfile = that.customToneProfile;
     customKeyCodes = that.customKeyCodes;
     tagFormat = that.tagFormat;
     writeToTagComment = that.writeToTagComment;
@@ -654,26 +560,25 @@ Preferences& Preferences::operator=(const Preferences& that){
     batchWindowState = that.batchWindowState;
     batchWindowGeometry = that.batchWindowGeometry;
     batchWindowSplitterState = that.batchWindowSplitterState;
-    generateBinFreqs();
   }
   return *this;
 }
 
 
 bool Preferences::equivalentSpectralAnalysis(const Preferences& that) const{
-  if(temporalWindow != that.temporalWindow)
+  if(core.getTemporalWindow() != that.core.getTemporalWindow())
     return false;
-  if(bps != that.bps)
+  if(core.getBpo() != that.core.getBpo())
     return false;
-  if(stFreq != that.stFreq)
+  if(core.getStartingFreqA() != that.core.getStartingFreqA())
     return false;
-  if(octaves != that.octaves)
+  if(core.getOctaves() != that.core.getOctaves())
     return false;
-  if(offsetToC != that.offsetToC)
+  if(core.getOffsetToC() != that.core.getOffsetToC())
     return false;
-  if(fftFrameSize != that.fftFrameSize)
+  if(core.getFftFrameSize() != that.core.getFftFrameSize())
     return false;
-  if(directSkStretch != that.directSkStretch)
+  if(core.getDirectSkStretch() != that.core.getDirectSkStretch())
     return false;
   return true;
 }
@@ -684,29 +589,29 @@ bool         Preferences::getWriteToTagComment()         const { return writeToT
 bool         Preferences::getWriteToTagGrouping()        const { return writeToTagGrouping; }
 bool         Preferences::getWriteToTagKey()             const { return writeToTagKey; }
 bool         Preferences::getSkipFilesWithExistingTags() const { return skipFilesWithExistingTags; }
-bool         Preferences::getOffsetToC()                 const { return offsetToC; }
-char         Preferences::getTemporalWindow()            const { return temporalWindow; }
-char         Preferences::getHcdf()                      const { return hcdf; }
-char         Preferences::getSimilarityMeasure()         const { return similarityMeasure; }
+bool         Preferences::getOffsetToC()                 const { return core.getOffsetToC(); }
+char         Preferences::getTemporalWindow()            const { return core.getTemporalWindow(); }
+char         Preferences::getHcdf()                      const { return core.getSegmentation(); }
+char         Preferences::getSimilarityMeasure()         const { return core.getSimilarityMeasure(); }
 char         Preferences::getTagFormat()                 const { return tagFormat; }
-int          Preferences::getHopSize()                   const { return hopSize; }
-int          Preferences::getFftFrameSize()              const { return fftFrameSize; }
-int          Preferences::getOctaves()                   const { return octaves; }
-int          Preferences::getBpo()                       const { return bps * 12; }
+int          Preferences::getHopSize()                   const { return core.getHopSize(); }
+int          Preferences::getFftFrameSize()              const { return core.getFftFrameSize(); }
+int          Preferences::getOctaves()                   const { return core.getOctaves(); }
+int          Preferences::getBpo()                       const { return core.getBpo(); }
 int          Preferences::getDFactor()                   const { return dFactor; }
-int          Preferences::getToneProfile()               const { return toneProfile; }
-int          Preferences::getTuningMethod()              const { return tuningMethod; }
-int          Preferences::getHcdfPeakPickingNeighbours() const { return hcdfPeakPickingNeighbours; }
-int          Preferences::getHcdfArbitrarySegments()     const { return hcdfArbitrarySegments; }
-int          Preferences::getHcdfGaussianSize()          const { return hcdfGaussianSize; }
-float        Preferences::getHcdfGaussianSigma()         const { return hcdfGaussianSigma; }
-float        Preferences::getStartingFreqA()             const { return stFreq; }
-float        Preferences::getDirectSkStretch()           const { return directSkStretch; }
-float        Preferences::getDetunedBandWeight()         const { return detunedBandWeight; }
+int          Preferences::getToneProfile()               const { return core.getToneProfile(); }
+int          Preferences::getTuningMethod()              const { return core.getTuningMethod(); }
+int          Preferences::getHcdfArbitrarySegments()     const { return core.getArbitrarySegments(); }
+int          Preferences::getHcdfPeakPickingNeighbours() const { return core.getHcdfPeakPickingNeighbours(); }
+int          Preferences::getHcdfGaussianSize()          const { return core.getHcdfGaussianSize(); }
+float        Preferences::getHcdfGaussianSigma()         const { return core.getHcdfGaussianSigma(); }
+float        Preferences::getStartingFreqA()             const { return core.getStartingFreqA(); }
+float        Preferences::getDirectSkStretch()           const { return core.getDirectSkStretch(); }
+float        Preferences::getDetunedBandWeight()         const { return core.getDetunedBandWeight(); }
 QString      Preferences::getITunesLibraryPath()         const { return iTunesLibraryPath; }
 QString      Preferences::getTraktorLibraryPath()        const { return traktorLibraryPath; }
 QString      Preferences::getSeratoLibraryPath()         const { return seratoLibraryPath; }
-QList<float> Preferences::getCustomToneProfile()         const { return customToneProfile; }
+QList<float> Preferences::getCustomToneProfile()         const { return core.getCustomToneProfile(); }
 QStringList  Preferences::getCustomKeyCodes()            const { return customKeyCodes; }
 QByteArray   Preferences::getBatchWindowState()          const { return batchWindowState; }
 QByteArray   Preferences::getBatchWindowGeometry()       const { return batchWindowGeometry; }
@@ -717,29 +622,29 @@ void Preferences::setWriteToTagComment(bool cmt)                    { writeToTag
 void Preferences::setWriteToTagGrouping(bool grp)                   { writeToTagGrouping = grp; }
 void Preferences::setWriteToTagKey(bool key)                        { writeToTagKey = key; }
 void Preferences::setSkipFilesWithExistingTags(bool skip)           { skipFilesWithExistingTags = skip; }
-void Preferences::setOffsetToC(bool off)                            { offsetToC = off; }
-void Preferences::setTemporalWindow(char window)                    { temporalWindow = window; }
-void Preferences::setHcdf(char f)                                   { hcdf = f; }
-void Preferences::setSimilarityMeasure(char msr)                    { similarityMeasure = msr; }
+void Preferences::setOffsetToC(bool off)                            { core.setOffsetToC(off); }
+void Preferences::setTemporalWindow(char window)                    { core.setTemporalWindow(window); }
+void Preferences::setHcdf(char h)                                   { core.setSegmentation(h); }
+void Preferences::setSimilarityMeasure(char msr)                    { core.setSimilarityMeasure(msr); }
 void Preferences::setTagFormat(char fmt)                            { tagFormat = fmt; }
-void Preferences::setHopSize(int size)                              { hopSize = size; }
-void Preferences::setFftFrameSize(int framesize)                    { fftFrameSize = framesize; }
-void Preferences::setOctaves(int oct)                               { octaves = oct; }
-void Preferences::setBps(int bands)                                 { bps = bands; }
+void Preferences::setHopSize(int size)                              { core.setHopSize(size); }
+void Preferences::setFftFrameSize(int framesize)                    { core.setFftFrameSize(framesize); }
+void Preferences::setOctaves(int oct)                               { core.setOctaves(oct); }
+void Preferences::setBps(int bands)                                 { core.setBps(bands); }
 void Preferences::setDFactor(int factor)                            { dFactor = factor; }
-void Preferences::setToneProfile(int profile)                       { toneProfile = profile; }
-void Preferences::setHcdfPeakPickingNeighbours(int neighbours)      { hcdfPeakPickingNeighbours = neighbours; }
-void Preferences::setHcdfArbitrarySegments(int segments)            { hcdfArbitrarySegments = segments; }
-void Preferences::setHcdfGaussianSize(int size)                     { hcdfGaussianSize = size; }
-void Preferences::setTuningMethod(int tune)                         { tuningMethod = tune; }
-void Preferences::setHcdfGaussianSigma(float sigma)                 { hcdfGaussianSigma = sigma; }
-void Preferences::setStartingFreqA(float a)                         { stFreq = a; }
-void Preferences::setDirectSkStretch(float stretch)                 { directSkStretch = stretch; }
-void Preferences::setDetunedBandWeight(float weight)                { detunedBandWeight = weight; }
+void Preferences::setToneProfile(int profile)                       { core.setToneProfile(profile); }
+void Preferences::setHcdfArbitrarySegments(int segments)            { core.setArbitrarySegments(segments); }
+void Preferences::setHcdfPeakPickingNeighbours(int neighbours)      { core.setHcdfPeakPickingNeighbours(neighbours); }
+void Preferences::setHcdfGaussianSize(int size)                     { core.setHcdfGaussianSize(size); }
+void Preferences::setTuningMethod(int tune)                         { core.setTuningMethod(tune); }
+void Preferences::setHcdfGaussianSigma(float sigma)                 { core.setHcdfGaussianSigma(sigma); }
+void Preferences::setStartingFreqA(float a)                         { core.setStartingFreqA(a); }
+void Preferences::setDirectSkStretch(float stretch)                 { core.setDirectSkStretch(stretch); }
+void Preferences::setDetunedBandWeight(float weight)                { core.setDetunedBandWeight(weight); }
 void Preferences::setITunesLibraryPath(const QString& path)         { iTunesLibraryPath = path; }
 void Preferences::setTraktorLibraryPath(const QString& path)        { traktorLibraryPath = path; }
 void Preferences::setSeratoLibraryPath(const QString& path)         { seratoLibraryPath = path; }
-void Preferences::setCustomToneProfile(const QList<float>& profile) { customToneProfile = profile; }
+void Preferences::setCustomToneProfile(const QList<float>& profile) { core.setCustomToneProfile(profile); }
 void Preferences::setCustomKeyCodes(const QStringList& codes)       { customKeyCodes = codes; }
 void Preferences::setBatchWindowState(const QByteArray& a)          { batchWindowState = a; }
 void Preferences::setBatchWindowGeometry(const QByteArray& a)       { batchWindowGeometry = a; }

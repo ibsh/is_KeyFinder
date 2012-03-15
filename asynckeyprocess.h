@@ -27,20 +27,19 @@
 
 #include <vector>
 
+#include "libkeyfinder/keyfinder.h"
+#include "libkeyfinder/exception.h"
+#include "libkeyfinder/audiodata.h"
+#include "libkeyfinder/keyfinderresult.h"
+
 #include "preferences.h"
-#include "exception.h"
-#include "audiostream.h"
 #include "decoder.h"
 #include "downsampler.h"
-#include "chromagram.h"
-#include "spectrumanalyserfactory.h"
-#include "hcdf.h"
-#include "keyclassifier.h"
-
 #include "asyncfileobject.h"
 #include "asynckeyresult.h"
 
+
 // trying this as a global function rather than an object...
-KeyDetectionResult keyDetectionProcess(const AsyncFileObject&);
+KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject&);
 
 #endif // KEYFINDERMODEL_H

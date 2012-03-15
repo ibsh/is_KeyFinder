@@ -21,42 +21,42 @@
 
 #include "asynckeyprocess.h"
 
-KeyDetectionResult keyDetectionProcess(const AsyncFileObject& object){
+KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
 
-  KeyDetectionResult result;
+  KeyFinderResultWrapper result;
   result.batchRow = object.batchRow;
 
   // initialise stream and decode file into it.
-  AudioStream* astrm = NULL;
-  AudioFileDecoder* dec = NULL;
+  KeyFinder::AudioData* audio = NULL;
+  AudioFileDecoder* decoder = NULL;
   try{
-    dec = AudioFileDecoder::getDecoder();
+    decoder = AudioFileDecoder::getDecoder();
   }catch(Exception){
-    delete dec;
+    delete decoder;
     result.errorMessage = "Could not get decoder.";
     return result;
   }
 
   try{
-    astrm = dec->decodeFile(object.filePath);
-    delete dec;
+    audio = decoder->decodeFile(object.filePath);
+    delete decoder;
   }catch(Exception){
-    delete astrm;
-    delete dec;
+    delete audio;
+    delete decoder;
     result.errorMessage = "Could not decode file.";
     return result;
   }
 
-  // make audio stream monaural
-  astrm->reduceToMono();
+  // make audio stream monaural ahead of downsample to reduce load
+  audio->reduceToMono();
 
   // downsample if necessary
   if(object.prefs.getDFactor() > 1){
-    Downsampler* ds = Downsampler::getDownsampler(object.prefs.getDFactor(),astrm->getFrameRate(),object.prefs.getLastFreq());
+    Downsampler* ds = Downsampler::getDownsampler(object.prefs.getDFactor(),audio->getFrameRate(),object.prefs.getLastFreq());
     try{
-      astrm = ds->downsample(astrm,object.prefs.getDFactor());
+      audio = ds->downsample(audio,object.prefs.getDFactor());
     }catch(Exception){
-      delete astrm;
+      delete audio;
       delete ds;
       result.errorMessage = "Downsampler failed.";
       return result;
@@ -64,65 +64,8 @@ KeyDetectionResult keyDetectionProcess(const AsyncFileObject& object){
     delete ds;
   }
 
-  // start spectrum analysis
-  SpectrumAnalyser* sa = NULL;
-  Chromagram* ch = NULL;
-  sa = SpectrumAnalyserFactory::getInstance()->getSpectrumAnalyser(astrm->getFrameRate(),object.prefs);
-  ch = sa->chromagram(astrm);
-  delete astrm; // note we don't delete the spectrum analyser; it stays in the centralised factory for reuse.
-  ch->reduceTuningBins(object.prefs);
-  if(object.batchRow == -1)
-    result.fullChromagram = Chromagram(*ch);
-
-  // reduce chromagram
-  ch->reduceToOneOctave(object.prefs);
-  if(object.batchRow == -1)
-    result.oneOctaveChromagram = Chromagram(*ch);
-
-  // get energy level across track to weight segments
-  std::vector<float> loudness(ch->getHops());
-  for(int h=0; h<ch->getHops(); h++)
-    for(int b=0; b<ch->getBins(); b++)
-      loudness[h] += ch->getMagnitude(h,b);
-
-  // get harmonic change signal
-  Segmentation* hcdf = Segmentation::getSegmentation(object.prefs);
-  result.harmonicChangeSignal = hcdf->getRateOfChange(ch,object.prefs);
-
-  // get track segmentation
-  std::vector<int> changes = hcdf->getSegments(result.harmonicChangeSignal,object.prefs);
-  delete hcdf;
-  changes.push_back(ch->getHops()); // It used to be getHops()-1. But this doesn't crash. So we like it.
-
-  // get key estimates for segments
-  KeyClassifier hc(object.prefs);
-  result.keyEstimates.clear();
-  std::vector<float> keyWeights(24);
-  for(int i=0; i<(signed)changes.size()-1; i++){
-    std::vector<double> chroma(ch->getBins());
-    for(int j=changes[i]; j<changes[i+1]; j++)
-      for(int k=0; k<ch->getBins(); k++)
-        chroma[k] += ch->getMagnitude(j,k);
-    int key = hc.classify(chroma);
-    for(int j=changes[i]; j<changes[i+1]; j++){
-      result.keyEstimates.push_back(key);
-      if(key < 24) // ignore parts that were classified as silent
-        keyWeights[key] += loudness[j];
-    }
-  }
-  result.keyEstimates.push_back(result.keyEstimates[result.keyEstimates.size()-1]); // put last key on again to match length of track
-
-  delete ch;
-
-  // get global key
-  result.globalKeyEstimate = 24;
-  float mostCommonKeyWeight = 0.0;
-  for(int i=0; i<(signed)keyWeights.size(); i++){
-    if(keyWeights[i] > mostCommonKeyWeight){
-      mostCommonKeyWeight = keyWeights[i];
-      result.globalKeyEstimate = i;
-    }
-  }
+  KeyFinder::KeyFinder keyFinder;
+  result.core = keyFinder.findKey(audio, object.prefs.core);
 
   return result;
 }

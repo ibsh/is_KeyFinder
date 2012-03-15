@@ -22,13 +22,13 @@
 #ifndef DOWNSAMPLER_H
 #define DOWNSAMPLER_H
 
-#include "exception.h"
-#include "audiostream.h"
+#include "libkeyfinder/audiodata.h"
+#include "libkeyfinder/exception.h"
 
 class Downsampler{
 public:
-  virtual AudioStream* downsample(AudioStream*,int) = 0;
-  static Downsampler* getDownsampler(int,int,float);
+  virtual KeyFinder::AudioData* downsample(KeyFinder::AudioData*, unsigned int) = 0;
+  static Downsampler* getDownsampler(unsigned int, unsigned int, float);
   virtual ~Downsampler();
 };
 
