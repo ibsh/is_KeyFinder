@@ -150,7 +150,8 @@ BatchWindow::~BatchWindow(){
 }
 
 void BatchWindow::closeEvent(QCloseEvent* e){
-  // save ui settings
+  // save ui settings, to an up-to-date prefs object
+  prefs = Preferences();
   prefs.setBatchWindowState(this->saveState());
   prefs.setBatchWindowGeometry(this->saveGeometry());
   prefs.setBatchWindowSplitterState(ui->splitter->saveState());
@@ -465,7 +466,7 @@ void BatchWindow::runAnalysis(){
     if(status == STATUS_NEW || status == STATUS_TAGSREAD)
       objects.push_back(AsyncFileObject(ui->tableWidget->item(row,COL_FILEPATH)->text(),prefs,row));
   }
-  QFuture<KeyDetectionResult> analysisFuture = QtConcurrent::mapped(objects, keyDetectionProcess);
+  QFuture<KeyFinderResultWrapper> analysisFuture = QtConcurrent::mapped(objects, keyDetectionProcess);
   analysisWatcher.setFuture(analysisFuture);
 }
 
@@ -482,7 +483,7 @@ void BatchWindow::analysisResultReadyAt(int index){
   QString error = analysisWatcher.resultAt(index).errorMessage;
   int row = analysisWatcher.resultAt(index).batchRow;
   if(error == ""){
-    int key = analysisWatcher.resultAt(index).globalKeyEstimate;
+    int key = analysisWatcher.resultAt(index).core.globalKeyEstimate;
     ui->tableWidget->item(row,COL_STATUS)->setText(QString::number(key));
     ui->tableWidget->item(row,COL_KEY)->setText(prefs.getKeyCode(key));
     if(prefs.getWriteTagsAutomatically())

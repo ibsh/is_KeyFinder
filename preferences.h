@@ -49,8 +49,9 @@ public:
   KeyFinder::Parameters core;
   Preferences();
   Preferences& operator=(const Preferences&);
-  bool equivalentSpectralAnalysis(const Preferences&) const;
-  // getters
+  void save();
+
+  // accessors
   bool getWriteTagsAutomatically() const;
   bool getParallelBatchJobs() const;
   bool getWriteToTagComment() const;
@@ -67,7 +68,28 @@ public:
   QByteArray getBatchWindowGeometry() const;
   QByteArray getBatchWindowSplitterState() const;
 
-  // setters
+  // accessors tied to KeyFinder::Parameters object
+  bool getOffsetToC() const;
+  KeyFinder::temporal_window_t getTemporalWindow() const;
+  KeyFinder::segmentation_t getSegmentation() const;
+  KeyFinder::similarity_measure_t getSimilarityMeasure() const;
+  KeyFinder::tuning_method_t getTuningMethod() const;
+  KeyFinder::tone_profile_t getToneProfile() const;
+  unsigned int getHopSize() const;
+  unsigned int getFftFrameSize() const;
+  unsigned int getOctaves() const;
+  unsigned int getBpo() const;
+  unsigned int getArbitrarySegments() const;
+  unsigned int getHcdfPeakPickingNeighbours() const;
+  unsigned int getHcdfGaussianSize() const;
+  float getHcdfGaussianSigma() const;
+  float getStartingFreqA() const;
+  float getLastFreq() const;
+  float getDirectSkStretch() const;
+  float getDetunedBandWeight() const;
+  std::vector<float> getCustomToneProfile() const;
+
+  // mutators
   void setWriteTagsAutomatically(bool);
   void setParallelBatchJobs(bool);
   void setWriteToTagComment(bool);
@@ -84,7 +106,25 @@ public:
   void setBatchWindowGeometry(const QByteArray&);
   void setBatchWindowSplitterState(const QByteArray&);
 
-  void save();
+  // mutators tied to KeyFinder::Parameters object
+  void setOffsetToC(bool);
+  void setTemporalWindow(KeyFinder::temporal_window_t);
+  void setSegmentation(KeyFinder::segmentation_t);
+  void setSimilarityMeasure(KeyFinder::similarity_measure_t);
+  void setTuningMethod(KeyFinder::tuning_method_t);
+  void setToneProfile(KeyFinder::tone_profile_t);
+  void setHopSize(unsigned int);
+  void setFftFrameSize(unsigned int);
+  void setOctaves(unsigned int);
+  void setBps(unsigned int);
+  void setArbitrarySegments(unsigned int);
+  void setHcdfPeakPickingNeighbours(unsigned int);
+  void setHcdfGaussianSize(unsigned int);
+  void setHcdfGaussianSigma(float);
+  void setStartingFreqA(float);
+  void setDirectSkStretch(float);
+  void setDetunedBandWeight(float);
+  void setCustomToneProfile(const std::vector<float>&);
 
   // not necessarily related to user preferences, just here for convenience
   QString getKeyCode(int) const;

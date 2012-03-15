@@ -26,7 +26,7 @@
 AudioFileDecoder* AudioFileDecoder::getDecoder(){
   try{
     return new LibAvDecoder();
-  }catch(Exception& e){
+  }catch(KeyFinder::Exception& e){
     throw e;
   }
 }

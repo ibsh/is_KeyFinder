@@ -38,19 +38,26 @@ public:
   explicit PrefsDialog(QWidget *parent = 0);
   ~PrefsDialog();
 private:
+  // map combobox indices to useful values
+  QList<tag_format_t>                    listTagFormat;
+  QList<float>                           listStartingFreq;
+  QList<unsigned int>                    listHopSize;
+  QList<KeyFinder::temporal_window_t>    listTemporalWindow;
+  QList<unsigned int>                    listFftFrameSize;
+  QList<KeyFinder::tuning_method_t>      listTuningMethod;
+  QList<KeyFinder::segmentation_t>       listSegmentation;
+  QList<KeyFinder::tone_profile_t>       listToneProfile;
+  QList<KeyFinder::similarity_measure_t> listSimilarityMeasure;
+  // altering state on field changes
   void tuningEnabled();
   void binAdaptiveTuningEnabled();
-  void hcdfEnabled();
+  void segmentationEnabled();
   void customProfileEnabled();
-  QString temporalWindowComboIndex;
-  QString hcdfComboIndex;
-  QString similarityMeasureComboIndex;
-  QString tagFormatComboIndex;
 private slots:
   void on_savePrefsButton_clicked();
   void on_cancelButton_clicked();
   void on_bps_valueChanged(int arg1);
-  void on_hcdf_currentIndexChanged(int index);
+  void on_segmentation_currentIndexChanged(int index);
   void on_toneProfile_currentIndexChanged(int index);
   void on_tuningMethod_currentIndexChanged(int index);
   void on_findITunesLibraryButton_clicked();

@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>807</width>
-    <height>463</height>
+    <height>512</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1080,7 +1080,7 @@
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>0</y>
+            <y>-280</y>
             <width>720</width>
             <height>919</height>
            </rect>
@@ -1521,7 +1521,7 @@
               </widget>
              </item>
              <item row="15" column="0">
-              <widget class="QLabel" name="lbl_hcdf">
+              <widget class="QLabel" name="lbl_segmentation">
                <property name="text">
                 <string>Segmentation</string>
                </property>
@@ -1531,7 +1531,7 @@
               </widget>
              </item>
              <item row="15" column="1">
-              <widget class="QComboBox" name="hcdf">
+              <widget class="QComboBox" name="segmentation">
                <property name="currentIndex">
                 <number>0</number>
                </property>
@@ -1630,7 +1630,7 @@
               </widget>
              </item>
              <item row="19" column="0">
-              <widget class="QLabel" name="lbl_hcdfArbitrarySegments">
+              <widget class="QLabel" name="lbl_ArbitrarySegments">
                <property name="text">
                 <string>Number of arbitrary segments</string>
                </property>
@@ -1640,7 +1640,7 @@
               </widget>
              </item>
              <item row="19" column="1">
-              <widget class="QSpinBox" name="hcdfArbitrarySegments">
+              <widget class="QSpinBox" name="arbitrarySegments">
                <property name="minimum">
                 <number>1</number>
                </property>

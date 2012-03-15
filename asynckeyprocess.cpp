@@ -31,19 +31,19 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
   AudioFileDecoder* decoder = NULL;
   try{
     decoder = AudioFileDecoder::getDecoder();
-  }catch(Exception){
+  }catch(KeyFinder::Exception& e){
     delete decoder;
-    result.errorMessage = "Could not get decoder.";
+    result.errorMessage = "TODO";
     return result;
   }
 
   try{
     audio = decoder->decodeFile(object.filePath);
     delete decoder;
-  }catch(Exception){
+  }catch(KeyFinder::Exception& e){
     delete audio;
     delete decoder;
-    result.errorMessage = "Could not decode file.";
+    result.errorMessage = "TODO";
     return result;
   }
 
@@ -55,17 +55,17 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
     Downsampler* ds = Downsampler::getDownsampler(object.prefs.getDFactor(),audio->getFrameRate(),object.prefs.getLastFreq());
     try{
       audio = ds->downsample(audio,object.prefs.getDFactor());
-    }catch(Exception){
+    }catch(KeyFinder::Exception& e){
       delete audio;
       delete ds;
-      result.errorMessage = "Downsampler failed.";
+      result.errorMessage = "TODO";
       return result;
     }
     delete ds;
   }
 
-  KeyFinder::KeyFinder keyFinder;
-  result.core = keyFinder.findKey(audio, object.prefs.core);
+  static KeyFinder::KeyFinder keyFinder; // static because it retains useful resources between uses
+  result.core = keyFinder.findKey(*audio, object.prefs.core);
 
   return result;
 }

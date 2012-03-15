@@ -23,13 +23,12 @@
 #include <QMenuBar>
 #include <QKeySequence>
 
-#include "decoderlibav.h"
-
 #include "keyfinderapplication.h"
 #include "guidetail.h"
 #include "guibatch.h"
 #include "guimenuhandler.h"
 #include "decoderlibav.h"
+#include "asynckeyresult.h"
 
 #include <fstream>
 
@@ -75,17 +74,17 @@ int commandLineInterface(int argc, char* argv[]){
 
   Preferences prefs;
   AsyncFileObject object(filePath, prefs, 0);
-  KeyDetectionResult result = keyDetectionProcess(object);
+  KeyFinderResultWrapper result = keyDetectionProcess(object);
   if(!result.errorMessage.isEmpty()){
     std::cerr << result.errorMessage.toLocal8Bit().data();
     return 1;
   }
 
-  std::cout << prefs.getKeyCode(result.globalKeyEstimate).toLocal8Bit().data();
+  std::cout << prefs.getKeyCode(result.core.globalKeyEstimate).toLocal8Bit().data();
 
   if(writeToTags){
     TagLibMetadata md(filePath);
-    QString written = md.writeKeyToMetadata(result.globalKeyEstimate,prefs);
+    QString written = md.writeKeyToMetadata(result.core.globalKeyEstimate,prefs);
     if(written.isEmpty()){
       std::cerr << "Could not write to tags" << std::endl;
       return 2;

@@ -22,7 +22,7 @@
 #include "downsamplerlibsrc.h"
 #include <samplerate.h>
 
-KeyFinder::AudioData* SecretRabbitDownsampler::downsample(KeyFinder::AudioData* audioIn, int factor){
+KeyFinder::AudioData* SecretRabbitDownsampler::downsample(KeyFinder::AudioData* audioIn, unsigned int factor){
   if(factor == 1) return audioIn;
   KeyFinder::AudioData* audioOut = new KeyFinder::AudioData();
   audioOut->setFrameRate(audioIn->getFrameRate() / factor);

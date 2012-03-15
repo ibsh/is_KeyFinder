@@ -88,7 +88,7 @@ private:
   QFutureWatcher<MetadataReadResult> metadataReadWatcher;
   void readMetadata();
 
-  QFutureWatcher<KeyDetectionResult> analysisWatcher;
+  QFutureWatcher<KeyFinderResultWrapper> analysisWatcher;
   void checkRowsForSkipping();
   void markRowSkipped(int,bool);
   void runAnalysis();

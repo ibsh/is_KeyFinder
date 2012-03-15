@@ -48,13 +48,16 @@ Preferences::Preferences(){
 
   settings.beginGroup("spectralAnalysis");
   if(settings.contains("temporalWindow")){
+    // backward compatibility; used to be stored as char before libKeyFinder
     QVariant val = settings.value("temporalWindow");
-    if(strcmp(val.typeName(),"QChar") == 0){
-      // backward compatibility; used to be stored as char before libKeyFinder
-      // TODO
-    }else{
+    if(val == 'b')
+      core.setTemporalWindow(KeyFinder::WINDOW_BLACKMAN);
+    else if(val == 'm')
+      core.setTemporalWindow(KeyFinder::WINDOW_HAMMING);
+    else if(val == 'n')
+      core.setTemporalWindow(KeyFinder::WINDOW_HANN);
+    else
       core.setTemporalWindow((KeyFinder::temporal_window_t)val.toInt());
-    }
   }
   if(settings.contains("fftFrameSize")){
     core.setFftFrameSize((unsigned)settings.value("fftFrameSize").toInt());
@@ -84,13 +87,7 @@ Preferences::Preferences(){
 
   settings.beginGroup("tuning");
   if(settings.contains("tuningMethod")){
-    QVariant val = settings.value("tuningMethod");
-    if(strcmp(val.typeName(),"TODO") == 0){
-      // backward compatibility; used to be stored as int before libKeyFinder
-      // TODO, but may not be necessary if enum in same order
-    }else{
-      core.setTuningMethod((KeyFinder::tuning_method_t)val.toInt());
-    }
+    core.setTuningMethod((KeyFinder::tuning_method_t)settings.value("tuningMethod").toInt());
   }
   if(settings.contains("detunedBandWeight")){
     core.setDetunedBandWeight(settings.value("detunedBandWeight").toFloat());
@@ -101,13 +98,18 @@ Preferences::Preferences(){
 
   settings.beginGroup("harmonicChangeDetectionFunction");
   if(settings.contains("hcdf")){
+    // backward compatibility; used to be stored as char before libKeyFinder
     QVariant val = settings.value("hcdf");
-    if(strcmp(val.typeName(),"QChar") == 0){
-      // backward compatibility; used to be stored as char before libKeyFinder
-      // TODO
-    }else{
+    if(val == 'n')
+      core.setSegmentation(KeyFinder::SEGMENTATION_NONE);
+    else if(val == 'h')
+      core.setSegmentation(KeyFinder::SEGMENTATION_HARTE);
+    else if(val == 'c')
+      core.setSegmentation(KeyFinder::SEGMENTATION_COSINE);
+    else if(val == 'a')
+      core.setSegmentation(KeyFinder::SEGMENTATION_ARBITRARY);
+    else
       core.setSegmentation((KeyFinder::segmentation_t)val.toInt());
-    }
   }
   if(settings.contains("hcdfGaussianSize")){
     core.setHcdfGaussianSize((unsigned)settings.value("hcdfGaussianSize").toInt());
@@ -127,22 +129,17 @@ Preferences::Preferences(){
 
   settings.beginGroup("keyClassification");
   if(settings.contains("toneProfile")){
-    QVariant val = settings.value("toneProfile");
-    if(strcmp(val.typeName(),"TODO") == 0){
-      // backward compatibility; used to be stored as int before libKeyFinder
-      // TODO, but may not be necessary if enum in same order
-    }else{
-      core.setToneProfile((KeyFinder::tone_profile_t)val.toInt());
-    }
+    core.setToneProfile((KeyFinder::tone_profile_t)settings.value("toneProfile").toInt());
   }
   if(settings.contains("similarityMeasure")){
+    // backward compatibility; used to be stored as char before libKeyFinder
     QVariant val = settings.value("similarityMeasure");
-    if(strcmp(val.typeName(),"QChar") == 0){
-      // backward compatibility; used to be stored as char before libKeyFinder
-      // TODO
-    }else{
+    if(val == 'c')
+      core.setSimilarityMeasure(KeyFinder::SIMILARITY_COSINE);
+    else if(val == 'k')
+      core.setSimilarityMeasure(KeyFinder::SIMILARITY_CORRELATION);
+    else
       core.setSimilarityMeasure((KeyFinder::similarity_measure_t)val.toInt());
-    }
   }
   settings.endGroup();
 
@@ -247,16 +244,19 @@ Preferences::Preferences(){
 
   settings.beginGroup("tags");
   if(settings.contains("tagFormat")){
+    // backward compatibility; used to be stored as char
     QVariant val = settings.value("tagFormat");
-    if(strcmp(val.typeName(),"QChar") == 0){
-      // backward compatibility; used to be stored as char
-      // TODO
-    }else{
+    if(val == 'k')
+      tagFormat = TAG_FORMAT_KEYS;
+    else if(val == 'c')
+      tagFormat = TAG_FORMAT_CUSTOM;
+    else if(val == 'b')
+      tagFormat = TAG_FORMAT_BOTH;
+    else
       tagFormat = (tag_format_t)val.toInt();
-    }
   }else{
     tag_format_t defaultVal = TAG_FORMAT_KEYS;
-    settings.setValue("tagFormat",defaultVal);
+    settings.setValue("tagFormat", defaultVal);
     tagFormat = defaultVal;
     qDebug("Wrote default tagFormat (Keys)");
   }
@@ -564,91 +564,76 @@ Preferences& Preferences::operator=(const Preferences& that){
   return *this;
 }
 
-
-bool Preferences::equivalentSpectralAnalysis(const Preferences& that) const{
-  if(core.getTemporalWindow() != that.core.getTemporalWindow())
-    return false;
-  if(core.getBpo() != that.core.getBpo())
-    return false;
-  if(core.getStartingFreqA() != that.core.getStartingFreqA())
-    return false;
-  if(core.getOctaves() != that.core.getOctaves())
-    return false;
-  if(core.getOffsetToC() != that.core.getOffsetToC())
-    return false;
-  if(core.getFftFrameSize() != that.core.getFftFrameSize())
-    return false;
-  if(core.getDirectSkStretch() != that.core.getDirectSkStretch())
-    return false;
-  return true;
-}
-
 bool         Preferences::getWriteTagsAutomatically()    const { return writeTagsAutomatically; }
 bool         Preferences::getParallelBatchJobs()         const { return parallelBatchJobs; }
 bool         Preferences::getWriteToTagComment()         const { return writeToTagComment; }
 bool         Preferences::getWriteToTagGrouping()        const { return writeToTagGrouping; }
 bool         Preferences::getWriteToTagKey()             const { return writeToTagKey; }
 bool         Preferences::getSkipFilesWithExistingTags() const { return skipFilesWithExistingTags; }
-bool         Preferences::getOffsetToC()                 const { return core.getOffsetToC(); }
-char         Preferences::getTemporalWindow()            const { return core.getTemporalWindow(); }
-char         Preferences::getHcdf()                      const { return core.getSegmentation(); }
-char         Preferences::getSimilarityMeasure()         const { return core.getSimilarityMeasure(); }
-char         Preferences::getTagFormat()                 const { return tagFormat; }
-int          Preferences::getHopSize()                   const { return core.getHopSize(); }
-int          Preferences::getFftFrameSize()              const { return core.getFftFrameSize(); }
-int          Preferences::getOctaves()                   const { return core.getOctaves(); }
-int          Preferences::getBpo()                       const { return core.getBpo(); }
+tag_format_t Preferences::getTagFormat()                 const { return tagFormat; }
 int          Preferences::getDFactor()                   const { return dFactor; }
-int          Preferences::getToneProfile()               const { return core.getToneProfile(); }
-int          Preferences::getTuningMethod()              const { return core.getTuningMethod(); }
-int          Preferences::getHcdfArbitrarySegments()     const { return core.getArbitrarySegments(); }
-int          Preferences::getHcdfPeakPickingNeighbours() const { return core.getHcdfPeakPickingNeighbours(); }
-int          Preferences::getHcdfGaussianSize()          const { return core.getHcdfGaussianSize(); }
-float        Preferences::getHcdfGaussianSigma()         const { return core.getHcdfGaussianSigma(); }
-float        Preferences::getStartingFreqA()             const { return core.getStartingFreqA(); }
-float        Preferences::getDirectSkStretch()           const { return core.getDirectSkStretch(); }
-float        Preferences::getDetunedBandWeight()         const { return core.getDetunedBandWeight(); }
 QString      Preferences::getITunesLibraryPath()         const { return iTunesLibraryPath; }
 QString      Preferences::getTraktorLibraryPath()        const { return traktorLibraryPath; }
 QString      Preferences::getSeratoLibraryPath()         const { return seratoLibraryPath; }
-QList<float> Preferences::getCustomToneProfile()         const { return core.getCustomToneProfile(); }
 QStringList  Preferences::getCustomKeyCodes()            const { return customKeyCodes; }
 QByteArray   Preferences::getBatchWindowState()          const { return batchWindowState; }
 QByteArray   Preferences::getBatchWindowGeometry()       const { return batchWindowGeometry; }
 QByteArray   Preferences::getBatchWindowSplitterState()  const { return batchWindowSplitterState; }
+
+bool                            Preferences::getOffsetToC()                 const { return core.getOffsetToC(); }
+KeyFinder::temporal_window_t    Preferences::getTemporalWindow()            const { return core.getTemporalWindow(); }
+KeyFinder::segmentation_t       Preferences::getSegmentation()              const { return core.getSegmentation(); }
+KeyFinder::similarity_measure_t Preferences::getSimilarityMeasure()         const { return core.getSimilarityMeasure(); }
+KeyFinder::tuning_method_t      Preferences::getTuningMethod()              const { return core.getTuningMethod(); }
+KeyFinder::tone_profile_t       Preferences::getToneProfile()               const { return core.getToneProfile(); }
+unsigned int                    Preferences::getHopSize()                   const { return core.getHopSize(); }
+unsigned int                    Preferences::getFftFrameSize()              const { return core.getFftFrameSize(); }
+unsigned int                    Preferences::getOctaves()                   const { return core.getOctaves(); }
+unsigned int                    Preferences::getBpo()                       const { return core.getBpo(); }
+unsigned int                    Preferences::getArbitrarySegments()         const { return core.getArbitrarySegments(); }
+unsigned int                    Preferences::getHcdfPeakPickingNeighbours() const { return core.getHcdfPeakPickingNeighbours(); }
+unsigned int                    Preferences::getHcdfGaussianSize()          const { return core.getHcdfGaussianSize(); }
+float                           Preferences::getHcdfGaussianSigma()         const { return core.getHcdfGaussianSigma(); }
+float                           Preferences::getStartingFreqA()             const { return core.getStartingFreqA(); }
+float                           Preferences::getLastFreq()                  const { return core.getLastFreq(); }
+float                           Preferences::getDirectSkStretch()           const { return core.getDirectSkStretch(); }
+float                           Preferences::getDetunedBandWeight()         const { return core.getDetunedBandWeight(); }
+std::vector<float>              Preferences::getCustomToneProfile()         const { return core.getCustomToneProfile(); }
 
 void Preferences::setWriteTagsAutomatically(bool autoTags)          { writeTagsAutomatically = autoTags; }
 void Preferences::setWriteToTagComment(bool cmt)                    { writeToTagComment = cmt; }
 void Preferences::setWriteToTagGrouping(bool grp)                   { writeToTagGrouping = grp; }
 void Preferences::setWriteToTagKey(bool key)                        { writeToTagKey = key; }
 void Preferences::setSkipFilesWithExistingTags(bool skip)           { skipFilesWithExistingTags = skip; }
-void Preferences::setOffsetToC(bool off)                            { core.setOffsetToC(off); }
-void Preferences::setTemporalWindow(char window)                    { core.setTemporalWindow(window); }
-void Preferences::setHcdf(char h)                                   { core.setSegmentation(h); }
-void Preferences::setSimilarityMeasure(char msr)                    { core.setSimilarityMeasure(msr); }
-void Preferences::setTagFormat(char fmt)                            { tagFormat = fmt; }
-void Preferences::setHopSize(int size)                              { core.setHopSize(size); }
-void Preferences::setFftFrameSize(int framesize)                    { core.setFftFrameSize(framesize); }
-void Preferences::setOctaves(int oct)                               { core.setOctaves(oct); }
-void Preferences::setBps(int bands)                                 { core.setBps(bands); }
+void Preferences::setTagFormat(tag_format_t fmt)                    { tagFormat = fmt; }
 void Preferences::setDFactor(int factor)                            { dFactor = factor; }
-void Preferences::setToneProfile(int profile)                       { core.setToneProfile(profile); }
-void Preferences::setHcdfArbitrarySegments(int segments)            { core.setArbitrarySegments(segments); }
-void Preferences::setHcdfPeakPickingNeighbours(int neighbours)      { core.setHcdfPeakPickingNeighbours(neighbours); }
-void Preferences::setHcdfGaussianSize(int size)                     { core.setHcdfGaussianSize(size); }
-void Preferences::setTuningMethod(int tune)                         { core.setTuningMethod(tune); }
-void Preferences::setHcdfGaussianSigma(float sigma)                 { core.setHcdfGaussianSigma(sigma); }
-void Preferences::setStartingFreqA(float a)                         { core.setStartingFreqA(a); }
-void Preferences::setDirectSkStretch(float stretch)                 { core.setDirectSkStretch(stretch); }
-void Preferences::setDetunedBandWeight(float weight)                { core.setDetunedBandWeight(weight); }
 void Preferences::setITunesLibraryPath(const QString& path)         { iTunesLibraryPath = path; }
 void Preferences::setTraktorLibraryPath(const QString& path)        { traktorLibraryPath = path; }
 void Preferences::setSeratoLibraryPath(const QString& path)         { seratoLibraryPath = path; }
-void Preferences::setCustomToneProfile(const QList<float>& profile) { core.setCustomToneProfile(profile); }
 void Preferences::setCustomKeyCodes(const QStringList& codes)       { customKeyCodes = codes; }
 void Preferences::setBatchWindowState(const QByteArray& a)          { batchWindowState = a; }
 void Preferences::setBatchWindowGeometry(const QByteArray& a)       { batchWindowGeometry = a; }
 void Preferences::setBatchWindowSplitterState(const QByteArray& a)  { batchWindowSplitterState = a; }
+
+void Preferences::setOffsetToC(bool off)                                  { core.setOffsetToC(off); }
+void Preferences::setTemporalWindow(KeyFinder::temporal_window_t w)       { core.setTemporalWindow(w); }
+void Preferences::setSegmentation(KeyFinder::segmentation_t h)            { core.setSegmentation(h); }
+void Preferences::setSimilarityMeasure(KeyFinder::similarity_measure_t m) { core.setSimilarityMeasure(m); }
+void Preferences::setTuningMethod(KeyFinder::tuning_method_t t)           { core.setTuningMethod(t); }
+void Preferences::setToneProfile(KeyFinder::tone_profile_t profile)       { core.setToneProfile(profile); }
+void Preferences::setHopSize(unsigned int size)                           { core.setHopSize(size); }
+void Preferences::setFftFrameSize(unsigned int framesize)                 { core.setFftFrameSize(framesize); }
+void Preferences::setOctaves(unsigned int oct)                            { core.setOctaves(oct); }
+void Preferences::setBps(unsigned int bands)                              { core.setBps(bands); }
+void Preferences::setArbitrarySegments(unsigned int segments)             { core.setArbitrarySegments(segments); }
+void Preferences::setHcdfPeakPickingNeighbours(unsigned int neighbours)   { core.setHcdfPeakPickingNeighbours(neighbours); }
+void Preferences::setHcdfGaussianSize(unsigned int size)                  { core.setHcdfGaussianSize(size); }
+void Preferences::setHcdfGaussianSigma(float sigma)                       { core.setHcdfGaussianSigma(sigma); }
+void Preferences::setStartingFreqA(float a)                               { core.setStartingFreqA(a); }
+void Preferences::setDirectSkStretch(float stretch)                       { core.setDirectSkStretch(stretch); }
+void Preferences::setDetunedBandWeight(float weight)                      { core.setDetunedBandWeight(weight); }
+void Preferences::setCustomToneProfile(const std::vector<float>& profile) { core.setCustomToneProfile(profile); }
+
 
 void Preferences::setParallelBatchJobs(bool parallel){
   parallelBatchJobs = parallel;
@@ -658,18 +643,6 @@ void Preferences::setParallelBatchJobs(bool parallel){
   }else{
     QThreadPool::globalInstance()->setMaxThreadCount(numThreads);
   }
-}
-
-float Preferences::getBinFreq(int n)const{
-  if(n >= octaves*12*bps){
-    qDebug("Attempt to get out-of-bounds frequency index (%d/%d)",n,octaves*12*bps);
-    return 0;
-  }
-  return binFreqs[n];
-}
-
-float Preferences::getLastFreq() const{
-  return binFreqs[binFreqs.size()-1];
 }
 
 QString Preferences::getKeyCode(int n) const{
@@ -693,31 +666,6 @@ QColor Preferences::getKeyColour(int n) const{
     return qRgb(0,0,0);
   }
   return keyColours[n];
-}
-
-void Preferences::generateBinFreqs(){
-  int bpo = bps * 12;
-  binFreqs = QList<float>();
-  float freqRatio = pow(2, 1.0 / bpo);
-  float octFreq = stFreq;
-  float binFreq;
-  int concertPitchBin = bps/2;
-  for(int i = 0; i < octaves; i++){
-    binFreq = octFreq;
-    // offset as required
-    if(offsetToC){
-      binFreq *= pow(freqRatio, 3);
-    }
-    // tune down for bins before first concert pitch bin (if bps > 1)
-    for(int j = 0; j < concertPitchBin; j++)
-      binFreqs << binFreq / pow(freqRatio, concertPitchBin - j);
-    // and tune all other bins
-    for(int j = concertPitchBin; j < bpo; j++){
-      binFreqs << binFreq;
-      binFreq *= freqRatio;
-    }
-    octFreq *= 2;
-  }
 }
 
 void Preferences::setImageColours(QImage& image, int which) const{

@@ -32,10 +32,11 @@
 
 #include <vector>
 
+#include "libkeyfinder/chromagram.h"
+
 #include "preferences.h"
 #include "asynckeyprocess.h"
 #include "asyncmetadatareadprocess.h"
-#include "chromagram.h"
 
 namespace Ui {
   class DetailWindow;
@@ -50,8 +51,8 @@ private:
   Preferences prefs;
   QString filePath;
 
-  QFuture<KeyDetectionResult> analysisFuture;
-  QFutureWatcher<KeyDetectionResult> analysisWatcher;
+  QFuture<KeyFinderResultWrapper> analysisFuture;
+  QFutureWatcher<KeyFinderResultWrapper> analysisWatcher;
 
   bool allowDrops;
   void dragEnterEvent(QDragEnterEvent*);
@@ -68,7 +69,7 @@ private:
   QImage colourScaleImage;
   int chromaScaleV;
   int chromaScaleH;
-  QImage imageFromChromagram(const Chromagram&);
+  QImage imageFromChromagram(const KeyFinder::Chromagram&);
 private slots:
   // interaction with model thread
   void analysisFinished();

@@ -38,7 +38,6 @@
 #include "asyncfileobject.h"
 #include "asynckeyresult.h"
 
-
 // trying this as a global function rather than an object...
 KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject&);
 

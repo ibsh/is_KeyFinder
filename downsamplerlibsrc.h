@@ -27,7 +27,7 @@
 
 class SecretRabbitDownsampler : public Downsampler{
 public:
-  virtual KeyFinder::AudioData* downsample(KeyFinder::AudioData*, int);
+  virtual KeyFinder::AudioData* downsample(KeyFinder::AudioData*, unsigned int);
 };
 
 #endif

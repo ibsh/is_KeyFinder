@@ -29,20 +29,9 @@ SOURCES += \
     downsamplerlibsrc.cpp \
     downsamplerib.cpp \
     preferences.cpp \
-    spectrumanalyserfactory.cpp \
     decoder.cpp \
     downsampler.cpp \
-    keyclassifier.cpp \
     metadatataglib.cpp \
-		hcdf.cpp \
-    hcdfharte.cpp \
-    hcdfcosine.cpp \
-		hcdfnone.cpp \
-    fftpp.cpp \
-    fftppdirectsk.cpp \
-    spectrumanalyserfftw.cpp \
-    hcdfarbitrary.cpp \
-    audiostream.cpp \
     main.cpp \
     guiabout.cpp \
     guibatch.cpp \
@@ -116,6 +105,7 @@ QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS
 RESOURCES += resources.qrc
 
 unix|macx{
+  LIBS += -lkeyfinder
   LIBS += -lavutil
   LIBS += -lavcodec
   LIBS += -lavformat
@@ -140,6 +130,7 @@ win32{
 	INCLUDEPATH += C:/MSYS/local/include
 	DEPENDPATH += C:/MSYS/local/bin
 	LIBS += -LC:/MSYS/local/bin
+  LIBS += -lkeyfinder
 	LIBS += -lavcodec
 	LIBS += -lavformat
 	LIBS += -lavutil

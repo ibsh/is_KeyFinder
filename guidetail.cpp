@@ -68,8 +68,8 @@ void DetailWindow::dropEvent(QDropEvent *e){
 
 void DetailWindow::runAnalysis(){
   // get latest preferences and redraw variable UI elements if they've changed since the last run.
-  int chkOctaves = prefs.getOctaves();
-  int chkOffset = prefs.getOffsetToC();
+  unsigned int chkOctaves = prefs.getOctaves();
+  unsigned int chkOffset = prefs.getOffsetToC();
   prefs = Preferences();
   if(chkOctaves != prefs.getOctaves() || chkOffset != prefs.getOffsetToC() || ui->chromagramLabel->toolTip().left(4) == "Drag"){
     layoutScaling();
@@ -109,30 +109,30 @@ void DetailWindow::analysisFinished(){
     shortName = filePath.mid(filePath.lastIndexOf("/") + 1);
   this->setWindowTitle("KeyFinder - Detailed Analysis - " + shortName);
   // full chromagram
-  chromagramImage = imageFromChromagram(analysisWatcher.result().fullChromagram);
+  chromagramImage = imageFromChromagram(analysisWatcher.result().core.fullChromagram);
   ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
-  ui->chromagramLabel->setMinimumHeight(analysisWatcher.result().fullChromagram.getBins()+2);
-  ui->chromagramLabel->setMinimumWidth(analysisWatcher.result().fullChromagram.getHops()+2);
+  ui->chromagramLabel->setMinimumHeight(analysisWatcher.result().core.fullChromagram.getBins()+2);
+  ui->chromagramLabel->setMinimumWidth(analysisWatcher.result().core.fullChromagram.getHops()+2);
   // one octave chromagram
-  miniChromagramImage = imageFromChromagram(analysisWatcher.result().oneOctaveChromagram);
+  miniChromagramImage = imageFromChromagram(analysisWatcher.result().core.oneOctaveChromagram);
   ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
   ui->miniChromagramLabel->setToolTip("This is the same chromagram data,\nreduced to a single octave.");
   // harmonic change signal
   int rateOfChangePrecision = 100;
-  int size = (signed)analysisWatcher.result().harmonicChangeSignal.size();
+  int size = (signed)analysisWatcher.result().core.harmonicChangeSignal.size();
   harmonicChangeImage = QImage(size*chromaScaleH,rateOfChangePrecision,QImage::Format_Indexed8);
   prefs.setImageColours(harmonicChangeImage,ui->chromaColourCombo->currentIndex());
   for(int h=0; h<size; h++){
-    int value = analysisWatcher.result().harmonicChangeSignal[h] * rateOfChangePrecision;
+    int value = analysisWatcher.result().core.harmonicChangeSignal[h] * rateOfChangePrecision;
     for(int y=0; y<rateOfChangePrecision; y++)
       for(int x=0; x<chromaScaleH; x++)
         harmonicChangeImage.setPixel(h*chromaScaleH+x, y, (rateOfChangePrecision - y > value ? 0 : 50));
   }
   ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
   // Tooltip
-  if(prefs.getHcdf() == 'n'){
+  if(prefs.getSegmentation() == 'n'){
     ui->harmonicChangeLabel->setToolTip("You are not using segmentation,\nso there is no harmonic change\ndata to display.");
-  }else if(prefs.getHcdf() == 'a'){
+  }else if(prefs.getSegmentation() == 'a'){
     ui->harmonicChangeLabel->setToolTip("You are using arbitrary segmentation,\nso there is no harmonic change\ndata to display.");
   }else{
     ui->harmonicChangeLabel->setToolTip("This is the level of harmonic\nchange detected in the\nchromagram over time. Peaks\nin this signal are used to\nsegment the chromagram.");
@@ -140,31 +140,29 @@ void DetailWindow::analysisFinished(){
   // Key estimates
   deleteKeyLabels();
   int lastChange = 0;
-  for(int h=1; h<(signed)analysisWatcher.result().keyEstimates.size(); h++){ // don't test the first hop
-    if(h == (signed)analysisWatcher.result().keyEstimates.size()-1 || analysisWatcher.result().keyEstimates[h] != analysisWatcher.result().keyEstimates[h-1]){ // at the end, and at changes
-      QLabel* newLabel = new QLabel(prefs.getKeyCode(analysisWatcher.result().keyEstimates[h-1]));
-      newLabel->setAlignment(Qt::AlignCenter);
-      QPalette pal = newLabel->palette();
-      pal.setColor(backgroundRole(),prefs.getKeyColour(analysisWatcher.result().keyEstimates[h-1]));
-      newLabel->setPalette(pal);
-      newLabel->setFrameStyle(1);
-      newLabel->setAutoFillBackground(true);
-      newLabel->setMinimumHeight(20);
-      newLabel->setMaximumHeight(30);
-      if(prefs.getHcdf() == 'n'){
-        newLabel->setToolTip("This row shows the key estimate for\nthe unsegmented chromagram.");
-      }else if(prefs.getHcdf() == 'a'){
-        newLabel->setToolTip("This row shows the key estimates\nfor the arbitrary segments.");
-      }else{
-        newLabel->setToolTip("This row shows the key estimates\nfor the segments between peak\nharmonic changes.");
-      }
-      ui->horizontalLayout_keyLabels->addWidget(newLabel,h-lastChange);
-      keyLabels.push_back(newLabel);
-      lastChange = h;
+  for(int h=0; h<(signed)analysisWatcher.result().core.segments.size(); h++){ // don't test the first hop
+    QLabel* newLabel = new QLabel(prefs.getKeyCode(analysisWatcher.result().core.segments[h].key));
+    newLabel->setAlignment(Qt::AlignCenter);
+    QPalette pal = newLabel->palette();
+    pal.setColor(backgroundRole(),prefs.getKeyColour(analysisWatcher.result().core.segments[h].key));
+    newLabel->setPalette(pal);
+    newLabel->setFrameStyle(1);
+    newLabel->setAutoFillBackground(true);
+    newLabel->setMinimumHeight(20);
+    newLabel->setMaximumHeight(30);
+    if(prefs.getSegmentation() == 'n'){
+      newLabel->setToolTip("This row shows the key estimate for\nthe unsegmented chromagram.");
+    }else if(prefs.getSegmentation() == 'a'){
+      newLabel->setToolTip("This row shows the key estimates\nfor the arbitrary segments.");
+    }else{
+      newLabel->setToolTip("This row shows the key estimates\nfor the segments between peak\nharmonic changes.");
     }
+    ui->horizontalLayout_keyLabels->addWidget(newLabel,h-lastChange);
+    keyLabels.push_back(newLabel);
+    lastChange = h;
   }
   // Global key estimate
-  say("Key estimate: " + prefs.getKeyCode(analysisWatcher.result().globalKeyEstimate));
+  say("Key estimate: " + prefs.getKeyCode(analysisWatcher.result().core.globalKeyEstimate));
   cleanUpAfterRun();
 }
 
@@ -175,22 +173,22 @@ void DetailWindow::cleanUpAfterRun(){
   allowDrops = true;
 }
 
-QImage DetailWindow::imageFromChromagram(const Chromagram& ch){
+QImage DetailWindow::imageFromChromagram(const KeyFinder::Chromagram& ch){
   // 64 colours (plus black at index 0)
   // don't draw individual pixels; draw blocks of chromaScaleV*chromaScaleH. Sharpens image.
   QImage img = QImage(ch.getHops()*chromaScaleH,ch.getBins()*chromaScaleV,QImage::Format_Indexed8);
   prefs.setImageColours(img,ui->chromaColourCombo->currentIndex());
   // get max to normalise
   float max = 0;
-  for(int h=0; h<ch.getHops(); h++){
-    for(int b=0; b<ch.getBins(); b++){
+  for(unsigned int h = 0; h < ch.getHops(); h++){
+    for(unsigned int b = 0; b < ch.getBins(); b++){
       float mag = ch.getMagnitude(h,b);
       if(mag>max) max = mag;
     }
   }
   // set pixels
-  for(int h=0; h<ch.getHops(); h++){
-    for(int b=0; b<ch.getBins(); b++){
+  for(unsigned int h = 0; h < ch.getHops(); h++){
+    for(unsigned int b = 0; b < ch.getBins(); b++){
       int pixVal = ch.getMagnitude(h,b) / max * img.colorCount() - 1;
       if(pixVal<1)
         pixVal = 1;
@@ -292,9 +290,9 @@ void DetailWindow::drawPianoKeys(){
   QString octaveRev = "bwbwwbwbwwbw";
   if(prefs.getOffsetToC())
     octaveRev = octaveRev.right(3) + octaveRev.left(9);
-  for(int o=0; o<prefs.getOctaves(); o++){
-    for(int s=0; s<12; s++){
-      for(int px=0; px<scale-1; px++){
+  for(unsigned int o = 0; o < prefs.getOctaves(); o++){
+    for(int s = 0; s < 12; s++){
+      for(int px = 0; px < scale-1; px++){
         pianoImage.setPixel(0,(o*12*scale)+(s*scale)+px,(octaveRev[s] == 'b' ? 1 : 0));
         miniPianoImage.setPixel(0,(s*scale)+px,(octaveRev[s] == 'b' ? 1 : 0));
       }

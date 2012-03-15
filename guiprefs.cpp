@@ -23,14 +23,56 @@
 #include "ui_prefsdialog.h"
 
 PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialog){
+  // map dropdown values to indices
+  listTagFormat << TAG_FORMAT_KEYS;
+  listTagFormat << TAG_FORMAT_CUSTOM;
+  listTagFormat << TAG_FORMAT_BOTH;
+  listStartingFreq << 27.5;
+  listStartingFreq << 55;
+  listStartingFreq << 110;
+  listStartingFreq << 220;
+  listStartingFreq << 440;
+  listStartingFreq << 880;
+  listHopSize << 128;
+  listHopSize << 256;
+  listHopSize << 512;
+  listHopSize << 1024;
+  listHopSize << 2048;
+  listHopSize << 4096;
+  listHopSize << 8192;
+  listHopSize << 16384;
+  listHopSize << 32768;
+  listHopSize << 65536;
+  listTemporalWindow << KeyFinder::WINDOW_BLACKMAN;
+  listTemporalWindow << KeyFinder::WINDOW_HAMMING;
+  listTemporalWindow << KeyFinder::WINDOW_HANN;
+  listFftFrameSize << 512;
+  listFftFrameSize << 1024;
+  listFftFrameSize << 2048;
+  listFftFrameSize << 4096;
+  listFftFrameSize << 8192;
+  listFftFrameSize << 16384;
+  listFftFrameSize << 32768;
+  listFftFrameSize << 65536;
+  listFftFrameSize << 131072;
+  listFftFrameSize << 262144;
+  listTuningMethod << KeyFinder::TUNING_HARTE;
+  listTuningMethod << KeyFinder::TUNING_BIN_ADAPTIVE;
+  listSegmentation << KeyFinder::SEGMENTATION_NONE;
+  listSegmentation << KeyFinder::SEGMENTATION_HARTE;
+  listSegmentation << KeyFinder::SEGMENTATION_COSINE;
+  listSegmentation << KeyFinder::SEGMENTATION_ARBITRARY;
+  listToneProfile << KeyFinder::TONE_PROFILE_KRUMHANSL;
+  listToneProfile << KeyFinder::TONE_PROFILE_TEMPERLEY;
+  listToneProfile << KeyFinder::TONE_PROFILE_GOMEZ;
+  listToneProfile << KeyFinder::TONE_PROFILE_SHAATH;
+  listToneProfile << KeyFinder::TONE_PROFILE_CUSTOM;
+  listSimilarityMeasure << KeyFinder::SIMILARITY_COSINE;
+  listSimilarityMeasure << KeyFinder::SIMILARITY_CORRELATION;
+
+  // UI
   ui->setupUi(this);
   this->setWindowFlags(Qt::WindowTitleHint | Qt::CustomizeWindowHint);
-
-  // these strings store the chars relating to each index of their dropdowns
-  temporalWindowComboIndex = "bmn";
-  hcdfComboIndex = "nhca";
-  similarityMeasureComboIndex = "ck";
-  tagFormatComboIndex = "kcb";
 
   // get values from preferences
   Preferences p;
@@ -40,30 +82,30 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   ui->writeToTagGrouping->setChecked(p.getWriteToTagGrouping());
   ui->writeToTagKey->setChecked(p.getWriteToTagKey());
   ui->skipFilesWithExistingTags->setChecked(p.getSkipFilesWithExistingTags());
-  ui->temporalWindow->setCurrentIndex(temporalWindowComboIndex.indexOf(p.getTemporalWindow()));
-  ui->hcdf->setCurrentIndex(hcdfComboIndex.indexOf(p.getHcdf()));
-  ui->similarityMeasure->setCurrentIndex(similarityMeasureComboIndex.indexOf(p.getSimilarityMeasure()));
-  ui->tagFormat->setCurrentIndex(tagFormatComboIndex.indexOf(p.getTagFormat()));
-  ui->hopSize->setCurrentIndex(log2(p.getHopSize()/128));
-  ui->fftFrameSize->setCurrentIndex(log2(p.getFftFrameSize()/512));
+  ui->temporalWindow->setCurrentIndex(listTemporalWindow.indexOf(p.getTemporalWindow()));
+  ui->segmentation->setCurrentIndex(listSegmentation.indexOf(p.getSegmentation()));
+  ui->similarityMeasure->setCurrentIndex(listSimilarityMeasure.indexOf(p.getSimilarityMeasure()));
+  ui->tagFormat->setCurrentIndex(listTagFormat.indexOf(p.getTagFormat()));
+  ui->hopSize->setCurrentIndex(listHopSize.indexOf(p.getHopSize()));
+  ui->fftFrameSize->setCurrentIndex(listFftFrameSize.indexOf(p.getFftFrameSize()));
   ui->octaves->setValue(p.getOctaves());
   ui->bps->setValue(p.getBpo()/12);
   ui->octaveOffset->setChecked(p.getOffsetToC());
   ui->dFactor->setValue(p.getDFactor());
-  ui->toneProfile->setCurrentIndex(p.getToneProfile());
+  ui->toneProfile->setCurrentIndex(listToneProfile.indexOf(p.getToneProfile()));
   ui->hcdfPeakPickingNeighbours->setValue(p.getHcdfPeakPickingNeighbours());
-  ui->hcdfArbitrarySegments->setValue(p.getHcdfArbitrarySegments());
+  ui->arbitrarySegments->setValue(p.getArbitrarySegments());
   ui->hcdfGaussianSize->setValue(p.getHcdfGaussianSize());
-  ui->tuningMethod->setCurrentIndex(p.getTuningMethod());
+  ui->tuningMethod->setCurrentIndex(listTuningMethod.indexOf(p.getTuningMethod()));
   ui->hcdfGaussianSigma->setValue(p.getHcdfGaussianSigma());
-  ui->stFreq->setCurrentIndex(log2(p.getStartingFreqA()/27.5));
+  ui->stFreq->setCurrentIndex(listStartingFreq.indexOf(p.getStartingFreqA()));
   ui->directSkStretch->setValue(p.getDirectSkStretch());
   ui->detunedBandWeight->setValue(p.getDetunedBandWeight());
   ui->iTunesLibraryPath->setText(p.getITunesLibraryPath());
   ui->traktorLibraryPath->setText(p.getTraktorLibraryPath());
   ui->seratoLibraryPath->setText(p.getSeratoLibraryPath());
 
-  QList<float> ctp = p.getCustomToneProfile();
+  std::vector<float> ctp = p.getCustomToneProfile();
   ui->maj0->setValue(ctp[0]);
   ui->maj1->setValue(ctp[1]);
   ui->maj2->setValue(ctp[2]);
@@ -119,7 +161,7 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   // enable/disable fields as necessary
   tuningEnabled();
   binAdaptiveTuningEnabled();
-  hcdfEnabled();
+  segmentationEnabled();
   customProfileEnabled();
 
   //relative sizing on Mac only
@@ -153,36 +195,54 @@ void PrefsDialog::on_savePrefsButton_clicked(){
   p.setWriteToTagGrouping(ui->writeToTagGrouping->isChecked());
   p.setWriteToTagKey(ui->writeToTagKey->isChecked());
   p.setSkipFilesWithExistingTags(ui->skipFilesWithExistingTags->isChecked());
-  p.setTemporalWindow(temporalWindowComboIndex[ui->temporalWindow->currentIndex()].toAscii());
-  p.setHcdf(hcdfComboIndex[ui->hcdf->currentIndex()].toAscii());
-  p.setSimilarityMeasure(similarityMeasureComboIndex[ui->similarityMeasure->currentIndex()].toAscii());
-  p.setTagFormat(tagFormatComboIndex[ui->tagFormat->currentIndex()].toAscii());
-  p.setHopSize(pow(2,ui->hopSize->currentIndex())*128);
-  p.setFftFrameSize(pow(2,ui->fftFrameSize->currentIndex())*512);
+  p.setTemporalWindow(listTemporalWindow[ui->temporalWindow->currentIndex()]);
+  p.setSegmentation(listSegmentation[ui->segmentation->currentIndex()]);
+  p.setSimilarityMeasure(listSimilarityMeasure[ui->similarityMeasure->currentIndex()]);
+  p.setTagFormat(listTagFormat[ui->tagFormat->currentIndex()]);
+  p.setHopSize(listHopSize[ui->hopSize->currentIndex()]);
+  p.setFftFrameSize(listFftFrameSize[ui->fftFrameSize->currentIndex()]);
   p.setOctaves(ui->octaves->value());
   p.setBps(ui->bps->value());
   p.setOffsetToC(ui->octaveOffset->isChecked());
   p.setDFactor(ui->dFactor->value());
-  p.setToneProfile(ui->toneProfile->currentIndex());
+  p.setToneProfile(listToneProfile[ui->toneProfile->currentIndex()]);
   p.setHcdfPeakPickingNeighbours(ui->hcdfPeakPickingNeighbours->value());
-  p.setHcdfArbitrarySegments(ui->hcdfArbitrarySegments->value());
+  p.setArbitrarySegments(ui->arbitrarySegments->value());
   p.setHcdfGaussianSize(ui->hcdfGaussianSize->value());
-  p.setTuningMethod(ui->tuningMethod->currentIndex());
+  p.setTuningMethod(listTuningMethod[ui->tuningMethod->currentIndex()]);
   p.setHcdfGaussianSigma(ui->hcdfGaussianSigma->value());
-  p.setStartingFreqA(pow(2,ui->stFreq->currentIndex())*27.5);
+  p.setStartingFreqA(listStartingFreq[ui->stFreq->currentIndex()]);
   p.setDirectSkStretch(ui->directSkStretch->value());
   p.setDetunedBandWeight(ui->detunedBandWeight->value());
   p.setITunesLibraryPath(ui->iTunesLibraryPath->text());
   p.setTraktorLibraryPath(ui->traktorLibraryPath->text());
   p.setSeratoLibraryPath(ui->seratoLibraryPath->text());
 
-  QList<float> ctp;
-  ctp << ui->maj0->value() << ui->maj1->value() << ui->maj2->value() << ui->maj3->value();
-  ctp << ui->maj4->value() << ui->maj5->value() << ui->maj6->value() << ui->maj7->value();
-  ctp << ui->maj8->value() << ui->maj9->value() << ui->maj10->value() << ui->maj11->value();
-  ctp << ui->min0->value() << ui->min1->value() << ui->min2->value() << ui->min3->value();
-  ctp << ui->min4->value() << ui->min5->value() << ui->min6->value() << ui->min7->value();
-  ctp << ui->min8->value() << ui->min9->value() << ui->min10->value() << ui->min11->value();
+  std::vector<float> ctp;
+  ctp.push_back(ui->maj0->value());
+  ctp.push_back(ui->maj1->value());
+  ctp.push_back(ui->maj2->value());
+  ctp.push_back(ui->maj3->value());
+  ctp.push_back(ui->maj4->value());
+  ctp.push_back(ui->maj5->value());
+  ctp.push_back(ui->maj6->value());
+  ctp.push_back(ui->maj7->value());
+  ctp.push_back(ui->maj8->value());
+  ctp.push_back(ui->maj9->value());
+  ctp.push_back(ui->maj10->value());
+  ctp.push_back(ui->maj11->value());
+  ctp.push_back(ui->min0->value());
+  ctp.push_back(ui->min1->value());
+  ctp.push_back(ui->min2->value());
+  ctp.push_back(ui->min3->value());
+  ctp.push_back(ui->min4->value());
+  ctp.push_back(ui->min5->value());
+  ctp.push_back(ui->min6->value());
+  ctp.push_back(ui->min7->value());
+  ctp.push_back(ui->min8->value());
+  ctp.push_back(ui->min9->value());
+  ctp.push_back(ui->min10->value());
+  ctp.push_back(ui->min11->value());
   p.setCustomToneProfile(ctp);
 
   QStringList ckc;
@@ -213,14 +273,14 @@ void PrefsDialog::binAdaptiveTuningEnabled(){
   ui->detunedBandWeight->setEnabled(ui->tuningMethod->isEnabled() && ui->tuningMethod->currentIndex() == 1);
 }
 
-void PrefsDialog::hcdfEnabled(){
-  int chk = ui->hcdf->currentIndex();
+void PrefsDialog::segmentationEnabled(){
+  int chk = ui->segmentation->currentIndex();
   bool e = (chk != 0 && chk != 3);
   ui->hcdfGaussianSigma->setEnabled(e);
   ui->hcdfGaussianSize->setEnabled(e);
   ui->hcdfPeakPickingNeighbours->setEnabled(e);
   e = (chk == 3);
-  ui->hcdfArbitrarySegments->setEnabled(e);
+  ui->arbitrarySegments->setEnabled(e);
 }
 
 void PrefsDialog::customProfileEnabled(){
@@ -259,8 +319,8 @@ void PrefsDialog::on_tuningMethod_currentIndexChanged(int /*index*/){
   binAdaptiveTuningEnabled();
 }
 
-void PrefsDialog::on_hcdf_currentIndexChanged(int /*index*/){
-  hcdfEnabled();
+void PrefsDialog::on_segmentation_currentIndexChanged(int /*index*/){
+  segmentationEnabled();
 }
 
 void PrefsDialog::on_toneProfile_currentIndexChanged(int /*index*/){
