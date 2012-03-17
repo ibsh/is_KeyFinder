@@ -47,8 +47,10 @@ Preferences::Preferences(){
   // ======================== Spectral analysis ================================
 
   settings.beginGroup("spectralAnalysis");
-  if(settings.contains("temporalWindow")){
-    // backward compatibility; used to be stored as char before libKeyFinder
+  if(settings.contains("temporalWindow_1_14")){
+    core.setTemporalWindow((KeyFinder::temporal_window_t)settings.value("temporalWindow_1_14").toInt());
+  }else if(settings.contains("temporalWindow")){
+    // backward compatibility for pre 1.14
     QVariant val = settings.value("temporalWindow");
     if(val == 'b')
       core.setTemporalWindow(KeyFinder::WINDOW_BLACKMAN);
@@ -56,8 +58,6 @@ Preferences::Preferences(){
       core.setTemporalWindow(KeyFinder::WINDOW_HAMMING);
     else if(val == 'n')
       core.setTemporalWindow(KeyFinder::WINDOW_HANN);
-    else
-      core.setTemporalWindow((KeyFinder::temporal_window_t)val.toInt());
   }
   if(settings.contains("fftFrameSize")){
     core.setFftFrameSize((unsigned)settings.value("fftFrameSize").toInt());
@@ -76,10 +76,7 @@ Preferences::Preferences(){
   if(settings.contains("dFactor")){
     dFactor = settings.value("dFactor").toInt();
   }else{
-    int defaultVal = 10;
-    settings.setValue("dFactor",defaultVal);
-    dFactor = defaultVal;
-    qDebug("Wrote default dFactor (%d)",dFactor);
+    dFactor = 10;
   }
   settings.endGroup();
 
@@ -97,8 +94,10 @@ Preferences::Preferences(){
   // ================ Harmonic Change Detection Function =======================
 
   settings.beginGroup("harmonicChangeDetectionFunction");
-  if(settings.contains("hcdf")){
-    // backward compatibility; used to be stored as char before libKeyFinder
+  if(settings.contains("segmentation")){
+    core.setSegmentation((KeyFinder::segmentation_t)settings.value("segmentation").toInt());
+  }else if(settings.contains("hcdf")){
+    // backward compatibility for pre 1.14
     QVariant val = settings.value("hcdf");
     if(val == 'n')
       core.setSegmentation(KeyFinder::SEGMENTATION_NONE);
@@ -108,8 +107,6 @@ Preferences::Preferences(){
       core.setSegmentation(KeyFinder::SEGMENTATION_COSINE);
     else if(val == 'a')
       core.setSegmentation(KeyFinder::SEGMENTATION_ARBITRARY);
-    else
-      core.setSegmentation((KeyFinder::segmentation_t)val.toInt());
   }
   if(settings.contains("hcdfGaussianSize")){
     core.setHcdfGaussianSize((unsigned)settings.value("hcdfGaussianSize").toInt());
@@ -128,18 +125,21 @@ Preferences::Preferences(){
   // ========================= Key classification ==============================
 
   settings.beginGroup("keyClassification");
-  if(settings.contains("toneProfile")){
-    core.setToneProfile((KeyFinder::tone_profile_t)settings.value("toneProfile").toInt());
+  if(settings.contains("toneProfile_1_14")){
+    core.setToneProfile((KeyFinder::tone_profile_t)settings.value("toneProfile_1_14").toInt());
+  }else if(settings.contains("toneProfile")){
+    // backward compatibility for pre 1.14
+    core.setToneProfile((KeyFinder::tone_profile_t)(settings.value("toneProfile").toInt() + 1));
   }
-  if(settings.contains("similarityMeasure")){
-    // backward compatibility; used to be stored as char before libKeyFinder
+  if(settings.contains("similarityMeasure_1_14")){
+    core.setSimilarityMeasure((KeyFinder::similarity_measure_t)settings.value("similarityMeasure_1_14").toInt());
+  }else if(settings.contains("similarityMeasure")){
+    // backward compatibility for pre 1.14
     QVariant val = settings.value("similarityMeasure");
     if(val == 'c')
       core.setSimilarityMeasure(KeyFinder::SIMILARITY_COSINE);
     else if(val == 'k')
       core.setSimilarityMeasure(KeyFinder::SIMILARITY_CORRELATION);
-    else
-      core.setSimilarityMeasure((KeyFinder::similarity_measure_t)val.toInt());
   }
   settings.endGroup();
 
@@ -148,6 +148,7 @@ Preferences::Preferences(){
   settings.beginGroup("customToneProfile");
   if(settings.contains("maj0")){
     std::vector<float> ctp;
+    // Tone profiles are stored sequentially; major chroma vector then minor chroma vector
     ctp.push_back(settings.value("maj0").toFloat());
     ctp.push_back(settings.value("maj1").toFloat());
     ctp.push_back(settings.value("maj2").toFloat());
@@ -179,9 +180,37 @@ Preferences::Preferences(){
   // ========================== Custom Key Codes ===============================
 
   settings.beginGroup("customKeyCodes");
-  if(settings.contains("majKey0")){
+  if(settings.contains("SLNC")){
     customKeyCodes = QStringList();
-    // interleaved major/minor to match tone profiling system
+    customKeyCodes.push_back(settings.value("A").toString());
+    customKeyCodes.push_back(settings.value("Am").toString());
+    customKeyCodes.push_back(settings.value("Bb").toString());
+    customKeyCodes.push_back(settings.value("Bbm").toString());
+    customKeyCodes.push_back(settings.value("B").toString());
+    customKeyCodes.push_back(settings.value("Bm").toString());
+    customKeyCodes.push_back(settings.value("C").toString());
+    customKeyCodes.push_back(settings.value("Cm").toString());
+    customKeyCodes.push_back(settings.value("Db").toString());
+    customKeyCodes.push_back(settings.value("Dbm").toString());
+    customKeyCodes.push_back(settings.value("D").toString());
+    customKeyCodes.push_back(settings.value("Dm").toString());
+    customKeyCodes.push_back(settings.value("Eb").toString());
+    customKeyCodes.push_back(settings.value("Ebm").toString());
+    customKeyCodes.push_back(settings.value("E").toString());
+    customKeyCodes.push_back(settings.value("Em").toString());
+    customKeyCodes.push_back(settings.value("F").toString());
+    customKeyCodes.push_back(settings.value("Fm").toString());
+    customKeyCodes.push_back(settings.value("Gb").toString());
+    customKeyCodes.push_back(settings.value("Gbm").toString());
+    customKeyCodes.push_back(settings.value("G").toString());
+    customKeyCodes.push_back(settings.value("Gm").toString());
+    customKeyCodes.push_back(settings.value("Ab").toString());
+    customKeyCodes.push_back(settings.value("Abm").toString());
+    customKeyCodes.push_back(settings.value("SLNC").toString());
+  }else if(settings.contains("majKey0")){
+    // backward compatibility for pre 1.14
+    customKeyCodes = QStringList();
+    // key names/codes are stored interleaved, for ease of looping in classification
     customKeyCodes.push_back(settings.value("majKey0").toString());
     customKeyCodes.push_back(settings.value("minKey0").toString());
     customKeyCodes.push_back(settings.value("majKey1").toString());
@@ -211,40 +240,16 @@ Preferences::Preferences(){
     customKeyCodes = QStringList();
     for(int i=0; i<25; i++)
       customKeyCodes << "";
-    settings.setValue("majKey0",customKeyCodes[0]);
-    settings.setValue("minKey0",customKeyCodes[1]);
-    settings.setValue("majKey1",customKeyCodes[2]);
-    settings.setValue("minKey1",customKeyCodes[3]);
-    settings.setValue("majKey2",customKeyCodes[4]);
-    settings.setValue("minKey2",customKeyCodes[5]);
-    settings.setValue("majKey3",customKeyCodes[6]);
-    settings.setValue("minKey3",customKeyCodes[7]);
-    settings.setValue("majKey4",customKeyCodes[8]);
-    settings.setValue("minKey4",customKeyCodes[9]);
-    settings.setValue("majKey5",customKeyCodes[10]);
-    settings.setValue("minKey5",customKeyCodes[11]);
-    settings.setValue("majKey6",customKeyCodes[12]);
-    settings.setValue("minKey6",customKeyCodes[13]);
-    settings.setValue("majKey7",customKeyCodes[14]);
-    settings.setValue("minKey7",customKeyCodes[15]);
-    settings.setValue("majKey8",customKeyCodes[16]);
-    settings.setValue("minKey8",customKeyCodes[17]);
-    settings.setValue("majKey9",customKeyCodes[18]);
-    settings.setValue("minKey9",customKeyCodes[19]);
-    settings.setValue("majKey10",customKeyCodes[20]);
-    settings.setValue("minKey10",customKeyCodes[21]);
-    settings.setValue("majKey11",customKeyCodes[22]);
-    settings.setValue("minKey11",customKeyCodes[23]);
-    settings.setValue("silence",customKeyCodes[24]);
-    qDebug("Wrote default customKeyCodes (blank)");
   }
   settings.endGroup();
 
   // ========================= Key classification ==============================
 
   settings.beginGroup("tags");
-  if(settings.contains("tagFormat")){
-    // backward compatibility; used to be stored as char
+  if(settings.contains("tagFormat_1_14")){
+    tagFormat = (tag_format_t)settings.value("tagFormat_1_14").toInt();
+  }else if(settings.contains("tagFormat")){
+    // backward compatibility for pre 1.14
     QVariant val = settings.value("tagFormat");
     if(val == 'k')
       tagFormat = TAG_FORMAT_KEYS;
@@ -252,54 +257,22 @@ Preferences::Preferences(){
       tagFormat = TAG_FORMAT_CUSTOM;
     else if(val == 'b')
       tagFormat = TAG_FORMAT_BOTH;
-    else
-      tagFormat = (tag_format_t)val.toInt();
   }else{
-    tag_format_t defaultVal = TAG_FORMAT_KEYS;
-    settings.setValue("tagFormat", defaultVal);
-    tagFormat = defaultVal;
-    qDebug("Wrote default tagFormat (Keys)");
+    tagFormat = TAG_FORMAT_KEYS;
   }
   if(settings.contains("writeToTagComment")){
     writeToTagComment = settings.value("writeToTagComment").toBool();
     writeToTagGrouping = settings.value("writeToTagGrouping").toBool();
     writeToTagKey = settings.value("writeToTagKey").toBool();
   }else{
-    // init
-    writeToTagComment = false;
+    writeToTagComment = true;
     writeToTagGrouping = false;
     writeToTagKey = false;
-    settings.setValue("writeToTagComment",false);
-    settings.setValue("writeToTagGrouping",false);
-    settings.setValue("writeToTagKey",false);
-    // check backwards compatible data
-    char oldTagField;
-    if(settings.contains("tagField")){
-      oldTagField = settings.value("tagField").toChar().toAscii();
-      if(oldTagField == 'g'){
-        writeToTagGrouping = true;
-        settings.setValue("writeToTagGrouping",true);
-      }else if(oldTagField == 'k'){
-        writeToTagKey = true;
-        settings.setValue("writeToTagKey",true);
-      }else{
-        writeToTagComment = true;
-        settings.setValue("writeToTagComment",true);
-      }
-      qDebug("Wrote writeToTags from old tagField setting");
-    }else{
-      writeToTagComment = true;
-      settings.setValue("writeToTagComment",true);
-      qDebug("Wrote default writeToTags (Comment)");
-    }
   }
   if(settings.contains("writeTagsAutomatically")){
     writeTagsAutomatically = settings.value("writeTagsAutomatically").toBool();
   }else{
-    bool defaultVal = false;
-    settings.setValue("writeTagsAutomatically",defaultVal);
-    writeTagsAutomatically = defaultVal;
-    qDebug("Wrote default writeTagsAutomatically (false)");
+    writeTagsAutomatically = false;
   }
   settings.endGroup();
 
@@ -309,18 +282,12 @@ Preferences::Preferences(){
   if(settings.contains("parallelBatchJobs")){
     parallelBatchJobs = settings.value("parallelBatchJobs").toBool();
   }else{
-    bool defaultVal = true;
-    settings.setValue("parallelBatchJobs",defaultVal);
-    parallelBatchJobs = defaultVal;
-    qDebug("Wrote default parallelBatchJobs (true)");
+    parallelBatchJobs = true;
   }
   if(settings.contains("skipFilesWithExistingTags")){
     skipFilesWithExistingTags = settings.value("skipFilesWithExistingTags").toBool();
   }else{
-    bool defaultVal = false;
-    settings.setValue("skipFilesWithExistingTags",defaultVal);
-    skipFilesWithExistingTags = defaultVal;
-    qDebug("Wrote default skipFilesWithExistingTags (false)");
+    skipFilesWithExistingTags = false;
   }
   settings.endGroup();
 
@@ -330,41 +297,29 @@ Preferences::Preferences(){
   if(settings.contains("iTunesLibraryPath")){
     iTunesLibraryPath = settings.value("iTunesLibraryPath").toString();
   }else{
-    QString defaultVal;
 #ifdef Q_OS_WIN
-    defaultVal = QDir::homePath() + "/My Music/iTunes/iTunes Music Library.xml";
+    iTunesLibraryPath = QDir::homePath() + "/My Music/iTunes/iTunes Music Library.xml";
 #else
-    defaultVal = QDir::homePath() + "/Music/iTunes/iTunes Music Library.xml";
+    iTunesLibraryPath = QDir::homePath() + "/Music/iTunes/iTunes Music Library.xml";
 #endif
-    settings.setValue("iTunesLibraryPath",defaultVal);
-    iTunesLibraryPath = defaultVal;
-    qDebug("Wrote default iTunesLibraryPath");
   }
   if(settings.contains("traktorLibraryPath")){
     traktorLibraryPath = settings.value("traktorLibraryPath").toString();
   }else{
-    QString defaultVal;
 #ifdef Q_OS_WIN
-    defaultVal = QDir::homePath() + "/My Documents/Native Instruments/Traktor 2.1.2/collection.nml";
+    traktorLibraryPath = QDir::homePath() + "/My Documents/Native Instruments/Traktor 2.1.2/collection.nml";
 #else
-    defaultVal = QDir::homePath() + "/Documents/Native Instruments/Traktor 2.1.2/collection.nml";
+    traktorLibraryPath = QDir::homePath() + "/Documents/Native Instruments/Traktor 2.1.2/collection.nml";
 #endif
-    settings.setValue("traktorLibraryPath",defaultVal);
-    traktorLibraryPath = defaultVal;
-    qDebug("Wrote default traktorLibraryPath");
   }
   if(settings.contains("seratoLibraryPath")){
     seratoLibraryPath = settings.value("seratoLibraryPath").toString();
   }else{
-    QString defaultVal;
 #ifdef Q_OS_WIN
-    defaultVal = QDir::homePath() + "/My Music/_Serato_/database V2";
+    seratoLibraryPath = QDir::homePath() + "/My Music/_Serato_/database V2";
 #else
-    defaultVal = QDir::homePath() + "/Music/_Serato_/database V2";
+    seratoLibraryPath = QDir::homePath() + "/Music/_Serato_/database V2";
 #endif
-    settings.setValue("seratoLibraryPath",defaultVal);
-    seratoLibraryPath = defaultVal;
-    qDebug("Wrote default seratoLibraryPath");
   }
   settings.endGroup();
 
@@ -431,7 +386,7 @@ void Preferences::save(){
   settings.endGroup();
 
   settings.beginGroup("spectralAnalysis");
-  settings.setValue("temporalWindow", core.getTemporalWindow());
+  settings.setValue("temporalWindow_1_14", core.getTemporalWindow());
   settings.setValue("fftFrameSize", core.getFftFrameSize());
   settings.setValue("hopSize", core.getHopSize());
   settings.setValue("directSkStretch", core.getDirectSkStretch());
@@ -447,7 +402,7 @@ void Preferences::save(){
   settings.endGroup();
 
   settings.beginGroup("harmonicChangeDetectionFunction");
-  settings.setValue("hcdf", core.getSegmentation());
+  settings.setValue("segmentation", core.getSegmentation());
   settings.setValue("hcdfGaussianSize", core.getHcdfGaussianSize());
   settings.setValue("hcdfGaussianSigma", core.getHcdfGaussianSigma());
   settings.setValue("hcdfPeakPickingNeighbours", core.getHcdfPeakPickingNeighbours());
@@ -455,8 +410,8 @@ void Preferences::save(){
   settings.endGroup();
 
   settings.beginGroup("keyClassification");
-  settings.setValue("toneProfile", core.getToneProfile());
-  settings.setValue("similarityMeasure", core.getSimilarityMeasure());
+  settings.setValue("toneProfile_1_14", core.getToneProfile());
+  settings.setValue("similarityMeasure_1_14", core.getSimilarityMeasure());
   settings.endGroup();
 
   settings.beginGroup("customToneProfile");
@@ -488,35 +443,23 @@ void Preferences::save(){
   settings.endGroup();
 
   settings.beginGroup("customKeyCodes");
-  settings.setValue("majKey0", customKeyCodes[0]);
-  settings.setValue("majKey1", customKeyCodes[1]);
-  settings.setValue("majKey2", customKeyCodes[2]);
-  settings.setValue("majKey3", customKeyCodes[3]);
-  settings.setValue("majKey4", customKeyCodes[4]);
-  settings.setValue("majKey5", customKeyCodes[5]);
-  settings.setValue("majKey6", customKeyCodes[6]);
-  settings.setValue("majKey7", customKeyCodes[7]);
-  settings.setValue("majKey8", customKeyCodes[8]);
-  settings.setValue("majKey9", customKeyCodes[9]);
-  settings.setValue("majKey10", customKeyCodes[10]);
-  settings.setValue("majKey11", customKeyCodes[11]);
-  settings.setValue("minKey0", customKeyCodes[12]);
-  settings.setValue("minKey1", customKeyCodes[13]);
-  settings.setValue("minKey2", customKeyCodes[14]);
-  settings.setValue("minKey3", customKeyCodes[15]);
-  settings.setValue("minKey4", customKeyCodes[16]);
-  settings.setValue("minKey5", customKeyCodes[17]);
-  settings.setValue("minKey6", customKeyCodes[18]);
-  settings.setValue("minKey7", customKeyCodes[19]);
-  settings.setValue("minKey8", customKeyCodes[20]);
-  settings.setValue("minKey9", customKeyCodes[21]);
-  settings.setValue("minKey10", customKeyCodes[22]);
-  settings.setValue("minKey11", customKeyCodes[23]);
-  settings.setValue("silence", customKeyCodes[24]);
+  settings.setValue("A",    customKeyCodes[0]);   settings.setValue("Am",  customKeyCodes[1]);
+  settings.setValue("Bb",   customKeyCodes[2]);   settings.setValue("Bbm", customKeyCodes[3]);
+  settings.setValue("B",    customKeyCodes[4]);   settings.setValue("Bm",  customKeyCodes[5]);
+  settings.setValue("C",    customKeyCodes[6]);   settings.setValue("Cm",  customKeyCodes[7]);
+  settings.setValue("Db",   customKeyCodes[8]);   settings.setValue("Dbm", customKeyCodes[9]);
+  settings.setValue("D",    customKeyCodes[10]);  settings.setValue("Dm",  customKeyCodes[11]);
+  settings.setValue("Eb",   customKeyCodes[12]);  settings.setValue("Ebm", customKeyCodes[13]);
+  settings.setValue("E",    customKeyCodes[14]);  settings.setValue("Em",  customKeyCodes[15]);
+  settings.setValue("F",    customKeyCodes[16]);  settings.setValue("Fm",  customKeyCodes[17]);
+  settings.setValue("Gb",   customKeyCodes[18]);  settings.setValue("Gbm", customKeyCodes[19]);
+  settings.setValue("G",    customKeyCodes[20]);  settings.setValue("Gm",  customKeyCodes[21]);
+  settings.setValue("Ab",   customKeyCodes[22]);  settings.setValue("Abm", customKeyCodes[23]);
+  settings.setValue("SLNC", customKeyCodes[24]);
   settings.endGroup();
 
   settings.beginGroup("tags");
-  settings.setValue("tagFormat", tagFormat);
+  settings.setValue("tagFormat_1_14", tagFormat);
   settings.setValue("writeToTagComment", writeToTagComment);
   settings.setValue("writeToTagGrouping", writeToTagGrouping);
   settings.setValue("writeToTagKey", writeToTagKey);

@@ -132,30 +132,18 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   ui->min11->setValue(ctp[23]);
 
   QStringList ckc = p.getCustomKeyCodes();
-  ui->majKey0->setText(ckc[0]);
-  ui->majKey1->setText(ckc[2]);
-  ui->majKey2->setText(ckc[4]);
-  ui->majKey3->setText(ckc[6]);
-  ui->majKey4->setText(ckc[8]);
-  ui->majKey5->setText(ckc[10]);
-  ui->majKey6->setText(ckc[12]);
-  ui->majKey7->setText(ckc[14]);
-  ui->majKey8->setText(ckc[16]);
-  ui->majKey9->setText(ckc[18]);
-  ui->majKey10->setText(ckc[20]);
-  ui->majKey11->setText(ckc[22]);
-  ui->minKey0->setText(ckc[1]);
-  ui->minKey1->setText(ckc[3]);
-  ui->minKey2->setText(ckc[5]);
-  ui->minKey3->setText(ckc[7]);
-  ui->minKey4->setText(ckc[9]);
-  ui->minKey5->setText(ckc[11]);
-  ui->minKey6->setText(ckc[13]);
-  ui->minKey7->setText(ckc[15]);
-  ui->minKey8->setText(ckc[17]);
-  ui->minKey9->setText(ckc[19]);
-  ui->minKey10->setText(ckc[21]);
-  ui->minKey11->setText(ckc[23]);
+  ui->majKey0->setText(ckc[0]);   ui->minKey0->setText(ckc[1]);
+  ui->majKey1->setText(ckc[2]);   ui->minKey1->setText(ckc[3]);
+  ui->majKey2->setText(ckc[4]);   ui->minKey2->setText(ckc[5]);
+  ui->majKey3->setText(ckc[6]);   ui->minKey3->setText(ckc[7]);
+  ui->majKey4->setText(ckc[8]);   ui->minKey4->setText(ckc[9]);
+  ui->majKey5->setText(ckc[10]);  ui->minKey5->setText(ckc[11]);
+  ui->majKey6->setText(ckc[12]);  ui->minKey6->setText(ckc[13]);
+  ui->majKey7->setText(ckc[14]);  ui->minKey7->setText(ckc[15]);
+  ui->majKey8->setText(ckc[16]);  ui->minKey8->setText(ckc[17]);
+  ui->majKey9->setText(ckc[18]);  ui->minKey9->setText(ckc[19]);
+  ui->majKey10->setText(ckc[20]); ui->minKey10->setText(ckc[21]);
+  ui->majKey11->setText(ckc[22]); ui->minKey11->setText(ckc[23]);
   ui->silence->setText(ckc[24]);
 
   // enable/disable fields as necessary
@@ -246,12 +234,18 @@ void PrefsDialog::on_savePrefsButton_clicked(){
   p.setCustomToneProfile(ctp);
 
   QStringList ckc;
-  ckc << ui->majKey0->text() << ui->majKey1->text() << ui->majKey2->text() << ui->majKey3->text();
-  ckc << ui->majKey4->text() << ui->majKey5->text() << ui->majKey6->text() << ui->majKey7->text();
-  ckc << ui->majKey8->text() << ui->majKey9->text() << ui->majKey10->text() << ui->majKey11->text();
-  ckc << ui->minKey0->text() << ui->minKey1->text() << ui->minKey2->text() << ui->minKey3->text();
-  ckc << ui->minKey4->text() << ui->minKey5->text() << ui->minKey6->text() << ui->minKey7->text();
-  ckc << ui->minKey8->text() << ui->minKey9->text() << ui->minKey10->text() << ui->minKey11->text();
+  ckc << ui->majKey0->text() << ui->minKey0->text();
+  ckc << ui->majKey1->text() << ui->minKey1->text();
+  ckc << ui->majKey2->text() << ui->minKey2->text();
+  ckc << ui->majKey3->text() << ui->minKey3->text();
+  ckc << ui->majKey4->text() << ui->minKey4->text();
+  ckc << ui->majKey5->text() << ui->minKey5->text();
+  ckc << ui->majKey6->text() << ui->minKey6->text();
+  ckc << ui->majKey7->text() << ui->minKey7->text();
+  ckc << ui->majKey8->text() << ui->minKey8->text();
+  ckc << ui->majKey9->text() << ui->minKey9->text();
+  ckc << ui->majKey10->text() << ui->minKey10->text();
+  ckc << ui->majKey11->text() << ui->minKey11->text();
   ckc << ui->silence->text();
   p.setCustomKeyCodes(ckc);
 
