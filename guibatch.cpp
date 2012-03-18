@@ -588,7 +588,6 @@ void BatchWindow::deleteSelectedRows(){
     if(chkRow < firstRow) firstRow = chkRow;
     if(chkRow > lastRow) lastRow = chkRow;
   }
-  std::cerr << firstRow << " to " << lastRow << std::endl;
   for(int r = lastRow; r >= firstRow ; r--){
     ui->tableWidget->removeRow(r);
   }
