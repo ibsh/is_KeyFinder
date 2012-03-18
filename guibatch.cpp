@@ -137,6 +137,11 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   QAction* clearDetectedAction = new QAction(tr("Clear detected keys"),this);
   connect(clearDetectedAction, SIGNAL(triggered()), this, SLOT(clearDetected()));
   ui->tableWidget->addAction(clearDetectedAction);
+
+  // VALGRIND
+//  QList<QUrl> test;
+//  test.push_back(QUrl("/Users/ibrahimshaath/Desktop/test tracks"));
+//  receiveUrls(test);
 }
 
 BatchWindow::~BatchWindow(){
@@ -390,6 +395,8 @@ void BatchWindow::metadataReadResultReadyAt(int index){
 
 void BatchWindow::metadataReadFinished(){
   setGuiDefaults();
+  // VALGRIND
+//  ui->runBatchButton->click();
 }
 
 void BatchWindow::on_runBatchButton_clicked(){
@@ -499,6 +506,8 @@ void BatchWindow::analysisResultReadyAt(int index){
 void BatchWindow::analysisFinished(){
   setGuiDefaults();
   QApplication::beep();
+  // VALGRIND
+//  this->close();
 }
 
 void BatchWindow::writeDetectedToTags(){
@@ -579,7 +588,8 @@ void BatchWindow::deleteSelectedRows(){
     if(chkRow < firstRow) firstRow = chkRow;
     if(chkRow > lastRow) lastRow = chkRow;
   }
-  for(int r = firstRow; r <= lastRow; r++){
+  std::cerr << firstRow << " to " << lastRow << std::endl;
+  for(int r = lastRow; r >= firstRow ; r--){
     ui->tableWidget->removeRow(r);
   }
 }

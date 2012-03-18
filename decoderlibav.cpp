@@ -45,12 +45,12 @@ KeyFinder::AudioData* LibAvDecoder::decodeFile(const QString& filePath){
   int openInputResult = avformat_open_input(&fCtx, filePathCh, NULL, NULL);
   if(openInputResult != 0){
     std::ostringstream ss;
-    ss << "Failed to open audio file (" << openInputResult << ")";
+    ss << "Could not open audio file (" << openInputResult << ")";
     throw KeyFinder::Exception(ss.str());
   }
 
   if(av_find_stream_info(fCtx) < 0){
-    throw KeyFinder::Exception("Failed to find stream information");
+    throw KeyFinder::Exception("Could not find stream information");
   }
   int audioStream = -1;
   for(int i=0; i<(signed)fCtx->nb_streams; i++){
@@ -60,7 +60,7 @@ KeyFinder::AudioData* LibAvDecoder::decodeFile(const QString& filePath){
     }
   }
   if(audioStream == -1){
-    throw KeyFinder::Exception("Failed to find an audio stream");
+    throw KeyFinder::Exception("Could not find an audio stream");
   }
 
   // Determine stream codec
@@ -74,7 +74,7 @@ KeyFinder::AudioData* LibAvDecoder::decodeFile(const QString& filePath){
   int codecOpenResult = avcodec_open2(cCtx, codec, &dict);
   if(codecOpenResult < 0){
     std::ostringstream ss;
-    ss << "Error opening audio codec: " << codec->long_name << " (" << codecOpenResult << ")";
+    ss << "Could not open audio codec: " << codec->long_name << " (" << codecOpenResult << ")";
     throw KeyFinder::Exception(ss.str());
   }
 
@@ -84,10 +84,10 @@ KeyFinder::AudioData* LibAvDecoder::decodeFile(const QString& filePath){
         AV_SAMPLE_FMT_S16, cCtx->sample_fmt,
         0, 0, 0, 0);
   if(rsCtx == NULL){
-    throw KeyFinder::Exception("Failed to create ReSampleContext");
+    throw KeyFinder::Exception("Could not create ReSampleContext");
   }
 
-  qDebug("Decoding %s (%s, %d)", filePathCh, av_get_sample_fmt_name(cCtx->sample_fmt), cCtx->sample_rate); // really?
+  qDebug("Decoding %s (%s, %d)", filePathCh, av_get_sample_fmt_name(cCtx->sample_fmt), cCtx->sample_rate);
 
   codecMutexLocker.unlock();
 
@@ -109,7 +109,7 @@ KeyFinder::AudioData* LibAvDecoder::decodeFile(const QString& filePath){
           if(badPacketCount < 100){
             badPacketCount++;
           }else{
-            throw KeyFinder::Exception("100 bad packets, may be DRM or corruption");
+            throw KeyFinder::Exception("100 bad packets");
           }
         }
       }catch(KeyFinder::Exception& e){
@@ -165,7 +165,7 @@ int LibAvDecoder::decodePacket(AVCodecContext* cCtx, ReSampleContext* rsCtx, AVP
     if(cCtx->sample_fmt != AV_SAMPLE_FMT_S16){
       int resampleResult = audio_resample(rsCtx, (short*)frameBufferConverted, (short*)frameBuffer, newSamplesDecoded);
       if(resampleResult < 0){
-        throw KeyFinder::Exception("Failed to resample");
+        throw KeyFinder::Exception("Could not resample");
       }
       dataBuffer = (int16_t*)frameBufferConverted;
     }
