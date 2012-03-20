@@ -518,21 +518,18 @@ void BatchWindow::writeDetectedToTags(){
   // get a new preferences object in case they've changed since the last run.
   prefs = Preferences();
   // which files to write to
-  int firstRow = INT_MAX;
-  int lastRow = 0;
+  int successfullyTagged = 0;
+  std::vector<int> rowsTried;
   foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()){
     int chkRow = selectedIndex.row();
-    if(chkRow < firstRow) firstRow = chkRow;
-    if(chkRow > lastRow) lastRow = chkRow;
-  }
-  // write
-  int count = 0;
-  for(int r = firstRow; r <= lastRow; r++){
-    if(writeToTagsAtRow(r))
-      count++;
+    if(std::find(rowsTried.begin(), rowsTried.end(), chkRow) == rowsTried.end()){
+      if(writeToTagsAtRow(chkRow))
+        successfullyTagged++;
+      rowsTried.push_back(chkRow);
+    }
   }
   QMessageBox msg;
-  msg.setText("Data written to tags in " + QString::number(count) + " files");
+  msg.setText("Data written to tags in " + QString::number(successfullyTagged) + " files");
   msg.exec();
 }
 
@@ -559,17 +556,15 @@ bool BatchWindow::writeToTagsAtRow(int row){
 }
 
 void BatchWindow::clearDetected(){
-  int firstRow = INT_MAX;
-  int lastRow = 0;
+  std::vector<int> rowsCleared;
   foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()){
     int chkRow = selectedIndex.row();
-    if(chkRow < firstRow) firstRow = chkRow;
-    if(chkRow > lastRow) lastRow = chkRow;
-  }
-  for(int r = firstRow; r <= lastRow; r++){
-    if(ui->tableWidget->item(r,COL_KEY) != 0){
-      ui->tableWidget->item(r,COL_STATUS)->setText(STATUS_TAGSREAD);
-      ui->tableWidget->item(r,COL_KEY)->setText("");
+    if(std::find(rowsCleared.begin(), rowsCleared.end(), chkRow) == rowsCleared.end()){
+      if(ui->tableWidget->item(chkRow,COL_KEY) != 0){
+        ui->tableWidget->item(chkRow,COL_STATUS)->setText(STATUS_TAGSREAD);
+        ui->tableWidget->item(chkRow,COL_KEY)->setText("");
+      }
+      rowsCleared.push_back(chkRow);
     }
   }
 }
@@ -581,15 +576,17 @@ void BatchWindow::deleteSelectedRows(){
     msg.exec();
     return;
   }
-  int firstRow = INT_MAX;
-  int lastRow = 0;
+  std::vector<int> rowsToDelete;
   foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()){
     int chkRow = selectedIndex.row();
-    if(chkRow < firstRow) firstRow = chkRow;
-    if(chkRow > lastRow) lastRow = chkRow;
+    if(std::find(rowsToDelete.begin(), rowsToDelete.end(), chkRow) == rowsToDelete.end()){
+      rowsToDelete.push_back(chkRow);
+    }
   }
-  for(int r = lastRow; r >= firstRow ; r--){
-    ui->tableWidget->removeRow(r);
+  for(int r = ui->tableWidget->rowCount(); r >= 0 ; r--){
+    if(std::find(rowsToDelete.begin(), rowsToDelete.end(), r) != rowsToDelete.end()){
+      ui->tableWidget->removeRow(r);
+    }
   }
 }
 
