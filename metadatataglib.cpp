@@ -326,13 +326,45 @@ int TagLibMetadata::setComment(const QString& cmt){
     qDebug("Cannot set comment tag on invalid file object");
     return 1;
   }
+
+  // TagLib's default behaviour for FLACs treats Description as Comment. Override.
   TagLib::FLAC::File* fileTestFlac = dynamic_cast<TagLib::FLAC::File*>(f);
   if(fileTestFlac != NULL){
-    // TagLib's default behaviour treats Description as Comment: override
     fileTestFlac->xiphComment()->addField("COMMENT",TagLib::String(cmt.toLocal8Bit().data()),true);
-  }else{
-    f->tag()->setComment(TagLib::String(cmt.toLocal8Bit().data()));
+    f->save();
+    return 0;
   }
+
+  // iTunes hack... is it worth doing this for other id3v2 formats?
+  TagLib::MPEG::File* fileTestMpeg = dynamic_cast<TagLib::MPEG::File*>(f);
+  if(fileTestMpeg != NULL){
+    TagLib::ID3v2::Tag* tagTestId3v2 = fileTestMpeg->ID3v2Tag();
+    if(tagTestId3v2 != NULL){
+      const TagLib::ID3v2::FrameList &comments = tagTestId3v2->frameListMap()["COMM"];
+      bool found = false;
+      for(TagLib::ID3v2::FrameList::ConstIterator it = comments.begin(); it != comments.end(); it++){
+        // overwrite all appropriate comment elements
+        TagLib::ID3v2::CommentsFrame *commFrame = dynamic_cast<TagLib::ID3v2::CommentsFrame *>(*it);
+        if(commFrame && commFrame->description().isEmpty()){
+          commFrame->setLanguage("eng"); // this is the key.
+          commFrame->setText(TagLib::String(cmt.toLocal8Bit().data()));
+          f->save();
+          found = true;
+        }
+      }
+      if(found) return 0;
+      // didn't find it
+      TagLib::ID3v2::CommentsFrame* frm = new TagLib::ID3v2::CommentsFrame();
+      frm->setText(TagLib::String(cmt.toLocal8Bit().data()));
+      frm->setLanguage("eng");
+      tagTestId3v2->addFrame(frm);
+      f->save();
+      return 0;
+    }
+  }
+
+  // default behaviour
+  f->tag()->setComment(TagLib::String(cmt.toLocal8Bit().data()));
   f->save();
   return 0;
 }

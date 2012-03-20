@@ -62,6 +62,7 @@
 #include <taglib/id3v1tag.h>
 #include <taglib/id3v2tag.h>
 #include <taglib/textidentificationframe.h>
+#include <taglib/commentsframe.h>
 #include <taglib/asftag.h>
 #include <taglib/apetag.h>
 #include <taglib/mp4tag.h>
