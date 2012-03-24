@@ -53,16 +53,20 @@ private:
   void binAdaptiveTuningEnabled();
   void segmentationEnabled();
   void customProfileEnabled();
+  void filenameDelimiterEnabled();
 private slots:
   void on_savePrefsButton_clicked();
   void on_cancelButton_clicked();
   void on_bps_valueChanged(int arg1);
-  void on_segmentation_currentIndexChanged(int index);
-  void on_toneProfile_currentIndexChanged(int index);
-  void on_tuningMethod_currentIndexChanged(int index);
+  void on_segmentation_currentIndexChanged(int);
+  void on_toneProfile_currentIndexChanged(int);
+  void on_tuningMethod_currentIndexChanged(int);
+  void on_writeToFilePrefix_stateChanged(int arg1);
+  void on_writeToFileSuffix_stateChanged(int arg1);
   void on_findITunesLibraryButton_clicked();
   void on_findTraktorLibraryButton_clicked();
   void on_findSeratoLibraryButton_clicked();
+
 private:
   Ui::PrefsDialog *ui;
 };

@@ -93,7 +93,8 @@ private:
   void markRowSkipped(int,bool);
   void runAnalysis();
 
-  bool writeToTagsAtRow(int);
+  bool writeToTagsAtRow(int, int);
+  bool writeToFilenameAtRow(int, int);
 
   // UI
   Ui::BatchWindow* ui;
@@ -115,7 +116,7 @@ private slots:
   void on_runBatchButton_clicked();
   void on_cancelBatchButton_clicked();
   void copySelectedFromTableWidget();
-  void writeDetectedToTags();
+  void writeDetectedToFiles();
   void clearDetected();
   void deleteSelectedRows();
   void runDetailedAnalysis();

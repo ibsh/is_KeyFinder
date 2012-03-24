@@ -52,17 +52,20 @@ public:
   void save();
 
   // accessors
-  bool getWriteTagsAutomatically() const;
+  bool getWriteToFilesAutomatically() const;
   bool getParallelBatchJobs() const;
   bool getWriteToTagComment() const;
   bool getWriteToTagGrouping() const;
   bool getWriteToTagKey() const;
+  bool getWriteToFilePrefix() const;
+  bool getWriteToFileSuffix() const;
   bool getSkipFilesWithExistingTags() const;
   tag_format_t getTagFormat() const;
   int getDFactor() const;
   QString getITunesLibraryPath() const;
   QString getTraktorLibraryPath() const;
   QString getSeratoLibraryPath() const;
+  QString getFilenameDelimiter() const;
   QStringList getCustomKeyCodes() const;
   QByteArray getBatchWindowState() const;
   QByteArray getBatchWindowGeometry() const;
@@ -90,17 +93,20 @@ public:
   std::vector<float> getCustomToneProfile() const;
 
   // mutators
-  void setWriteTagsAutomatically(bool);
+  void setWriteToFilesAutomatically(bool);
   void setParallelBatchJobs(bool);
   void setWriteToTagComment(bool);
   void setWriteToTagGrouping(bool);
   void setWriteToTagKey(bool);
+  void setWriteToFilePrefix(bool);
+  void setWriteToFileSuffix(bool);
   void setSkipFilesWithExistingTags(bool);
   void setTagFormat(tag_format_t);
   void setDFactor(int);
   void setITunesLibraryPath(const QString&);
   void setTraktorLibraryPath(const QString&);
   void setSeratoLibraryPath(const QString&);
+  void setFilenameDelimiter(const QString&);
   void setCustomKeyCodes(const QStringList&);
   void setBatchWindowState(const QByteArray&);
   void setBatchWindowGeometry(const QByteArray&);
@@ -132,17 +138,20 @@ public:
   void setImageColours(QImage&, int) const;
 
 private:
-  bool writeTagsAutomatically;
+  bool writeToFilesAutomatically;
   bool parallelBatchJobs;
   bool writeToTagComment;
   bool writeToTagGrouping;
   bool writeToTagKey;
+  bool writeToFilePrefix;
+  bool writeToFileSuffix;
   bool skipFilesWithExistingTags;
   tag_format_t tagFormat;
   int dFactor;
   QString iTunesLibraryPath;
   QString traktorLibraryPath;
   QString seratoLibraryPath;
+  QString filenameDelimiter;
   QStringList customKeyCodes;
   QStringList defaultKeyCodes;
   QList<QColor> keyColours;

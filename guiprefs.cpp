@@ -76,11 +76,14 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 
   // get values from preferences
   Preferences p;
-  ui->writeTagsAutomatically->setChecked(p.getWriteTagsAutomatically());
+  ui->writeToFilesAutomatically->setChecked(p.getWriteToFilesAutomatically());
   ui->parallelBatchJobs->setChecked(p.getParallelBatchJobs());
   ui->writeToTagComment->setChecked(p.getWriteToTagComment());
   ui->writeToTagGrouping->setChecked(p.getWriteToTagGrouping());
   ui->writeToTagKey->setChecked(p.getWriteToTagKey());
+  ui->writeToFilePrefix->setChecked(p.getWriteToFilePrefix());
+  ui->writeToFileSuffix->setChecked(p.getWriteToFileSuffix());
+  ui->filenameDelimiter->setText(p.getFilenameDelimiter());
   ui->skipFilesWithExistingTags->setChecked(p.getSkipFilesWithExistingTags());
   ui->temporalWindow->setCurrentIndex(listTemporalWindow.indexOf(p.getTemporalWindow()));
   ui->segmentation->setCurrentIndex(listSegmentation.indexOf(p.getSegmentation()));
@@ -151,6 +154,7 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   binAdaptiveTuningEnabled();
   segmentationEnabled();
   customProfileEnabled();
+  filenameDelimiterEnabled();
 
   //relative sizing on Mac only
 #ifdef Q_OS_MAC
@@ -177,11 +181,14 @@ PrefsDialog::~PrefsDialog(){
 
 void PrefsDialog::on_savePrefsButton_clicked(){
   Preferences p;
-  p.setWriteTagsAutomatically(ui->writeTagsAutomatically->isChecked());
+  p.setWriteToFilesAutomatically(ui->writeToFilesAutomatically->isChecked());
   p.setParallelBatchJobs(ui->parallelBatchJobs->isChecked());
   p.setWriteToTagComment(ui->writeToTagComment->isChecked());
   p.setWriteToTagGrouping(ui->writeToTagGrouping->isChecked());
   p.setWriteToTagKey(ui->writeToTagKey->isChecked());
+  p.setWriteToFilePrefix(ui->writeToFilePrefix->isChecked());
+  p.setWriteToFileSuffix(ui->writeToFileSuffix->isChecked());
+  p.setFilenameDelimiter(ui->filenameDelimiter->text());
   p.setSkipFilesWithExistingTags(ui->skipFilesWithExistingTags->isChecked());
   p.setTemporalWindow(listTemporalWindow[ui->temporalWindow->currentIndex()]);
   p.setSegmentation(listSegmentation[ui->segmentation->currentIndex()]);
@@ -305,6 +312,10 @@ void PrefsDialog::customProfileEnabled(){
   ui->min11->setEnabled(e);
 }
 
+void PrefsDialog::filenameDelimiterEnabled(){
+  ui->filenameDelimiter->setEnabled(ui->writeToFilePrefix->isChecked() || ui->writeToFileSuffix->isChecked());
+}
+
 void PrefsDialog::on_bps_valueChanged(int /*arg1*/){
   tuningEnabled();
 }
@@ -319,6 +330,14 @@ void PrefsDialog::on_segmentation_currentIndexChanged(int /*index*/){
 
 void PrefsDialog::on_toneProfile_currentIndexChanged(int /*index*/){
   customProfileEnabled();
+}
+
+void PrefsDialog::on_writeToFilePrefix_stateChanged(int /*state*/){
+  filenameDelimiterEnabled();
+}
+
+void PrefsDialog::on_writeToFileSuffix_stateChanged(int /*state*/){
+  filenameDelimiterEnabled();
 }
 
 void PrefsDialog::on_findITunesLibraryButton_clicked(){

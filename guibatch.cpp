@@ -122,9 +122,9 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   copyAction->setShortcut(QKeySequence::Copy);
   connect(copyAction, SIGNAL(triggered()), this, SLOT(copySelectedFromTableWidget()));
   ui->tableWidget->addAction(copyAction);
-  QAction* writeToTagsAction = new QAction(tr("Write key to tags"),this);
+  QAction* writeToTagsAction = new QAction(tr("Write key to file"),this);
   writeToTagsAction->setShortcut(QKeySequence("Ctrl+T"));
-  connect(writeToTagsAction, SIGNAL(triggered()), this, SLOT(writeDetectedToTags()));
+  connect(writeToTagsAction, SIGNAL(triggered()), this, SLOT(writeDetectedToFiles()));
   ui->tableWidget->addAction(writeToTagsAction);
   QAction* runDetailedAction = new QAction(tr("Run detailed analysis"),this);
   runDetailedAction->setShortcut(QKeySequence("Ctrl+D"));
@@ -480,7 +480,7 @@ void BatchWindow::runAnalysis(){
 void BatchWindow::on_cancelBatchButton_clicked(){
   ui->statusLabel->setText("Cancelling...");
   ui->cancelBatchButton->setEnabled(false);
-  progressRangeChanged(0,0);
+  progressRangeChanged(0, 0);
   progressValueChanged(-1);
   metadataReadWatcher.cancel();
   analysisWatcher.cancel();
@@ -493,13 +493,15 @@ void BatchWindow::analysisResultReadyAt(int index){
     int key = analysisWatcher.resultAt(index).core.globalKeyEstimate;
     ui->tableWidget->item(row,COL_STATUS)->setText(QString::number(key));
     ui->tableWidget->item(row,COL_KEY)->setText(prefs.getKeyCode(key));
-    if(prefs.getWriteTagsAutomatically())
-      writeToTagsAtRow(row);
+    if(prefs.getWriteToFilesAutomatically()){
+      writeToTagsAtRow(row, key);
+      writeToFilenameAtRow(row, key);
+    }
   }else{
-    ui->tableWidget->item(row,COL_STATUS)->setText(STATUS_FAILED);
-    ui->tableWidget->item(row,COL_KEY)->setText("Failed: " + error);
-    ui->tableWidget->item(row,COL_KEY)->setForeground(textError);
-    ui->tableWidget->item(row,COL_FILENAME)->setForeground(textError);
+    ui->tableWidget->item(row, COL_STATUS)->setText(STATUS_FAILED);
+    ui->tableWidget->item(row, COL_KEY)->setText("Failed: " + error);
+    ui->tableWidget->item(row, COL_KEY)->setForeground(textError);
+    ui->tableWidget->item(row, COL_FILENAME)->setForeground(textError);
   }
 }
 
@@ -510,7 +512,7 @@ void BatchWindow::analysisFinished(){
 //  this->close();
 }
 
-void BatchWindow::writeDetectedToTags(){
+void BatchWindow::writeDetectedToFiles(){
   if(addFilesWatcher.isRunning() || metadataReadWatcher.isRunning() || analysisWatcher.isRunning()){
     QApplication::beep();
     return;
@@ -518,31 +520,35 @@ void BatchWindow::writeDetectedToTags(){
   // get a new preferences object in case they've changed since the last run.
   prefs = Preferences();
   // which files to write to
-  int successfullyTagged = 0;
+  int successfullyWrittenToTags = 0;
+  int successfullyWrittenToFilename = 0;
   std::vector<int> rowsTried;
   foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()){
-    int chkRow = selectedIndex.row();
-    if(std::find(rowsTried.begin(), rowsTried.end(), chkRow) == rowsTried.end()){
-      if(writeToTagsAtRow(chkRow))
-        successfullyTagged++;
-      rowsTried.push_back(chkRow);
+    int row = selectedIndex.row();
+    if(std::find(rowsTried.begin(), rowsTried.end(), row) == rowsTried.end()){
+      // only write if there's a detected key
+      bool toIntOk = false;
+      int key = ui->tableWidget->item(row,COL_STATUS)->text().toInt(&toIntOk);
+      if(toIntOk && key >= 0){
+        if(writeToTagsAtRow(row, key))
+          successfullyWrittenToTags++;
+        if(writeToFilenameAtRow(row, key))
+          successfullyWrittenToFilename++;
+      }
+      rowsTried.push_back(row);
     }
   }
   QMessageBox msg;
-  msg.setText("Data written to tags in " + QString::number(successfullyTagged) + " files");
+  msg.setText("Data written to " + QString::number(successfullyWrittenToTags) + " tags and " + QString::number(successfullyWrittenToFilename) + " filenames");
   msg.exec();
 }
 
-bool BatchWindow::writeToTagsAtRow(int row){
-  // only write if there's a detected key
-  bool toIntOk = false;
-  int key = ui->tableWidget->item(row,COL_STATUS)->text().toInt(&toIntOk);
-  if(!toIntOk || key < 0)
-    return false;
+bool BatchWindow::writeToTagsAtRow(int row, int key){
   TagLibMetadata md(ui->tableWidget->item(row,COL_FILEPATH)->text());
   QString written = md.writeKeyToMetadata(key,prefs);
   if(written.isEmpty())
     return false;
+  // reflect changes in table widget
   for(int i=0; i<(signed)written.size(); i++){
     int col = COL_TAG_COMMENT; // default
     if(written[i] == 'g') col = COL_TAG_GROUPING;
@@ -555,16 +561,52 @@ bool BatchWindow::writeToTagsAtRow(int row){
   return true;
 }
 
+bool BatchWindow::writeToFilenameAtRow(int row, int key){
+  QString dataToWrite = prefs.getKeyCode(key);
+  QFile file(ui->tableWidget->item(row,COL_FILEPATH)->text());
+  QString path = file.fileName().left(file.fileName().lastIndexOf("/") + 1);
+  QString extn = file.fileName().mid(file.fileName().lastIndexOf("."));
+  QString name = file.fileName().mid(file.fileName().lastIndexOf("/") + 1);
+  name = name.left(name.length() - extn.length());
+  bool writtenPrefix = false;
+  if(prefs.getWriteToFilePrefix()){
+    if(name.left(dataToWrite.length()) != dataToWrite){
+      name = dataToWrite + prefs.getFilenameDelimiter() + name;
+      writtenPrefix = file.rename(path + name + extn);
+    }
+  }
+  bool writtenSuffix = false;
+  if(prefs.getWriteToFileSuffix()){
+    if(name.right(dataToWrite.length()) != dataToWrite){
+      name = name + prefs.getFilenameDelimiter() + dataToWrite;
+      writtenSuffix = file.rename(path + name + extn);
+    }
+  }
+  if(writtenPrefix || writtenSuffix){
+    // reflect changes in table widget
+    ui->tableWidget->item(row,COL_FILEPATH)->setText(path + name + extn);
+    ui->tableWidget->item(row,COL_FILENAME)->setText(name + extn);
+    ui->tableWidget->item(row,COL_FILENAME)->setForeground(textSuccess);
+    return true;
+  }
+  return false;
+}
+
 void BatchWindow::clearDetected(){
   std::vector<int> rowsCleared;
   foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()){
-    int chkRow = selectedIndex.row();
-    if(std::find(rowsCleared.begin(), rowsCleared.end(), chkRow) == rowsCleared.end()){
-      if(ui->tableWidget->item(chkRow,COL_KEY) != 0){
-        ui->tableWidget->item(chkRow,COL_STATUS)->setText(STATUS_TAGSREAD);
-        ui->tableWidget->item(chkRow,COL_KEY)->setText("");
+    int row = selectedIndex.row();
+    if(std::find(rowsCleared.begin(), rowsCleared.end(), row) == rowsCleared.end()){
+      if(ui->tableWidget->item(row, COL_KEY) != 0){
+        ui->tableWidget->item(row, COL_STATUS)->setText(STATUS_TAGSREAD);
+        ui->tableWidget->item(row, COL_KEY)->setText("");
+        // clear text colours
+        for(int col = 0; col < ui->tableWidget->columnCount(); col++)
+          if(!ui->tableWidget->isColumnHidden(col))
+            if(ui->tableWidget->item(row, col) != 0)
+              ui->tableWidget->item(row, col)->setForeground(textDefault);
       }
-      rowsCleared.push_back(chkRow);
+      rowsCleared.push_back(row);
     }
   }
 }

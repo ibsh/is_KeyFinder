@@ -269,10 +269,28 @@ Preferences::Preferences(){
     writeToTagGrouping = false;
     writeToTagKey = false;
   }
-  if(settings.contains("writeTagsAutomatically")){
-    writeTagsAutomatically = settings.value("writeTagsAutomatically").toBool();
+  if(settings.contains("writeToFilePrefix")){
+    writeToFilePrefix = settings.value("writeToFilePrefix").toBool();
   }else{
-    writeTagsAutomatically = false;
+    writeToFilePrefix = false;
+  }
+  if(settings.contains("writeToFileSuffix")){
+    writeToFileSuffix = settings.value("writeToFileSuffix").toBool();
+  }else{
+    writeToFileSuffix = false;
+  }
+  if(settings.contains("filenameDelimiter")){
+    filenameDelimiter = settings.value("filenameDelimiter").toString();
+  }else{
+    filenameDelimiter = " - ";
+  }
+  if(settings.contains("writeToFilesAutomatically")){
+    writeToFilesAutomatically = settings.value("writeToFilesAutomatically").toBool();
+  }else if(settings.contains("writeTagsAutomatically")){
+    // backward compatibility for pre 1.14
+    writeToFilesAutomatically = settings.value("writeTagsAutomatically").toBool();
+  }else{
+    writeToFilesAutomatically = false;
   }
   settings.endGroup();
 
@@ -463,7 +481,10 @@ void Preferences::save(){
   settings.setValue("writeToTagComment", writeToTagComment);
   settings.setValue("writeToTagGrouping", writeToTagGrouping);
   settings.setValue("writeToTagKey", writeToTagKey);
-  settings.setValue("writeTagsAutomatically", writeTagsAutomatically);
+  settings.setValue("writeToFilePrefix", writeToFilePrefix);
+  settings.setValue("writeToFileSuffix", writeToFileSuffix);
+  settings.setValue("filenameDelimiter", filenameDelimiter);
+  settings.setValue("writeToFilesAutomatically", writeToFilesAutomatically);
   settings.endGroup();
 
   settings.beginGroup("batch");
@@ -494,7 +515,10 @@ Preferences& Preferences::operator=(const Preferences& that){
     writeToTagComment = that.writeToTagComment;
     writeToTagGrouping = that.writeToTagGrouping;
     writeToTagKey = that.writeToTagKey;
-    writeTagsAutomatically = that.writeTagsAutomatically;
+    writeToFilePrefix = that.writeToFilePrefix;
+    writeToFileSuffix = that.writeToFileSuffix;
+    filenameDelimiter = that.filenameDelimiter;
+    writeToFilesAutomatically = that.writeToFilesAutomatically;
     skipFilesWithExistingTags = that.skipFilesWithExistingTags;
     parallelBatchJobs = that.parallelBatchJobs;
     iTunesLibraryPath = that.iTunesLibraryPath;
@@ -507,17 +531,20 @@ Preferences& Preferences::operator=(const Preferences& that){
   return *this;
 }
 
-bool         Preferences::getWriteTagsAutomatically()    const { return writeTagsAutomatically; }
+bool         Preferences::getWriteToFilesAutomatically() const { return writeToFilesAutomatically; }
 bool         Preferences::getParallelBatchJobs()         const { return parallelBatchJobs; }
 bool         Preferences::getWriteToTagComment()         const { return writeToTagComment; }
 bool         Preferences::getWriteToTagGrouping()        const { return writeToTagGrouping; }
 bool         Preferences::getWriteToTagKey()             const { return writeToTagKey; }
+bool         Preferences::getWriteToFilePrefix()         const { return writeToFilePrefix; }
+bool         Preferences::getWriteToFileSuffix()         const { return writeToFileSuffix; }
 bool         Preferences::getSkipFilesWithExistingTags() const { return skipFilesWithExistingTags; }
 tag_format_t Preferences::getTagFormat()                 const { return tagFormat; }
 int          Preferences::getDFactor()                   const { return dFactor; }
 QString      Preferences::getITunesLibraryPath()         const { return iTunesLibraryPath; }
 QString      Preferences::getTraktorLibraryPath()        const { return traktorLibraryPath; }
 QString      Preferences::getSeratoLibraryPath()         const { return seratoLibraryPath; }
+QString      Preferences::getFilenameDelimiter()         const { return filenameDelimiter; }
 QStringList  Preferences::getCustomKeyCodes()            const { return customKeyCodes; }
 QByteArray   Preferences::getBatchWindowState()          const { return batchWindowState; }
 QByteArray   Preferences::getBatchWindowGeometry()       const { return batchWindowGeometry; }
@@ -543,16 +570,19 @@ float                           Preferences::getDirectSkStretch()           cons
 float                           Preferences::getDetunedBandWeight()         const { return core.getDetunedBandWeight(); }
 std::vector<float>              Preferences::getCustomToneProfile()         const { return core.getCustomToneProfile(); }
 
-void Preferences::setWriteTagsAutomatically(bool autoTags)          { writeTagsAutomatically = autoTags; }
+void Preferences::setWriteToFilesAutomatically(bool autoWrite)      { writeToFilesAutomatically = autoWrite; }
 void Preferences::setWriteToTagComment(bool cmt)                    { writeToTagComment = cmt; }
 void Preferences::setWriteToTagGrouping(bool grp)                   { writeToTagGrouping = grp; }
 void Preferences::setWriteToTagKey(bool key)                        { writeToTagKey = key; }
+void Preferences::setWriteToFilePrefix(bool pre)                    { writeToFilePrefix = pre; }
+void Preferences::setWriteToFileSuffix(bool suf)                    { writeToFileSuffix = suf; }
 void Preferences::setSkipFilesWithExistingTags(bool skip)           { skipFilesWithExistingTags = skip; }
 void Preferences::setTagFormat(tag_format_t fmt)                    { tagFormat = fmt; }
 void Preferences::setDFactor(int factor)                            { dFactor = factor; }
 void Preferences::setITunesLibraryPath(const QString& path)         { iTunesLibraryPath = path; }
 void Preferences::setTraktorLibraryPath(const QString& path)        { traktorLibraryPath = path; }
 void Preferences::setSeratoLibraryPath(const QString& path)         { seratoLibraryPath = path; }
+void Preferences::setFilenameDelimiter(const QString & delim)       { filenameDelimiter = delim; }
 void Preferences::setCustomKeyCodes(const QStringList& codes)       { customKeyCodes = codes; }
 void Preferences::setBatchWindowState(const QByteArray& a)          { batchWindowState = a; }
 void Preferences::setBatchWindowGeometry(const QByteArray& a)       { batchWindowGeometry = a; }
