@@ -23,7 +23,7 @@
 #define KeyDetectionResult_H
 
 #include <QObject>
-#include "libkeyfinder/keyfinderresult.h"
+#include "keyfinder/keyfinderresult.h"
 
 class KeyFinderResultWrapper{
 public:

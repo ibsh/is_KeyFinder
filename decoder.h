@@ -24,8 +24,8 @@
 
 #include <QString>
 
-#include "libkeyfinder/exception.h"
-#include "libkeyfinder/audiodata.h"
+#include "keyfinder/exception.h"
+#include "keyfinder/audiodata.h"
 
 class AudioFileDecoder{
 public:

@@ -32,7 +32,7 @@
 
 #include <vector>
 
-#include "libkeyfinder/chromagram.h"
+#include "keyfinder/chromagram.h"
 
 #include "preferences.h"
 #include "asynckeyprocess.h"

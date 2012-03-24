@@ -36,7 +36,7 @@
 #include <vector>
 #include <cstring>
 
-#include "libkeyfinder/parameters.h"
+#include "keyfinder/parameters.h"
 
 enum tag_format_t{
   TAG_FORMAT_KEYS,

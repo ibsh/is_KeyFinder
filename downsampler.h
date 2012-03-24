@@ -22,8 +22,8 @@
 #ifndef DOWNSAMPLER_H
 #define DOWNSAMPLER_H
 
-#include "libkeyfinder/audiodata.h"
-#include "libkeyfinder/exception.h"
+#include "keyfinder/audiodata.h"
+#include "keyfinder/exception.h"
 
 class Downsampler{
 public:

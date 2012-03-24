@@ -27,10 +27,10 @@
 
 #include <vector>
 
-#include "libkeyfinder/keyfinder.h"
-#include "libkeyfinder/exception.h"
-#include "libkeyfinder/audiodata.h"
-#include "libkeyfinder/keyfinderresult.h"
+#include "keyfinder/keyfinder.h"
+#include "keyfinder/exception.h"
+#include "keyfinder/audiodata.h"
+#include "keyfinder/keyfinderresult.h"
 
 #include "preferences.h"
 #include "decoder.h"
