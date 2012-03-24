@@ -173,7 +173,13 @@ Preferences::Preferences(){
     ctp.push_back(settings.value("min9").toFloat());
     ctp.push_back(settings.value("min10").toFloat());
     ctp.push_back(settings.value("min11").toFloat());
-    core.setCustomToneProfile(ctp);
+    try{
+      core.setCustomToneProfile(ctp);
+    }catch(KeyFinder::Exception& e){
+      qDebug("LibKeyFinder Exception: %s", e.what().c_str());
+    }catch(...){
+      qDebug("Caught unknown exception setting custom tone profile.");
+    }
   }
   settings.endGroup();
 
