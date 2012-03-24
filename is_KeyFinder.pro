@@ -130,17 +130,17 @@ win32{
 	INCLUDEPATH += C:/MSYS/local/include
 	DEPENDPATH += C:/MSYS/local/bin
 	LIBS += -LC:/MSYS/local/bin
-  LIBS += -lkeyfinder
+	LIBS += -lkeyfinder0
 	LIBS += -lavcodec
 	LIBS += -lavformat
 	LIBS += -lavutil
 	LIBS += -lsamplerate-0
 	LIBS += -lfftw3-3
 
-	INCLUDEPATH += $$PWD/../Desktop/taglib-1.7
-	INCLUDEPATH += $$PWD/../Desktop/taglib-1.7/include
-	DEPENDPATH += $$PWD/../Desktop/taglib-1.7/taglib
-	LIBS += -L$$PWD/../Desktop/taglib-1.7/taglib -llibtag
+	INCLUDEPATH += C:/MSYS/home/user/taglib-1.7
+	INCLUDEPATH += C:/MSYS/home/user/taglib-1.7/include
+	DEPENDPATH += C:/MSYS/home/user/taglib-1.7/taglib
+	LIBS += -LC:/MSYS/home/user/taglib-1.7/taglib -llibtag
 
 	OTHER_FILES += is_KeyFinder.ico
 	RC_FILE = win32.rc

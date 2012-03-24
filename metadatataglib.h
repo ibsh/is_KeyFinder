@@ -35,6 +35,7 @@
 #include <tfile.h>
 #include <id3v1tag.h>
 #include <id3v2tag.h>
+#include <commentsframe.h>
 #include <textidentificationframe.h>
 #include <asftag.h>
 #include <apetag.h>
