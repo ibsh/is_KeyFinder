@@ -333,9 +333,8 @@ QList<QUrl> BatchWindow::getDirectoryContents(QDir dir) const{
 }
 
 void BatchWindow::addNewRow(QString fileUrl){
-  if(initialHelpLabel != NULL){
-    delete initialHelpLabel;
-    initialHelpLabel = NULL;
+  if(initialHelpLabel){
+    initialHelpLabel->deleteLater();
   }
   int newRow = ui->tableWidget->rowCount();
   ui->tableWidget->insertRow(newRow);

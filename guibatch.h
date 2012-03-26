@@ -98,7 +98,7 @@ private:
 
   // UI
   Ui::BatchWindow* ui;
-  QLabel* initialHelpLabel;
+  QPointer<QLabel> initialHelpLabel;
   MainMenuHandler* menuHandler;
   QBrush keyFinderRow;
   QBrush keyFinderAltRow;
