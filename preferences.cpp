@@ -631,9 +631,9 @@ QString Preferences::getKeyCode(int n) const{
   }
   QString defaultCode = defaultKeyCodes[n];
   QString customCode = customKeyCodes[n];
-  if(customCode == "" || tagFormat == 'k')
+  if(tagFormat == TAG_FORMAT_KEYS || customCode == "")
     return defaultCode;
-  else if(tagFormat == 'c')
+  else if(tagFormat == TAG_FORMAT_CUSTOM)
     return customCode;
   else
     return customCode + " " + defaultCode;
