@@ -19,17 +19,21 @@
 
 *************************************************************************/
 
-#ifndef KEYFINDERRESULTWRAPPER_H
-#define KEYFINDERRESULTWRAPPER_H
+#include "libkeyfindersingleton.h"
 
-#include <QString>
-#include "keyfinder/keyfinderresult.h"
+LibKeyFinderSingleton* LibKeyFinderSingleton::inst = NULL;
 
-class KeyFinderResultWrapper{
-public:
-  KeyFinder::KeyDetectionResult core;
-  int batchRow;
-  QString errorMessage;
-};
+QMutex singletonMutex;
 
-#endif // KEYFINDERRESULTWRAPPER_H
+LibKeyFinderSingleton* LibKeyFinderSingleton::getInstance(){
+  QMutexLocker locker(&singletonMutex);
+  if(inst == NULL)
+    inst = new LibKeyFinderSingleton();
+  return inst;
+}
+
+LibKeyFinderSingleton::LibKeyFinderSingleton(){ }
+
+KeyFinder::KeyFinder* LibKeyFinderSingleton::getKeyFinder(){
+  return &kf;
+}

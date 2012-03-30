@@ -37,6 +37,7 @@
 #include "downsampler.h"
 #include "asyncfileobject.h"
 #include "asynckeyresult.h"
+#include "libkeyfindersingleton.h"
 
 // trying this as a global function rather than an object...
 KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject&);

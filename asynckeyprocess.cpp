@@ -64,8 +64,8 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
     delete ds;
   }
 
-  static KeyFinder::KeyFinder keyFinder; // static because it retains useful resources between uses
-  result.core = keyFinder.findKey(*audio, object.prefs.core);
+  KeyFinder::KeyFinder* kf = LibKeyFinderSingleton::getInstance()->getKeyFinder();
+  result.core = kf->findKey(*audio, object.prefs.core);
 
   delete audio;
 

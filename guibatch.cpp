@@ -141,6 +141,7 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   // VALGRIND
 //  QList<QUrl> test;
 //  test.push_back(QUrl("/Users/ibrahimshaath/Desktop/test tracks"));
+//  test.push_back(QUrl("/Users/shaati01/QtProjects/is_KeyFinder_supt/test tracks"));
 //  receiveUrls(test);
 }
 

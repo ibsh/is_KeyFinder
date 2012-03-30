@@ -44,7 +44,8 @@ SOURCES += \
     os_windows.cpp \
     asyncfileobject.cpp \
     externalplaylist.cpp \
-    externalplaylistserato.cpp
+    externalplaylistserato.cpp \
+    libkeyfindersingleton.cpp
 
 HEADERS  += \
     decoderlibav.h \
@@ -84,7 +85,8 @@ HEADERS  += \
     _VERSION.h \
     asyncfileobject.h \
     externalplaylist.h \
-    externalplaylistserato.h
+    externalplaylistserato.h \
+    libkeyfindersingleton.h
 
 FORMS += \
     detailwindow.ui \
