@@ -77,6 +77,9 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   textDefault     = QBrush(QColor(  0,   0,   0));
   textSuccess     = QBrush(QColor(  0, 128,   0));
   textError       = QBrush(QColor(191,   0,   0));
+  sortColumn = -1;
+  allowSort = false;
+  connect(ui->tableWidget->horizontalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(headerClicked(int)));
 
   // Read music library
   ui->libraryWidget->insertRow(0);
@@ -173,7 +176,8 @@ void BatchWindow::setGuiDefaults(){
   ui->cancelBatchButton->setEnabled(false);
   ui->libraryWidget->setEnabled(true);
   ui->tableWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
-  ui->tableWidget->setSortingEnabled(true);
+  allowSort = true;
+  sortTableWidget();
   ui->tableWidget->resizeColumnsToContents();
   ui->tableWidget->resizeRowsToContents();
 }
@@ -191,7 +195,7 @@ void BatchWindow::setGuiRunning(const QString& msg, bool cancellable){
   ui->cancelBatchButton->setEnabled(cancellable);
   ui->libraryWidget->setEnabled(false);
   ui->tableWidget->setContextMenuPolicy(Qt::NoContextMenu);
-  ui->tableWidget->setSortingEnabled(false);
+  allowSort = false;
 }
 
 void BatchWindow::readLibraryFinished(){
@@ -407,13 +411,9 @@ void BatchWindow::metadataReadFinished(){
 }
 
 void BatchWindow::on_runBatchButton_clicked(){
-  // Get a new preferences object in case they've changed since the last run.
-  prefs = Preferences();
-
+  prefs = Preferences(); // Get a new preferences object in case they've changed since the last run.
   checkRowsForSkipping();
-
   setGuiRunning("Analysing (" + QString::number(QThreadPool::globalInstance()->maxThreadCount()) + " threads)...", true);
-
   runAnalysis();
 }
 
@@ -439,6 +439,7 @@ void BatchWindow::checkRowsForSkipping(){
 
     // otherwise, skip this file if all the relevant tags have data.
     // open question: what if tag is n/a?
+    // TODO: can we also take into account filename prefix/suffix? Would need to check against all possible key codes.
     int countSkip = 0;
     if(commentRelevant && !(ui->tableWidget->item(row,COL_TAG_COMMENT) == 0))
       countSkip++;
@@ -518,9 +519,9 @@ void BatchWindow::writeDetectedToFiles(){
     QApplication::beep();
     return;
   }
-  // get a new preferences object in case they've changed since the last run.
-  prefs = Preferences();
-  // which files to write to
+  setGuiRunning("Writing to files...", false);
+  prefs = Preferences(); // get a new preferences object in case they've changed since the last run.
+  // which files to write to?
   int successfullyWrittenToTags = 0;
   int successfullyWrittenToFilename = 0;
   std::vector<int> rowsTried;
@@ -542,6 +543,7 @@ void BatchWindow::writeDetectedToFiles(){
   QMessageBox msg;
   msg.setText("Data written to " + QString::number(successfullyWrittenToTags) + " tags and " + QString::number(successfullyWrittenToFilename) + " filenames");
   msg.exec();
+  setGuiDefaults();
 }
 
 bool BatchWindow::writeToTagsAtRow(int row, int key){
@@ -594,6 +596,7 @@ bool BatchWindow::writeToFilenameAtRow(int row, int key){
 }
 
 void BatchWindow::clearDetected(){
+  setGuiRunning("Clearing data...", false);
   std::vector<int> rowsCleared;
   foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()){
     int row = selectedIndex.row();
@@ -610,6 +613,7 @@ void BatchWindow::clearDetected(){
       rowsCleared.push_back(row);
     }
   }
+  setGuiDefaults();
 }
 
 void BatchWindow::deleteSelectedRows(){
@@ -619,6 +623,7 @@ void BatchWindow::deleteSelectedRows(){
     msg.exec();
     return;
   }
+  setGuiRunning("Deleting rows...", false);
   std::vector<int> rowsToDelete;
   foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()){
     int chkRow = selectedIndex.row();
@@ -631,6 +636,7 @@ void BatchWindow::deleteSelectedRows(){
       ui->tableWidget->removeRow(r);
     }
   }
+  setGuiDefaults();
 }
 
 void BatchWindow::copySelectedFromTableWidget(){
@@ -686,6 +692,25 @@ void BatchWindow::progressRangeChanged(int minimum, int maximum){
 
 void BatchWindow::progressValueChanged(int progressValue){
   ui->progressBar->setValue(progressValue);
+}
+
+void BatchWindow::headerClicked(int col){
+  sortColumn = col;
+  if(allowSort)
+    sortTableWidget();
+}
+
+void BatchWindow::sortTableWidget(){
+  if(sortColumn < 0)
+    return;
+  ui->tableWidget->sortByColumn(sortColumn);
+  for(int row = 0; row < ui->tableWidget->rowCount(); row++){
+    if(row % 2 == 0){
+      ui->tableWidget->item(row,COL_KEY)->setBackground(keyFinderRow);
+    }else{
+      ui->tableWidget->item(row,COL_KEY)->setBackground(keyFinderAltRow);
+    }
+  }
 }
 
 void BatchWindow::checkForNewVersion(){

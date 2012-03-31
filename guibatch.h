@@ -74,6 +74,8 @@ private:
   void setGuiDefaults();
   void setGuiRunning(const QString&, bool);
 
+  void sortTableWidget();
+
   int libraryOldIndex;
   QFutureWatcher<QList<ExternalPlaylistObject> > readLibraryWatcher;
   QFutureWatcher<QList<QUrl> > loadPlaylistWatcher;
@@ -106,9 +108,12 @@ private:
   QBrush textDefault;
   QBrush textSuccess;
   QBrush textError;
+  bool allowSort;
+  int sortColumn;
 private slots:
 
   void on_libraryWidget_cellClicked(int,int);
+  void headerClicked(int);
 
   void readLibraryFinished();
   void loadPlaylistFinished();
