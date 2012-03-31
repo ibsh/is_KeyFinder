@@ -72,6 +72,7 @@ private:
   void closeEvent(QCloseEvent*);
   Preferences prefs;
   void setGuiDefaults();
+  void setGuiRunning(const QString&, bool);
 
   int libraryOldIndex;
   QFutureWatcher<QList<ExternalPlaylistObject> > readLibraryWatcher;

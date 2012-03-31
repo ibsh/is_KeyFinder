@@ -38,7 +38,6 @@ SOURCES += \
     guidetail.cpp \
     guimenuhandler.cpp \
     guiprefs.cpp \
-    keyfinderapplication.cpp \
     asynckeyprocess.cpp \
     asyncmetadatareadprocess.cpp \
     os_windows.cpp \
@@ -76,7 +75,6 @@ HEADERS  += \
     guidetail.h \
     guimenuhandler.h \
     guiprefs.h \
-    keyfinderapplication.h \
     asynckeyprocess.h \
     asynckeyresult.h \
     asyncmetadatareadprocess.h \
@@ -96,8 +94,7 @@ FORMS += \
 
 OTHER_FILES += \
 		README \
-    win32.rc \
-    Info.plist
+    win32.rc
 
 UI_DIR = ui
 
@@ -118,7 +115,7 @@ unix|macx{
   LIBS += -lxqilla
 
   ICON = is_KeyFinder.icns
-  QMAKE_INFO_PLIST = Info.plist
+  QMAKE_INFO_PLIST =
 }
 
 macx{

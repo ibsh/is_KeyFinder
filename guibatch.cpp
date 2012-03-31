@@ -173,8 +173,25 @@ void BatchWindow::setGuiDefaults(){
   ui->cancelBatchButton->setEnabled(false);
   ui->libraryWidget->setEnabled(true);
   ui->tableWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
+  ui->tableWidget->setSortingEnabled(true);
   ui->tableWidget->resizeColumnsToContents();
   ui->tableWidget->resizeRowsToContents();
+}
+
+void BatchWindow::setGuiRunning(const QString& msg, bool cancellable){
+  if(cancellable){
+    progressRangeChanged(0,100);
+    progressValueChanged(0);
+  }else{
+    progressRangeChanged(0,0);
+    progressValueChanged(-1);
+  }
+  ui->statusLabel->setText(msg);
+  ui->runBatchButton->setEnabled(false);
+  ui->cancelBatchButton->setEnabled(cancellable);
+  ui->libraryWidget->setEnabled(false);
+  ui->tableWidget->setContextMenuPolicy(Qt::NoContextMenu);
+  ui->tableWidget->setSortingEnabled(false);
 }
 
 void BatchWindow::readLibraryFinished(){
@@ -220,12 +237,7 @@ void BatchWindow::on_libraryWidget_cellClicked(int row, int /*col*/){
   if(ui->libraryWidget->item(row, COL_PLAYLIST_SOURCE)->text() == SOURCE_KEYFINDER)
     return;
 
-  ui->libraryWidget->setEnabled(false);
-  ui->statusLabel->setText("Loading playlist...");
-  ui->runBatchButton->setEnabled(false);
-  ui->cancelBatchButton->setEnabled(false);
-  progressRangeChanged(0,0);
-  progressValueChanged(-1);
+  setGuiRunning("Loading playlist...", false);
 
   QString playlistName = ui->libraryWidget->item(row,COL_PLAYLIST_NAME)->text();
   QString playlistSource = ui->libraryWidget->item(row,COL_PLAYLIST_SOURCE)->text();
@@ -261,11 +273,7 @@ bool BatchWindow::receiveUrls(const QList<QUrl>& urls){
     return false;
   droppedFiles << urls;
   if(!addFilesWatcher.isRunning()){
-    ui->runBatchButton->setEnabled(false);
-    ui->libraryWidget->setEnabled(false);
-    progressRangeChanged(0,0);
-    progressValueChanged(-1);
-    ui->statusLabel->setText("Loading files...");
+    setGuiRunning("Loading files...", false);
     QFuture<void> addFileFuture = QtConcurrent::run(this,&BatchWindow::addDroppedFiles);
     addFilesWatcher.setFuture(addFileFuture);
   }
@@ -358,8 +366,7 @@ void BatchWindow::addFilesFinished(){
 }
 
 void BatchWindow::readMetadata(){
-  ui->statusLabel->setText("Reading tags...");
-  ui->cancelBatchButton->setEnabled(true);
+  setGuiRunning("Reading tags...", true);
   QList<AsyncFileObject> objects;
   for(int row = 0; row < (signed)ui->tableWidget->rowCount(); row++){
     if(ui->tableWidget->item(row,COL_STATUS)->text() == STATUS_NEW)
@@ -404,11 +411,8 @@ void BatchWindow::on_runBatchButton_clicked(){
   prefs = Preferences();
 
   checkRowsForSkipping();
-  ui->runBatchButton->setEnabled(false);
-  ui->cancelBatchButton->setEnabled(true);
-  ui->libraryWidget->setEnabled(false);
-  ui->tableWidget->setContextMenuPolicy(Qt::NoContextMenu); // so that no tags can be written while busy
-  ui->statusLabel->setText("Analysing (" + QString::number(QThreadPool::globalInstance()->maxThreadCount()) + " threads)...");
+
+  setGuiRunning("Analysing (" + QString::number(QThreadPool::globalInstance()->maxThreadCount()) + " threads)...", true);
 
   runAnalysis();
 }
@@ -478,10 +482,7 @@ void BatchWindow::runAnalysis(){
 }
 
 void BatchWindow::on_cancelBatchButton_clicked(){
-  ui->statusLabel->setText("Cancelling...");
-  ui->cancelBatchButton->setEnabled(false);
-  progressRangeChanged(0, 0);
-  progressValueChanged(-1);
+  setGuiRunning("Cancelling...", false);
   metadataReadWatcher.cancel();
   analysisWatcher.cancel();
 }

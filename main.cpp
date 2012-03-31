@@ -23,7 +23,6 @@
 #include <QMenuBar>
 #include <QKeySequence>
 
-#include "keyfinderapplication.h"
 #include "guidetail.h"
 #include "guibatch.h"
 #include "guimenuhandler.h"
@@ -115,7 +114,7 @@ int main(int argc, char* argv[]){
 
   qInstallMsgHandler(LoggingHandler);
 
-  KeyFinderApplication a(argc, argv);
+  QApplication a(argc, argv);
 
   MainMenuHandler* menuHandler = new MainMenuHandler(0);
 
