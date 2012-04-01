@@ -1,9 +1,8 @@
 ; keyfinder.nsi
 ;
-; This script is based on example1.nsi, but it remember the directory, 
-; has uninstall support and (optionally) installs start menu shortcuts.
+; This script installs KeyFinder in Program Files, remembers the directory, 
+; has uninstall support and (optionally) installs start menu & desktop shortcuts.
 ;
-; It will install example2.nsi into a directory that the user selects,
 
 ;--------------------------------
 
@@ -11,7 +10,7 @@
 Name "KeyFinder"
 
 ; The file to write
-OutFile "KeyFinder-0.15.exe"
+OutFile "KeyFinder-1.15.exe"
 
 ; The default installation directory
 InstallDir $PROGRAMFILES\KeyFinder
