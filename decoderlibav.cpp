@@ -49,7 +49,7 @@ KeyFinder::AudioData* LibAvDecoder::decodeFile(const QString& filePath){
     throw KeyFinder::Exception(ss.str());
   }
 
-  if(av_find_stream_info(fCtx) < 0){
+  if(avformat_find_stream_info(fCtx,NULL) < 0){
     throw KeyFinder::Exception("Could not find stream information");
   }
   int audioStream = -1;
