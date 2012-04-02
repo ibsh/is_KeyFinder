@@ -302,7 +302,7 @@ void BatchWindow::addDroppedFiles(){
 
     // check for symlink (.isSymLink doesn't seem to work on Lion)
     if(fileInfo.isSymLink() || fileInfo.symLinkTarget() != ""){
-      droppedFiles.push_back(QUrl(fileInfo.symLinkTarget()));
+	  droppedFiles.push_back(QUrl::fromLocalFile(fileInfo.symLinkTarget()));
       continue;
     }
 
@@ -637,6 +637,7 @@ void BatchWindow::deleteSelectedRows(){
     }
   }
   setGuiDefaults();
+  this->setWindowTitle("KeyFinder - Batch Analysis - " + QString::number(ui->tableWidget->rowCount()) + " files");
 }
 
 void BatchWindow::copySelectedFromTableWidget(){
