@@ -1,3 +1,5 @@
+!include "Version.txt"
+
 ; keyfinder.nsi
 ;
 ; This script installs KeyFinder in Program Files, remembers the directory, 
@@ -7,10 +9,10 @@
 ;--------------------------------
 
 ; The name of the installer
-Name "KeyFinder"
+Name "KeyFinder ${VERSION}"
 
 ; The file to write
-OutFile "KeyFinder-1.15.exe"
+OutFile "KeyFinder-${VERSION}.exe"
 
 ; The default installation directory
 InstallDir $PROGRAMFILES\KeyFinder
