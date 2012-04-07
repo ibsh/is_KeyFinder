@@ -94,8 +94,8 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   QFuture<QList<ExternalPlaylistObject> > readLibraryFuture = QtConcurrent::run(ExternalPlaylist::readLibrary, prefs);
   readLibraryWatcher.setFuture(readLibraryFuture);
 
-  //relative sizing on Mac only
-#ifdef Q_OS_MAC
+  //relative sizing on Mac/Linux only
+#ifndef Q_OS_WIN
   QFont smallerFont;
   smallerFont.setPointSize(smallerFont.pointSize() - 2);
   ui->tableWidget->setFont(smallerFont);
