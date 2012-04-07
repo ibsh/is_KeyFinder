@@ -58,15 +58,14 @@ QMenuBar* MainMenuHandler::newMenuBar(){
   menuFile->addAction("New Batch Window",this,SLOT(new_Batch_Window()),QKeySequence("Ctrl+Shift+N"));
   menuFile->addSeparator();
   menuFile->addAction("Close Window",this,SLOT(close_Window()),QKeySequence("Ctrl+W"));
-#ifdef Q_OS_MAC
-  menuFile->addAction("Preferences",this,SLOT(preferences()));
-  menuFile->addAction("About",this,SLOT(about()));
-#endif
 #ifdef Q_OS_WIN
   QMenu* menuEdit = menuBar->addMenu("Edit");
   menuEdit->addAction("Preferences",this,SLOT(preferences()));
   QMenu* menuHelp = menuBar->addMenu("Help");
   menuHelp->addAction("About",this,SLOT(about()));
+#else
+  menuFile->addAction("Preferences",this,SLOT(preferences()));
+  menuFile->addAction("About",this,SLOT(about()));
 #endif
   return menuBar;
 }
