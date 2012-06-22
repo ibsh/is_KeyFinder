@@ -52,9 +52,9 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
 
   // downsample if necessary
   if(object.prefs.getDFactor() > 1){
-    Downsampler* ds = Downsampler::getDownsampler(object.prefs.getDFactor(),audio->getFrameRate(),object.prefs.getLastFreq());
+    Downsampler* ds = Downsampler::getDownsampler(object.prefs.getDFactor(), audio->getFrameRate(), object.prefs.getLastFreq());
     try{
-      audio = ds->downsample(audio,object.prefs.getDFactor());
+      audio = ds->downsample(audio, object.prefs.getDFactor());
     }catch(KeyFinder::Exception& e){
       delete audio;
       delete ds;

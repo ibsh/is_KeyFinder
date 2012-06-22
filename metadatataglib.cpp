@@ -335,7 +335,11 @@ int TagLibMetadata::setComment(const QString& cmt){
     return 0;
   }
 
-  // iTunes hack... is it worth doing this for other id3v2 formats?
+  // non-FLAC behaviour
+  f->tag()->setComment(TagLib::String(cmt.toLocal8Bit().data()));
+  f->save();
+
+  // iTunes hack in addition... is it worth doing this for other id3v2 formats?
   TagLib::MPEG::File* fileTestMpeg = dynamic_cast<TagLib::MPEG::File*>(f);
   if(fileTestMpeg != NULL){
     TagLib::ID3v2::Tag* tagTestId3v2 = fileTestMpeg->ID3v2Tag();
@@ -363,9 +367,6 @@ int TagLibMetadata::setComment(const QString& cmt){
     }
   }
 
-  // default behaviour
-  f->tag()->setComment(TagLib::String(cmt.toLocal8Bit().data()));
-  f->save();
   return 0;
 }
 
