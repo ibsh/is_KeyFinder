@@ -313,6 +313,11 @@ Preferences::Preferences(){
   }else{
     skipFilesWithExistingTags = false;
   }
+  if(settings.contains("maxDuration")){
+    maxDuration = settings.value("maxDuration").toInt();
+  }else{
+    maxDuration = 60;
+  }
   settings.endGroup();
 
   // ============================= Library ==================================
@@ -496,6 +501,7 @@ void Preferences::save(){
   settings.beginGroup("batch");
   settings.setValue("parallelBatchJobs", parallelBatchJobs);
   settings.setValue("skipFilesWithExistingTags", skipFilesWithExistingTags);
+  settings.setValue("maxDuration", maxDuration);
   settings.endGroup();
 
   settings.beginGroup("library");
@@ -526,6 +532,7 @@ Preferences& Preferences::operator=(const Preferences& that){
     filenameDelimiter = that.filenameDelimiter;
     writeToFilesAutomatically = that.writeToFilesAutomatically;
     skipFilesWithExistingTags = that.skipFilesWithExistingTags;
+    maxDuration = that.maxDuration;
     parallelBatchJobs = that.parallelBatchJobs;
     iTunesLibraryPath = that.iTunesLibraryPath;
     traktorLibraryPath = that.traktorLibraryPath;
@@ -545,6 +552,7 @@ bool         Preferences::getWriteToTagKey()             const { return writeToT
 bool         Preferences::getWriteToFilePrefix()         const { return writeToFilePrefix; }
 bool         Preferences::getWriteToFileSuffix()         const { return writeToFileSuffix; }
 bool         Preferences::getSkipFilesWithExistingTags() const { return skipFilesWithExistingTags; }
+int          Preferences::getMaxDuration()               const { return maxDuration; }
 tag_format_t Preferences::getTagFormat()                 const { return tagFormat; }
 int          Preferences::getDFactor()                   const { return dFactor; }
 QString      Preferences::getITunesLibraryPath()         const { return iTunesLibraryPath; }
@@ -583,6 +591,7 @@ void Preferences::setWriteToTagKey(bool key)                        { writeToTag
 void Preferences::setWriteToFilePrefix(bool pre)                    { writeToFilePrefix = pre; }
 void Preferences::setWriteToFileSuffix(bool suf)                    { writeToFileSuffix = suf; }
 void Preferences::setSkipFilesWithExistingTags(bool skip)           { skipFilesWithExistingTags = skip; }
+void Preferences::setMaxDuration(int max)                           { maxDuration = max; }
 void Preferences::setTagFormat(tag_format_t fmt)                    { tagFormat = fmt; }
 void Preferences::setDFactor(int factor)                            { dFactor = factor; }
 void Preferences::setITunesLibraryPath(const QString& path)         { iTunesLibraryPath = path; }

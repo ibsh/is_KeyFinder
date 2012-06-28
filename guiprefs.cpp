@@ -85,6 +85,7 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   ui->writeToFileSuffix->setChecked(p.getWriteToFileSuffix());
   ui->filenameDelimiter->setText(p.getFilenameDelimiter());
   ui->skipFilesWithExistingTags->setChecked(p.getSkipFilesWithExistingTags());
+  ui->maxDuration->setValue(p.getMaxDuration());
   ui->temporalWindow->setCurrentIndex(listTemporalWindow.indexOf(p.getTemporalWindow()));
   ui->segmentation->setCurrentIndex(listSegmentation.indexOf(p.getSegmentation()));
   ui->similarityMeasure->setCurrentIndex(listSimilarityMeasure.indexOf(p.getSimilarityMeasure()));
@@ -190,6 +191,7 @@ void PrefsDialog::on_savePrefsButton_clicked(){
   p.setWriteToFileSuffix(ui->writeToFileSuffix->isChecked());
   p.setFilenameDelimiter(ui->filenameDelimiter->text());
   p.setSkipFilesWithExistingTags(ui->skipFilesWithExistingTags->isChecked());
+  p.setMaxDuration(ui->maxDuration->value());
   p.setTemporalWindow(listTemporalWindow[ui->temporalWindow->currentIndex()]);
   p.setSegmentation(listSegmentation[ui->segmentation->currentIndex()]);
   p.setSimilarityMeasure(listSimilarityMeasure[ui->similarityMeasure->currentIndex()]);

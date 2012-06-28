@@ -38,7 +38,7 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
   }
 
   try{
-    audio = decoder->decodeFile(object.filePath);
+    audio = decoder->decodeFile(object.filePath, object.prefs.getMaxDuration());
     delete decoder;
   }catch(KeyFinder::Exception& e){
     delete audio;

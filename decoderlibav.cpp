@@ -23,7 +23,7 @@
 
 QMutex codecMutex; // I don't think this should be necessary if I get the lock manager right.
 
-KeyFinder::AudioData* LibAvDecoder::decodeFile(const QString& filePath){
+KeyFinder::AudioData* LibAvDecoder::decodeFile(const QString& filePath, const int maxDuration){
 
   QMutexLocker codecMutexLocker(&codecMutex); // mutex the preparatory section of this method
 
@@ -50,6 +50,7 @@ KeyFinder::AudioData* LibAvDecoder::decodeFile(const QString& filePath){
   }
 
   if(av_find_stream_info(fCtx) < 0){
+    av_close_input_file(fCtx);
     throw KeyFinder::Exception("Could not find stream information");
   }
   int audioStream = -1;
@@ -60,19 +61,32 @@ KeyFinder::AudioData* LibAvDecoder::decodeFile(const QString& filePath){
     }
   }
   if(audioStream == -1){
+    av_close_input_file(fCtx);
     throw KeyFinder::Exception("Could not find an audio stream");
+  }
+
+  // Determine duration
+  int durationSeconds = fCtx->duration / AV_TIME_BASE;
+  int durationMinutes = durationSeconds / 60;
+  if(durationSeconds > maxDuration * 60){
+    av_close_input_file(fCtx);
+    std::ostringstream ss;
+    ss << "Duration (" << durationMinutes << ":" << std::setw(2) << std::setfill('0') << durationSeconds % 60 << ") exceeds specified maximum (" << std::setw(1) << maxDuration << ":00)";
+    throw KeyFinder::Exception(ss.str());
   }
 
   // Determine stream codec
   cCtx = fCtx->streams[audioStream]->codec;
   codec = avcodec_find_decoder(cCtx->codec_id);
   if(codec == NULL){
+    av_close_input_file(fCtx);
     throw KeyFinder::Exception("Audio stream has unsupported codec");
   }
 
   // Open codec
   int codecOpenResult = avcodec_open2(cCtx, codec, &dict);
   if(codecOpenResult < 0){
+    av_close_input_file(fCtx);
     std::ostringstream ss;
     ss << "Could not open audio codec: " << codec->long_name << " (" << codecOpenResult << ")";
     throw KeyFinder::Exception(ss.str());
@@ -84,6 +98,8 @@ KeyFinder::AudioData* LibAvDecoder::decodeFile(const QString& filePath){
         AV_SAMPLE_FMT_S16, cCtx->sample_fmt,
         0, 0, 0, 0);
   if(rsCtx == NULL){
+    avcodec_close(cCtx);
+    av_close_input_file(fCtx);
     throw KeyFinder::Exception("Could not create ReSampleContext");
   }
 
@@ -109,6 +125,8 @@ KeyFinder::AudioData* LibAvDecoder::decodeFile(const QString& filePath){
           if(badPacketCount < 100){
             badPacketCount++;
           }else{
+            avcodec_close(cCtx);
+            av_close_input_file(fCtx);
             throw KeyFinder::Exception("100 bad packets");
           }
         }

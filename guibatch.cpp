@@ -501,7 +501,7 @@ void BatchWindow::analysisResultReadyAt(int index){
     }
   }else{
     ui->tableWidget->item(row, COL_STATUS)->setText(STATUS_FAILED);
-    ui->tableWidget->item(row, COL_KEY)->setText("Failed: " + error);
+    ui->tableWidget->item(row, COL_KEY)->setText("Exception: " + error);
     ui->tableWidget->item(row, COL_KEY)->setForeground(textError);
     ui->tableWidget->item(row, COL_FILENAME)->setForeground(textError);
   }

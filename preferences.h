@@ -60,6 +60,7 @@ public:
   bool getWriteToFilePrefix() const;
   bool getWriteToFileSuffix() const;
   bool getSkipFilesWithExistingTags() const;
+  int getMaxDuration() const;
   tag_format_t getTagFormat() const;
   int getDFactor() const;
   QString getITunesLibraryPath() const;
@@ -101,6 +102,7 @@ public:
   void setWriteToFilePrefix(bool);
   void setWriteToFileSuffix(bool);
   void setSkipFilesWithExistingTags(bool);
+  void setMaxDuration(int);
   void setTagFormat(tag_format_t);
   void setDFactor(int);
   void setITunesLibraryPath(const QString&);
@@ -146,6 +148,7 @@ private:
   bool writeToFilePrefix;
   bool writeToFileSuffix;
   bool skipFilesWithExistingTags;
+  int maxDuration;
   tag_format_t tagFormat;
   int dFactor;
   QString iTunesLibraryPath;

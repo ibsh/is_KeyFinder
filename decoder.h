@@ -23,13 +23,14 @@
 #define AUDIOFILEDECODER_H
 
 #include <QString>
+#include <iomanip>
 
 #include "keyfinder/exception.h"
 #include "keyfinder/audiodata.h"
 
 class AudioFileDecoder{
 public:
-  virtual KeyFinder::AudioData* decodeFile(const QString&) = 0;
+  virtual KeyFinder::AudioData* decodeFile(const QString&, const int) = 0;
   static AudioFileDecoder* getDecoder();
   virtual ~AudioFileDecoder();
 };
