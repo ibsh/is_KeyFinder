@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>831</width>
-    <height>573</height>
+    <height>585</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -418,7 +418,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -447,7 +447,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -476,7 +476,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -505,7 +505,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -534,7 +534,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -563,7 +563,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -582,7 +582,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -611,7 +611,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -650,7 +650,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -669,7 +669,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -698,7 +698,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -727,7 +727,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -876,7 +876,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -895,7 +895,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -914,7 +914,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -933,7 +933,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -952,7 +952,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -971,7 +971,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -990,7 +990,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -1009,7 +1009,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -1028,7 +1028,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -1047,7 +1047,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -1066,7 +1066,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -1085,7 +1085,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -1104,7 +1104,7 @@
                 </size>
                </property>
                <property name="maxLength">
-                <number>10</number>
+                <number>50</number>
                </property>
               </widget>
              </item>

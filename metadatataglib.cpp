@@ -86,7 +86,6 @@ TagLibMetadata::TagLibMetadata(const QString& filePath){
 
   // or else...
   f = NULL;
-
 #ifdef Q_OS_WIN
   qDebug("TagLib returned NULL File for %s",utf16_to_utf8(filePathCh));
 #else
@@ -323,7 +322,7 @@ QString TagLibMetadata::writeKeyToMetadata(int key, const Preferences& prefs){
 
 int TagLibMetadata::setComment(const QString& cmt){
   if(f == NULL || !f->isValid()){
-    qDebug("Cannot set comment tag on invalid file object");
+    qDebug("Cannot set Comment tag on invalid file object");
     return 1;
   }
 
@@ -373,7 +372,7 @@ int TagLibMetadata::setComment(const QString& cmt){
 int TagLibMetadata::setGrouping(const QString& grp){
 
   if(f == NULL || !f->isValid()){
-    qDebug("Cannot set grouping tag on invalid file object");
+    qDebug("Cannot set Grouping tag on invalid file object");
     return 1;
   }
 
@@ -460,7 +459,7 @@ int TagLibMetadata::setGrouping(const QString& grp){
 int TagLibMetadata::setKey(const QString& key){
 
   if(f == NULL || !f->isValid()){
-    qDebug("Cannot set grouping tag on invalid file object");
+    qDebug("Cannot set Key tag on invalid file object");
     return 1;
   }
 
