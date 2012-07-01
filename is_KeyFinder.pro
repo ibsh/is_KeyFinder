@@ -16,6 +16,20 @@
 # along with KeyFinder.  If not, see <http://www.gnu.org/licenses/>.
 
 
+# CURRENT DEPENDENCIES:
+# qt               4.7.4
+# libkeyfinder     0.1.5
+#  |-> boost      1.49.0
+#  \-> fftw        3.3.2
+# libav            0.7.6
+# libsamplerate    0.1.8
+# taglib           1.7.2
+#
+# MAC (AND LINUX?) ONLY:
+# xerces-c         3.1.1
+# xqilla           2.3.0
+
+
 QT += core
 QT += gui
 QT += xml
@@ -136,10 +150,10 @@ win32{
 	LIBS += -lsamplerate-0
 	LIBS += -lfftw3-3
 
-	INCLUDEPATH += C:/MSYS/home/user/taglib-1.7
-	INCLUDEPATH += C:/MSYS/home/user/taglib-1.7/include
-	DEPENDPATH += C:/MSYS/home/user/taglib-1.7/taglib
-	LIBS += -LC:/MSYS/home/user/taglib-1.7/taglib -llibtag
+	INCLUDEPATH += C:/MSYS/home/user/taglib-1.7.2
+	INCLUDEPATH += C:/MSYS/home/user/taglib-1.7.2/include
+	DEPENDPATH += C:/MSYS/home/user/taglib-1.7.2/taglib
+	LIBS += -LC:/MSYS/home/user/taglib-1.7.2/taglib -llibtag
 
 	OTHER_FILES += is_KeyFinder.ico
 	RC_FILE = win32.rc
