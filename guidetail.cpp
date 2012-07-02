@@ -89,8 +89,7 @@ void DetailWindow::runAnalysis(){
   ui->runButton->setEnabled(false);
   // and proceed
   QList<AsyncFileObject> objects;
-  objects.push_back(AsyncFileObject(filePath,prefs,-1));
-
+  objects.push_back(AsyncFileObject(filePath, prefs, -1));
   analysisFuture = QtConcurrent::mapped(objects, keyDetectionProcess);
   analysisWatcher.setFuture(analysisFuture);
 }
@@ -139,12 +138,12 @@ void DetailWindow::analysisFinished(){
   }
   // Key estimates
   deleteKeyLabels();
-  int lastChange = 0;
-  for(int h=0; h<(signed)analysisWatcher.result().core.segments.size(); h++){ // don't test the first hop
+  int lastChange = -1; // enable correct stretch policy for first segment
+  for(int h = 0; h < (signed)analysisWatcher.result().core.segments.size(); h++){
     QLabel* newLabel = new QLabel(prefs.getKeyCode(analysisWatcher.result().core.segments[h].key));
     newLabel->setAlignment(Qt::AlignCenter);
     QPalette pal = newLabel->palette();
-    pal.setColor(backgroundRole(),prefs.getKeyColour(analysisWatcher.result().core.segments[h].key));
+    pal.setColor(backgroundRole(), prefs.getKeyColour(analysisWatcher.result().core.segments[h].key));
     newLabel->setPalette(pal);
     newLabel->setFrameStyle(1);
     newLabel->setAutoFillBackground(true);
@@ -157,7 +156,7 @@ void DetailWindow::analysisFinished(){
     }else{
       newLabel->setToolTip("This row shows the key estimates\nfor the segments between peak\nharmonic changes.");
     }
-    ui->horizontalLayout_keyLabels->addWidget(newLabel,h-lastChange);
+    ui->horizontalLayout_keyLabels->addWidget(newLabel, h - lastChange);
     keyLabels.push_back(newLabel);
     lastChange = h;
   }
@@ -209,10 +208,10 @@ void DetailWindow::on_runButton_clicked(){
 }
 
 void DetailWindow::on_chromaColourCombo_currentIndexChanged(int index){
-  prefs.setImageColours(chromagramImage,index);
-  prefs.setImageColours(miniChromagramImage,index);
-  prefs.setImageColours(harmonicChangeImage,index);
-  prefs.setImageColours(colourScaleImage,index);
+  prefs.setImageColours(chromagramImage, index);
+  prefs.setImageColours(miniChromagramImage, index);
+  prefs.setImageColours(harmonicChangeImage, index);
+  prefs.setImageColours(colourScaleImage, index);
   ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
   ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
   ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
@@ -220,17 +219,17 @@ void DetailWindow::on_chromaColourCombo_currentIndexChanged(int index){
 }
 
 void DetailWindow::layoutScaling(){
-  ui->gridLayout_Visualisation->setRowStretch(ROW_BIGCHROMA,prefs.getOctaves()*2);
-  ui->gridLayout_Visualisation->setRowStretch(ROW_MINICHROMA,2);
-  ui->gridLayout_Visualisation->setRowStretch(ROW_RATEOFCHANGE,1);
+  ui->gridLayout_Visualisation->setRowStretch(ROW_BIGCHROMA, prefs.getOctaves() * 2);
+  ui->gridLayout_Visualisation->setRowStretch(ROW_MINICHROMA, 2);
+  ui->gridLayout_Visualisation->setRowStretch(ROW_RATEOFCHANGE, 1);
   chromaScaleV = 5;
-  chromaScaleH = 5*(prefs.getHopSize()/16384.0)*(prefs.getDFactor()/10.0);
+  chromaScaleH = 5 * (prefs.getHopSize() / 16384.0) * (prefs.getDFactor() / 10.0);
   if(chromaScaleH < 1) chromaScaleH = 1;
 }
 
 void DetailWindow::drawColourScale(){
-  colourScaleImage = QImage(1,65,QImage::Format_Indexed8);
-  prefs.setImageColours(colourScaleImage,ui->chromaColourCombo->currentIndex());
+  colourScaleImage = QImage(1, 65, QImage::Format_Indexed8);
+  prefs.setImageColours(colourScaleImage, ui->chromaColourCombo->currentIndex());
   for(int i=0; i<=64; i++)
     colourScaleImage.setPixel(0,64-i,i);
   ui->colourScaleLabel->setPixmap(QPixmap::fromImage(colourScaleImage));
@@ -256,7 +255,7 @@ void DetailWindow::blankVisualisations(){
 }
 
 void DetailWindow::deleteKeyLabels(){
-  for(int i=keyLabels.size()-1; i>=0; i--){
+  for(int i = keyLabels.size()-1; i >= 0; i--){
     delete keyLabels[i];
     keyLabels.pop_back();
   }

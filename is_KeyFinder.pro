@@ -1,20 +1,23 @@
+#*************************************************************************
+#
 # Copyright 2011 Ibrahim Sha'ath
-
+#
 # This file is part of KeyFinder.
-
+#
 # KeyFinder is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-
+#
 # KeyFinder is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-
+#
 # You should have received a copy of the GNU General Public License
 # along with KeyFinder.  If not, see <http://www.gnu.org/licenses/>.
-
+#
+#*************************************************************************
 
 # CURRENT DEPENDENCIES:
 # qt               4.7.4
@@ -29,7 +32,6 @@
 # xerces-c         3.1.1
 # xqilla           2.3.0
 
-
 QT += core
 QT += gui
 QT += xml
@@ -38,72 +40,56 @@ QT += network
 TEMPLATE = app
 TARGET = KeyFinder
 
-SOURCES += \
-    decoderlibav.cpp \
-    downsamplerlibsrc.cpp \
-    downsamplerib.cpp \
-    preferences.cpp \
-    decoder.cpp \
-    downsampler.cpp \
-    metadatataglib.cpp \
-    main.cpp \
-    guiabout.cpp \
-    guibatch.cpp \
-    guidetail.cpp \
-    guimenuhandler.cpp \
-    guiprefs.cpp \
-    asynckeyprocess.cpp \
-    asyncmetadatareadprocess.cpp \
-    os_windows.cpp \
-    asyncfileobject.cpp \
-    externalplaylist.cpp \
-    externalplaylistserato.cpp \
-    libkeyfindersingleton.cpp
-
 HEADERS  += \
-    decoderlibav.h \
+    _VERSION.h \
+    asyncfileobject.h \
+    asynckeyprocess.h \
+    asynckeyresult.h \
+    asyncmetadatareadprocess.h \
+    asyncmetadatareadresult.h \
     decoder.h \
-    chromagram.h \
-    downsamplerlibsrc.h \
-    downsamplerib.h \
+    decoderlibav.h \
     downsampler.h \
-    windowfunctions.h \
-    toneprofiles.h \
-    spectrumanalyser.h \
-    preferences.h \
-    spectrumanalyserfactory.h \
-    exception.h \
-    hcdf.h \
-    keyclassifier.h \
-		metadatataglib.h \
-    hcdfharte.h \
-    hcdfcosine.h \
-		hcdfnone.h \
-    fftppdirectsk.h \
-    spectrumanalyserfftw.h \
-		fftpp.h \
-		hcdfarbitrary.h \
-    audiostream.h \
+    downsamplerib.h \
+    downsamplerlibsrc.h \
+    externalplaylist.h \
+    externalplaylistserato.h \
     guiabout.h \
     guibatch.h \
     guidetail.h \
     guimenuhandler.h \
     guiprefs.h \
-    asynckeyprocess.h \
-    asynckeyresult.h \
-    asyncmetadatareadprocess.h \
-    asyncmetadatareadresult.h \
+    libkeyfindersingleton.h \
+    metadatataglib.h \
     os_windows.h \
-    _VERSION.h \
-    asyncfileobject.h \
-    externalplaylist.h \
-    externalplaylistserato.h \
-    libkeyfindersingleton.h
+    preferences.h
+
+SOURCES += \
+    asyncfileobject.cpp \
+    asynckeyprocess.cpp \
+    asyncmetadatareadprocess.cpp \
+    decoder.cpp \
+    decoderlibav.cpp \
+    downsampler.cpp \
+    downsamplerib.cpp \
+    downsamplerlibsrc.cpp \
+    externalplaylist.cpp \
+    externalplaylistserato.cpp \
+    guiabout.cpp \
+    guibatch.cpp \
+    guidetail.cpp \
+    guimenuhandler.cpp \
+    guiprefs.cpp \
+    libkeyfindersingleton.cpp \
+    main.cpp \
+    metadatataglib.cpp \
+    os_windows.cpp \
+    preferences.cpp
 
 FORMS += \
-    detailwindow.ui \
-    batchwindow.ui \
     aboutdialog.ui \
+    batchwindow.ui \
+    detailwindow.ui \
     prefsdialog.ui
 
 OTHER_FILES += \
@@ -112,17 +98,15 @@ OTHER_FILES += \
 
 UI_DIR = ui
 
-# for libav
-QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS
+QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS # for libav
 
 RESOURCES += resources.qrc
 
 unix|macx{
   LIBS += -lkeyfinder
-  LIBS += -lavutil
   LIBS += -lavcodec
   LIBS += -lavformat
-  LIBS += -lfftw3
+  LIBS += -lavutil
   LIBS += -lsamplerate
   LIBS += -ltag
   LIBS += -lxerces-c
@@ -148,7 +132,6 @@ win32{
 	LIBS += -lavformat
 	LIBS += -lavutil
 	LIBS += -lsamplerate-0
-	LIBS += -lfftw3-3
 
 	INCLUDEPATH += C:/MSYS/home/user/taglib-1.7.2
 	INCLUDEPATH += C:/MSYS/home/user/taglib-1.7.2/include

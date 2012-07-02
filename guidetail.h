@@ -29,7 +29,6 @@
 #include <QDropEvent>
 #include <QUrl>
 #include <QLabel>
-
 #include <vector>
 
 #include "keyfinder/chromagram.h"

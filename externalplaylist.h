@@ -41,9 +41,9 @@
 #include "externalplaylistserato.h"
 
 const QString SOURCE_KEYFINDER = "KeyFinder";
-const QString SOURCE_ITUNES = "iTunes";
-const QString SOURCE_TRAKTOR = "Traktor";
-const QString SOURCE_SERATO = "Serato";
+const QString SOURCE_ITUNES    = "iTunes";
+const QString SOURCE_TRAKTOR   = "Traktor";
+const QString SOURCE_SERATO    = "Serato";
 
 class ExternalPlaylistObject{
 public:

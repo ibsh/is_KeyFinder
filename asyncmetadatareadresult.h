@@ -34,5 +34,4 @@ public:
   QString key;
 };
 
-
 #endif // ASYNCMETADATAREADRESULT_H

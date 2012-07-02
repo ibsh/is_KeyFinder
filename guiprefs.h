@@ -70,7 +70,6 @@ private slots:
   void on_metadataWriteGrouping_currentIndexChanged(int index);
   void on_metadataWriteKey_currentIndexChanged(int index);
   void on_metadataWriteFilename_currentIndexChanged(int index);
-
 private:
   Ui::PrefsDialog *ui;
 };
