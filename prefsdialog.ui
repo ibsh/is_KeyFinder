@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>831</width>
-    <height>585</height>
+    <height>607</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -58,7 +58,7 @@
          <item row="1" column="0">
           <widget class="QLabel" name="lbl_skipFilesWithExistingTags">
            <property name="text">
-            <string>Skip files with existing data in relevant tags</string>
+            <string>Skip files that already have key metadata</string>
            </property>
           </widget>
          </item>
@@ -262,78 +262,22 @@
                </item>
               </widget>
              </item>
-             <item row="1" column="1">
-              <widget class="QCheckBox" name="writeToTagComment">
+             <item row="2" column="0">
+              <widget class="QLabel" name="lbl_metadataWriteComment">
                <property name="text">
                 <string>Comment tag</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="1">
-              <widget class="QCheckBox" name="writeToTagGrouping">
+             <item row="6" column="0">
+              <widget class="QLabel" name="lbl_metadataDelimiter">
                <property name="text">
-                <string>Grouping tag</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="QCheckBox" name="writeToTagKey">
-               <property name="text">
-                <string>Key tag</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="lbl_tagWhere">
-               <property name="text">
-                <string>Where to write</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="lbl_tagWhere_2">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="lbl_tagWhere_3">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="1">
-              <widget class="QCheckBox" name="writeToFileSuffix">
-               <property name="text">
-                <string>Filename (suffix)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="QCheckBox" name="writeToFilePrefix">
-               <property name="text">
-                <string>Filename (prefix)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QLabel" name="lbl_tagWhere_4">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="0">
-              <widget class="QLabel" name="lbl_tagWhere_5">
-               <property name="text">
-                <string/>
+                <string>Delimiter</string>
                </property>
               </widget>
              </item>
              <item row="6" column="1">
-              <widget class="QLineEdit" name="filenameDelimiter">
+              <widget class="QLineEdit" name="metadataDelimiter">
                <property name="maximumSize">
                 <size>
                  <width>80</width>
@@ -345,11 +289,116 @@
                </property>
               </widget>
              </item>
-             <item row="6" column="0">
-              <widget class="QLabel" name="lbl_filenameDelimiter">
+             <item row="1" column="0" colspan="2">
+              <widget class="QLabel" name="lbl_tagWhere">
                <property name="text">
-                <string>Filename delimiter</string>
+                <string>Where to write</string>
                </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="lbl_metadataWriteGrouping">
+               <property name="text">
+                <string>Grouping tag</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="lbl_metadataWriteKey">
+               <property name="text">
+                <string>Key tag</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="lbl_metadataWriteFilename">
+               <property name="text">
+                <string>Filename</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QComboBox" name="metadataWriteGrouping">
+               <item>
+                <property name="text">
+                 <string>No</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Prepend</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Append</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Overwrite</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QComboBox" name="metadataWriteKey">
+               <item>
+                <property name="text">
+                 <string>No</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Overwrite</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QComboBox" name="metadataWriteFilename">
+               <item>
+                <property name="text">
+                 <string>No</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Prepend</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Append</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QComboBox" name="metadataWriteComment">
+               <item>
+                <property name="text">
+                 <string>No</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Prepend</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Append</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Overwrite</string>
+                </property>
+               </item>
               </widget>
              </item>
             </layout>
@@ -1157,7 +1206,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>597</width>
+            <width>744</width>
             <height>919</height>
            </rect>
           </property>

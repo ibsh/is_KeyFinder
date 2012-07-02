@@ -249,46 +249,61 @@ Preferences::Preferences(){
   }
   settings.endGroup();
 
-  // ========================= Key classification ==============================
+  // ============================ Metadata =================================
 
   settings.beginGroup("tags");
-  if(settings.contains("tagFormat_1_14")){
-    tagFormat = (tag_format_t)settings.value("tagFormat_1_14").toInt();
+  if(settings.contains("metadataFormat")){
+    metadataFormat = (metadata_format_t)settings.value("metadataFormat").toInt();
+  }else if(settings.contains("tagFormat_1_14")){
+    // backward compatibility for pre 1.16
+    metadataFormat = (metadata_format_t)settings.value("tagFormat_1_14").toInt();
   }else if(settings.contains("tagFormat")){
     // backward compatibility for pre 1.14
     QVariant val = settings.value("tagFormat");
     if(val == 'k')
-      tagFormat = TAG_FORMAT_KEYS;
+      metadataFormat = METADATA_FORMAT_KEYS;
     else if(val == 'c')
-      tagFormat = TAG_FORMAT_CUSTOM;
+      metadataFormat = METADATA_FORMAT_CUSTOM;
     else if(val == 'b')
-      tagFormat = TAG_FORMAT_BOTH;
+      metadataFormat = METADATA_FORMAT_BOTH;
   }else{
-    tagFormat = TAG_FORMAT_KEYS;
+    metadataFormat = METADATA_FORMAT_KEYS;
   }
-  if(settings.contains("writeToTagComment")){
-    writeToTagComment = settings.value("writeToTagComment").toBool();
-    writeToTagGrouping = settings.value("writeToTagGrouping").toBool();
-    writeToTagKey = settings.value("writeToTagKey").toBool();
+
+  if(settings.contains("metadataWriteComment")){
+    metadataWriteComment = (metadata_write_t)settings.value("metadataWriteComment").toInt();
+    metadataWriteGrouping = (metadata_write_t)settings.value("metadataWriteGrouping").toInt();
+    metadataWriteKey = (metadata_write_t)settings.value("metadataWriteKey").toInt();
+  }else if(settings.contains("writeToTagComment")){
+    // backward compatibility for pre 1.16
+    metadataWriteComment = (settings.value("writeToTagComment").toBool() ? METADATA_WRITE_OVERWRITE : METADATA_WRITE_NONE);
+    metadataWriteGrouping = (settings.value("writeToTagGrouping").toBool() ? METADATA_WRITE_OVERWRITE : METADATA_WRITE_NONE);
+    metadataWriteKey = (settings.value("writeToTagKey").toBool() ? METADATA_WRITE_OVERWRITE : METADATA_WRITE_NONE);
   }else{
-    writeToTagComment = true;
-    writeToTagGrouping = false;
-    writeToTagKey = false;
+    metadataWriteComment = METADATA_WRITE_PREPEND;
+    metadataWriteGrouping = METADATA_WRITE_NONE;
+    metadataWriteKey = METADATA_WRITE_NONE;
   }
-  if(settings.contains("writeToFilePrefix")){
-    writeToFilePrefix = settings.value("writeToFilePrefix").toBool();
+  if(settings.contains("metadataWriteFilename")){
+    metadataWriteFilename = (metadata_write_t)settings.value("metadataWriteFilename").toInt();
+  }else if(settings.contains("writeToFilePrefix")){
+    // backward compatibility for pre 1.16
+    if(settings.value("writeToFilePrefix").toBool())
+      metadataWriteFilename = METADATA_WRITE_PREPEND;
+    else if(settings.value("writeToFileSuffix").toBool())
+      metadataWriteFilename = METADATA_WRITE_APPEND;
+    else
+      metadataWriteFilename = METADATA_WRITE_NONE;
   }else{
-    writeToFilePrefix = false;
+    metadataWriteFilename = METADATA_WRITE_NONE;
   }
-  if(settings.contains("writeToFileSuffix")){
-    writeToFileSuffix = settings.value("writeToFileSuffix").toBool();
+  if(settings.contains("metadataDelimiter")){
+    metadataDelimiter = settings.value("metadataDelimiter").toString();
+  }else if(settings.contains("filenameDelimiter")){
+    // backward compatibility for pre 1.16
+    metadataDelimiter = settings.value("filenameDelimiter").toString();
   }else{
-    writeToFileSuffix = false;
-  }
-  if(settings.contains("filenameDelimiter")){
-    filenameDelimiter = settings.value("filenameDelimiter").toString();
-  }else{
-    filenameDelimiter = " - ";
+    metadataDelimiter = " - ";
   }
   if(settings.contains("writeToFilesAutomatically")){
     writeToFilesAutomatically = settings.value("writeToFilesAutomatically").toBool();
@@ -488,13 +503,12 @@ void Preferences::save(){
   settings.endGroup();
 
   settings.beginGroup("tags");
-  settings.setValue("tagFormat_1_14", tagFormat);
-  settings.setValue("writeToTagComment", writeToTagComment);
-  settings.setValue("writeToTagGrouping", writeToTagGrouping);
-  settings.setValue("writeToTagKey", writeToTagKey);
-  settings.setValue("writeToFilePrefix", writeToFilePrefix);
-  settings.setValue("writeToFileSuffix", writeToFileSuffix);
-  settings.setValue("filenameDelimiter", filenameDelimiter);
+  settings.setValue("metadataFormat", metadataFormat);
+  settings.setValue("metadataWriteComment", metadataWriteComment);
+  settings.setValue("metadataWriteGrouping", metadataWriteGrouping);
+  settings.setValue("metadataWriteKey", metadataWriteKey);
+  settings.setValue("metadataWriteFilename", metadataWriteFilename);
+  settings.setValue("metadataDelimiter", metadataDelimiter);
   settings.setValue("writeToFilesAutomatically", writeToFilesAutomatically);
   settings.endGroup();
 
@@ -523,13 +537,12 @@ Preferences& Preferences::operator=(const Preferences& that){
     core = that.core;
     dFactor = that.dFactor;
     customKeyCodes = that.customKeyCodes;
-    tagFormat = that.tagFormat;
-    writeToTagComment = that.writeToTagComment;
-    writeToTagGrouping = that.writeToTagGrouping;
-    writeToTagKey = that.writeToTagKey;
-    writeToFilePrefix = that.writeToFilePrefix;
-    writeToFileSuffix = that.writeToFileSuffix;
-    filenameDelimiter = that.filenameDelimiter;
+    metadataFormat = that.metadataFormat;
+    metadataWriteComment = that.metadataWriteComment;
+    metadataWriteGrouping = that.metadataWriteGrouping;
+    metadataWriteKey = that.metadataWriteKey;
+    metadataWriteFilename = that.metadataWriteFilename;
+    metadataDelimiter = that.metadataDelimiter;
     writeToFilesAutomatically = that.writeToFilesAutomatically;
     skipFilesWithExistingTags = that.skipFilesWithExistingTags;
     maxDuration = that.maxDuration;
@@ -544,25 +557,24 @@ Preferences& Preferences::operator=(const Preferences& that){
   return *this;
 }
 
-bool         Preferences::getWriteToFilesAutomatically() const { return writeToFilesAutomatically; }
-bool         Preferences::getParallelBatchJobs()         const { return parallelBatchJobs; }
-bool         Preferences::getWriteToTagComment()         const { return writeToTagComment; }
-bool         Preferences::getWriteToTagGrouping()        const { return writeToTagGrouping; }
-bool         Preferences::getWriteToTagKey()             const { return writeToTagKey; }
-bool         Preferences::getWriteToFilePrefix()         const { return writeToFilePrefix; }
-bool         Preferences::getWriteToFileSuffix()         const { return writeToFileSuffix; }
-bool         Preferences::getSkipFilesWithExistingTags() const { return skipFilesWithExistingTags; }
-int          Preferences::getMaxDuration()               const { return maxDuration; }
-tag_format_t Preferences::getTagFormat()                 const { return tagFormat; }
-int          Preferences::getDFactor()                   const { return dFactor; }
-QString      Preferences::getITunesLibraryPath()         const { return iTunesLibraryPath; }
-QString      Preferences::getTraktorLibraryPath()        const { return traktorLibraryPath; }
-QString      Preferences::getSeratoLibraryPath()         const { return seratoLibraryPath; }
-QString      Preferences::getFilenameDelimiter()         const { return filenameDelimiter; }
-QStringList  Preferences::getCustomKeyCodes()            const { return customKeyCodes; }
-QByteArray   Preferences::getBatchWindowState()          const { return batchWindowState; }
-QByteArray   Preferences::getBatchWindowGeometry()       const { return batchWindowGeometry; }
-QByteArray   Preferences::getBatchWindowSplitterState()  const { return batchWindowSplitterState; }
+bool              Preferences::getWriteToFilesAutomatically() const { return writeToFilesAutomatically; }
+bool              Preferences::getParallelBatchJobs()         const { return parallelBatchJobs; }
+metadata_write_t  Preferences::getMetadataWriteComment()      const { return metadataWriteComment; }
+metadata_write_t  Preferences::getMetadataWriteGrouping()     const { return metadataWriteGrouping; }
+metadata_write_t  Preferences::getMetadataWriteKey()          const { return metadataWriteKey; }
+metadata_write_t  Preferences::getMetadataWriteFilename()     const { return metadataWriteFilename; }
+metadata_format_t Preferences::getMetadataFormat()            const { return metadataFormat; }
+bool              Preferences::getSkipFilesWithExistingTags() const { return skipFilesWithExistingTags; }
+int               Preferences::getMaxDuration()               const { return maxDuration; }
+int               Preferences::getDFactor()                   const { return dFactor; }
+QString           Preferences::getITunesLibraryPath()         const { return iTunesLibraryPath; }
+QString           Preferences::getTraktorLibraryPath()        const { return traktorLibraryPath; }
+QString           Preferences::getSeratoLibraryPath()         const { return seratoLibraryPath; }
+QString           Preferences::getMetadataDelimiter()         const { return metadataDelimiter; }
+QStringList       Preferences::getCustomKeyCodes()            const { return customKeyCodes; }
+QByteArray        Preferences::getBatchWindowState()          const { return batchWindowState; }
+QByteArray        Preferences::getBatchWindowGeometry()       const { return batchWindowGeometry; }
+QByteArray        Preferences::getBatchWindowSplitterState()  const { return batchWindowSplitterState; }
 
 bool                            Preferences::getOffsetToC()                 const { return core.getOffsetToC(); }
 KeyFinder::temporal_window_t    Preferences::getTemporalWindow()            const { return core.getTemporalWindow(); }
@@ -585,19 +597,18 @@ float                           Preferences::getDetunedBandWeight()         cons
 std::vector<float>              Preferences::getCustomToneProfile()         const { return core.getCustomToneProfile(); }
 
 void Preferences::setWriteToFilesAutomatically(bool autoWrite)      { writeToFilesAutomatically = autoWrite; }
-void Preferences::setWriteToTagComment(bool cmt)                    { writeToTagComment = cmt; }
-void Preferences::setWriteToTagGrouping(bool grp)                   { writeToTagGrouping = grp; }
-void Preferences::setWriteToTagKey(bool key)                        { writeToTagKey = key; }
-void Preferences::setWriteToFilePrefix(bool pre)                    { writeToFilePrefix = pre; }
-void Preferences::setWriteToFileSuffix(bool suf)                    { writeToFileSuffix = suf; }
+void Preferences::setMetadataWriteComment(metadata_write_t cmt)     { metadataWriteComment = cmt; }
+void Preferences::setMetadataWriteGrouping(metadata_write_t grp)    { metadataWriteGrouping = grp; }
+void Preferences::setMetadataWriteKey(metadata_write_t key)         { metadataWriteKey = key; }
+void Preferences::setMetadataWriteFilename(metadata_write_t fn)     { metadataWriteFilename = fn; }
 void Preferences::setSkipFilesWithExistingTags(bool skip)           { skipFilesWithExistingTags = skip; }
 void Preferences::setMaxDuration(int max)                           { maxDuration = max; }
-void Preferences::setTagFormat(tag_format_t fmt)                    { tagFormat = fmt; }
+void Preferences::setMetadataFormat(metadata_format_t fmt)          { metadataFormat = fmt; }
 void Preferences::setDFactor(int factor)                            { dFactor = factor; }
 void Preferences::setITunesLibraryPath(const QString& path)         { iTunesLibraryPath = path; }
 void Preferences::setTraktorLibraryPath(const QString& path)        { traktorLibraryPath = path; }
 void Preferences::setSeratoLibraryPath(const QString& path)         { seratoLibraryPath = path; }
-void Preferences::setFilenameDelimiter(const QString & delim)       { filenameDelimiter = delim; }
+void Preferences::setMetadataDelimiter(const QString & delim)       { metadataDelimiter = delim; }
 void Preferences::setCustomKeyCodes(const QStringList& codes)       { customKeyCodes = codes; }
 void Preferences::setBatchWindowState(const QByteArray& a)          { batchWindowState = a; }
 void Preferences::setBatchWindowGeometry(const QByteArray& a)       { batchWindowGeometry = a; }
@@ -634,22 +645,29 @@ void Preferences::setParallelBatchJobs(bool parallel){
 }
 
 QString Preferences::getKeyCode(int n) const{
-  if(n < 0 || n >= (signed)defaultKeyCodes.size()){
+  if(n < 0 || n >= defaultKeyCodes.size()){
     qDebug("Attempt to get name of out-of-bounds key (%d/%d)",n,(int)defaultKeyCodes.size());
     return "";
   }
   QString defaultCode = defaultKeyCodes[n];
   QString customCode = customKeyCodes[n];
-  if(tagFormat == TAG_FORMAT_KEYS || customCode == "")
+  if(metadataFormat == METADATA_FORMAT_KEYS || customCode == "")
     return defaultCode;
-  else if(tagFormat == TAG_FORMAT_CUSTOM)
+  else if(metadataFormat == METADATA_FORMAT_CUSTOM)
     return customCode;
   else
     return customCode + " " + defaultCode;
 }
 
+QStringList Preferences::getKeyCodeList() const{
+  QStringList output;
+  for(int i = 0; i < defaultKeyCodes.size(); i++)
+    output << getKeyCode(i);
+  return output;
+}
+
 QColor Preferences::getKeyColour(int n) const{
-  if(n < 0 || n >= (signed)keyColours.size()){
+  if(n < 0 || n >= keyColours.size()){
     qDebug("Attempt to get colour of out-of-bounds key (%d/%d)",n,(int)keyColours.size());
     return qRgb(0,0,0);
   }

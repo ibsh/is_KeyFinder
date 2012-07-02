@@ -93,6 +93,7 @@ private:
 
   QFutureWatcher<KeyFinderResultWrapper> analysisWatcher;
   void checkRowsForSkipping();
+  bool checkFieldForMetadata(int, int);
   void markRowSkipped(int,bool);
   void runAnalysis();
 

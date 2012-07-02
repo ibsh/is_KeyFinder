@@ -24,9 +24,15 @@
 
 PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialog){
   // map dropdown values to indices
-  listTagFormat << TAG_FORMAT_KEYS;
-  listTagFormat << TAG_FORMAT_CUSTOM;
-  listTagFormat << TAG_FORMAT_BOTH;
+  listMetadataWrite << METADATA_WRITE_NONE;
+  listMetadataWrite << METADATA_WRITE_PREPEND;
+  listMetadataWrite << METADATA_WRITE_APPEND;
+  listMetadataWrite << METADATA_WRITE_OVERWRITE;
+  listMetadataWriteKey << METADATA_WRITE_NONE;
+  listMetadataWriteKey << METADATA_WRITE_OVERWRITE;
+  listMetadataFormat << METADATA_FORMAT_KEYS;
+  listMetadataFormat << METADATA_FORMAT_CUSTOM;
+  listMetadataFormat << METADATA_FORMAT_BOTH;
   listStartingFreq << 27.5;
   listStartingFreq << 55;
   listStartingFreq << 110;
@@ -78,18 +84,19 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   Preferences p;
   ui->writeToFilesAutomatically->setChecked(p.getWriteToFilesAutomatically());
   ui->parallelBatchJobs->setChecked(p.getParallelBatchJobs());
-  ui->writeToTagComment->setChecked(p.getWriteToTagComment());
-  ui->writeToTagGrouping->setChecked(p.getWriteToTagGrouping());
-  ui->writeToTagKey->setChecked(p.getWriteToTagKey());
-  ui->writeToFilePrefix->setChecked(p.getWriteToFilePrefix());
-  ui->writeToFileSuffix->setChecked(p.getWriteToFileSuffix());
-  ui->filenameDelimiter->setText(p.getFilenameDelimiter());
   ui->skipFilesWithExistingTags->setChecked(p.getSkipFilesWithExistingTags());
   ui->maxDuration->setValue(p.getMaxDuration());
+
+  ui->tagFormat->setCurrentIndex(listMetadataFormat.indexOf(p.getMetadataFormat()));
+  ui->metadataWriteComment->setCurrentIndex(listMetadataWrite.indexOf(p.getMetadataWriteComment()));
+  ui->metadataWriteGrouping->setCurrentIndex(listMetadataWrite.indexOf(p.getMetadataWriteGrouping()));
+  ui->metadataWriteKey->setCurrentIndex(listMetadataWriteKey.indexOf(p.getMetadataWriteKey()));
+  ui->metadataWriteFilename->setCurrentIndex(listMetadataWrite.indexOf(p.getMetadataWriteFilename()));
+  ui->metadataDelimiter->setText(p.getMetadataDelimiter());
+
   ui->temporalWindow->setCurrentIndex(listTemporalWindow.indexOf(p.getTemporalWindow()));
   ui->segmentation->setCurrentIndex(listSegmentation.indexOf(p.getSegmentation()));
   ui->similarityMeasure->setCurrentIndex(listSimilarityMeasure.indexOf(p.getSimilarityMeasure()));
-  ui->tagFormat->setCurrentIndex(listTagFormat.indexOf(p.getTagFormat()));
   ui->hopSize->setCurrentIndex(listHopSize.indexOf(p.getHopSize()));
   ui->fftFrameSize->setCurrentIndex(listFftFrameSize.indexOf(p.getFftFrameSize()));
   ui->octaves->setValue(p.getOctaves());
@@ -155,7 +162,7 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   binAdaptiveTuningEnabled();
   segmentationEnabled();
   customProfileEnabled();
-  filenameDelimiterEnabled();
+  metadataDelimiterEnabled();
 
   //relative sizing on Mac only
 #ifdef Q_OS_MAC
@@ -184,18 +191,17 @@ void PrefsDialog::on_savePrefsButton_clicked(){
   Preferences p;
   p.setWriteToFilesAutomatically(ui->writeToFilesAutomatically->isChecked());
   p.setParallelBatchJobs(ui->parallelBatchJobs->isChecked());
-  p.setWriteToTagComment(ui->writeToTagComment->isChecked());
-  p.setWriteToTagGrouping(ui->writeToTagGrouping->isChecked());
-  p.setWriteToTagKey(ui->writeToTagKey->isChecked());
-  p.setWriteToFilePrefix(ui->writeToFilePrefix->isChecked());
-  p.setWriteToFileSuffix(ui->writeToFileSuffix->isChecked());
-  p.setFilenameDelimiter(ui->filenameDelimiter->text());
+  p.setMetadataFormat(listMetadataFormat[ui->tagFormat->currentIndex()]);
+  p.setMetadataWriteComment(listMetadataWrite[ui->metadataWriteComment->currentIndex()]);
+  p.setMetadataWriteGrouping(listMetadataWrite[ui->metadataWriteGrouping->currentIndex()]);
+  p.setMetadataWriteKey(listMetadataWriteKey[ui->metadataWriteKey->currentIndex()]);
+  p.setMetadataWriteFilename(listMetadataWrite[ui->metadataWriteFilename->currentIndex()]);
+  p.setMetadataDelimiter(ui->metadataDelimiter->text());
   p.setSkipFilesWithExistingTags(ui->skipFilesWithExistingTags->isChecked());
   p.setMaxDuration(ui->maxDuration->value());
   p.setTemporalWindow(listTemporalWindow[ui->temporalWindow->currentIndex()]);
   p.setSegmentation(listSegmentation[ui->segmentation->currentIndex()]);
   p.setSimilarityMeasure(listSimilarityMeasure[ui->similarityMeasure->currentIndex()]);
-  p.setTagFormat(listTagFormat[ui->tagFormat->currentIndex()]);
   p.setHopSize(listHopSize[ui->hopSize->currentIndex()]);
   p.setFftFrameSize(listFftFrameSize[ui->fftFrameSize->currentIndex()]);
   p.setOctaves(ui->octaves->value());
@@ -314,8 +320,19 @@ void PrefsDialog::customProfileEnabled(){
   ui->min11->setEnabled(e);
 }
 
-void PrefsDialog::filenameDelimiterEnabled(){
-  ui->filenameDelimiter->setEnabled(ui->writeToFilePrefix->isChecked() || ui->writeToFileSuffix->isChecked());
+void PrefsDialog::metadataDelimiterEnabled(){
+  QList<int> indices;
+  indices << ui->metadataWriteComment->currentIndex();
+  indices << ui->metadataWriteGrouping->currentIndex();
+  indices << ui->metadataWriteFilename->currentIndex();
+  bool enable = false;
+  for(int i = 0; i < indices.size(); i++){
+    if(listMetadataWrite[indices[i]] == METADATA_WRITE_PREPEND)
+      enable = true;
+    if(listMetadataWrite[indices[i]] == METADATA_WRITE_APPEND)
+      enable = true;
+  }
+  ui->metadataDelimiter->setEnabled(enable);
 }
 
 void PrefsDialog::on_bps_valueChanged(int /*arg1*/){
@@ -334,12 +351,20 @@ void PrefsDialog::on_toneProfile_currentIndexChanged(int /*index*/){
   customProfileEnabled();
 }
 
-void PrefsDialog::on_writeToFilePrefix_stateChanged(int /*state*/){
-  filenameDelimiterEnabled();
+void PrefsDialog::on_metadataWriteComment_currentIndexChanged(int /*index*/){
+  metadataDelimiterEnabled();
 }
 
-void PrefsDialog::on_writeToFileSuffix_stateChanged(int /*state*/){
-  filenameDelimiterEnabled();
+void PrefsDialog::on_metadataWriteGrouping_currentIndexChanged(int /*index*/){
+  metadataDelimiterEnabled();
+}
+
+void PrefsDialog::on_metadataWriteKey_currentIndexChanged(int /*index*/){
+  metadataDelimiterEnabled();
+}
+
+void PrefsDialog::on_metadataWriteFilename_currentIndexChanged(int /*index*/){
+  metadataDelimiterEnabled();
 }
 
 void PrefsDialog::on_findITunesLibraryButton_clicked(){

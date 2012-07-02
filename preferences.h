@@ -38,10 +38,17 @@
 
 #include "keyfinder/parameters.h"
 
-enum tag_format_t{
-  TAG_FORMAT_KEYS,
-  TAG_FORMAT_CUSTOM,
-  TAG_FORMAT_BOTH
+enum metadata_format_t{
+  METADATA_FORMAT_KEYS,
+  METADATA_FORMAT_CUSTOM,
+  METADATA_FORMAT_BOTH
+};
+
+enum metadata_write_t{
+  METADATA_WRITE_NONE,
+  METADATA_WRITE_PREPEND,
+  METADATA_WRITE_APPEND,
+  METADATA_WRITE_OVERWRITE
 };
 
 class Preferences{
@@ -54,19 +61,18 @@ public:
   // accessors
   bool getWriteToFilesAutomatically() const;
   bool getParallelBatchJobs() const;
-  bool getWriteToTagComment() const;
-  bool getWriteToTagGrouping() const;
-  bool getWriteToTagKey() const;
-  bool getWriteToFilePrefix() const;
-  bool getWriteToFileSuffix() const;
+  metadata_write_t getMetadataWriteComment() const;
+  metadata_write_t getMetadataWriteGrouping() const;
+  metadata_write_t getMetadataWriteKey() const;
+  metadata_write_t getMetadataWriteFilename() const;
+  metadata_format_t getMetadataFormat() const;
   bool getSkipFilesWithExistingTags() const;
   int getMaxDuration() const;
-  tag_format_t getTagFormat() const;
   int getDFactor() const;
   QString getITunesLibraryPath() const;
   QString getTraktorLibraryPath() const;
   QString getSeratoLibraryPath() const;
-  QString getFilenameDelimiter() const;
+  QString getMetadataDelimiter() const;
   QStringList getCustomKeyCodes() const;
   QByteArray getBatchWindowState() const;
   QByteArray getBatchWindowGeometry() const;
@@ -96,19 +102,18 @@ public:
   // mutators
   void setWriteToFilesAutomatically(bool);
   void setParallelBatchJobs(bool);
-  void setWriteToTagComment(bool);
-  void setWriteToTagGrouping(bool);
-  void setWriteToTagKey(bool);
-  void setWriteToFilePrefix(bool);
-  void setWriteToFileSuffix(bool);
+  void setMetadataWriteComment(metadata_write_t);
+  void setMetadataWriteGrouping(metadata_write_t);
+  void setMetadataWriteKey(metadata_write_t);
+  void setMetadataWriteFilename(metadata_write_t);
+  void setMetadataFormat(metadata_format_t);
   void setSkipFilesWithExistingTags(bool);
   void setMaxDuration(int);
-  void setTagFormat(tag_format_t);
   void setDFactor(int);
   void setITunesLibraryPath(const QString&);
   void setTraktorLibraryPath(const QString&);
   void setSeratoLibraryPath(const QString&);
-  void setFilenameDelimiter(const QString&);
+  void setMetadataDelimiter(const QString&);
   void setCustomKeyCodes(const QStringList&);
   void setBatchWindowState(const QByteArray&);
   void setBatchWindowGeometry(const QByteArray&);
@@ -136,25 +141,25 @@ public:
 
   // not necessarily related to user preferences, just here for convenience
   QString getKeyCode(int) const;
+  QStringList getKeyCodeList() const;
   QColor getKeyColour(int) const;
   void setImageColours(QImage&, int) const;
 
 private:
   bool writeToFilesAutomatically;
   bool parallelBatchJobs;
-  bool writeToTagComment;
-  bool writeToTagGrouping;
-  bool writeToTagKey;
-  bool writeToFilePrefix;
-  bool writeToFileSuffix;
+  metadata_write_t metadataWriteComment;
+  metadata_write_t metadataWriteGrouping;
+  metadata_write_t metadataWriteKey;
+  metadata_write_t metadataWriteFilename;
+  metadata_format_t metadataFormat;
   bool skipFilesWithExistingTags;
   int maxDuration;
-  tag_format_t tagFormat;
   int dFactor;
   QString iTunesLibraryPath;
   QString traktorLibraryPath;
   QString seratoLibraryPath;
-  QString filenameDelimiter;
+  QString metadataDelimiter;
   QStringList customKeyCodes;
   QStringList defaultKeyCodes;
   QList<QColor> keyColours;

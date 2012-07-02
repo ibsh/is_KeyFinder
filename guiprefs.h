@@ -39,7 +39,9 @@ public:
   ~PrefsDialog();
 private:
   // map combobox indices to useful values
-  QList<tag_format_t>                    listTagFormat;
+  QList<metadata_format_t>               listMetadataFormat;
+  QList<metadata_write_t>                listMetadataWrite;
+  QList<metadata_write_t>                listMetadataWriteKey;
   QList<float>                           listStartingFreq;
   QList<unsigned int>                    listHopSize;
   QList<KeyFinder::temporal_window_t>    listTemporalWindow;
@@ -53,7 +55,7 @@ private:
   void binAdaptiveTuningEnabled();
   void segmentationEnabled();
   void customProfileEnabled();
-  void filenameDelimiterEnabled();
+  void metadataDelimiterEnabled();
 private slots:
   void on_savePrefsButton_clicked();
   void on_cancelButton_clicked();
@@ -61,11 +63,13 @@ private slots:
   void on_segmentation_currentIndexChanged(int);
   void on_toneProfile_currentIndexChanged(int);
   void on_tuningMethod_currentIndexChanged(int);
-  void on_writeToFilePrefix_stateChanged(int arg1);
-  void on_writeToFileSuffix_stateChanged(int arg1);
   void on_findITunesLibraryButton_clicked();
   void on_findTraktorLibraryButton_clicked();
   void on_findSeratoLibraryButton_clicked();
+  void on_metadataWriteComment_currentIndexChanged(int index);
+  void on_metadataWriteGrouping_currentIndexChanged(int index);
+  void on_metadataWriteKey_currentIndexChanged(int index);
+  void on_metadataWriteFilename_currentIndexChanged(int index);
 
 private:
   Ui::PrefsDialog *ui;
