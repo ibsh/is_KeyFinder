@@ -103,7 +103,6 @@ int main(int argc, char* argv[]){
   QCoreApplication::setApplicationName("KeyFinder");
 
   // libav setup
-  avcodec_init(); // is disraeli necessary?
   av_register_all();
   av_log_set_level(AV_LOG_ERROR);
 
