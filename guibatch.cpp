@@ -429,10 +429,10 @@ void BatchWindow::checkRowsForSkipping(){
       prefs.getMetadataWriteGrouping() == METADATA_WRITE_NONE &&
       prefs.getMetadataWriteKey()      == METADATA_WRITE_NONE
     ) skip = false;
-    if(prefs.getMetadataWriteFilename() != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_FILENAME)     == false) skip = false;
-    if(prefs.getMetadataWriteComment()  != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_TAG_COMMENT)  == false) skip = false;
-    if(prefs.getMetadataWriteGrouping() != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_TAG_GROUPING) == false) skip = false;
-    if(prefs.getMetadataWriteKey()      != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_TAG_KEY)      == false) skip = false;
+    else if(prefs.getMetadataWriteFilename() != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_FILENAME)     == false) skip = false;
+    else if(prefs.getMetadataWriteComment()  != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_TAG_COMMENT)  == false) skip = false;
+    else if(prefs.getMetadataWriteGrouping() != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_TAG_GROUPING) == false) skip = false;
+    else if(prefs.getMetadataWriteKey()      != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_TAG_KEY)      == false) skip = false;
 
     markRowSkipped(row, skip);
   }
@@ -445,10 +445,12 @@ bool BatchWindow::checkFieldForMetadata(int row, int col){
   QStringList keyCodes = prefs.getKeyCodeList();
   for(int i = 0; i < keyCodes.size(); i++){
     QString chk = keyCodes[i];
-    if(str.indexOf(chk) != -1)
+    if(col == COL_TAG_KEY){
+      if(str.indexOf(chk.left(3)) != -1)
+        return true;
+    }else if(str.indexOf(chk) != -1){
       return true;
-    if(col == COL_TAG_KEY && str.indexOf(chk.left(3)) != -1)
-      return true;
+    }
   }
   return false;
 }
