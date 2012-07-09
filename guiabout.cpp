@@ -30,8 +30,8 @@ AboutDialog::AboutDialog(QWidget *parent): QDialog(parent),ui(new Ui::AboutDialo
 
   ui->label_2_cp->setText("Copyright 2011-" + QString::number(QDate::currentDate().year()) + "\nIbrahim Sha'ath");
 
-  //relative sizing on Mac only
-#ifdef Q_OS_MAC
+  //relative sizing on Mac/Linux only
+#ifndef Q_OS_WIN
   QFont smallerFont;
   smallerFont.setPointSize(smallerFont.pointSize() - 2);
   ui->label_3_gpl->setFont(smallerFont);

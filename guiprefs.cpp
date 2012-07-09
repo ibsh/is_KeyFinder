@@ -164,8 +164,8 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   customProfileEnabled();
   metadataDelimiterEnabled();
 
-  //relative sizing on Mac only
-#ifdef Q_OS_MAC
+  //relative sizing on Mac/Linux only
+#ifndef Q_OS_WIN
   QFont smallerFont;
   smallerFont.setPointSize(smallerFont.pointSize() - 2);
   for(int i=0; i<ui->gridLayoutKeyCodes->count(); i++)
