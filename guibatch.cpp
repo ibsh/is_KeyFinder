@@ -296,7 +296,7 @@ void BatchWindow::addDroppedFiles(){
 
     // check for symlink (.isSymLink doesn't seem to work on Lion)
     if(fileInfo.isSymLink() || fileInfo.symLinkTarget() != ""){
-      droppedFiles.push_back(QUrl(fileInfo.symLinkTarget()));
+      droppedFiles.push_back(QUrl::fromLocalFile(fileInfo.symLinkTarget()));
       continue;
     }
 
