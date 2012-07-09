@@ -33,8 +33,10 @@
 
 void LoggingHandler(QtMsgType type, const char *msg) {
   std::ofstream logfile;
-#ifdef Q_OS_MAC
+#if defined Q_OS_MAC
   logfile.open(QDir::homePath().toLocal8Bit() + "/Library/Logs/KeyFinder.log",std::ios::app);
+#elif defined Q_OS_LINUX
+  logfile.open("KeyFinder.log",std::ios::app);
 #else
   logfile.open("KeyFinder_log.txt",std::ios::app);
 #endif
