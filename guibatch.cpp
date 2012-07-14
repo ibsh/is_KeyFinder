@@ -423,33 +423,47 @@ void BatchWindow::checkRowsForSkipping(){
     }
     // otherwise, skip this file if the relevant tags already contain tag metadata
     bool skip = true;
+    metadata_write_t f = prefs.getMetadataWriteFilename();
+    metadata_write_t c = prefs.getMetadataWriteComment();
+    metadata_write_t g = prefs.getMetadataWriteGrouping();
+    metadata_write_t k = prefs.getMetadataWriteKey();
     if(
-      prefs.getMetadataWriteFilename() == METADATA_WRITE_NONE &&
-      prefs.getMetadataWriteComment()  == METADATA_WRITE_NONE &&
-      prefs.getMetadataWriteGrouping() == METADATA_WRITE_NONE &&
-      prefs.getMetadataWriteKey()      == METADATA_WRITE_NONE
+      f == METADATA_WRITE_NONE &&
+      c == METADATA_WRITE_NONE &&
+      g == METADATA_WRITE_NONE &&
+      k == METADATA_WRITE_NONE
     ) skip = false;
-    else if(prefs.getMetadataWriteFilename() != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_FILENAME)     == false) skip = false;
-    else if(prefs.getMetadataWriteComment()  != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_TAG_COMMENT)  == false) skip = false;
-    else if(prefs.getMetadataWriteGrouping() != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_TAG_GROUPING) == false) skip = false;
-    else if(prefs.getMetadataWriteKey()      != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_TAG_KEY)      == false) skip = false;
+    else if(f != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_FILENAME, f)     == false) skip = false;
+    else if(c != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_TAG_COMMENT, c)  == false) skip = false;
+    else if(g != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_TAG_GROUPING, g) == false) skip = false;
+    else if(k != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_TAG_KEY, k)      == false) skip = false;
 
     markRowSkipped(row, skip);
   }
 }
 
-bool BatchWindow::checkFieldForMetadata(int row, int col){
+bool BatchWindow::checkFieldForMetadata(int row, int col, metadata_write_t t){
   if(ui->tableWidget->item(row, col) == 0)
     return false;
   QString str = ui->tableWidget->item(row, col)->text();
+  if(col == COL_FILENAME)
+    str = str.mid(0,str.lastIndexOf("."));
   QStringList keyCodes = prefs.getKeyCodeList();
   for(int i = 0; i < keyCodes.size(); i++){
     QString chk = keyCodes[i];
     if(col == COL_TAG_KEY){
       if(str.indexOf(chk.left(3)) != -1)
         return true;
-    }else if(str.indexOf(chk) != -1){
+    }else if(t == METADATA_WRITE_OVERWRITE && str == chk){
       return true;
+    }else if(t == METADATA_WRITE_PREPEND){
+      chk = prefs.getMetadataDelimiter() + chk;
+      if(str.left(chk.length()) == chk)
+        return true;
+    }else if(t == METADATA_WRITE_APPEND){
+      chk = prefs.getMetadataDelimiter() + chk;
+      if(str.right(chk.length()) == chk)
+        return true;
     }
   }
   return false;

@@ -402,7 +402,7 @@ Preferences::Preferences(){
   defaultKeyCodes.push_back("Gb");	defaultKeyCodes.push_back("Gbm");
   defaultKeyCodes.push_back("G");		defaultKeyCodes.push_back("Gm");
   defaultKeyCodes.push_back("Ab");	defaultKeyCodes.push_back("Abm");
-  defaultKeyCodes.push_back(".");
+  defaultKeyCodes.push_back("...");
   // key colours for display
   keyColours.push_back(qRgb(223,255,127));	keyColours.push_back(qRgb(191,223,127));
   keyColours.push_back(qRgb(255,127,255));	keyColours.push_back(qRgb(223,127,223));
