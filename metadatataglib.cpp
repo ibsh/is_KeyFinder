@@ -301,26 +301,27 @@ QString TagLibMetadata::writeKeyToMetadata(int key, const Preferences& prefs){
   QString dataToWrite = prefs.getKeyCode(key);
   QString delim = prefs.getMetadataDelimiter();
 
-  if(prefs.getMetadataWriteComment() == METADATA_WRITE_OVERWRITE)
+  if(prefs.getMetadataWriteComment() == METADATA_WRITE_OVERWRITE){
     if(getComment() != dataToWrite && setComment(dataToWrite.toLocal8Bit().data()) == 0)
       result += "c";
-  else if(prefs.getMetadataWriteComment() == METADATA_WRITE_PREPEND)
+  }else if(prefs.getMetadataWriteComment() == METADATA_WRITE_PREPEND){
     if(getComment().left(dataToWrite.length()) != dataToWrite && setComment(dataToWrite.toLocal8Bit().data() + delim + getComment()) == 0)
       result += "c";
-  else if(prefs.getMetadataWriteComment() == METADATA_WRITE_APPEND)
+  }else if(prefs.getMetadataWriteComment() == METADATA_WRITE_APPEND){
     if(getComment().right(dataToWrite.length()) != dataToWrite && setComment(getComment() + delim + dataToWrite.toLocal8Bit().data()) == 0)
       result += "c";
+  }
 
-
-  if(prefs.getMetadataWriteGrouping() == METADATA_WRITE_OVERWRITE)
+  if(prefs.getMetadataWriteGrouping() == METADATA_WRITE_OVERWRITE){
     if(getGrouping() != dataToWrite && setGrouping(dataToWrite.toLocal8Bit().data()) == 0)
       result += "g";
-  else if(prefs.getMetadataWriteGrouping() == METADATA_WRITE_PREPEND)
+  }else if(prefs.getMetadataWriteGrouping() == METADATA_WRITE_PREPEND){
     if(getGrouping().left(dataToWrite.length()) != dataToWrite && setGrouping(dataToWrite.toLocal8Bit().data() + delim + getGrouping()) == 0)
       result += "g";
-  else if(prefs.getMetadataWriteGrouping() == METADATA_WRITE_APPEND)
+  }else if(prefs.getMetadataWriteGrouping() == METADATA_WRITE_APPEND){
     if(getGrouping().right(dataToWrite.length()) != dataToWrite && setGrouping(getGrouping() + delim + dataToWrite.toLocal8Bit().data()) == 0)
       result += "g";
+  }
 
   dataToWrite = dataToWrite.left(3); // Key field in ID3 holds only 3 chars
   if(prefs.getMetadataWriteKey() == METADATA_WRITE_OVERWRITE)
