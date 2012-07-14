@@ -34,11 +34,11 @@
 void LoggingHandler(QtMsgType type, const char *msg) {
   std::ofstream logfile;
 #if defined Q_OS_MAC
-  logfile.open(QDir::homePath().toLocal8Bit() + "/Library/Logs/KeyFinder.log",std::ios::app);
+  logfile.open(QDir::homePath().toLocal8Bit() + "/Library/Logs/KeyFinder.log", std::ios::app);
 #elif defined Q_OS_LINUX
-  logfile.open("KeyFinder.log",std::ios::app);
+  logfile.open("KeyFinder.log", std::ios::app);
 #else
-  logfile.open("KeyFinder_log.txt",std::ios::app);
+  logfile.open("KeyFinder_log.txt", std::ios::app);
 #endif
   logfile << QDate::currentDate().toString("yyyy-MM-dd").toLocal8Bit().data() << " ";
   logfile << QTime::currentTime().toString("hh:mm:ss.zzz").toLocal8Bit().data() << " ";
@@ -105,6 +105,7 @@ int main(int argc, char* argv[]){
   // libav setup
   av_register_all();
   av_log_set_level(AV_LOG_ERROR);
+  av_lockmgr_register(NULL);
 
   // primitive command line use
   if(argc > 2){
@@ -118,12 +119,7 @@ int main(int argc, char* argv[]){
   QApplication a(argc, argv);
 
   MainMenuHandler* menuHandler = new MainMenuHandler(0);
-
   menuHandler->new_Batch_Window(true);
 
-  int appResult = a.exec();
-
-  av_lockmgr_register(NULL);
-
-  return appResult;
+  return a.exec();
 }

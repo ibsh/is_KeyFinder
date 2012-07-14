@@ -54,7 +54,7 @@ QList<ExternalPlaylistObject> ExternalPlaylist::readPlaylistsFromITunesLibrary(c
   defaultPlaylists << "Genius";
   defaultPlaylists << "iTunes DJ";
 
-#ifdef Q_OS_WIN
+#ifndef Q_OS_MAC
   // QXmlQuery on Windows
 
   QString xPath;
@@ -95,7 +95,7 @@ QList<ExternalPlaylistObject> ExternalPlaylist::readPlaylistsFromTraktorLibrary(
   defaultPlaylists << "_RECORDINGS";
   defaultPlaylists << "Preparation";
 
-#ifdef Q_OS_WIN
+#ifndef Q_OS_MAC
   // QXmlQuery on Windows
 
   QString xPath = "doc($inputDocument)//NODE[@TYPE='PLAYLIST']/@NAME/string(.)";
@@ -164,7 +164,7 @@ QList<QUrl> ExternalPlaylist::readITunesLibraryPlaylist(const QString& playlistN
   QList<QUrl> results;
   QStringList resultStrings;
 
-#ifdef Q_OS_WIN
+#ifndef Q_OS_MAC
   // QXmlQuery on Windows
 
   QString xPath;
@@ -206,7 +206,7 @@ QList<QUrl> ExternalPlaylist::readTraktorLibraryPlaylist(const QString& playlist
   QList<QUrl> results;
   QStringList resultStrings;
 
-#ifdef Q_OS_WIN
+#ifndef Q_OS_MAC
   // QXmlQuery on Windows
 
   QString xPath;
@@ -251,7 +251,7 @@ QList<QUrl> ExternalPlaylist::readSeratoLibraryPlaylist(const QString& playlistN
   // Serato path stuff
   QString pathPrefix = "/";
   #ifdef Q_OS_WIN
-    pathPrefix = prefs.getSeratoLibraryPath().left(3);
+  pathPrefix = prefs.getSeratoLibraryPath().left(3);
   #endif
   if(crate->open(QIODevice::ReadOnly)){
     SeratoDataStream instr;
@@ -331,7 +331,7 @@ QUrl ExternalPlaylist::fixTraktorAddressing(const QString& address){
 
 // ======================================= XQilla stuff ============================================
 
-#ifdef Q_OS_WIN
+#ifndef Q_OS_MAC
 
 QStringList ExternalPlaylist::qXmlQueryReadLibrary(const QString& libraryPath, const QString& xPath){
 

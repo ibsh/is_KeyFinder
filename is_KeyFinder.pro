@@ -20,7 +20,7 @@
 #*************************************************************************
 
 # CURRENT DEPENDENCIES:
-# qt               4.7.4
+# qt               4.8.2
 # libkeyfinder     0.1.5
 #  |-> boost      1.49.0
 #  \-> fftw        3.3.2
@@ -28,7 +28,7 @@
 # libsamplerate    0.1.8
 # taglib           1.7.2
 #
-# MAC (AND LINUX?) ONLY:
+# MAC ONLY:
 # xerces-c         3.1.1
 # xqilla           2.3.0
 

@@ -24,7 +24,7 @@
 
 #include <QUrl>
 #include <QMutex>
-#ifdef Q_OS_WIN
+#ifndef Q_OS_MAC
 #include <QtXml/QtXml>
 #include <QtXmlPatterns/QtXmlPatterns>
 #else
@@ -71,7 +71,7 @@ private:
   static QList<ExternalPlaylistObject> readPlaylistsFromTraktorLibrary(const Preferences&);
   static QList<QUrl> readTraktorLibraryPlaylist(const QString&, const Preferences&);
   static QUrl fixTraktorAddressing(const QString&);
-#ifdef Q_OS_WIN
+#ifndef Q_OS_MAC
   // QXmlQuery
   static QStringList qXmlQueryReadLibrary(const QString&, const QString&);
   static QStringList qXmlQueryReadLibraryPlaylist(const QString&, const QString&, const QString&);
