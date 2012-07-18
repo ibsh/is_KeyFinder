@@ -268,7 +268,12 @@ QString TagLibMetadata::getKey() const{
 
   TagLib::MP4::Tag* tagTestMp4 = dynamic_cast<TagLib::MP4::Tag*>(f->tag());
   if(tagTestMp4 != NULL){
-    return "N/A";
+    TagLib::MP4::Item m = tagTestMp4->itemListMap()["----:com.apple.iTunes:initialkey"];
+    if(m.isValid()){
+      TagLib::String out = m.toStringList().front();
+      return QString::fromUtf8((out.toCString()));
+    }
+    return "";
   }
 
   TagLib::ASF::Tag* tagTestAsf = dynamic_cast<TagLib::ASF::Tag*>(f->tag());
@@ -526,12 +531,11 @@ int TagLibMetadata::setKey(const QString& key){
 
   TagLib::MP4::Tag* tagTestMp4 = dynamic_cast<TagLib::MP4::Tag*>(f->tag());
   if(tagTestMp4 != NULL){
-#ifdef Q_OS_WIN
-    qDebug("iTunes metadata does not support the Key tag (%s)",utf16_to_utf8(f->name()));
-#else
-    qDebug("iTunes metadata does not support the Key tag (%s)",f->name());
-#endif
-    return 1;
+    TagLib::StringList sl(TagLib::String(key.toLocal8Bit().data()));
+    tagTestMp4->itemListMap()["----:com.apple.iTunes:initialkey"] = sl;
+    tagTestMp4->save();
+    f->save();
+    return 0;
   }
 
   TagLib::ASF::Tag* tagTestAsf = dynamic_cast<TagLib::ASF::Tag*>(f->tag());
