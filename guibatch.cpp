@@ -58,6 +58,7 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
 
   // SETUP UI
   ui->setupUi(this);
+  this->setWindowTitle(GuiStrings::getInstance()->appName() + GuiStrings::getInstance()->delim() + tr("Batch Analysis"));
   menuHandler = handler;
   ui->libraryWidget->setColumnHidden(COL_PLAYLIST_SOURCE, true);
   ui->tableWidget->setColumnHidden(COL_FILEPATH, true);
@@ -86,7 +87,7 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   ui->libraryWidget->setItem(0, COL_PLAYLIST_SOURCE, new QTableWidgetItem());
   ui->libraryWidget->setItem(0, COL_PLAYLIST_NAME, new QTableWidgetItem());
   ui->libraryWidget->item(0, COL_PLAYLIST_SOURCE)->setText(SOURCE_KEYFINDER);
-  ui->libraryWidget->item(0, COL_PLAYLIST_NAME)->setText("KeyFinder drag and drop");
+  ui->libraryWidget->item(0, COL_PLAYLIST_NAME)->setText(tr("%1 drag and drop").arg(GuiStrings::getInstance()->appName()));
   ui->libraryWidget->item(0, COL_PLAYLIST_NAME)->setIcon(QIcon(":/KeyFinder/images/icon-18.png"));
   ui->libraryWidget->item(0, COL_PLAYLIST_NAME)->setBackground(keyFinderRow);
   ui->libraryWidget->setColumnWidth(0,170);
@@ -103,7 +104,7 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
 #endif
 
   // HELP LABEL
-  initialHelpLabel = new QLabel("Drag audio files here", ui->tableWidget);
+  initialHelpLabel = new QLabel(tr("Drag audio files here"), ui->tableWidget);
   QFont font;
   font.setPointSize(20);
   font.setBold(true);
@@ -165,7 +166,7 @@ void BatchWindow::closeEvent(QCloseEvent* e){
 void BatchWindow::setGuiDefaults(){
   progressRangeChanged(0,100);
   progressValueChanged(0);
-  ui->statusLabel->setText("Ready");
+  ui->statusLabel->setText(tr("Ready"));
   ui->runBatchButton->setEnabled(true);
   ui->cancelBatchButton->setEnabled(false);
   ui->libraryWidget->setEnabled(true);
@@ -219,8 +220,8 @@ void BatchWindow::on_libraryWidget_cellClicked(int row, int /*col*/){
     return;
   if(ui->libraryWidget->item(libraryOldIndex, COL_PLAYLIST_SOURCE)->text() == SOURCE_KEYFINDER && ui->tableWidget->rowCount() > 0){
     QMessageBox msgBox;
-    msgBox.setText("The drag and drop list will not be saved.");
-    msgBox.setInformativeText("Are you sure you want to view another playlist?");
+    msgBox.setText(tr("The drag and drop list will not be saved."));
+    msgBox.setInformativeText(tr("Are you sure you want to view another playlist?"));
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgBox.setDefaultButton(QMessageBox::No);
     int ret = msgBox.exec();
@@ -230,12 +231,12 @@ void BatchWindow::on_libraryWidget_cellClicked(int row, int /*col*/){
     }
   }
   ui->tableWidget->setRowCount(0);
-  this->setWindowTitle("KeyFinder - Batch Analysis");
+  this->setWindowTitle(GuiStrings::getInstance()->appName() + GuiStrings::getInstance()->delim() + tr("Batch Analysis"));
   libraryOldIndex = row;
   if(ui->libraryWidget->item(row, COL_PLAYLIST_SOURCE)->text() == SOURCE_KEYFINDER)
     return;
 
-  setGuiRunning("Loading playlist...", false);
+  setGuiRunning(tr("Loading playlist..."), false);
 
   QString playlistName = ui->libraryWidget->item(row, COL_PLAYLIST_NAME)->text();
   QString playlistSource = ui->libraryWidget->item(row, COL_PLAYLIST_SOURCE)->text();
@@ -259,7 +260,7 @@ void BatchWindow::dragEnterEvent(QDragEnterEvent *e){
 void BatchWindow::dropEvent(QDropEvent *e){
   if(ui->libraryWidget->currentIndex().row() != 0){
     QMessageBox msg;
-    msg.setText("Cannot change an external playlist from KeyFinder");
+    msg.setText(tr("Cannot change an external playlist from %1").arg(GuiStrings::getInstance()->appName()));
     msg.exec();
     return;
   }
@@ -271,7 +272,7 @@ bool BatchWindow::receiveUrls(const QList<QUrl>& urls){
     return false;
   droppedFiles << urls;
   if(!addFilesWatcher.isRunning()){
-    setGuiRunning("Loading files...", false);
+    setGuiRunning(tr("Loading files..."), false);
     QFuture<void> addFileFuture = QtConcurrent::run(this,&BatchWindow::addDroppedFiles);
     addFilesWatcher.setFuture(addFileFuture);
   }
@@ -323,7 +324,13 @@ void BatchWindow::addDroppedFiles(){
       addNewRow(filePath);
 
   }
-  this->setWindowTitle("KeyFinder - Batch Analysis - " + QString::number(ui->tableWidget->rowCount()) + " files");
+  this->setWindowTitle(
+    GuiStrings::getInstance()->appName() +
+    GuiStrings::getInstance()->delim() +
+    tr("Batch Analysis") +
+    GuiStrings::getInstance()->delim() +
+    tr("%n file(s)", "", ui->tableWidget->rowCount())
+  );
 }
 
 QList<QUrl> BatchWindow::getDirectoryContents(QDir dir) const{
@@ -364,7 +371,7 @@ void BatchWindow::addFilesFinished(){
 }
 
 void BatchWindow::readMetadata(){
-  setGuiRunning("Reading tags...", true);
+  setGuiRunning(tr("Reading tags..."), true);
   QList<AsyncFileObject> objects;
   for(int row = 0; row < (signed)ui->tableWidget->rowCount(); row++){
     if(ui->tableWidget->item(row, COL_STATUS)->text() == STATUS_NEW)
@@ -405,7 +412,7 @@ void BatchWindow::metadataReadFinished(){
 void BatchWindow::on_runBatchButton_clicked(){
   prefs = Preferences(); // Get a new preferences object in case they've changed since the last run.
   checkRowsForSkipping();
-  setGuiRunning("Analysing (" + QString::number(QThreadPool::globalInstance()->maxThreadCount()) + " threads)...", true);
+  setGuiRunning(tr("Analysing (%n thread(s))...", "", QThreadPool::globalInstance()->maxThreadCount()), true);
   runAnalysis();
 }
 
@@ -416,7 +423,7 @@ void BatchWindow::checkRowsForSkipping(){
     QString status = ui->tableWidget->item(row, COL_STATUS)->text();
     if(status != STATUS_NEW && status != STATUS_TAGSREAD && status != STATUS_SKIPPED )
       continue;
-    // if we're not skipping, errr, don't skip
+    // if we're not skipping, don't skip
     if(!skippingFiles){
       markRowSkipped(row, false);
       continue;
@@ -472,7 +479,7 @@ bool BatchWindow::checkFieldForMetadata(int row, int col, metadata_write_t t){
 void BatchWindow::markRowSkipped(int row, bool skip){
   if(skip && ui->tableWidget->item(row, COL_STATUS)->text() != STATUS_SKIPPED){
     ui->tableWidget->item(row, COL_STATUS)->setText(STATUS_SKIPPED);
-    ui->tableWidget->item(row, COL_KEY)->setText("Skipped");
+    ui->tableWidget->item(row, COL_KEY)->setText(tr("Skipped"));
     ui->tableWidget->item(row, COL_KEY)->setForeground(textError);
     return;
   }
@@ -496,7 +503,7 @@ void BatchWindow::runAnalysis(){
 }
 
 void BatchWindow::on_cancelBatchButton_clicked(){
-  setGuiRunning("Cancelling...", false);
+  setGuiRunning(tr("Cancelling..."), false);
   metadataReadWatcher.cancel();
   analysisWatcher.cancel();
 }
@@ -514,7 +521,7 @@ void BatchWindow::analysisResultReadyAt(int index){
     }
   }else{
     ui->tableWidget->item(row, COL_STATUS)->setText(STATUS_FAILED);
-    ui->tableWidget->item(row, COL_KEY)->setText("Exception: " + error);
+    ui->tableWidget->item(row, COL_KEY)->setText(tr("Exception: %1").arg(error));
     ui->tableWidget->item(row, COL_KEY)->setForeground(textError);
     ui->tableWidget->item(row, COL_FILENAME)->setForeground(textError);
   }
@@ -530,7 +537,7 @@ void BatchWindow::writeDetectedToFiles(){
     QApplication::beep();
     return;
   }
-  setGuiRunning("Writing to files...", false);
+  setGuiRunning(tr("Writing to files..."), false);
   prefs = Preferences(); // get a new preferences object in case they've changed since the last run.
   // which files to write to?
   int successfullyWrittenToTags = 0;
@@ -552,7 +559,7 @@ void BatchWindow::writeDetectedToFiles(){
     }
   }
   QMessageBox msg;
-  msg.setText("Data written to " + QString::number(successfullyWrittenToTags) + " tags and " + QString::number(successfullyWrittenToFilename) + " filenames");
+  msg.setText(tr("Data written to %1 and %2").arg(tr("%n tag(s)", "", successfullyWrittenToTags).arg(tr("%n filename(s)", "", successfullyWrittenToFilename))));
   msg.exec();
   setGuiDefaults();
 }
@@ -608,7 +615,7 @@ bool BatchWindow::writeToFilenameAtRow(int row, int key){
 }
 
 void BatchWindow::clearDetected(){
-  setGuiRunning("Clearing data...", false);
+  setGuiRunning(tr("Clearing data..."), false);
   std::vector<int> rowsCleared;
   foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()){
     int row = selectedIndex.row();
@@ -631,11 +638,11 @@ void BatchWindow::clearDetected(){
 void BatchWindow::deleteSelectedRows(){
   if(ui->libraryWidget->currentIndex().row() != 0){
     QMessageBox msg;
-    msg.setText("Cannot change an external playlist from KeyFinder");
+    msg.setText(tr("Cannot change an external playlist from %1").arg(GuiStrings::getInstance()->appName()));
     msg.exec();
     return;
   }
-  setGuiRunning("Deleting rows...", false);
+  setGuiRunning(tr("Deleting rows..."), false);
   std::vector<int> rowsToDelete;
   foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()){
     int chkRow = selectedIndex.row();
@@ -690,7 +697,7 @@ void BatchWindow::runDetailedAnalysis(){
   }
   if(firstRow != lastRow){
     QMessageBox msg;
-    msg.setText("Please select a single row for detailed analysis");
+    msg.setText(tr("Please select a single row for detailed analysis"));
     msg.exec();
     return;
   }
@@ -748,7 +755,7 @@ void BatchWindow::receiveNetworkReply(QNetworkReply* reply){
   }
   reply->deleteLater();
   if(!newVersion.isEmpty()){
-    newVersion = "A new version, v" + newVersion + ", is available on <a href='http://www.ibrahimshaath.co.uk/keyfinder/'>the KeyFinder website</a>!";
+    newVersion = tr("A new version, %1, is available on <a href='%2'>the %3 website</a>!").arg(newVersion).arg(GuiStrings::getInstance()->appUrl()).arg(GuiStrings::getInstance()->appName());
     QMessageBox msg;
     msg.setText(newVersion);
     msg.exec();

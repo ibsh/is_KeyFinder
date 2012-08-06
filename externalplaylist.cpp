@@ -41,18 +41,7 @@ QList<ExternalPlaylistObject> ExternalPlaylist::readPlaylistsFromITunesLibrary(c
   QList<ExternalPlaylistObject> results;
   QStringList resultStrings;
 
-  QStringList defaultPlaylists;
-  defaultPlaylists << "Library";
-  defaultPlaylists << "Music";
-  defaultPlaylists << "Movies";
-  defaultPlaylists << "Films";
-  defaultPlaylists << "TV Shows";
-  defaultPlaylists << "TV Programmes";
-  defaultPlaylists << "Podcasts";
-  defaultPlaylists << "Books";
-  defaultPlaylists << "Purchased";
-  defaultPlaylists << "Genius";
-  defaultPlaylists << "iTunes DJ";
+  QStringList defaultPlaylists = GuiStrings::getInstance()->iTunesDefaultPlaylists();
 
 #ifndef Q_OS_MAC
   // QXmlQuery on Windows
@@ -90,10 +79,7 @@ QList<ExternalPlaylistObject> ExternalPlaylist::readPlaylistsFromTraktorLibrary(
   QList<ExternalPlaylistObject> results;
   QStringList resultStrings;
 
-  QStringList defaultPlaylists;
-  defaultPlaylists << "_LOOPS";
-  defaultPlaylists << "_RECORDINGS";
-  defaultPlaylists << "Preparation";
+  QStringList defaultPlaylists = GuiStrings::getInstance()->traktorDefaultPlaylists();
 
 #ifndef Q_OS_MAC
   // QXmlQuery on Windows
@@ -126,7 +112,7 @@ QList<ExternalPlaylistObject> ExternalPlaylist::readPlaylistsFromSeratoLibrary(c
   QString path = prefs.getSeratoLibraryPath();
   path = path.left(path.lastIndexOf("/")+1);
 
-  QDir dir = QDir(path + QString("Subcrates"));
+  QDir dir = QDir(path + GuiStrings::getInstance()->seratoSubcratesDirName());
   QStringList filters;
   filters << "*.crate";
   QFileInfoList contents = dir.entryInfoList(filters);
@@ -136,7 +122,7 @@ QList<ExternalPlaylistObject> ExternalPlaylist::readPlaylistsFromSeratoLibrary(c
     results.push_back(o);
   }
 
-  dir = QDir(path + QString("SmartCrates"));
+  dir = QDir(path + GuiStrings::getInstance()->seratoSmartCratesDirName());
   filters.clear();
   filters << "*.scrate";
   contents = dir.entryInfoList(filters);
@@ -241,11 +227,11 @@ QList<QUrl> ExternalPlaylist::readSeratoLibraryPlaylist(const QString& playlistN
   // is it a [sub]crate or a smartcrate?
   QString playlistNameCopy = playlistName;
   playlistNameCopy = playlistNameCopy.replace(QString("/"),QString("%%"));
-  QFile* crate = new QFile(path + QString("Subcrates/") + playlistNameCopy + QString(".crate"));
+  QFile* crate = new QFile(path + GuiStrings::getInstance()->seratoSubcratesDirName() + QString("/") + playlistNameCopy + QString(".crate"));
   bool sub = true;
   if(!crate->exists()){
     delete crate;
-    crate = new QFile(path + QString("SmartCrates/") + playlistNameCopy + QString(".scrate"));
+    crate = new QFile(path + GuiStrings::getInstance()->seratoSmartCratesDirName() + QString("/") + playlistNameCopy + QString(".scrate"));
     sub = false;
   }
   // Serato path stuff
@@ -318,7 +304,7 @@ QList<QUrl> ExternalPlaylist::readM3uStandalonePlaylist(const QString& m3uPath){
 QUrl ExternalPlaylist::fixITunesAddressing(const QString& address){
   QString addressCopy = address;
   addressCopy = addressCopy.replace(QString("file://localhost"), QString(""));
-  addressCopy = QUrl::fromPercentEncoding(addressCopy.toLocal8Bit().data());
+  addressCopy = QUrl::fromPercentEncoding(addressCopy.toLocal8Bit().constData());
   return QUrl(QUrl::fromLocalFile(addressCopy));
 }
 
@@ -391,12 +377,12 @@ QStringList ExternalPlaylist::xQillaReadLibrary(const QString& libraryPath, cons
     AutoDelete<xercesc_3_1::DOMLSParser> parser(xqillaImplementation->createLSParser(xercesc_3_1::DOMImplementationLS::MODE_SYNCHRONOUS, 0));
     parser->getDomConfig()->setParameter(xercesc_3_1::XMLUni::fgXercesLoadExternalDTD, false);
     // Parse a DOMDocument
-    xercesc_3_1::DOMDocument *document = parser->parseURI(X(libraryPath.toLocal8Bit().data()));
+    xercesc_3_1::DOMDocument *document = parser->parseURI(X(libraryPath.toLocal8Bit().constData()));
     if(document == 0) {
       throw XQillaException(99,X("No library file found"));
     }
     // Parse XPath
-    AutoRelease<xercesc_3_1::DOMXPathExpression> expression(document->createExpression(X(xPath.toLocal8Bit().data()), 0));
+    AutoRelease<xercesc_3_1::DOMXPathExpression> expression(document->createExpression(X(xPath.toLocal8Bit().constData()), 0));
     // Execute query
     AutoRelease<xercesc_3_1::DOMXPathResult> result(expression->evaluate(document, xercesc_3_1::DOMXPathResult::ITERATOR_RESULT_TYPE, 0));
     // Iterate over the results
@@ -435,13 +421,13 @@ QStringList ExternalPlaylist::xQillaReadLibraryPlaylist(const QString& libraryPa
     // disable remote DTD resolution
     parser->getDomConfig()->setParameter(xercesc_3_1::XMLUni::fgXercesLoadExternalDTD, false);
     // Parse the XML document
-    xercesc_3_1::DOMDocument *document = parser->parseURI(X(libraryPath.toLocal8Bit().data()));
+    xercesc_3_1::DOMDocument *document = parser->parseURI(X(libraryPath.toLocal8Bit().constData()));
     if(document == 0) {
       throw XQillaException(99,X("No library file found"));
     }
     // now set up a simple API query and context to evaluate the parsed document
     XQilla xqilla;
-    AutoDelete<XQQuery> xQuery(xqilla.parse(X(xPath.toLocal8Bit().data())));
+    AutoDelete<XQQuery> xQuery(xqilla.parse(X(xPath.toLocal8Bit().constData())));
     AutoDelete<DynamicContext> xQueryContext(xQuery->createDynamicContext());
     // grab document from xerces API
     XercesConfiguration xc;
@@ -452,7 +438,7 @@ QStringList ExternalPlaylist::xQillaReadLibraryPlaylist(const QString& libraryPa
       xQueryContext->setContextPosition(1);
       xQueryContext->setContextSize(1);
       // bind playlistName variable
-      Item::Ptr value = xQueryContext->getItemFactory()->createString(X(playlistName.toLocal8Bit().data()), xQueryContext.get());
+      Item::Ptr value = xQueryContext->getItemFactory()->createString(X(playlistName.toLocal8Bit().constData()), xQueryContext.get());
       xQueryContext->setExternalVariable(X("playlistName"), value);
     }
     // execute query

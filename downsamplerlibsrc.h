@@ -23,6 +23,7 @@
 #define SECRETRABBITDOWNSAMPLER_H
 
 #include "downsampler.h"
+#include "strings.h"
 #include <sstream>
 
 class SecretRabbitDownsampler : public Downsampler{

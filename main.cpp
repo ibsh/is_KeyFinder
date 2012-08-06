@@ -40,8 +40,8 @@ void LoggingHandler(QtMsgType type, const char *msg) {
 #else
   logfile.open("KeyFinder_log.txt", std::ios::app);
 #endif
-  logfile << QDate::currentDate().toString("yyyy-MM-dd").toLocal8Bit().data() << " ";
-  logfile << QTime::currentTime().toString("hh:mm:ss.zzz").toLocal8Bit().data() << " ";
+  logfile << QDate::currentDate().toString("yyyy-MM-dd").toLocal8Bit().constData() << " ";
+  logfile << QTime::currentTime().toString("hh:mm:ss.zzz").toLocal8Bit().constData() << " ";
   switch (type) {
   case QtDebugMsg:
     logfile << "Debug: " << msg << "\n";
@@ -77,11 +77,11 @@ int commandLineInterface(int argc, char* argv[]){
   AsyncFileObject object(filePath, prefs, 0);
   KeyFinderResultWrapper result = keyDetectionProcess(object);
   if(!result.errorMessage.isEmpty()){
-    std::cerr << result.errorMessage.toLocal8Bit().data();
+    std::cerr << result.errorMessage.toLocal8Bit().constData();
     return 1;
   }
 
-  std::cout << prefs.getKeyCode(result.core.globalKeyEstimate).toLocal8Bit().data();
+  std::cout << prefs.getKeyCode(result.core.globalKeyEstimate).toLocal8Bit().constData();
 
   if(writeToTags){
     TagLibMetadata md(filePath);
@@ -100,7 +100,7 @@ int main(int argc, char* argv[]){
 
   QCoreApplication::setOrganizationName("Ibrahim Sha'ath");
   QCoreApplication::setOrganizationDomain("ibrahimshaath.co.uk");
-  QCoreApplication::setApplicationName("KeyFinder");
+  QCoreApplication::setApplicationName(GuiStrings::getInstance()->appName());
 
   // libav setup
   av_register_all();
@@ -117,6 +117,25 @@ int main(int argc, char* argv[]){
   qInstallMsgHandler(LoggingHandler);
 
   QApplication a(argc, argv);
+
+  QTranslator qtTranslator;
+  qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+  a.installTranslator(&qtTranslator);
+
+  QString localeParam = "%1/Translations/is_keyfinder_%2.qm";
+#if defined Q_OS_MAC
+  QDir dir(QApplication::applicationDirPath());
+  dir.cdUp();
+  QString localePath = localeParam.arg(dir.absolutePath()).arg(QLocale::system().name());
+#elif defined Q_OS_LINUX
+  QString localePath = localeParam.arg(WORK_CACHEDIR).arg(QLocale::system().name());
+#else
+  QString localePath = localeParam.arg(QCoreApplication::applicationDirPath()).arg(QLocale::system().name());
+#endif
+
+  QTranslator myappTranslator;
+  myappTranslator.load(localePath);
+  a.installTranslator(&myappTranslator);
 
   MainMenuHandler* menuHandler = new MainMenuHandler(0);
   menuHandler->new_Batch_Window(true);

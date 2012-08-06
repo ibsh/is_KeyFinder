@@ -62,13 +62,19 @@ namespace Ui {
 
 class BatchWindow : public QMainWindow{
   Q_OBJECT
+
 public:
+
   explicit BatchWindow(MainMenuHandler* handler, QWidget* parent = 0);
   bool receiveUrls(const QList<QUrl>&);
   ~BatchWindow();
+
 public slots:
+
   void checkForNewVersion();
+
 private:
+
   void closeEvent(QCloseEvent*);
   Preferences prefs;
   void setGuiDefaults();
@@ -111,6 +117,7 @@ private:
   QBrush textError;
   bool allowSort;
   int sortColumn;
+
 private slots:
 
   void on_libraryWidget_cellClicked(int,int);

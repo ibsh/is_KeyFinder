@@ -28,6 +28,9 @@ const int ROW_RATEOFCHANGE = 2;
 
 DetailWindow::DetailWindow(QWidget *parent, QString path) : QMainWindow(parent), ui(new Ui::DetailWindow){
   ui->setupUi(this);
+  this->setWindowTitle(GuiStrings::getInstance()->appName() + GuiStrings::getInstance()->delim() + tr("Detailed Analysis"));
+  ui->chromaColourCombo->setToolTip(wrapToolTip(tr("Choose the colour scheme for the chromagram. Some provide higher contrast than others.")));
+  ui->colourScaleLabel->setToolTip(wrapToolTip(tr("This is the colour scale of the current chromagram. You can change the colour scheme using the dropdown below.")));
   connect(&analysisWatcher, SIGNAL(finished()), this, SLOT(analysisFinished()));
   allowDrops = true;
   ui->progressBar->setVisible(false);
@@ -46,6 +49,11 @@ DetailWindow::DetailWindow(QWidget *parent, QString path) : QMainWindow(parent),
 DetailWindow::~DetailWindow(){
   analysisWatcher.cancel();
   delete ui;
+}
+
+QString DetailWindow::wrapToolTip(const QString& str){
+  // This makes a tooltip rich text, which enables wrapping
+  return "<FONT COLOR=black>" + str + "</FONT>";
 }
 
 void DetailWindow::dragEnterEvent(QDragEnterEvent *e){
@@ -74,16 +82,11 @@ void DetailWindow::runAnalysis(){
   if(chkOctaves != prefs.getOctaves() || chkOffset != prefs.getOffsetToC() || ui->chromagramLabel->toolTip().left(4) == "Drag"){
     layoutScaling();
     drawPianoKeys();
-    // Chromagram tooltip
-    QString numbers[] = {"","one octave","two octaves","three octaves","four octaves","five octaves","six octaves","seven octaves","eight octaves"};
-    QString tooltip = "This chromagram spans " + numbers[prefs.getOctaves()] + ".\n";
-    tooltip += "The vertical axis represents musical frequencies\nas indicated by the piano keyboard.\n";
-    tooltip += "The horizontal axis splits the track into analysis\nwindows of about " + QString::number((44100.0/prefs.getDFactor())/prefs.getHopSize()).left(4) + " seconds each.\n";
-    tooltip += "The brighter the colour, the higher the energy\nfound at that frequency during that window.";
-    ui->chromagramLabel->setToolTip(tooltip);
+    // Chromagram tooltip... this is horribly long.
+    ui->chromagramLabel->setToolTip(wrapToolTip(tr("This chromagram spans %1. The vertical axis represents musical frequencies as indicated by the piano keyboard. The horizontal axis splits the track into analysis windows of about %1 seconds each. The brighter the colour, the higher the energy found at that frequency during that window.").arg(tr("%n octave(s)", "", prefs.getOctaves())).arg(QString::number((44100.0/prefs.getDFactor())/prefs.getHopSize()).left(4))));
   }
   // visuals
-  say("Analysing... ");
+  say(tr("Analysing... "));
   ui->progressBar->setVisible(true);
   ui->chromaColourCombo->setEnabled(false);
   ui->runButton->setEnabled(false);
@@ -106,7 +109,7 @@ void DetailWindow::analysisFinished(){
   QString shortName = md.getTitle();
   if(shortName == "")
     shortName = filePath.mid(filePath.lastIndexOf("/") + 1);
-  this->setWindowTitle("KeyFinder - Detailed Analysis - " + shortName);
+  this->setWindowTitle(GuiStrings::getInstance()->appName() + tr("Detailed Analysis") + GuiStrings::getInstance()->delim() + shortName);
   // full chromagram
   chromagramImage = imageFromChromagram(analysisWatcher.result().core.fullChromagram);
   ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
@@ -115,7 +118,7 @@ void DetailWindow::analysisFinished(){
   // one octave chromagram
   miniChromagramImage = imageFromChromagram(analysisWatcher.result().core.oneOctaveChromagram);
   ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
-  ui->miniChromagramLabel->setToolTip("This is the same chromagram data,\nreduced to a single octave.");
+  ui->miniChromagramLabel->setToolTip(wrapToolTip(tr("This is the same chromagram data, reduced to a single octave.")));
   // harmonic change signal
   int rateOfChangePrecision = 100;
   int size = (signed)analysisWatcher.result().core.harmonicChangeSignal.size();
@@ -130,11 +133,11 @@ void DetailWindow::analysisFinished(){
   ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
   // Tooltip
   if(prefs.getSegmentation() == 'n'){
-    ui->harmonicChangeLabel->setToolTip("You are not using segmentation,\nso there is no harmonic change\ndata to display.");
+    ui->harmonicChangeLabel->setToolTip(wrapToolTip(tr("You are not using segmentation, so there is no harmonic change data to display.")));
   }else if(prefs.getSegmentation() == 'a'){
-    ui->harmonicChangeLabel->setToolTip("You are using arbitrary segmentation,\nso there is no harmonic change\ndata to display.");
+    ui->harmonicChangeLabel->setToolTip(wrapToolTip(tr("You are using arbitrary segmentation, so there is no harmonic change data to display.")));
   }else{
-    ui->harmonicChangeLabel->setToolTip("This is the level of harmonic\nchange detected in the\nchromagram over time. Peaks\nin this signal are used to\nsegment the chromagram.");
+    ui->harmonicChangeLabel->setToolTip(wrapToolTip(tr("This is the level of harmonic change detected in the chromagram over time. Peaks in this signal are used to segment the chromagram.")));
   }
   // Key estimates
   deleteKeyLabels();
@@ -150,18 +153,18 @@ void DetailWindow::analysisFinished(){
     newLabel->setMinimumHeight(20);
     newLabel->setMaximumHeight(30);
     if(prefs.getSegmentation() == 'n'){
-      newLabel->setToolTip("This row shows the key estimate for\nthe unsegmented chromagram.");
+      newLabel->setToolTip(wrapToolTip(tr("This row shows the key estimate for the unsegmented chromagram.")));
     }else if(prefs.getSegmentation() == 'a'){
-      newLabel->setToolTip("This row shows the key estimates\nfor the arbitrary segments.");
+      newLabel->setToolTip(wrapToolTip(tr("This row shows the key estimates for the arbitrary segments.")));
     }else{
-      newLabel->setToolTip("This row shows the key estimates\nfor the segments between peak\nharmonic changes.");
+      newLabel->setToolTip(wrapToolTip(tr("This row shows the key estimates for the segments between peak harmonic changes.")));
     }
     ui->horizontalLayout_keyLabels->addWidget(newLabel, h - lastChange);
     keyLabels.push_back(newLabel);
     lastChange = h;
   }
   // Global key estimate
-  say("Key estimate: " + prefs.getKeyCode(analysisWatcher.result().core.globalKeyEstimate));
+  say(tr("Key estimate: %1").arg(prefs.getKeyCode(analysisWatcher.result().core.globalKeyEstimate)));
   cleanUpAfterRun();
 }
 
@@ -248,7 +251,7 @@ void DetailWindow::blankVisualisations(){
   ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
   ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
   ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
-  QString blank = "Drag an audio file onto the window.";
+  QString blank = wrapToolTip(tr("Drag an audio file onto the window."));
   ui->chromagramLabel->setToolTip(blank);
   ui->miniChromagramLabel->setToolTip(blank);
   ui->harmonicChangeLabel->setToolTip(blank);
@@ -270,7 +273,7 @@ void DetailWindow::blankKeyLabel(){
   dummyLabel->setAutoFillBackground(true);
   dummyLabel->setMinimumHeight(20);
   dummyLabel->setMaximumHeight(30);
-  dummyLabel->setToolTip("Drag an audio file onto the window.");
+  dummyLabel->setToolTip(wrapToolTip(tr("Drag an audio file onto the window.")));
   ui->horizontalLayout_keyLabels->addWidget(dummyLabel);
   keyLabels.push_back(dummyLabel);
 }

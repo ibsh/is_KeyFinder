@@ -28,33 +28,10 @@
     <height>490</height>
    </size>
   </property>
-  <property name="windowTitle">
-   <string>About KeyFinder</string>
+  <property name="locale">
+   <locale language="English" country="UnitedKingdom"/>
   </property>
   <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,1">
-   <item row="2" column="0" colspan="2">
-    <widget class="QLabel" name="label_3_gpl">
-     <property name="text">
-      <string>KeyFinder is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-KeyFinder is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with KeyFinder. If not, see http://www.gnu.org/licenses/.
-
-KeyFinder includes library code from:
-Qt (qt.nokia.com)
-FFTW (www.fftw.org)
-LibAV (www.libav.org)
-Secret Rabbit Code (www.mega-nerd.com/SRC)
-TagLib (developer.kde.org/~wheeler/taglib.html)
-XQilla (xqilla.sourceforge.net)
-Xerces-C++ (xerces.apache.org)</string>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="0" rowspan="2">
     <widget class="QLabel" name="label_0_icon">
      <property name="text">
@@ -71,7 +48,7 @@ Xerces-C++ (xerces.apache.org)</string>
    <item row="1" column="1">
     <widget class="QLabel" name="label_2_cp">
      <property name="text">
-      <string>copyright_years
+      <string notr="true">copyright_years
 Ibrahim Sha'ath</string>
      </property>
      <property name="textFormat">
@@ -92,13 +69,51 @@ Ibrahim Sha'ath</string>
       </font>
      </property>
      <property name="text">
-      <string>KeyFinder
+      <string notr="true">KeyFinder
 version_num</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignBottom|Qt::AlignHCenter</set>
      </property>
     </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLabel" name="label_3_gpl">
+       <property name="text">
+        <string notr="true">KeyFinder is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+KeyFinder is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with KeyFinder. If not, see http://www.gnu.org/licenses/.</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_4_includes">
+       <property name="text">
+        <string notr="true">includes</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_5_libs">
+       <property name="text">
+        <string notr="true">libraries</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

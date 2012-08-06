@@ -23,6 +23,7 @@
 #define PREFERENCES_H
 
 #include <QtGlobal>
+#include <QDebug>
 #include <QThreadPool>
 #include <QSettings>
 #include <QString>
@@ -37,6 +38,7 @@
 #include <cstring>
 
 #include "keyfinder/parameters.h"
+#include "strings.h"
 
 enum metadata_format_t{
   METADATA_FORMAT_KEYS,
@@ -146,6 +148,8 @@ public:
   void setImageColours(QImage&, int) const;
 
 private:
+  GuiStrings* strings;
+
   bool writeToFilesAutomatically;
   bool parallelBatchJobs;
   metadata_write_t metadataWriteComment;

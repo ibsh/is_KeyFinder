@@ -13,9 +13,6 @@
   <property name="acceptDrops">
    <bool>true</bool>
   </property>
-  <property name="windowTitle">
-   <string>KeyFinder - Batch Analysis</string>
-  </property>
   <property name="locale">
    <locale language="English" country="UnitedKingdom"/>
   </property>
@@ -50,7 +47,7 @@
        </attribute>
        <column>
         <property name="text">
-         <string>Source (Hidden)</string>
+         <string notr="true">Source (Hidden)</string>
         </property>
        </column>
        <column>
@@ -80,12 +77,12 @@
        </property>
        <column>
         <property name="text">
-         <string>Status (Hidden)</string>
+         <string notr="true">Status (Hidden)</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>Audio File Path (Hidden)</string>
+         <string notr="true">Audio File Path (Hidden)</string>
         </property>
        </column>
        <column>
@@ -208,35 +205,6 @@
     </item>
    </layout>
   </widget>
-  <action name="actionNew_Detail_Keyfinder">
-   <property name="text">
-    <string>New Detail Window</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+N</string>
-   </property>
-  </action>
-  <action name="actionNew_Batch_Keyfinder">
-   <property name="text">
-    <string>New Batch Window</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+N</string>
-   </property>
-  </action>
-  <action name="actionClose_Window">
-   <property name="text">
-    <string>Close Window</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+W</string>
-   </property>
-  </action>
-  <action name="actionAbout_KeyFinder">
-   <property name="text">
-    <string>About KeyFinder</string>
-   </property>
-  </action>
  </widget>
  <resources/>
  <connections/>

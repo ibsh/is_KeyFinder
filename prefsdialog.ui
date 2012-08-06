@@ -16,6 +16,9 @@
   <property name="windowTitle">
    <string>Preferences</string>
   </property>
+  <property name="locale">
+   <locale language="English" country="UnitedKingdom"/>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget">
@@ -445,7 +448,7 @@
              <item row="0" column="0">
               <widget class="QLabel" name="lbl_majKey0">
                <property name="text">
-                <string>A</string>
+                <string notr="true">A</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -474,7 +477,7 @@
              <item row="0" column="2">
               <widget class="QLabel" name="lbl_majKey1">
                <property name="text">
-                <string>Bb</string>
+                <string notr="true">Bb</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -503,7 +506,7 @@
              <item row="0" column="4">
               <widget class="QLabel" name="lbl_majKey2">
                <property name="text">
-                <string>B</string>
+                <string notr="true">B</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -532,7 +535,7 @@
              <item row="0" column="6">
               <widget class="QLabel" name="lbl_majKey3">
                <property name="text">
-                <string>C</string>
+                <string notr="true">C</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -561,7 +564,7 @@
              <item row="0" column="8">
               <widget class="QLabel" name="lbl_majKey4">
                <property name="text">
-                <string>Db</string>
+                <string notr="true">Db</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -590,7 +593,7 @@
              <item row="0" column="10">
               <widget class="QLabel" name="lbl_majKey5">
                <property name="text">
-                <string>D</string>
+                <string notr="true">D</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -638,7 +641,7 @@
              <item row="1" column="2">
               <widget class="QLabel" name="lbl_majKey7">
                <property name="text">
-                <string>E</string>
+                <string notr="true">E</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -667,7 +670,7 @@
              <item row="1" column="0">
               <widget class="QLabel" name="lbl_majKey6">
                <property name="text">
-                <string>Eb</string>
+                <string notr="true">Eb</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -677,7 +680,7 @@
              <item row="1" column="4">
               <widget class="QLabel" name="lbl_majKey8">
                <property name="text">
-                <string>F</string>
+                <string notr="true">F</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -725,7 +728,7 @@
              <item row="1" column="6">
               <widget class="QLabel" name="lbl_majKey9">
                <property name="text">
-                <string>Gb</string>
+                <string notr="true">Gb</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -754,7 +757,7 @@
              <item row="1" column="8">
               <widget class="QLabel" name="lbl_majKey10">
                <property name="text">
-                <string>G</string>
+                <string notr="true">G</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -783,7 +786,7 @@
              <item row="1" column="10">
               <widget class="QLabel" name="lbl_majKey11">
                <property name="text">
-                <string>Ab</string>
+                <string notr="true">Ab</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -793,7 +796,7 @@
              <item row="2" column="0">
               <widget class="QLabel" name="lbl_minKey0">
                <property name="text">
-                <string>Am</string>
+                <string notr="true">Am</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -803,7 +806,7 @@
              <item row="2" column="2">
               <widget class="QLabel" name="lbl_minKey1">
                <property name="text">
-                <string>Bbm</string>
+                <string notr="true">Bbm</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -813,7 +816,7 @@
              <item row="2" column="4">
               <widget class="QLabel" name="lbl_minKey2">
                <property name="text">
-                <string>Bm</string>
+                <string notr="true">Bm</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -823,7 +826,7 @@
              <item row="2" column="6">
               <widget class="QLabel" name="lbl_minKey3">
                <property name="text">
-                <string>Cm</string>
+                <string notr="true">Cm</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -833,7 +836,7 @@
              <item row="2" column="8">
               <widget class="QLabel" name="lbl_minKey4">
                <property name="text">
-                <string>Dbm</string>
+                <string notr="true">Dbm</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -843,7 +846,7 @@
              <item row="2" column="10">
               <widget class="QLabel" name="lbl_minKey5">
                <property name="text">
-                <string>Dm</string>
+                <string notr="true">Dm</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -853,7 +856,7 @@
              <item row="3" column="0">
               <widget class="QLabel" name="lbl_minKey6">
                <property name="text">
-                <string>Ebm</string>
+                <string notr="true">Ebm</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -863,7 +866,7 @@
              <item row="3" column="2">
               <widget class="QLabel" name="lbl_minKey7">
                <property name="text">
-                <string>Em</string>
+                <string notr="true">Em</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -873,7 +876,7 @@
              <item row="3" column="4">
               <widget class="QLabel" name="lbl_minKey8">
                <property name="text">
-                <string>Fm</string>
+                <string notr="true">Fm</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -883,7 +886,7 @@
              <item row="3" column="6">
               <widget class="QLabel" name="lbl_minKey9">
                <property name="text">
-                <string>Gbm</string>
+                <string notr="true">Gbm</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -893,7 +896,7 @@
              <item row="3" column="8">
               <widget class="QLabel" name="lbl_minKey10">
                <property name="text">
-                <string>Gm</string>
+                <string notr="true">Gm</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -903,7 +906,7 @@
              <item row="3" column="10">
               <widget class="QLabel" name="lbl_minKey11">
                <property name="text">
-                <string>Abm</string>
+                <string notr="true">Abm</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1244,32 +1247,32 @@
               <widget class="QComboBox" name="stFreq">
                <item>
                 <property name="text">
-                 <string>27.5</string>
+                 <string notr="true">27.5</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>55</string>
+                 <string notr="true">55</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>110</string>
+                 <string notr="true">110</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>220</string>
+                 <string notr="true">220</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>440</string>
+                 <string notr="true">440</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>880</string>
+                 <string notr="true">880</string>
                 </property>
                </item>
               </widget>
@@ -1397,52 +1400,52 @@
                </property>
                <item>
                 <property name="text">
-                 <string>128</string>
+                 <string notr="true">128</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>256</string>
+                 <string notr="true">256</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>512</string>
+                 <string notr="true">512</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>1024</string>
+                 <string notr="true">1024</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>2048</string>
+                 <string notr="true">2048</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>4096</string>
+                 <string notr="true">4096</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>8192</string>
+                 <string notr="true">8192</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>16384</string>
+                 <string notr="true">16384</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>32768</string>
+                 <string notr="true">32768</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>65536</string>
+                 <string notr="true">65536</string>
                 </property>
                </item>
               </widget>
@@ -1461,17 +1464,17 @@
               <widget class="QComboBox" name="temporalWindow">
                <item>
                 <property name="text">
-                 <string>Blackman</string>
+                 <string notr="true">Blackman</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>Hamming</string>
+                 <string notr="true">Hamming</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>Hann</string>
+                 <string notr="true">Hann</string>
                 </property>
                </item>
               </widget>
@@ -1493,52 +1496,52 @@
                </property>
                <item>
                 <property name="text">
-                 <string>512</string>
+                 <string notr="true">512</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>1024</string>
+                 <string notr="true">1024</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>2048</string>
+                 <string notr="true">2048</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>4096</string>
+                 <string notr="true">4096</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>8192</string>
+                 <string notr="true">8192</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>16384</string>
+                 <string notr="true">16384</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>32768</string>
+                 <string notr="true">32768</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>65536</string>
+                 <string notr="true">65536</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>131072</string>
+                 <string notr="true">131072</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>262144</string>
+                 <string notr="true">262144</string>
                 </property>
                </item>
               </widget>
@@ -1589,7 +1592,7 @@
                </property>
                <item>
                 <property name="text">
-                 <string>Harte</string>
+                 <string notr="true">Harte</string>
                 </property>
                </item>
                <item>
@@ -1667,7 +1670,7 @@
                </item>
                <item>
                 <property name="text">
-                 <string>Harte HCDF</string>
+                 <string notr="true">Harte HCDF</string>
                 </property>
                </item>
                <item>
@@ -1807,26 +1810,26 @@
              <item row="21" column="1">
               <widget class="QComboBox" name="toneProfile">
                <property name="currentIndex">
-                <number>3</number>
+                <number>0</number>
                </property>
                <item>
                 <property name="text">
-                 <string>Krumhansl</string>
+                 <string notr="true">Krumhansl</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>Temperley</string>
+                 <string notr="true">Temperley</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>Gomez</string>
+                 <string notr="true">Gomez</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>Sha'ath</string>
+                 <string notr="true">Sha'ath</string>
                 </property>
                </item>
                <item>
@@ -2034,7 +2037,7 @@
                <item row="0" column="2">
                 <widget class="QLabel" name="lbl_maj1">
                  <property name="text">
-                  <string>m2</string>
+                  <string notr="true">m2</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2044,7 +2047,7 @@
                <item row="0" column="4">
                 <widget class="QLabel" name="lbl_maj2">
                  <property name="text">
-                  <string>M2</string>
+                  <string notr="true">M2</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2054,7 +2057,7 @@
                <item row="0" column="6">
                 <widget class="QLabel" name="lbl_maj3">
                  <property name="text">
-                  <string>m3</string>
+                  <string notr="true">m3</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2064,7 +2067,7 @@
                <item row="0" column="8">
                 <widget class="QLabel" name="lbl_maj4">
                  <property name="text">
-                  <string>M3</string>
+                  <string notr="true">M3</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2074,7 +2077,7 @@
                <item row="0" column="10">
                 <widget class="QLabel" name="lbl_maj5">
                  <property name="text">
-                  <string>P4</string>
+                  <string notr="true">P4</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2084,7 +2087,7 @@
                <item row="1" column="10">
                 <widget class="QLabel" name="lbl_maj11">
                  <property name="text">
-                  <string>M7</string>
+                  <string notr="true">M7</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2094,7 +2097,7 @@
                <item row="1" column="8">
                 <widget class="QLabel" name="lbl_maj10">
                  <property name="text">
-                  <string>m7</string>
+                  <string notr="true">m7</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2104,7 +2107,7 @@
                <item row="1" column="6">
                 <widget class="QLabel" name="lbl_maj9">
                  <property name="text">
-                  <string>M6</string>
+                  <string notr="true">M6</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2114,7 +2117,7 @@
                <item row="1" column="4">
                 <widget class="QLabel" name="lbl_maj8">
                  <property name="text">
-                  <string>m6</string>
+                  <string notr="true">m6</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2124,7 +2127,7 @@
                <item row="1" column="2">
                 <widget class="QLabel" name="lbl_maj7">
                  <property name="text">
-                  <string>P5</string>
+                  <string notr="true">P5</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2134,7 +2137,7 @@
                <item row="1" column="0">
                 <widget class="QLabel" name="lbl_maj6">
                  <property name="text">
-                  <string>TT</string>
+                  <string notr="true">TT</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2144,7 +2147,7 @@
                <item row="0" column="0">
                 <widget class="QLabel" name="lbl_maj0">
                  <property name="text">
-                  <string>P1</string>
+                  <string notr="true">P1</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2317,7 +2320,7 @@
                <item row="0" column="0">
                 <widget class="QLabel" name="lbl_min0">
                  <property name="text">
-                  <string>P1</string>
+                  <string notr="true">P1</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2327,7 +2330,7 @@
                <item row="0" column="2">
                 <widget class="QLabel" name="lbl_min1">
                  <property name="text">
-                  <string>m2</string>
+                  <string notr="true">m2</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2337,7 +2340,7 @@
                <item row="0" column="4">
                 <widget class="QLabel" name="lbl_min2">
                  <property name="text">
-                  <string>M2</string>
+                  <string notr="true">M2</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2347,7 +2350,7 @@
                <item row="0" column="6">
                 <widget class="QLabel" name="lbl_min3">
                  <property name="text">
-                  <string>m3</string>
+                  <string notr="true">m3</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2357,7 +2360,7 @@
                <item row="0" column="8">
                 <widget class="QLabel" name="lbl_min4">
                  <property name="text">
-                  <string>M3</string>
+                  <string notr="true">M3</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2367,7 +2370,7 @@
                <item row="0" column="10">
                 <widget class="QLabel" name="lbl_min5">
                  <property name="text">
-                  <string>P4</string>
+                  <string notr="true">P4</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2377,7 +2380,7 @@
                <item row="1" column="10">
                 <widget class="QLabel" name="lbl_min11">
                  <property name="text">
-                  <string>M7</string>
+                  <string notr="true">M7</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2387,7 +2390,7 @@
                <item row="1" column="8">
                 <widget class="QLabel" name="lbl_min10">
                  <property name="text">
-                  <string>m7</string>
+                  <string notr="true">m7</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2397,7 +2400,7 @@
                <item row="1" column="6">
                 <widget class="QLabel" name="lbl_min9">
                  <property name="text">
-                  <string>M6</string>
+                  <string notr="true">M6</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2407,7 +2410,7 @@
                <item row="1" column="4">
                 <widget class="QLabel" name="lbl_min8">
                  <property name="text">
-                  <string>m6</string>
+                  <string notr="true">m6</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2417,7 +2420,7 @@
                <item row="1" column="2">
                 <widget class="QLabel" name="lbl_min7">
                  <property name="text">
-                  <string>P5</string>
+                  <string notr="true">P5</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -2427,7 +2430,7 @@
                <item row="1" column="0">
                 <widget class="QLabel" name="lbl_min6">
                  <property name="text">
-                  <string>TT</string>
+                  <string notr="true">TT</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>

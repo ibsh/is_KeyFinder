@@ -23,6 +23,7 @@
 #define LIBAVDECODER_H
 
 #include "decoder.h"
+#include "strings.h"
 
 #ifndef INT64_C
 #define UINT64_C(c) (c ## ULL)

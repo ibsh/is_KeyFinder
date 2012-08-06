@@ -24,17 +24,32 @@
 
 AboutDialog::AboutDialog(QWidget *parent): QDialog(parent),ui(new Ui::AboutDialog){
   ui->setupUi(this);
+  this->setWindowTitle(tr("About %1").arg(GuiStrings::getInstance()->appName()));
   this->setWindowFlags(Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::CustomizeWindowHint);
 
-  ui->label_1_vn->setText("KeyFinder\nv" + QString::number(VERSION_MAJOR) + "." + QString::number(VERSION_MINOR));
+  QString br = "\n";
 
-  ui->label_2_cp->setText("Copyright 2011-" + QString::number(QDate::currentDate().year()) + "\nIbrahim Sha'ath");
+  ui->label_1_vn->setText(GuiStrings::getInstance()->appName() + br + "v" + QString::number(VERSION_MAJOR) + "." + QString::number(VERSION_MINOR));
+  ui->label_2_cp->setText(tr("Copyright %1").arg("2011-" + QString::number(QDate::currentDate().year())) + br + "Ibrahim Sha'ath");
+  ui->label_4_includes->setText(tr("%1 includes library code from:").arg(GuiStrings::getInstance()->appName()));
+
+  QString libs;
+  libs += "Qt (qt.nokia.com)" + br;
+  libs += "FFTW (www.fftw.org)" + br;
+  libs += "LibAV (www.libav.org)" + br;
+  libs += "Secret Rabbit Code (www.mega-nerd.com/SRC)" + br;
+  libs += "TagLib (developer.kde.org/~wheeler/taglib.html)" + br;
+  libs += "XQilla (xqilla.sourceforge.net)" + br;
+  libs += "Xerces-C++ (xerces.apache.org)";
+  ui->label_5_libs->setText(libs);
 
   //relative sizing on Mac/Linux only
 #ifndef Q_OS_WIN
   QFont smallerFont;
   smallerFont.setPointSize(smallerFont.pointSize() - 2);
   ui->label_3_gpl->setFont(smallerFont);
+  ui->label_4_includes->setFont(smallerFont);
+  ui->label_5_libs->setFont(smallerFont);
 #endif
 }
 

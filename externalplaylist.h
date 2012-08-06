@@ -38,9 +38,10 @@
 #endif
 
 #include "preferences.h"
+#include "strings.h"
 #include "externalplaylistserato.h"
 
-const QString SOURCE_KEYFINDER = "KeyFinder";
+const QString SOURCE_KEYFINDER = GuiStrings::getInstance()->appName();
 const QString SOURCE_ITUNES    = "iTunes";
 const QString SOURCE_TRAKTOR   = "Traktor";
 const QString SOURCE_SERATO    = "Serato";

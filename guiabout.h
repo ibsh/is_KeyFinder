@@ -26,6 +26,7 @@
 #include <QDate>
 
 #include "_VERSION.h"
+#include "strings.h"
 
 namespace Ui {
   class AboutDialog;

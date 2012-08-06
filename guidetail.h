@@ -58,6 +58,7 @@ private:
   void dropEvent(QDropEvent*);
   void runAnalysis();
   void cleanUpAfterRun();
+  QString wrapToolTip(const QString&);
 
   // UI
   Ui::DetailWindow* ui;

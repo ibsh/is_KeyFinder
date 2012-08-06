@@ -34,7 +34,7 @@ void MainMenuHandler::preferences(){
 }
 
 void MainMenuHandler::new_Batch_Window(bool firstWindow){
-  BatchWindow* newWin = new BatchWindow(this,0);
+  BatchWindow* newWin = new BatchWindow(this, 0);
   newWin->setMenuBar(newMenuBar());
   newWin->show();
   if(firstWindow)
@@ -42,7 +42,7 @@ void MainMenuHandler::new_Batch_Window(bool firstWindow){
 }
 
 void MainMenuHandler::new_Detail_Window(QString path){
-  DetailWindow* newWin = new DetailWindow(0,path);
+  DetailWindow* newWin = new DetailWindow(0, path);
   newWin->setMenuBar(newMenuBar());
   newWin->show();
 }
@@ -54,18 +54,18 @@ void MainMenuHandler::close_Window(){
 QMenuBar* MainMenuHandler::newMenuBar(){
   QMenuBar* menuBar = new QMenuBar(0);
   QMenu* menuFile = menuBar->addMenu("File");
-  menuFile->addAction("New Detail Window",this,SLOT(new_Detail_Window()),QKeySequence("Ctrl+N"));
-  menuFile->addAction("New Batch Window",this,SLOT(new_Batch_Window()),QKeySequence("Ctrl+Shift+N"));
+  menuFile->addAction(tr("New Detail Window"), this, SLOT(new_Detail_Window()), QKeySequence("Ctrl+N"));
+  menuFile->addAction(tr("New Batch Window"), this, SLOT(new_Batch_Window()), QKeySequence("Ctrl+Shift+N"));
   menuFile->addSeparator();
-  menuFile->addAction("Close Window",this,SLOT(close_Window()),QKeySequence("Ctrl+W"));
+  menuFile->addAction(tr("Close Window"), this, SLOT(close_Window()), QKeySequence("Ctrl+W"));
 #ifdef Q_OS_WIN
   QMenu* menuEdit = menuBar->addMenu("Edit");
-  menuEdit->addAction("Preferences",this,SLOT(preferences()));
+  menuEdit->addAction(tr("Preferences"), this, SLOT(preferences()));
   QMenu* menuHelp = menuBar->addMenu("Help");
-  menuHelp->addAction("About",this,SLOT(about()));
+  menuHelp->addAction(tr("About"), this, SLOT(about()));
 #else
-  menuFile->addAction("Preferences",this,SLOT(preferences()));
-  menuFile->addAction("About",this,SLOT(about()));
+  menuFile->addAction(tr("Preferences"), this, SLOT(preferences()));
+  menuFile->addAction(tr("About"), this, SLOT(about()));
 #endif
   return menuBar;
 }

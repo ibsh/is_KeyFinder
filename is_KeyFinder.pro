@@ -62,7 +62,8 @@ HEADERS  += \
     libkeyfindersingleton.h \
     metadatataglib.h \
     os_windows.h \
-    preferences.h
+    preferences.h \
+    strings.h
 
 SOURCES += \
     asyncfileobject.cpp \
@@ -84,7 +85,8 @@ SOURCES += \
     main.cpp \
     metadatataglib.cpp \
     os_windows.cpp \
-    preferences.cpp
+    preferences.cpp \
+    strings.cpp
 
 FORMS += \
     aboutdialog.ui \
@@ -141,3 +143,6 @@ win32{
 	OTHER_FILES += is_KeyFinder.ico
 	RC_FILE = win32.rc
 }
+
+TRANSLATIONS = \
+    is_keyfinder_en_GB.ts

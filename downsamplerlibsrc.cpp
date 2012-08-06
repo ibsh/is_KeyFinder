@@ -43,7 +43,7 @@ KeyFinder::AudioData* SecretRabbitDownsampler::downsample(KeyFinder::AudioData* 
   // 3-4 super fast but the aliasing is worse than a simple discard. Don't use.
   int result = src_simple(&srcData,2,audioIn->getChannels());
   if(result != 0){
-    throw KeyFinder::Exception("Error in LibSRC sample rate conversion");
+    throw KeyFinder::Exception(GuiStrings::getInstance()->libsrcError().toLocal8Bit().constData());
   }
   delete audioIn;
   return audioOut;
