@@ -28,8 +28,11 @@ const int ROW_RATEOFCHANGE = 2;
 
 DetailWindow::DetailWindow(QWidget *parent, QString path) : QMainWindow(parent), ui(new Ui::DetailWindow){
   ui->setupUi(this);
+  //: The title of the Detail window
   this->setWindowTitle(GuiStrings::getInstance()->appName() + GuiStrings::getInstance()->delim() + tr("Detailed Analysis"));
+  //: A tooltip on the Detail window
   ui->chromaColourCombo->setToolTip(wrapToolTip(tr("Choose the colour scheme for the chromagram. Some provide higher contrast than others.")));
+  //: A tooltip on the Detail window
   ui->colourScaleLabel->setToolTip(wrapToolTip(tr("This is the colour scale of the current chromagram. You can change the colour scheme using the dropdown below.")));
   connect(&analysisWatcher, SIGNAL(finished()), this, SLOT(analysisFinished()));
   allowDrops = true;
@@ -82,10 +85,13 @@ void DetailWindow::runAnalysis(){
   if(chkOctaves != prefs.getOctaves() || chkOffset != prefs.getOffsetToC() || ui->chromagramLabel->toolTip().left(4) == "Drag"){
     layoutScaling();
     drawPianoKeys();
-    // Chromagram tooltip... this is horribly long.
-    ui->chromagramLabel->setToolTip(wrapToolTip(tr("This chromagram spans %1. The vertical axis represents musical frequencies as indicated by the piano keyboard. The horizontal axis splits the track into analysis windows of about %1 seconds each. The brighter the colour, the higher the energy found at that frequency during that window.").arg(tr("%n octave(s)", "", prefs.getOctaves())).arg(QString::number((44100.0/prefs.getDFactor())/prefs.getHopSize()).left(4))));
+    //: A tooltip on the Detail window
+    ui->chromagramLabel->setToolTip(wrapToolTip(tr("This chromagram spans %1. The vertical axis represents musical frequencies as indicated by the piano keyboard. The horizontal axis splits the track into analysis windows of about %1 seconds each. The brighter the colour, the higher the energy found at that frequency during that window.")
+      //: Part of a tooltip on the Detail window
+      .arg(tr("%n octave(s)", "", prefs.getOctaves()))
+      .arg(QString::number((44100.0/prefs.getDFactor())/prefs.getHopSize()).left(4))));
   }
-  // visuals
+  //: Text in the Batch window status bar
   say(tr("Analysing... "));
   ui->progressBar->setVisible(true);
   ui->chromaColourCombo->setEnabled(false);
@@ -118,6 +124,7 @@ void DetailWindow::analysisFinished(){
   // one octave chromagram
   miniChromagramImage = imageFromChromagram(analysisWatcher.result().core.oneOctaveChromagram);
   ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
+  //: A tooltip on the Detail window
   ui->miniChromagramLabel->setToolTip(wrapToolTip(tr("This is the same chromagram data, reduced to a single octave.")));
   // harmonic change signal
   int rateOfChangePrecision = 100;
@@ -133,10 +140,13 @@ void DetailWindow::analysisFinished(){
   ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
   // Tooltip
   if(prefs.getSegmentation() == 'n'){
+    //: A tooltip on the Detail window
     ui->harmonicChangeLabel->setToolTip(wrapToolTip(tr("You are not using segmentation, so there is no harmonic change data to display.")));
   }else if(prefs.getSegmentation() == 'a'){
+    //: A tooltip on the Detail window
     ui->harmonicChangeLabel->setToolTip(wrapToolTip(tr("You are using arbitrary segmentation, so there is no harmonic change data to display.")));
   }else{
+    //: A tooltip on the Detail window
     ui->harmonicChangeLabel->setToolTip(wrapToolTip(tr("This is the level of harmonic change detected in the chromagram over time. Peaks in this signal are used to segment the chromagram.")));
   }
   // Key estimates
@@ -153,17 +163,20 @@ void DetailWindow::analysisFinished(){
     newLabel->setMinimumHeight(20);
     newLabel->setMaximumHeight(30);
     if(prefs.getSegmentation() == 'n'){
+      //: A tooltip on the Detail window
       newLabel->setToolTip(wrapToolTip(tr("This row shows the key estimate for the unsegmented chromagram.")));
     }else if(prefs.getSegmentation() == 'a'){
+      //: A tooltip on the Detail window
       newLabel->setToolTip(wrapToolTip(tr("This row shows the key estimates for the arbitrary segments.")));
     }else{
+      //: A tooltip on the Detail window
       newLabel->setToolTip(wrapToolTip(tr("This row shows the key estimates for the segments between peak harmonic changes.")));
     }
     ui->horizontalLayout_keyLabels->addWidget(newLabel, h - lastChange);
     keyLabels.push_back(newLabel);
     lastChange = h;
   }
-  // Global key estimate
+  //: Text in the Batch window status bar; includes a key code at %1
   say(tr("Key estimate: %1").arg(prefs.getKeyCode(analysisWatcher.result().core.globalKeyEstimate)));
   cleanUpAfterRun();
 }
@@ -251,6 +264,7 @@ void DetailWindow::blankVisualisations(){
   ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
   ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
   ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
+  //: The initial help tooltip on the Detail window
   QString blank = wrapToolTip(tr("Drag an audio file onto the window."));
   ui->chromagramLabel->setToolTip(blank);
   ui->miniChromagramLabel->setToolTip(blank);

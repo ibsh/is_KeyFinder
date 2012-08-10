@@ -54,14 +54,19 @@ void MainMenuHandler::close_Window(){
 QMenuBar* MainMenuHandler::newMenuBar(){
   QMenuBar* menuBar = new QMenuBar(0);
   QMenu* menuFile = menuBar->addMenu("File");
+  //: An action on the menu bar
   menuFile->addAction(tr("New Detail Window"), this, SLOT(new_Detail_Window()), QKeySequence("Ctrl+N"));
+  //: An action on the menu bar
   menuFile->addAction(tr("New Batch Window"), this, SLOT(new_Batch_Window()), QKeySequence("Ctrl+Shift+N"));
   menuFile->addSeparator();
+  //: An action on the menu bar
   menuFile->addAction(tr("Close Window"), this, SLOT(close_Window()), QKeySequence("Ctrl+W"));
 #ifdef Q_OS_WIN
   QMenu* menuEdit = menuBar->addMenu("Edit");
+  //: An action on the menu bar
   menuEdit->addAction(tr("Preferences"), this, SLOT(preferences()));
   QMenu* menuHelp = menuBar->addMenu("Help");
+  //: An action on the menu bar
   menuHelp->addAction(tr("About"), this, SLOT(about()));
 #else
   menuFile->addAction(tr("Preferences"), this, SLOT(preferences()));

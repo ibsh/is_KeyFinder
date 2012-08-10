@@ -374,7 +374,15 @@ void PrefsDialog::on_findITunesLibraryButton_clicked(){
 #else
   initDir = QDir::homePath() + "/Music/iTunes";
 #endif
-  QString iTunesLibraryPath = QFileDialog::getOpenFileName(this,tr("Choose iTunes Library XML"), initDir, tr("iTunes XML (*.xml)"));
+  //: File browse dialog launched from the Preferences window
+  QString iTunesLibraryPath = QFileDialog::getOpenFileName(
+    this,
+    //: Title of file browse dialog launched from the Preferences window
+    tr("Choose iTunes Library XML"),
+    initDir,
+    //: Filetype in file browse dialog launched from the Preferences window
+    tr("iTunes XML (*.xml)")
+  );
   if(iTunesLibraryPath.isEmpty())
     return;
   ui->iTunesLibraryPath->setText(iTunesLibraryPath);
@@ -387,7 +395,14 @@ void PrefsDialog::on_findTraktorLibraryButton_clicked(){
 #else
   initDir = QDir::homePath() + "/Documents/Native Instruments/Traktor 2.1.2";
 #endif
-  QString traktorLibraryPath = QFileDialog::getOpenFileName(this,tr("Choose Traktor Library NML"), initDir, tr("Traktor NML (*.nml)"));
+  QString traktorLibraryPath = QFileDialog::getOpenFileName(
+    this,
+    //: Title of file browse dialog launched from the Preferences window
+    tr("Choose Traktor Library NML"),
+    initDir,
+    //: Filetype in file browse dialog launched from the Preferences window
+    tr("Traktor NML (*.nml)")
+  );
   if(traktorLibraryPath.isEmpty())
     return;
   ui->traktorLibraryPath->setText(traktorLibraryPath);
@@ -400,7 +415,14 @@ void PrefsDialog::on_findSeratoLibraryButton_clicked(){
 #else
   initDir = QDir::homePath() + "/Music/_Serato_";
 #endif
-  QString seratoLibraryPath = QFileDialog::getOpenFileName(this,tr("Choose Serato database"), initDir, tr("Serato database (*)"));
+  QString seratoLibraryPath = QFileDialog::getOpenFileName(
+    this,
+    //: Title of file browse dialog launched from the Preferences window
+    tr("Choose Serato database"),
+    initDir,
+    //: Filetype in file browse dialog launched from the Preferences window
+    tr("Serato database (*)")
+  );
   if(seratoLibraryPath.isEmpty())
     return;
   ui->seratoLibraryPath->setText(seratoLibraryPath);

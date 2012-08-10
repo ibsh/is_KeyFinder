@@ -231,7 +231,7 @@
          </font>
         </property>
         <property name="text">
-         <string> CHROMAGRAM COLOURS</string>
+         <string>CHROMAGRAM COLOURS</string>
         </property>
         <property name="textFormat">
          <enum>Qt::PlainText</enum>

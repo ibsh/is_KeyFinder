@@ -182,8 +182,8 @@
         <source>Analysing (%n thread(s))...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation>
-            <numerusform>Analysing (%n thread)...</numerusform>
-            <numerusform>Analysing (%n threads)...</numerusform>
+            <numerusform>Analyzing (%n thread)...</numerusform>
+            <numerusform>Analyzing (%n threads)...</numerusform>
         </translation>
     </message>
     <message>
@@ -265,7 +265,7 @@
         <location filename="detailwindow.ui" line="234"/>
         <source>CHROMAGRAM COLOURS</source>
         <oldsource> CHROMAGRAM COLOURS</oldsource>
-        <translation></translation>
+        <translation>CHROMAGRAM COLORS</translation>
     </message>
     <message>
         <location filename="detailwindow.ui" line="257"/>
@@ -308,19 +308,19 @@
         <location filename="guidetail.cpp" line="34"/>
         <source>Choose the colour scheme for the chromagram. Some provide higher contrast than others.</source>
         <extracomment>A tooltip on the Detail window</extracomment>
-        <translation></translation>
+        <translation>Choose the color scheme for the chromagram. Some provide higher contrast than others.</translation>
     </message>
     <message>
         <location filename="guidetail.cpp" line="36"/>
         <source>This is the colour scale of the current chromagram. You can change the colour scheme using the dropdown below.</source>
         <extracomment>A tooltip on the Detail window</extracomment>
-        <translation></translation>
+        <translation>This is the color scale of the current chromagram. You can change the color scheme using the dropdown below.</translation>
     </message>
     <message>
         <location filename="guidetail.cpp" line="89"/>
         <source>This chromagram spans %1. The vertical axis represents musical frequencies as indicated by the piano keyboard. The horizontal axis splits the track into analysis windows of about %1 seconds each. The brighter the colour, the higher the energy found at that frequency during that window.</source>
         <extracomment>A tooltip on the Detail window</extracomment>
-        <translation></translation>
+        <translation>This chromagram spans %1. The vertical axis represents musical frequencies as indicated by the piano keyboard. The horizontal axis splits the track into analysis windows of about %1 seconds each. The brighter the color, the higher the energy found at that frequency during that window.</translation>
     </message>
     <message numerus="yes">
         <location filename="guidetail.cpp" line="91"/>
@@ -612,7 +612,7 @@
     <message>
         <location filename="prefsdialog.ui" line="50"/>
         <source>Parallelise batch jobs (faster, but higher CPU load)</source>
-        <translation></translation>
+        <translation>Parallelize batch jobs (faster, but higher CPU load)</translation>
     </message>
     <message>
         <location filename="prefsdialog.ui" line="64"/>

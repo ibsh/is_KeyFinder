@@ -24,13 +24,16 @@
 
 AboutDialog::AboutDialog(QWidget *parent): QDialog(parent),ui(new Ui::AboutDialog){
   ui->setupUi(this);
+  //: The title of the About window; includes the app name at %1
   this->setWindowTitle(tr("About %1").arg(GuiStrings::getInstance()->appName()));
   this->setWindowFlags(Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::CustomizeWindowHint);
 
   QString br = "\n";
 
   ui->label_1_vn->setText(GuiStrings::getInstance()->appName() + br + "v" + QString::number(VERSION_MAJOR) + "." + QString::number(VERSION_MINOR));
+  //: The copyright notice in the About window; includes the year and author name at %1
   ui->label_2_cp->setText(tr("Copyright %1").arg("2011-" + QString::number(QDate::currentDate().year())) + br + "Ibrahim Sha'ath");
+  //: The middle section of the About window; includes the app name at %1
   ui->label_4_includes->setText(tr("%1 includes library code from:").arg(GuiStrings::getInstance()->appName()));
 
   QString libs;
