@@ -149,6 +149,10 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   QAction* clearDetectedAction = new QAction(tr("Clear detected keys"),this);
   connect(clearDetectedAction, SIGNAL(triggered()), this, SLOT(clearDetected()));
   ui->tableWidget->addAction(clearDetectedAction);
+
+  // Resize elements for string lengths (esp for localisations)
+  ui->tableWidget->resizeColumnsToContents();
+
 }
 
 BatchWindow::~BatchWindow(){

@@ -17,7 +17,7 @@
    <locale language="English" country="UnitedKingdom"/>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0">
+   <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
@@ -142,12 +142,6 @@
           <height>0</height>
          </size>
         </property>
-        <property name="maximumSize">
-         <size>
-          <width>170</width>
-          <height>16777215</height>
-         </size>
-        </property>
         <property name="text">
          <string>Ready</string>
         </property>
@@ -155,6 +149,12 @@
       </item>
       <item>
        <widget class="QProgressBar" name="progressBar">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="value">
          <number>0</number>
         </property>
@@ -162,18 +162,6 @@
       </item>
       <item>
        <widget class="QPushButton" name="runBatchButton">
-        <property name="minimumSize">
-         <size>
-          <width>155</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>155</width>
-          <height>16777215</height>
-         </size>
-        </property>
         <property name="text">
          <string>Run Batch Analysis</string>
         </property>
@@ -183,18 +171,6 @@
        <widget class="QPushButton" name="cancelBatchButton">
         <property name="enabled">
          <bool>false</bool>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>16777215</height>
-         </size>
         </property>
         <property name="text">
          <string>Cancel</string>

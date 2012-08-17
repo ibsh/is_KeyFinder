@@ -115,7 +115,7 @@ void DetailWindow::analysisFinished(){
   QString shortName = md.getTitle();
   if(shortName == "")
     shortName = filePath.mid(filePath.lastIndexOf("/") + 1);
-  this->setWindowTitle(GuiStrings::getInstance()->appName() + tr("Detailed Analysis") + GuiStrings::getInstance()->delim() + shortName);
+  this->setWindowTitle(GuiStrings::getInstance()->appName() + GuiStrings::getInstance()->delim() + tr("Detailed Analysis") + GuiStrings::getInstance()->delim() + shortName);
   // full chromagram
   chromagramImage = imageFromChromagram(analysisWatcher.result().core.fullChromagram);
   ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
