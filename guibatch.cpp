@@ -587,9 +587,9 @@ void BatchWindow::writeDetectedToFiles(){
   //: An alert message in the Batch window; contains "N tags" at %1 and "N filenames" at %2
   msg.setText(tr("Data written to %1 and %2")
     //: Part of an alert message in the Batch window
-    .arg(tr("%n tag(s)", "", successfullyWrittenToTags)
+    .arg(tr("%n tag(s)", "", successfullyWrittenToTags))
     //: Part of an alert message in the Batch window
-    .arg(tr("%n filename(s)", "", successfullyWrittenToFilename))));
+    .arg(tr("%n filename(s)", "", successfullyWrittenToFilename)));
   msg.exec();
   setGuiDefaults();
 }
