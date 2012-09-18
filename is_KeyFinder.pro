@@ -26,7 +26,7 @@
 #  \-> fftw        3.3.2
 # libav            0.7.6
 # libsamplerate    0.1.8
-# taglib           1.7.2
+# taglib           1.8.0
 #
 # MAC ONLY:
 # xerces-c         3.1.1
@@ -147,9 +147,5 @@ win32{
 TRANSLATIONS = \
     is_keyfinder_en_GB.ts \
     is_keyfinder_en_US.ts \
-    is_keyfinder_de.ts \
-    is_keyfinder_it.ts \
-    is_keyfinder_es.ts \
     is_keyfinder_fr.ts \
-    is_keyfinder_pt.ts \
     is_keyfinder_sv.ts
