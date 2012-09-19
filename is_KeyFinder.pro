@@ -135,10 +135,10 @@ win32{
 	LIBS += -lavutil
 	LIBS += -lsamplerate-0
 
-	INCLUDEPATH += C:/MSYS/home/user/taglib-1.7.2
-	INCLUDEPATH += C:/MSYS/home/user/taglib-1.7.2/include
-	DEPENDPATH += C:/MSYS/home/user/taglib-1.7.2/taglib
-	LIBS += -LC:/MSYS/home/user/taglib-1.7.2/taglib -llibtag
+	INCLUDEPATH += C:/MSYS/home/user/taglib-1.8
+	INCLUDEPATH += C:/MSYS/home/user/taglib-1.8/include
+	DEPENDPATH += C:/MSYS/home/user/taglib-1.8/taglib
+	LIBS += -LC:/MSYS/home/user/taglib-1.8/taglib -llibtag
 
 	OTHER_FILES += is_KeyFinder.ico
 	RC_FILE = win32.rc
