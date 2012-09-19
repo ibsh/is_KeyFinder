@@ -34,7 +34,7 @@ AboutDialog::AboutDialog(QWidget *parent): QDialog(parent),ui(new Ui::AboutDialo
   //: The copyright notice in the About window; includes the year and author name at %1
   ui->label_2_cp->setText(tr("Copyright %1").arg("2011-" + QString::number(QDate::currentDate().year())) + br + "Ibrahim Sha'ath");
   //: The middle section of the About window; includes the app name at %1
-  ui->label_4_includes->setText(tr("%1 includes library code from:").arg(GuiStrings::getInstance()->appName()));
+  ui->label_5_includes->setText(tr("%1 includes library code from:").arg(GuiStrings::getInstance()->appName()));
 
   QString libs;
   libs += "Qt (qt.nokia.com)" + br;
@@ -44,15 +44,15 @@ AboutDialog::AboutDialog(QWidget *parent): QDialog(parent),ui(new Ui::AboutDialo
   libs += "TagLib (developer.kde.org/~wheeler/taglib.html)" + br;
   libs += "XQilla (xqilla.sourceforge.net)" + br;
   libs += "Xerces-C++ (xerces.apache.org)";
-  ui->label_5_libs->setText(libs);
+  ui->label_6_libs->setText(libs);
 
   //relative sizing on Mac/Linux only
 #ifndef Q_OS_WIN
   QFont smallerFont;
   smallerFont.setPointSize(smallerFont.pointSize() - 2);
-  ui->label_3_gpl->setFont(smallerFont);
-  ui->label_4_includes->setFont(smallerFont);
-  ui->label_5_libs->setFont(smallerFont);
+  ui->label_4_gpl->setFont(smallerFont);
+  ui->label_5_includes->setFont(smallerFont);
+  ui->label_6_libs->setFont(smallerFont);
 #endif
 }
 

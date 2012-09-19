@@ -21,7 +21,7 @@
 
 # CURRENT DEPENDENCIES:
 # qt               4.8.2
-# libkeyfinder     0.1.5
+# libkeyfinder     0.1.6
 #  |-> boost      1.49.0
 #  \-> fftw        3.3.2
 # libav            0.7.6

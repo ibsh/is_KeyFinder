@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>360</width>
-    <height>490</height>
+    <height>520</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -16,16 +16,10 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="minimumSize">
-   <size>
-    <width>360</width>
-    <height>490</height>
-   </size>
-  </property>
   <property name="maximumSize">
    <size>
     <width>360</width>
-    <height>490</height>
+    <height>520</height>
    </size>
   </property>
   <property name="locale">
@@ -80,7 +74,20 @@ version_num</string>
    <item row="2" column="0" colspan="2">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QLabel" name="label_3_gpl">
+      <widget class="QLabel" name="label_3_website">
+       <property name="text">
+        <string notr="true">&lt;a href=&quot;http://www.ibrahimshaath.co.uk/keyfinder&quot;&gt;http://www.ibrahimshaath.co.uk/keyfinder&lt;/a&gt;</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_4_gpl">
        <property name="text">
         <string notr="true">KeyFinder is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
@@ -94,7 +101,7 @@ See the GNU General Public License for more details. You should have received a 
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_4_includes">
+      <widget class="QLabel" name="label_5_includes">
        <property name="text">
         <string notr="true">includes</string>
        </property>
@@ -104,7 +111,7 @@ See the GNU General Public License for more details. You should have received a 
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_5_libs">
+      <widget class="QLabel" name="label_6_libs">
        <property name="text">
         <string notr="true">libraries</string>
        </property>
