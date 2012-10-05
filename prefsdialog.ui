@@ -133,9 +133,6 @@
              <height>0</height>
             </size>
            </property>
-           <property name="frame">
-            <bool>true</bool>
-           </property>
            <property name="readOnly">
             <bool>true</bool>
            </property>
@@ -163,9 +160,6 @@
              <height>0</height>
             </size>
            </property>
-           <property name="frame">
-            <bool>true</bool>
-           </property>
            <property name="readOnly">
             <bool>true</bool>
            </property>
@@ -192,9 +186,6 @@
              <width>300</width>
              <height>0</height>
             </size>
-           </property>
-           <property name="frame">
-            <bool>true</bool>
            </property>
            <property name="readOnly">
             <bool>true</bool>
