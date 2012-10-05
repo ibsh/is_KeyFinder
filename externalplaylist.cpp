@@ -305,14 +305,14 @@ QUrl ExternalPlaylist::fixITunesAddressing(const QString& address){
   QString addressCopy = address;
   addressCopy = addressCopy.replace(QString("file://localhost"), QString(""));
   addressCopy = QUrl::fromPercentEncoding(addressCopy.toLocal8Bit().constData());
-  return QUrl(QUrl::fromLocalFile(addressCopy));
+  return QUrl::fromLocalFile(addressCopy);
 }
 
 QUrl ExternalPlaylist::fixTraktorAddressing(const QString& address){
   QString addressCopy = address;
   addressCopy = addressCopy.replace(QString("/:"), QString("/"));
   addressCopy = addressCopy.replace(QString("Macintosh HD"), QString(""));
-  return QUrl(QUrl::fromLocalFile(addressCopy));
+  return QUrl::fromLocalFile(addressCopy);
 }
 
 // ======================================= XQilla stuff ============================================
