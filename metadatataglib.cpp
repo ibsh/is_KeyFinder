@@ -306,30 +306,30 @@ QString TagLibMetadata::writeKeyToMetadata(int key, const Preferences& prefs){
   QString delim = prefs.getMetadataDelimiter();
 
   if(prefs.getMetadataWriteComment() == METADATA_WRITE_OVERWRITE){
-    if(getComment() != dataToWrite && setComment(dataToWrite.toLocal8Bit().constData()) == 0)
+    if(getComment() != dataToWrite && setComment(dataToWrite) == 0)
       result += "c";
   }else if(prefs.getMetadataWriteComment() == METADATA_WRITE_PREPEND){
-    if(getComment().left(dataToWrite.length()) != dataToWrite && setComment(dataToWrite.toLocal8Bit().constData() + delim + getComment()) == 0)
+    if(getComment().left(dataToWrite.length()) != dataToWrite && setComment(dataToWrite + delim + getComment()) == 0)
       result += "c";
   }else if(prefs.getMetadataWriteComment() == METADATA_WRITE_APPEND){
-    if(getComment().right(dataToWrite.length()) != dataToWrite && setComment(getComment() + delim + dataToWrite.toLocal8Bit().constData()) == 0)
+    if(getComment().right(dataToWrite.length()) != dataToWrite && setComment(getComment() + delim + dataToWrite) == 0)
       result += "c";
   }
 
   if(prefs.getMetadataWriteGrouping() == METADATA_WRITE_OVERWRITE){
-    if(getGrouping() != dataToWrite && setGrouping(dataToWrite.toLocal8Bit().constData()) == 0)
+    if(getGrouping() != dataToWrite && setGrouping(dataToWrite) == 0)
       result += "g";
   }else if(prefs.getMetadataWriteGrouping() == METADATA_WRITE_PREPEND){
-    if(getGrouping().left(dataToWrite.length()) != dataToWrite && setGrouping(dataToWrite.toLocal8Bit().constData() + delim + getGrouping()) == 0)
+    if(getGrouping().left(dataToWrite.length()) != dataToWrite && setGrouping(dataToWrite + delim + getGrouping()) == 0)
       result += "g";
   }else if(prefs.getMetadataWriteGrouping() == METADATA_WRITE_APPEND){
-    if(getGrouping().right(dataToWrite.length()) != dataToWrite && setGrouping(getGrouping() + delim + dataToWrite.toLocal8Bit().constData()) == 0)
+    if(getGrouping().right(dataToWrite.length()) != dataToWrite && setGrouping(getGrouping() + delim + dataToWrite) == 0)
       result += "g";
   }
 
   dataToWrite = dataToWrite.left(3); // Key field in ID3 holds only 3 chars
   if(prefs.getMetadataWriteKey() == METADATA_WRITE_OVERWRITE)
-    if(getKey() != dataToWrite && setKey(dataToWrite.toLocal8Bit().constData()) == 0)
+    if(getKey() != dataToWrite && setKey(dataToWrite) == 0)
         result += "k";
 
   return result;
