@@ -36,7 +36,8 @@ TagLibMetadata::TagLibMetadata(const QString& filePath){
   QString fileExt = filePath.mid(filePath.lastIndexOf(".") + 1).toLower();
 
 #ifdef Q_OS_WIN
-  const wchar_t* filePathCh = reinterpret_cast<const wchar_t *>(filePath.constData());
+  // Using utf16_to_utf8 here, as per decoderlibav, leads to a null file reference.
+  const wchar_t* filePathCh = reinterpret_cast<const wchar_t*>(filePath.constData());
 #else
   QByteArray encodedPath = QFile::encodeName(filePath);
   const char* filePathCh = encodedPath;

@@ -518,7 +518,7 @@ void BatchWindow::runAnalysis(){
   for(int row = 0; row < ui->tableWidget->rowCount(); row++){
     QString status = ui->tableWidget->item(row, COL_STATUS)->text();
     if(status == STATUS_NEW || status == STATUS_TAGSREAD)
-      objects.push_back(AsyncFileObject(ui->tableWidget->item(row, COL_FILEPATH)->text(),prefs,row));
+      objects.push_back(AsyncFileObject(ui->tableWidget->item(row, COL_FILEPATH)->text(), prefs, row));
   }
   QFuture<KeyFinderResultWrapper> analysisFuture = QtConcurrent::mapped(objects, keyDetectionProcess);
   analysisWatcher.setFuture(analysisFuture);
