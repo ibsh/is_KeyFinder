@@ -768,22 +768,19 @@ void BatchWindow::sortTableWidget(){
 void BatchWindow::checkForNewVersion(){
   QNetworkAccessManager *manager = new QNetworkAccessManager(this);
   connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(receiveNetworkReply(QNetworkReply*)));
-  manager->get(QNetworkRequest(QUrl("http://www.ibrahimshaath.co.uk/keyfinder/kf.xml")));
+  manager->get(QNetworkRequest(QUrl("http://www.ibrahimshaath.co.uk/keyfinder/kf.txt")));
 }
 
 void BatchWindow::receiveNetworkReply(QNetworkReply* reply){
   QString newVersion = "";
   if(reply->error() == QNetworkReply::NoError){
-    QXmlQuery xmlQuery;
-    xmlQuery.setFocus(reply->readAll());
-    xmlQuery.setQuery("//KeyFinder/version/@*/string(.)");
-    QStringList xmlContents;
-    xmlQuery.evaluateTo(&xmlContents);
-    if(!xmlContents.isEmpty()){
-      int latest_major = xmlContents[0].toInt();
-      int latest_minor = xmlContents[1].toInt();
+    QString released(reply->readAll());
+    QStringList version = released.split(".",QString::SkipEmptyParts);
+    if(!version.isEmpty()){
+      int latest_major = version.first().toInt();
+      int latest_minor = version.last().toInt();
       if(latest_major > VERSION_MAJOR || latest_minor > VERSION_MINOR)
-        newVersion = xmlContents[0] + "." + xmlContents[1];
+        newVersion = released.trimmed();
     }
   }
   reply->deleteLater();

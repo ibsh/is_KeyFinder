@@ -36,14 +36,6 @@ class MainMenuHandler;
 #include <QClipboard>
 #include <QMessageBox>
 #include <QLabel>
-#ifdef Q_OS_WIN
-#include <QtXml/QtXml>
-#include <QtXmlPatterns/QtXmlPatterns>
-#else
-#include <Qt/QtXml>
-#include <Qt/QtXmlPatterns>
-#endif
-#include <QXmlResultItems>
 #include <QtNetwork/QNetworkReply>
 
 #include "guidetail.h"
