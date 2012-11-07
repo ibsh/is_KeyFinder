@@ -28,9 +28,6 @@
 #include <QtXml/QtXml>
 #include <QtXmlPatterns/QtXmlPatterns>
 #else
-// these two currently necessary for iTunes standalone... maybe rewrite that.
-#include <Qt/QtXml>
-#include <Qt/QtXmlPatterns>
 // XQilla
 #include <xqilla/xqilla-simple.hpp>
 #include <xercesc/dom/DOM.hpp>

@@ -256,6 +256,9 @@ QList<QUrl> ExternalPlaylist::readITunesStandalonePlaylist(const QString& playli
   QStringList resultStrings;
   QList<QUrl> results;
 
+#ifndef Q_OS_MAC
+  // QXmlQuery on Windows
+
   QFile xmlFile(playlistPath);
   if (!xmlFile.open(QIODevice::ReadOnly))
     return results;
@@ -272,8 +275,52 @@ QList<QUrl> ExternalPlaylist::readITunesStandalonePlaylist(const QString& playli
   xmlQuery.evaluateTo(&resultStrings);
   xmlFile.close();
 
+#else
+  // XQilla on Mac
+
+  QString xPath;
+  xPath += "plist/dict/dict[preceding-sibling::key[1]='Tracks']";
+  xPath += "/dict/string[preceding-sibling::key[1]='Location']/text()";
+
+  // Initialise Xerces-C and XQilla using XQillaPlatformUtils
+  try{
+    XQillaPlatformUtils::initialize();
+  }catch (const xercesc_3_1::XMLException& eXerces){
+    qDebug("Xerces exception message: %s", UTF8(eXerces.getMessage()));
+    return results;
+  }
+  // Get the XQilla DOMImplementation object
+  xercesc_3_1::DOMImplementation *xqillaImplementation = xercesc_3_1::DOMImplementationRegistry::getDOMImplementation(X("XPath2 3.0"));
+  try{
+    // Create a DOMLSParser object
+    AutoDelete<xercesc_3_1::DOMLSParser> parser(xqillaImplementation->createLSParser(xercesc_3_1::DOMImplementationLS::MODE_SYNCHRONOUS, 0));
+    parser->getDomConfig()->setParameter(xercesc_3_1::XMLUni::fgXercesLoadExternalDTD, false);
+    // Parse a DOMDocument
+    xercesc_3_1::DOMDocument *document = parser->parseURI(X(playlistPath.toLocal8Bit().constData()));
+    if(document == 0) {
+      throw XQillaException(99,X("No library file found"));
+    }
+    // Parse XPath
+    AutoRelease<xercesc_3_1::DOMXPathExpression> expression(document->createExpression(X(xPath.toLocal8Bit().constData()), 0));
+    // Execute query
+    AutoRelease<xercesc_3_1::DOMXPathResult> result(expression->evaluate(document, xercesc_3_1::DOMXPathResult::ITERATOR_RESULT_TYPE, 0));
+    // Iterate over the results
+    while(result->iterateNext())
+      resultStrings.push_back(QString::fromUtf8(UTF8(result->getNodeValue()->getTextContent())));
+  }catch(XQillaException &e){
+    qDebug("XQillaException: %s", UTF8(e.getString()));
+  }catch(...){
+    qDebug("Unspecified exception with XQilla");
+  }
+
+  // Terminate Xerces-C and XQilla using XQillaPlatformUtils
+  XQillaPlatformUtils::terminate();
+
+#endif
+
   for(int i=0; i<(signed)resultStrings.size(); i++)
     results.push_back(fixITunesAddressing(resultStrings[i]));
+
   return results;
 }
 
@@ -315,7 +362,7 @@ QUrl ExternalPlaylist::fixTraktorAddressing(const QString& address){
   return QUrl::fromLocalFile(addressCopy);
 }
 
-// ======================================= XQilla stuff ============================================
+// ================================= QXmlQuery / XQilla stuff =======================================
 
 #ifndef Q_OS_MAC
 
