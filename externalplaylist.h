@@ -69,15 +69,8 @@ private:
   static QList<ExternalPlaylistObject> readPlaylistsFromTraktorLibrary(const Preferences&);
   static QList<QUrl> readTraktorLibraryPlaylist(const QString&, const Preferences&);
   static QUrl fixTraktorAddressing(const QString&);
-#ifndef Q_OS_MAC
-  // QXmlQuery
-  static QStringList qXmlQueryReadLibrary(const QString&, const QString&);
-  static QStringList qXmlQueryReadLibraryPlaylist(const QString&, const QString&, const QString&);
-#else
-  // XQilla
-  static QStringList xQillaReadLibrary(const QString&, const QString&);
-  static QStringList xQillaReadLibraryPlaylist(const QString&, const QString&, const QString&);
-#endif
+  // XML handling
+  static QStringList executeXmlQuery(const QString&, const QString&, const QStringList& = QStringList());
 };
 
 #endif // EXTERNALPLAYLIST_H
