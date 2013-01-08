@@ -22,9 +22,9 @@
 #ifndef PREFSDIALOG_H
 #define PREFSDIALOG_H
 
-#include <QDialog>
+#include <QtWidgets/QDialog>
 #include <QString>
-#include <QFileDialog>
+#include <QtWidgets/QFileDialog>
 
 #include "preferences.h"
 

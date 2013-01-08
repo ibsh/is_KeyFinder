@@ -26,6 +26,7 @@
 class BatchWindow;
 
 #include <QtGui>
+#include <QtWidgets>
 #include <QObject>
 
 #include "guibatch.h"

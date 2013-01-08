@@ -37,7 +37,7 @@ AboutDialog::AboutDialog(QWidget *parent): QDialog(parent),ui(new Ui::AboutDialo
   ui->label_5_includes->setText(tr("%1 includes library code from:").arg(GuiStrings::getInstance()->appName()));
 
   QString libs;
-  libs += "Qt (qt.nokia.com)" + br;
+  libs += "Qt (qt-project.org)" + br;
   libs += "FFTW (www.fftw.org)" + br;
   libs += "LibAV (www.libav.org)" + br;
   libs += "Secret Rabbit Code (www.mega-nerd.com/SRC)" + br;

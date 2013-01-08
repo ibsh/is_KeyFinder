@@ -19,7 +19,7 @@
 
 *************************************************************************/
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QMenuBar>
 #include <QKeySequence>
 
@@ -31,7 +31,7 @@
 
 #include <fstream>
 
-void LoggingHandler(QtMsgType type, const char *msg) {
+void LoggingHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
   std::ofstream logfile;
 #if defined Q_OS_MAC
   logfile.open(QDir::homePath().toLocal8Bit() + "/Library/Logs/KeyFinder.log", std::ios::app);
@@ -44,19 +44,19 @@ void LoggingHandler(QtMsgType type, const char *msg) {
   logfile << QTime::currentTime().toString("hh:mm:ss.zzz").toLocal8Bit().constData() << " ";
   switch (type) {
   case QtDebugMsg:
-    logfile << "Debug: " << msg << "\n";
-    break;
+    logfile << "Debug";    break;
   case QtWarningMsg:
-    logfile << "Warning: " << msg << "\n";
-    break;
+    logfile << "Warning";  break;
   case QtCriticalMsg:
-    logfile << "Critical: " << msg << "\n";
-    break;
+    logfile << "Critical"; break;
   case QtFatalMsg:
-    logfile << "Fatal: " << msg << "\n";
+    logfile << "Fatal";    break;
+  }
+  logfile << ": " << msg.toLocal8Bit().constData() << " (" << context.file << ":" << context.line << ")\n";
+  logfile.close();
+  if(type == QtFatalMsg){
     abort();
   }
-  logfile.close();
 }
 
 int commandLineInterface(int argc, char* argv[]){
@@ -114,7 +114,7 @@ int main(int argc, char* argv[]){
       return cliResult;
   }
 
-  qInstallMsgHandler(LoggingHandler);
+  qInstallMessageHandler(LoggingHandler);
 
   QApplication a(argc, argv);
 

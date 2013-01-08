@@ -261,9 +261,9 @@ QList<QUrl> ExternalPlaylist::readM3uStandalonePlaylist(const QString& m3uPath){
   // M3U files break with ch10/13, and comment with ch35.
   // QTextStream.readLine doesn't work, so we do it a char at a time
   while(!(m3uChar = m3uTextStream.read(1)).isNull()){
-    int chVal = int(m3uChar[0].toAscii());
+    int chVal = int(m3uChar[0].toLatin1());
     if(chVal == 13 || chVal == 10){
-      if(m3uLine.length() > 0 && int(m3uLine[0].toAscii()) != 35){
+      if(m3uLine.length() > 0 && int(m3uLine[0].toLatin1()) != 35){
         results.push_back(QUrl(m3uLine));
       }
       m3uLine = "";
@@ -292,7 +292,7 @@ QUrl ExternalPlaylist::fixTraktorAddressing(const QString& address){
 
 #ifndef Q_OS_MAC
 
-QStringList ExternalPlaylist::executeXmlQuery(const QString& libraryPath, const QString& xPath, const QStringList& parameters = QStringList()){
+QStringList ExternalPlaylist::executeXmlQuery(const QString& libraryPath, const QString& xPath, const QStringList& parameters){
 
   QStringList results;
 

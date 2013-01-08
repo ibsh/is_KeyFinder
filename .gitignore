@@ -1,5 +1,5 @@
 .DS_Store
-is_KeyFinder.pro.user
+is_KeyFinder.pro.user*
 ui/
 moc_*
 qrc_resources.cpp

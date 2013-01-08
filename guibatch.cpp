@@ -75,9 +75,9 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   if(prefs.getBatchWindowSplitterState() != QByteArray())
     ui->splitter->restoreState(prefs.getBatchWindowSplitterState());
   keyFinderRow    = QBrush(QColor(191, 255, 191));
-  keyFinderAltRow = QBrush(QColor(127, 234, 127));
+  keyFinderAltRow = QBrush(QColor(127, 223, 127));
   textDefault     = QBrush(QColor(  0,   0,   0));
-  textSuccess     = QBrush(QColor(  0, 128,   0));
+  textSuccess     = QBrush(QColor(  0, 127,   0));
   textError       = QBrush(QColor(191,   0,   0));
   sortColumn = -1;
   allowSort = false;

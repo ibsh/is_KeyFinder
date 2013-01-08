@@ -22,7 +22,7 @@
 #ifndef ABOUTDIALOG_H
 #define ABOUTDIALOG_H
 
-#include <QDialog>
+#include <QtWidgets/QDialog>
 #include <QDate>
 
 #include "_VERSION.h"

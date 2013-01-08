@@ -20,7 +20,7 @@
 #*************************************************************************
 
 # CURRENT DEPENDENCIES:
-# qt               4.8.2
+# qt               5.0.0
 # libkeyfinder     0.1.6
 #  |-> boost      1.49.0
 #  \-> fftw        3.3.2
@@ -32,13 +32,19 @@
 # xerces-c         3.1.1
 # xqilla           2.3.0
 
-QT += core
-QT += gui
-QT += xml
-QT += xmlpatterns
-QT += network
+QT += \
+    core \
+    gui \
+    widgets \
+    xml \
+    xmlpatterns \
+    concurrent \
+    network
+
 TEMPLATE = app
 TARGET = KeyFinder
+UI_DIR = ui
+RESOURCES += resources.qrc
 
 HEADERS  += \
     _VERSION.h \
@@ -98,11 +104,7 @@ OTHER_FILES += \
 		README \
     win32.rc
 
-UI_DIR = ui
-
 QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS # for libav
-
-RESOURCES += resources.qrc
 
 unix|macx{
   LIBS += -lkeyfinder

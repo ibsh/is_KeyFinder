@@ -26,7 +26,8 @@
 class MainMenuHandler;
 
 #include <QtCore>
-#include <QMainWindow>
+#include <QtConcurrent/QtConcurrent>
+#include <QtWidgets/QMainWindow>
 #include <QThread>
 #include <QDragEnterEvent>
 #include <QDropEvent>
@@ -34,8 +35,8 @@ class MainMenuHandler;
 #include <QFuture>
 #include <QFutureWatcher>
 #include <QClipboard>
-#include <QMessageBox>
-#include <QLabel>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QLabel>
 #include <QtNetwork/QNetworkReply>
 
 #include "guidetail.h"
@@ -46,7 +47,6 @@ class MainMenuHandler;
 #include "metadatataglib.h"
 #include "externalplaylist.h"
 #include "_VERSION.h"
-
 
 namespace Ui {
   class BatchWindow;

@@ -23,12 +23,13 @@
 #define DETAILWINDOW_H
 
 #include <QtCore>
-#include <QMainWindow>
+#include <QtConcurrent/QtConcurrent>
+#include <QtWidgets/QMainWindow>
 #include <QThread>
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QUrl>
-#include <QLabel>
+#include <QtWidgets/QLabel>
 #include <vector>
 
 #include "keyfinder/chromagram.h"

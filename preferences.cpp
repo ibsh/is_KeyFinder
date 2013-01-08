@@ -404,19 +404,23 @@ Preferences::Preferences(){
   defaultKeyCodes.push_back("Ab");	defaultKeyCodes.push_back("Abm");
   defaultKeyCodes.push_back("...");
   // key colours for display
-  keyColours.push_back(qRgb(223,255,127));	keyColours.push_back(qRgb(191,223,127));
-  keyColours.push_back(qRgb(255,127,255));	keyColours.push_back(qRgb(223,127,223));
-  keyColours.push_back(qRgb(127,255,223));	keyColours.push_back(qRgb(127,223,191));
-  keyColours.push_back(qRgb(255,127,127));	keyColours.push_back(qRgb(223,127,127));
-  keyColours.push_back(qRgb(127,223,255));	keyColours.push_back(qRgb(127,191,223));
-  keyColours.push_back(qRgb(255,255,127));	keyColours.push_back(qRgb(223,223,127));
-  keyColours.push_back(qRgb(223,127,255));	keyColours.push_back(qRgb(191,127,223));
-  keyColours.push_back(qRgb(127,255,127));	keyColours.push_back(qRgb(127,223,127));
-  keyColours.push_back(qRgb(255,127,223));	keyColours.push_back(qRgb(223,127,191));
-  keyColours.push_back(qRgb(127,255,255));	keyColours.push_back(qRgb(127,223,223));
-  keyColours.push_back(qRgb(255,223,127));	keyColours.push_back(qRgb(223,191,127));
-  keyColours.push_back(qRgb(127,127,255));	keyColours.push_back(qRgb(127,127,223));
-  keyColours.push_back(qRgb(127,127,127));
+  int a = 127;
+  int b = 191;
+  int c = 223;
+  int d = 255;
+  keyColours.push_back(qRgb(c,d,a));	keyColours.push_back(qRgb(b,c,a));
+  keyColours.push_back(qRgb(d,a,d));	keyColours.push_back(qRgb(c,a,c));
+  keyColours.push_back(qRgb(a,d,c));	keyColours.push_back(qRgb(a,c,b));
+  keyColours.push_back(qRgb(d,a,a));	keyColours.push_back(qRgb(c,a,a));
+  keyColours.push_back(qRgb(a,c,d));	keyColours.push_back(qRgb(a,b,c));
+  keyColours.push_back(qRgb(d,d,a));	keyColours.push_back(qRgb(c,c,a));
+  keyColours.push_back(qRgb(c,a,d));	keyColours.push_back(qRgb(b,a,c));
+  keyColours.push_back(qRgb(a,d,a));	keyColours.push_back(qRgb(a,c,a));
+  keyColours.push_back(qRgb(d,a,c));	keyColours.push_back(qRgb(c,a,b));
+  keyColours.push_back(qRgb(a,d,d));	keyColours.push_back(qRgb(a,c,c));
+  keyColours.push_back(qRgb(d,c,a));	keyColours.push_back(qRgb(c,b,a));
+  keyColours.push_back(qRgb(a,a,c));	keyColours.push_back(qRgb(a,a,c));
+  keyColours.push_back(qRgb(a,a,a));
 }
 
 void Preferences::save(){
