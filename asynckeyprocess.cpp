@@ -47,23 +47,6 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
     return result;
   }
 
-  // make audio stream monaural ahead of downsample to reduce load
-  audio->reduceToMono();
-
-  // downsample if necessary
-  if(object.prefs.getDFactor() > 1){
-    Downsampler* ds = Downsampler::getDownsampler(object.prefs.getDFactor(), audio->getFrameRate(), object.prefs.getLastFreq());
-    try{
-      audio = ds->downsample(audio, object.prefs.getDFactor());
-    }catch(KeyFinder::Exception& e){
-      delete audio;
-      delete ds;
-      result.errorMessage = QString(e.what().c_str());
-      return result;
-    }
-    delete ds;
-  }
-
   KeyFinder::KeyFinder* kf = LibKeyFinderSingleton::getInstance()->getKeyFinder();
   result.core = kf->findKey(*audio, object.prefs.core);
 

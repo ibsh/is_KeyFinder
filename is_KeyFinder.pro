@@ -21,11 +21,10 @@
 
 # CURRENT DEPENDENCIES:
 # qt               5.0.0
-# libkeyfinder     0.1.6
+# libkeyfinder     0.2.0
 #  |-> boost      1.49.0
 #  \-> fftw        3.3.2
 # libav            0.7.6
-# libsamplerate    0.1.8
 # taglib           1.8.0
 #
 # MAC ONLY:
@@ -55,9 +54,6 @@ HEADERS  += \
     asyncmetadatareadresult.h \
     decoder.h \
     decoderlibav.h \
-    downsampler.h \
-    downsamplerib.h \
-    downsamplerlibsrc.h \
     externalplaylist.h \
     externalplaylistserato.h \
     guiabout.h \
@@ -77,9 +73,6 @@ SOURCES += \
     asyncmetadatareadprocess.cpp \
     decoder.cpp \
     decoderlibav.cpp \
-    downsampler.cpp \
-    downsamplerib.cpp \
-    downsamplerlibsrc.cpp \
     externalplaylist.cpp \
     externalplaylistserato.cpp \
     guiabout.cpp \
@@ -111,7 +104,6 @@ unix|macx{
   LIBS += -lavcodec
   LIBS += -lavformat
   LIBS += -lavutil
-  LIBS += -lsamplerate
   LIBS += -ltag
   LIBS += -lxerces-c
   LIBS += -lxqilla
@@ -135,7 +127,6 @@ win32{
 	LIBS += -lavcodec
 	LIBS += -lavformat
 	LIBS += -lavutil
-	LIBS += -lsamplerate-0
 
 	INCLUDEPATH += C:/MSYS/home/user/taglib-1.8
 	INCLUDEPATH += C:/MSYS/home/user/taglib-1.8/include

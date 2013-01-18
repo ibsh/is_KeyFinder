@@ -34,7 +34,6 @@
 
 #include "preferences.h"
 #include "decoder.h"
-#include "downsampler.h"
 #include "asyncfileobject.h"
 #include "asynckeyresult.h"
 #include "libkeyfindersingleton.h"

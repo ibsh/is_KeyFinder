@@ -70,7 +70,6 @@ public:
   metadata_format_t getMetadataFormat() const;
   bool getSkipFilesWithExistingTags() const;
   int getMaxDuration() const;
-  int getDFactor() const;
   QString getITunesLibraryPath() const;
   QString getTraktorLibraryPath() const;
   QString getSeratoLibraryPath() const;
@@ -87,8 +86,8 @@ public:
   KeyFinder::similarity_measure_t getSimilarityMeasure() const;
   KeyFinder::tuning_method_t getTuningMethod() const;
   KeyFinder::tone_profile_t getToneProfile() const;
-  unsigned int getHopSize() const;
   unsigned int getFftFrameSize() const;
+  unsigned int getHopsPerFrame() const;
   unsigned int getOctaves() const;
   unsigned int getBpo() const;
   unsigned int getArbitrarySegments() const;
@@ -111,7 +110,6 @@ public:
   void setMetadataFormat(metadata_format_t);
   void setSkipFilesWithExistingTags(bool);
   void setMaxDuration(int);
-  void setDFactor(int);
   void setITunesLibraryPath(const QString&);
   void setTraktorLibraryPath(const QString&);
   void setSeratoLibraryPath(const QString&);
@@ -128,8 +126,8 @@ public:
   void setSimilarityMeasure(KeyFinder::similarity_measure_t);
   void setTuningMethod(KeyFinder::tuning_method_t);
   void setToneProfile(KeyFinder::tone_profile_t);
-  void setHopSize(unsigned int);
   void setFftFrameSize(unsigned int);
+  void setHopsPerFrame(unsigned int);
   void setOctaves(unsigned int);
   void setBps(unsigned int);
   void setArbitrarySegments(unsigned int);
@@ -159,7 +157,6 @@ private:
   metadata_format_t metadataFormat;
   bool skipFilesWithExistingTags;
   int maxDuration;
-  int dFactor;
   QString iTunesLibraryPath;
   QString traktorLibraryPath;
   QString seratoLibraryPath;

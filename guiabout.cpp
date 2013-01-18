@@ -40,7 +40,6 @@ AboutDialog::AboutDialog(QWidget *parent): QDialog(parent),ui(new Ui::AboutDialo
   libs += "Qt (qt-project.org)" + br;
   libs += "FFTW (www.fftw.org)" + br;
   libs += "LibAV (www.libav.org)" + br;
-  libs += "Secret Rabbit Code (www.mega-nerd.com/SRC)" + br;
   libs += "TagLib (developer.kde.org/~wheeler/taglib.html)" + br;
   libs += "XQilla (xqilla.sourceforge.net)" + br;
   libs += "Xerces-C++ (xerces.apache.org)";

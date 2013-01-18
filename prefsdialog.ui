@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>831</width>
-    <height>607</height>
+    <height>613</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1201,96 +1201,12 @@
             <x>0</x>
             <y>0</y>
             <width>744</width>
-            <height>919</height>
+            <height>884</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
            <item row="0" column="0">
             <layout class="QGridLayout" name="gridLayout">
-             <item row="0" column="0" colspan="2">
-              <widget class="QLabel" name="label">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                 <underline>true</underline>
-                </font>
-               </property>
-               <property name="text">
-                <string>Musical range</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="lbl_stFreq">
-               <property name="text">
-                <string>Starting frequency (Hz)</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QComboBox" name="stFreq">
-               <item>
-                <property name="text">
-                 <string notr="true">27.5</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">55</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">110</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">220</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">440</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">880</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="lbl_octaves">
-               <property name="text">
-                <string>Number of octaves</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QSpinBox" name="octaves">
-               <property name="minimum">
-                <number>1</number>
-               </property>
-               <property name="maximum">
-                <number>8</number>
-               </property>
-               <property name="value">
-                <number>6</number>
-               </property>
-              </widget>
-             </item>
              <item row="3" column="0">
               <widget class="QLabel" name="lbl_octaveOffset">
                <property name="text">
@@ -1301,853 +1217,7 @@
                </property>
               </widget>
              </item>
-             <item row="3" column="1">
-              <widget class="QCheckBox" name="octaveOffset">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QLabel" name="lbl_bps">
-               <property name="text">
-                <string>Bands per semitone</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="QSpinBox" name="bps">
-               <property name="minimum">
-                <number>1</number>
-               </property>
-               <property name="maximum">
-                <number>5</number>
-               </property>
-               <property name="singleStep">
-                <number>2</number>
-               </property>
-               <property name="value">
-                <number>1</number>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="0">
-              <widget class="QLabel" name="lbl_dFactor">
-               <property name="text">
-                <string>Downsample factor</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="1">
-              <widget class="QSpinBox" name="dFactor">
-               <property name="minimum">
-                <number>1</number>
-               </property>
-               <property name="maximum">
-                <number>12</number>
-               </property>
-               <property name="value">
-                <number>10</number>
-               </property>
-              </widget>
-             </item>
-             <item row="6" column="0" colspan="2">
-              <widget class="QLabel" name="label_2">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                 <underline>true</underline>
-                </font>
-               </property>
-               <property name="text">
-                <string>Spectral analysis</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="7" column="0">
-              <widget class="QLabel" name="lbl_hopSize">
-               <property name="text">
-                <string>Hop size</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="7" column="1">
-              <widget class="QComboBox" name="hopSize">
-               <property name="currentIndex">
-                <number>0</number>
-               </property>
-               <item>
-                <property name="text">
-                 <string notr="true">128</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">256</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">512</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">1024</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">2048</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">4096</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">8192</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">16384</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">32768</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">65536</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="8" column="0">
-              <widget class="QLabel" name="lbl_temporalWindow">
-               <property name="text">
-                <string>Temporal window</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="8" column="1">
-              <widget class="QComboBox" name="temporalWindow">
-               <item>
-                <property name="text">
-                 <string notr="true">Blackman</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">Hamming</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">Hann</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="9" column="0">
-              <widget class="QLabel" name="lbl_fftFrameSize">
-               <property name="text">
-                <string>FFT frame size</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="9" column="1">
-              <widget class="QComboBox" name="fftFrameSize">
-               <property name="currentIndex">
-                <number>0</number>
-               </property>
-               <item>
-                <property name="text">
-                 <string notr="true">512</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">1024</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">2048</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">4096</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">8192</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">16384</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">32768</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">65536</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">131072</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">262144</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="10" column="0">
-              <widget class="QLabel" name="lbl_directSkStretch">
-               <property name="text">
-                <string>Direct SK stretch</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="10" column="1">
-              <widget class="QDoubleSpinBox" name="directSkStretch">
-               <property name="decimals">
-                <number>1</number>
-               </property>
-               <property name="minimum">
-                <double>0.100000000000000</double>
-               </property>
-               <property name="maximum">
-                <double>5.000000000000000</double>
-               </property>
-               <property name="singleStep">
-                <double>0.100000000000000</double>
-               </property>
-               <property name="value">
-                <double>1.000000000000000</double>
-               </property>
-              </widget>
-             </item>
-             <item row="12" column="0">
-              <widget class="QLabel" name="lbl_tuningMethod">
-               <property name="text">
-                <string>Tuning method</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="12" column="1">
-              <widget class="QComboBox" name="tuningMethod">
-               <property name="currentIndex">
-                <number>0</number>
-               </property>
-               <item>
-                <property name="text">
-                 <string notr="true">Harte</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Bin-adaptive</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="13" column="0">
-              <widget class="QLabel" name="lbl_detunedBandWeight">
-               <property name="text">
-                <string>Detuned band weighting</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="13" column="1">
-              <widget class="QDoubleSpinBox" name="detunedBandWeight">
-               <property name="decimals">
-                <number>1</number>
-               </property>
-               <property name="minimum">
-                <double>0.000000000000000</double>
-               </property>
-               <property name="maximum">
-                <double>1.000000000000000</double>
-               </property>
-               <property name="singleStep">
-                <double>0.100000000000000</double>
-               </property>
-               <property name="value">
-                <double>0.500000000000000</double>
-               </property>
-              </widget>
-             </item>
-             <item row="14" column="0" colspan="2">
-              <widget class="QLabel" name="label_4">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                 <underline>true</underline>
-                </font>
-               </property>
-               <property name="text">
-                <string>Segmentation</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="15" column="0">
-              <widget class="QLabel" name="lbl_segmentation">
-               <property name="text">
-                <string>Segmentation</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="15" column="1">
-              <widget class="QComboBox" name="segmentation">
-               <property name="currentIndex">
-                <number>0</number>
-               </property>
-               <item>
-                <property name="text">
-                 <string>None</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">Harte HCDF</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Cosine similarity CDF</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Arbitrary segmentation</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="16" column="0">
-              <widget class="QLabel" name="lbl_hcdfGaussianSize">
-               <property name="text">
-                <string>Smoothing Gaussian size</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="16" column="1">
-              <widget class="QSpinBox" name="hcdfGaussianSize">
-               <property name="minimum">
-                <number>1</number>
-               </property>
-               <property name="maximum">
-                <number>120</number>
-               </property>
-               <property name="value">
-                <number>35</number>
-               </property>
-              </widget>
-             </item>
-             <item row="17" column="0">
-              <widget class="QLabel" name="lbl_hcdfGaussianSigma">
-               <property name="text">
-                <string>Smoothing Gaussian sigma</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="17" column="1">
-              <widget class="QDoubleSpinBox" name="hcdfGaussianSigma">
-               <property name="decimals">
-                <number>1</number>
-               </property>
-               <property name="minimum">
-                <double>0.500000000000000</double>
-               </property>
-               <property name="maximum">
-                <double>20.000000000000000</double>
-               </property>
-               <property name="value">
-                <double>8.000000000000000</double>
-               </property>
-              </widget>
-             </item>
-             <item row="18" column="0">
-              <widget class="QLabel" name="lbl_hcdfPeakPickingNeighbours">
-               <property name="text">
-                <string>Peak-picking threshold</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="18" column="1">
-              <widget class="QSpinBox" name="hcdfPeakPickingNeighbours">
-               <property name="minimum">
-                <number>1</number>
-               </property>
-               <property name="maximum">
-                <number>20</number>
-               </property>
-               <property name="value">
-                <number>4</number>
-               </property>
-              </widget>
-             </item>
-             <item row="19" column="0">
-              <widget class="QLabel" name="lbl_ArbitrarySegments">
-               <property name="text">
-                <string>Number of arbitrary segments</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="19" column="1">
-              <widget class="QSpinBox" name="arbitrarySegments">
-               <property name="minimum">
-                <number>1</number>
-               </property>
-               <property name="maximum">
-                <number>10</number>
-               </property>
-               <property name="value">
-                <number>3</number>
-               </property>
-              </widget>
-             </item>
-             <item row="20" column="0" colspan="2">
-              <widget class="QLabel" name="label_5">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                 <underline>true</underline>
-                </font>
-               </property>
-               <property name="text">
-                <string>Classification</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="21" column="0">
-              <widget class="QLabel" name="lbl_toneProfile">
-               <property name="text">
-                <string>Tone profiles</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="21" column="1">
-              <widget class="QComboBox" name="toneProfile">
-               <property name="currentIndex">
-                <number>0</number>
-               </property>
-               <item>
-                <property name="text">
-                 <string notr="true">Krumhansl</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">Temperley</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">Gomez</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string notr="true">Sha'ath</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Custom</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="22" column="0">
-              <widget class="QLabel" name="lbl_similarityMeasure">
-               <property name="text">
-                <string>Similarity measure</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="22" column="1">
-              <widget class="QComboBox" name="similarityMeasure">
-               <property name="currentIndex">
-                <number>0</number>
-               </property>
-               <item>
-                <property name="text">
-                 <string>Cosine</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Correlation</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="23" column="0" colspan="2">
-              <widget class="QLabel" name="lbl_customMajor">
-               <property name="text">
-                <string>Custom profile major</string>
-               </property>
-              </widget>
-             </item>
-             <item row="24" column="0" colspan="2">
-              <layout class="QGridLayout" name="customMajor">
-               <property name="topMargin">
-                <number>6</number>
-               </property>
-               <item row="0" column="1">
-                <widget class="QDoubleSpinBox" name="maj0">
-                 <property name="maximum">
-                  <double>9.990000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.010000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.880000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="3">
-                <widget class="QDoubleSpinBox" name="maj1">
-                 <property name="maximum">
-                  <double>9.990000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.010000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.500000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="5">
-                <widget class="QDoubleSpinBox" name="maj2">
-                 <property name="maximum">
-                  <double>9.990000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.010000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.700000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="7">
-                <widget class="QDoubleSpinBox" name="maj3">
-                 <property name="maximum">
-                  <double>9.990000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.010000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.530000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="9">
-                <widget class="QDoubleSpinBox" name="maj4">
-                 <property name="maximum">
-                  <double>9.990000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.010000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.740000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="11">
-                <widget class="QDoubleSpinBox" name="maj5">
-                 <property name="maximum">
-                  <double>9.990000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.010000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.630000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QDoubleSpinBox" name="maj6">
-                 <property name="maximum">
-                  <double>9.990000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.010000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.540000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="3">
-                <widget class="QDoubleSpinBox" name="maj7">
-                 <property name="maximum">
-                  <double>9.990000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.010000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.840000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="5">
-                <widget class="QDoubleSpinBox" name="maj8">
-                 <property name="maximum">
-                  <double>9.990000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.010000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.500000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="7">
-                <widget class="QDoubleSpinBox" name="maj9">
-                 <property name="maximum">
-                  <double>9.990000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.010000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.700000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="9">
-                <widget class="QDoubleSpinBox" name="maj10">
-                 <property name="maximum">
-                  <double>9.990000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.010000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.580000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="11">
-                <widget class="QDoubleSpinBox" name="maj11">
-                 <property name="maximum">
-                  <double>9.990000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.010000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.680000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="2">
-                <widget class="QLabel" name="lbl_maj1">
-                 <property name="text">
-                  <string notr="true">m2</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="4">
-                <widget class="QLabel" name="lbl_maj2">
-                 <property name="text">
-                  <string notr="true">M2</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="6">
-                <widget class="QLabel" name="lbl_maj3">
-                 <property name="text">
-                  <string notr="true">m3</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="8">
-                <widget class="QLabel" name="lbl_maj4">
-                 <property name="text">
-                  <string notr="true">M3</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="10">
-                <widget class="QLabel" name="lbl_maj5">
-                 <property name="text">
-                  <string notr="true">P4</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="10">
-                <widget class="QLabel" name="lbl_maj11">
-                 <property name="text">
-                  <string notr="true">M7</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="8">
-                <widget class="QLabel" name="lbl_maj10">
-                 <property name="text">
-                  <string notr="true">m7</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="6">
-                <widget class="QLabel" name="lbl_maj9">
-                 <property name="text">
-                  <string notr="true">M6</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="4">
-                <widget class="QLabel" name="lbl_maj8">
-                 <property name="text">
-                  <string notr="true">m6</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="2">
-                <widget class="QLabel" name="lbl_maj7">
-                 <property name="text">
-                  <string notr="true">P5</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="lbl_maj6">
-                 <property name="text">
-                  <string notr="true">TT</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="lbl_maj0">
-                 <property name="text">
-                  <string notr="true">P1</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item row="26" column="0" colspan="2">
+             <item row="25" column="0" colspan="2">
               <layout class="QGridLayout" name="customMinor">
                <property name="topMargin">
                 <number>6</number>
@@ -2430,7 +1500,255 @@
                </item>
               </layout>
              </item>
-             <item row="11" column="0" colspan="2">
+             <item row="6" column="1">
+              <widget class="QComboBox" name="fftFrameSize">
+               <property name="currentIndex">
+                <number>0</number>
+               </property>
+               <item>
+                <property name="text">
+                 <string notr="true">512</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string notr="true">1024</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string notr="true">2048</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string notr="true">4096</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string notr="true">8192</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string notr="true">16384</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string notr="true">32768</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string notr="true">65536</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string notr="true">131072</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string notr="true">262144</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="12" column="1">
+              <widget class="QDoubleSpinBox" name="detunedBandWeight">
+               <property name="decimals">
+                <number>1</number>
+               </property>
+               <property name="minimum">
+                <double>0.000000000000000</double>
+               </property>
+               <property name="maximum">
+                <double>1.000000000000000</double>
+               </property>
+               <property name="singleStep">
+                <double>0.100000000000000</double>
+               </property>
+               <property name="value">
+                <double>0.500000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="16" column="1">
+              <widget class="QDoubleSpinBox" name="hcdfGaussianSigma">
+               <property name="decimals">
+                <number>1</number>
+               </property>
+               <property name="minimum">
+                <double>0.500000000000000</double>
+               </property>
+               <property name="maximum">
+                <double>20.000000000000000</double>
+               </property>
+               <property name="value">
+                <double>8.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="1">
+              <widget class="QComboBox" name="temporalWindow">
+               <item>
+                <property name="text">
+                 <string notr="true">Blackman</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string notr="true">Hamming</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string notr="true">Hann</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="18" column="0">
+              <widget class="QLabel" name="lbl_ArbitrarySegments">
+               <property name="text">
+                <string>Number of arbitrary segments</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="1">
+              <widget class="QComboBox" name="hopsPerFrame">
+               <property name="currentIndex">
+                <number>0</number>
+               </property>
+               <item>
+                <property name="text">
+                 <string>1</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>2</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>4</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>8</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="16" column="0">
+              <widget class="QLabel" name="lbl_hcdfGaussianSigma">
+               <property name="text">
+                <string>Smoothing Gaussian sigma</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="1">
+              <widget class="QDoubleSpinBox" name="directSkStretch">
+               <property name="decimals">
+                <number>1</number>
+               </property>
+               <property name="minimum">
+                <double>0.100000000000000</double>
+               </property>
+               <property name="maximum">
+                <double>5.000000000000000</double>
+               </property>
+               <property name="singleStep">
+                <double>0.100000000000000</double>
+               </property>
+               <property name="value">
+                <double>1.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="14" column="1">
+              <widget class="QComboBox" name="segmentation">
+               <property name="currentIndex">
+                <number>0</number>
+               </property>
+               <item>
+                <property name="text">
+                 <string>None</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string notr="true">Harte HCDF</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Cosine similarity CDF</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Arbitrary segmentation</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="0" column="0" colspan="2">
+              <widget class="QLabel" name="label">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                 <underline>true</underline>
+                </font>
+               </property>
+               <property name="text">
+                <string>Musical range</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="22" column="0" colspan="2">
+              <widget class="QLabel" name="lbl_customMajor">
+               <property name="text">
+                <string>Custom profile major</string>
+               </property>
+              </widget>
+             </item>
+             <item row="24" column="0" colspan="2">
+              <widget class="QLabel" name="lbl_customMinor">
+               <property name="text">
+                <string>Custom profile minor</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QSpinBox" name="octaves">
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>8</number>
+               </property>
+               <property name="value">
+                <number>6</number>
+               </property>
+              </widget>
+             </item>
+             <item row="10" column="0" colspan="2">
               <widget class="QLabel" name="label_3">
                <property name="font">
                 <font>
@@ -2447,10 +1765,639 @@
                </property>
               </widget>
              </item>
-             <item row="25" column="0" colspan="2">
-              <widget class="QLabel" name="lbl_customMinor">
+             <item row="21" column="1">
+              <widget class="QComboBox" name="similarityMeasure">
+               <property name="currentIndex">
+                <number>0</number>
+               </property>
+               <item>
+                <property name="text">
+                 <string>Cosine</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Correlation</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="21" column="0">
+              <widget class="QLabel" name="lbl_similarityMeasure">
                <property name="text">
-                <string>Custom profile minor</string>
+                <string>Similarity measure</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="19" column="0" colspan="2">
+              <widget class="QLabel" name="label_5">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                 <underline>true</underline>
+                </font>
+               </property>
+               <property name="text">
+                <string>Classification</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="20" column="0">
+              <widget class="QLabel" name="lbl_toneProfile">
+               <property name="text">
+                <string>Tone profiles</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QComboBox" name="stFreq">
+               <item>
+                <property name="text">
+                 <string notr="true">27.5</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string notr="true">55</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string notr="true">110</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string notr="true">220</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string notr="true">440</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string notr="true">880</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="14" column="0">
+              <widget class="QLabel" name="lbl_segmentation">
+               <property name="text">
+                <string>Segmentation</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="lbl_octaves">
+               <property name="text">
+                <string>Number of octaves</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="23" column="0" colspan="2">
+              <layout class="QGridLayout" name="customMajor">
+               <property name="topMargin">
+                <number>6</number>
+               </property>
+               <item row="0" column="1">
+                <widget class="QDoubleSpinBox" name="maj0">
+                 <property name="maximum">
+                  <double>9.990000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.010000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.880000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="3">
+                <widget class="QDoubleSpinBox" name="maj1">
+                 <property name="maximum">
+                  <double>9.990000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.010000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="5">
+                <widget class="QDoubleSpinBox" name="maj2">
+                 <property name="maximum">
+                  <double>9.990000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.010000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.700000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="7">
+                <widget class="QDoubleSpinBox" name="maj3">
+                 <property name="maximum">
+                  <double>9.990000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.010000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.530000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="9">
+                <widget class="QDoubleSpinBox" name="maj4">
+                 <property name="maximum">
+                  <double>9.990000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.010000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.740000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="11">
+                <widget class="QDoubleSpinBox" name="maj5">
+                 <property name="maximum">
+                  <double>9.990000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.010000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.630000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QDoubleSpinBox" name="maj6">
+                 <property name="maximum">
+                  <double>9.990000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.010000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.540000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="3">
+                <widget class="QDoubleSpinBox" name="maj7">
+                 <property name="maximum">
+                  <double>9.990000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.010000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.840000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="5">
+                <widget class="QDoubleSpinBox" name="maj8">
+                 <property name="maximum">
+                  <double>9.990000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.010000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="7">
+                <widget class="QDoubleSpinBox" name="maj9">
+                 <property name="maximum">
+                  <double>9.990000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.010000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.700000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="9">
+                <widget class="QDoubleSpinBox" name="maj10">
+                 <property name="maximum">
+                  <double>9.990000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.010000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.580000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="11">
+                <widget class="QDoubleSpinBox" name="maj11">
+                 <property name="maximum">
+                  <double>9.990000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.010000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.680000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2">
+                <widget class="QLabel" name="lbl_maj1">
+                 <property name="text">
+                  <string notr="true">m2</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="4">
+                <widget class="QLabel" name="lbl_maj2">
+                 <property name="text">
+                  <string notr="true">M2</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="6">
+                <widget class="QLabel" name="lbl_maj3">
+                 <property name="text">
+                  <string notr="true">m3</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="8">
+                <widget class="QLabel" name="lbl_maj4">
+                 <property name="text">
+                  <string notr="true">M3</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="10">
+                <widget class="QLabel" name="lbl_maj5">
+                 <property name="text">
+                  <string notr="true">P4</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="10">
+                <widget class="QLabel" name="lbl_maj11">
+                 <property name="text">
+                  <string notr="true">M7</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="8">
+                <widget class="QLabel" name="lbl_maj10">
+                 <property name="text">
+                  <string notr="true">m7</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="6">
+                <widget class="QLabel" name="lbl_maj9">
+                 <property name="text">
+                  <string notr="true">M6</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="4">
+                <widget class="QLabel" name="lbl_maj8">
+                 <property name="text">
+                  <string notr="true">m6</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="2">
+                <widget class="QLabel" name="lbl_maj7">
+                 <property name="text">
+                  <string notr="true">P5</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="lbl_maj6">
+                 <property name="text">
+                  <string notr="true">TT</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="lbl_maj0">
+                 <property name="text">
+                  <string notr="true">P1</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="3" column="1">
+              <widget class="QCheckBox" name="octaveOffset">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="lbl_bps">
+               <property name="text">
+                <string>Bands per semitone</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="18" column="1">
+              <widget class="QSpinBox" name="arbitrarySegments">
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>10</number>
+               </property>
+               <property name="value">
+                <number>3</number>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QSpinBox" name="bps">
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>5</number>
+               </property>
+               <property name="singleStep">
+                <number>2</number>
+               </property>
+               <property name="value">
+                <number>1</number>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="lbl_stFreq">
+               <property name="text">
+                <string>Starting frequency (Hz)</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="20" column="1">
+              <widget class="QComboBox" name="toneProfile">
+               <property name="currentIndex">
+                <number>0</number>
+               </property>
+               <item>
+                <property name="text">
+                 <string notr="true">Krumhansl</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string notr="true">Temperley</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string notr="true">Gomez</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string notr="true">Sha'ath</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Custom</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="13" column="0" colspan="2">
+              <widget class="QLabel" name="label_4">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                 <underline>true</underline>
+                </font>
+               </property>
+               <property name="text">
+                <string>Segmentation</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="0">
+              <widget class="QLabel" name="lbl_hopsPerFrame">
+               <property name="text">
+                <string>Hops per frame</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="0">
+              <widget class="QLabel" name="lbl_fftFrameSize">
+               <property name="text">
+                <string>FFT frame size</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0" colspan="2">
+              <widget class="QLabel" name="label_2">
+               <property name="font">
+                <font>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                 <underline>true</underline>
+                </font>
+               </property>
+               <property name="text">
+                <string>Spectral analysis</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="15" column="1">
+              <widget class="QSpinBox" name="hcdfGaussianSize">
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>120</number>
+               </property>
+               <property name="value">
+                <number>35</number>
+               </property>
+              </widget>
+             </item>
+             <item row="12" column="0">
+              <widget class="QLabel" name="lbl_detunedBandWeight">
+               <property name="text">
+                <string>Detuned band weighting</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="11" column="1">
+              <widget class="QComboBox" name="tuningMethod">
+               <property name="currentIndex">
+                <number>0</number>
+               </property>
+               <item>
+                <property name="text">
+                 <string notr="true">Harte</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Bin-adaptive</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="15" column="0">
+              <widget class="QLabel" name="lbl_hcdfGaussianSize">
+               <property name="text">
+                <string>Smoothing Gaussian size</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="11" column="0">
+              <widget class="QLabel" name="lbl_tuningMethod">
+               <property name="text">
+                <string>Tuning method</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="0">
+              <widget class="QLabel" name="lbl_directSkStretch">
+               <property name="text">
+                <string>Direct SK stretch</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="0">
+              <widget class="QLabel" name="lbl_temporalWindow">
+               <property name="text">
+                <string>Temporal window</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="17" column="1">
+              <widget class="QSpinBox" name="hcdfPeakPickingNeighbours">
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>20</number>
+               </property>
+               <property name="value">
+                <number>4</number>
+               </property>
+              </widget>
+             </item>
+             <item row="17" column="0">
+              <widget class="QLabel" name="lbl_hcdfPeakPickingNeighbours">
+               <property name="text">
+                <string>Peak-picking threshold</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>

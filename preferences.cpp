@@ -62,21 +62,11 @@ Preferences::Preferences(){
   if(settings.contains("fftFrameSize")){
     core.setFftFrameSize((unsigned)settings.value("fftFrameSize").toInt());
   }
-  if(settings.contains("hopSize")){
-    core.setHopSize((unsigned)settings.value("hopSize").toInt());
+  if(settings.contains("hopsPerFrame")){
+    core.setHopsPerFrame((unsigned)settings.value("hopsPerFrame").toInt());
   }
   if(settings.contains("directSkStretch")){
     core.setDirectSkStretch(settings.value("directSkStretch").toFloat());
-  }
-  settings.endGroup();
-
-  // ========================== Downsampling ===================================
-
-  settings.beginGroup("downsampling");
-  if(settings.contains("dFactor")){
-    dFactor = settings.value("dFactor").toInt();
-  }else{
-    dFactor = 10;
   }
   settings.endGroup();
 
@@ -436,12 +426,8 @@ void Preferences::save(){
   settings.beginGroup("spectralAnalysis");
   settings.setValue("temporalWindow_1_14", core.getTemporalWindow());
   settings.setValue("fftFrameSize", core.getFftFrameSize());
-  settings.setValue("hopSize", core.getHopSize());
+  settings.setValue("hopsPerFrame", core.getHopsPerFrame());
   settings.setValue("directSkStretch", core.getDirectSkStretch());
-  settings.endGroup();
-
-  settings.beginGroup("downsampling");
-  settings.setValue("dFactor", dFactor);
   settings.endGroup();
 
   settings.beginGroup("tuning");
@@ -539,7 +525,6 @@ void Preferences::save(){
 Preferences& Preferences::operator=(const Preferences& that){
   if(this != &that){
     core = that.core;
-    dFactor = that.dFactor;
     customKeyCodes = that.customKeyCodes;
     metadataFormat = that.metadataFormat;
     metadataWriteComment = that.metadataWriteComment;
@@ -570,7 +555,6 @@ metadata_write_t  Preferences::getMetadataWriteFilename()     const { return met
 metadata_format_t Preferences::getMetadataFormat()            const { return metadataFormat; }
 bool              Preferences::getSkipFilesWithExistingTags() const { return skipFilesWithExistingTags; }
 int               Preferences::getMaxDuration()               const { return maxDuration; }
-int               Preferences::getDFactor()                   const { return dFactor; }
 QString           Preferences::getITunesLibraryPath()         const { return iTunesLibraryPath; }
 QString           Preferences::getTraktorLibraryPath()        const { return traktorLibraryPath; }
 QString           Preferences::getSeratoLibraryPath()         const { return seratoLibraryPath; }
@@ -586,8 +570,8 @@ KeyFinder::segmentation_t       Preferences::getSegmentation()              cons
 KeyFinder::similarity_measure_t Preferences::getSimilarityMeasure()         const { return core.getSimilarityMeasure(); }
 KeyFinder::tuning_method_t      Preferences::getTuningMethod()              const { return core.getTuningMethod(); }
 KeyFinder::tone_profile_t       Preferences::getToneProfile()               const { return core.getToneProfile(); }
-unsigned int                    Preferences::getHopSize()                   const { return core.getHopSize(); }
 unsigned int                    Preferences::getFftFrameSize()              const { return core.getFftFrameSize(); }
+unsigned int                    Preferences::getHopsPerFrame()              const { return core.getHopsPerFrame(); }
 unsigned int                    Preferences::getOctaves()                   const { return core.getOctaves(); }
 unsigned int                    Preferences::getBpo()                       const { return core.getBpo(); }
 unsigned int                    Preferences::getArbitrarySegments()         const { return core.getArbitrarySegments(); }
@@ -608,7 +592,6 @@ void Preferences::setMetadataWriteFilename(metadata_write_t fn)     { metadataWr
 void Preferences::setSkipFilesWithExistingTags(bool skip)           { skipFilesWithExistingTags = skip; }
 void Preferences::setMaxDuration(int max)                           { maxDuration = max; }
 void Preferences::setMetadataFormat(metadata_format_t fmt)          { metadataFormat = fmt; }
-void Preferences::setDFactor(int factor)                            { dFactor = factor; }
 void Preferences::setITunesLibraryPath(const QString& path)         { iTunesLibraryPath = path; }
 void Preferences::setTraktorLibraryPath(const QString& path)        { traktorLibraryPath = path; }
 void Preferences::setSeratoLibraryPath(const QString& path)         { seratoLibraryPath = path; }
@@ -624,7 +607,7 @@ void Preferences::setSegmentation(KeyFinder::segmentation_t h)            { core
 void Preferences::setSimilarityMeasure(KeyFinder::similarity_measure_t m) { core.setSimilarityMeasure(m); }
 void Preferences::setTuningMethod(KeyFinder::tuning_method_t t)           { core.setTuningMethod(t); }
 void Preferences::setToneProfile(KeyFinder::tone_profile_t profile)       { core.setToneProfile(profile); }
-void Preferences::setHopSize(unsigned int size)                           { core.setHopSize(size); }
+void Preferences::setHopsPerFrame(unsigned int hpf)                       { core.setHopsPerFrame(hpf); }
 void Preferences::setFftFrameSize(unsigned int framesize)                 { core.setFftFrameSize(framesize); }
 void Preferences::setOctaves(unsigned int oct)                            { core.setOctaves(oct); }
 void Preferences::setBps(unsigned int bands)                              { core.setBps(bands); }

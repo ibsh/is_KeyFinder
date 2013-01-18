@@ -86,10 +86,9 @@ void DetailWindow::runAnalysis(){
     layoutScaling();
     drawPianoKeys();
     //: A tooltip on the Detail window
-    ui->chromagramLabel->setToolTip(wrapToolTip(tr("This chromagram spans %1. The vertical axis represents musical frequencies as indicated by the piano keyboard. The horizontal axis splits the track into analysis windows of about %1 seconds each. The brighter the colour, the higher the energy found at that frequency during that window.")
+    ui->chromagramLabel->setToolTip(wrapToolTip(tr("This chromagram spans %1. The vertical axis represents musical frequencies as indicated by the piano keyboard. The horizontal axis splits the track into analysis windows of a few seconds each. The brighter the colour, the higher the energy found at that frequency during that window.")
       //: Part of a tooltip on the Detail window
-      .arg(tr("%n octave(s)", "", prefs.getOctaves()))
-      .arg(QString::number((44100.0/prefs.getDFactor())/prefs.getHopSize()).left(4))));
+      .arg(tr("%n octave(s)", "", prefs.getOctaves()))));
   }
   //: Text in the Batch window status bar
   say(tr("Analysing... "));
@@ -239,8 +238,7 @@ void DetailWindow::layoutScaling(){
   ui->gridLayout_Visualisation->setRowStretch(ROW_MINICHROMA, 2);
   ui->gridLayout_Visualisation->setRowStretch(ROW_RATEOFCHANGE, 1);
   chromaScaleV = 5;
-  chromaScaleH = 5 * (prefs.getHopSize() / 16384.0) * (prefs.getDFactor() / 10.0);
-  if(chromaScaleH < 1) chromaScaleH = 1;
+  chromaScaleH = 8 / prefs.getHopsPerFrame();
 }
 
 void DetailWindow::drawColourScale(){

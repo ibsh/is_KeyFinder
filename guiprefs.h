@@ -43,7 +43,7 @@ private:
   QList<metadata_write_t>                listMetadataWrite;
   QList<metadata_write_t>                listMetadataWriteKey;
   QList<float>                           listStartingFreq;
-  QList<unsigned int>                    listHopSize;
+  QList<unsigned int>                    listHopsPerFrame;
   QList<KeyFinder::temporal_window_t>    listTemporalWindow;
   QList<unsigned int>                    listFftFrameSize;
   QList<KeyFinder::tuning_method_t>      listTuningMethod;

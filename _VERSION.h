@@ -23,6 +23,6 @@
 #define _VERSION_H
 
 const int VERSION_MAJOR = 1;
-const int VERSION_MINOR = 17;
+const int VERSION_MINOR = 18;
 
 #endif // _VERSION_H
