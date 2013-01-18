@@ -1,6 +1,6 @@
 #*************************************************************************
 #
-# Copyright 2011 Ibrahim Sha'ath
+# Copyright 2011-2013 Ibrahim Sha'ath
 #
 # This file is part of KeyFinder.
 #
