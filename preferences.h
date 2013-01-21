@@ -91,9 +91,9 @@ public:
   unsigned int getOctaves() const;
   unsigned int getBpo() const;
   unsigned int getArbitrarySegments() const;
-  unsigned int getHcdfPeakPickingNeighbours() const;
-  unsigned int getHcdfGaussianSize() const;
-  float getHcdfGaussianSigma() const;
+  unsigned int getSegPeakPickingNeighbours() const;
+  unsigned int getSegGaussianSize() const;
+  float getSegGaussianSigma() const;
   float getStartingFreqA() const;
   float getLastFreq() const;
   float getDirectSkStretch() const;
@@ -131,9 +131,9 @@ public:
   void setOctaves(unsigned int);
   void setBps(unsigned int);
   void setArbitrarySegments(unsigned int);
-  void setHcdfPeakPickingNeighbours(unsigned int);
-  void setHcdfGaussianSize(unsigned int);
-  void setHcdfGaussianSigma(float);
+  void setSegPeakPickingNeighbours(unsigned int);
+  void setSegGaussianSize(unsigned int);
+  void setSegGaussianSigma(float);
   void setStartingFreqA(float);
   void setDirectSkStretch(float);
   void setDetunedBandWeight(float);

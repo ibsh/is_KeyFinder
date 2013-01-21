@@ -49,15 +49,6 @@ Preferences::Preferences(){
   settings.beginGroup("spectralAnalysis");
   if(settings.contains("temporalWindow_1_14")){
     core.setTemporalWindow((KeyFinder::temporal_window_t)settings.value("temporalWindow_1_14").toInt());
-  }else if(settings.contains("temporalWindow")){
-    // backward compatibility for pre 1.14
-    QVariant val = settings.value("temporalWindow");
-    if(val == 'b')
-      core.setTemporalWindow(KeyFinder::WINDOW_BLACKMAN);
-    else if(val == 'm')
-      core.setTemporalWindow(KeyFinder::WINDOW_HAMMING);
-    else if(val == 'n')
-      core.setTemporalWindow(KeyFinder::WINDOW_HANN);
   }
   if(settings.contains("fftFrameSize")){
     core.setFftFrameSize((unsigned)settings.value("fftFrameSize").toInt());
@@ -86,26 +77,15 @@ Preferences::Preferences(){
   settings.beginGroup("harmonicChangeDetectionFunction");
   if(settings.contains("segmentation")){
     core.setSegmentation((KeyFinder::segmentation_t)settings.value("segmentation").toInt());
-  }else if(settings.contains("hcdf")){
-    // backward compatibility for pre 1.14
-    QVariant val = settings.value("hcdf");
-    if(val == 'n')
-      core.setSegmentation(KeyFinder::SEGMENTATION_NONE);
-    else if(val == 'h')
-      core.setSegmentation(KeyFinder::SEGMENTATION_HARTE);
-    else if(val == 'c')
-      core.setSegmentation(KeyFinder::SEGMENTATION_COSINE);
-    else if(val == 'a')
-      core.setSegmentation(KeyFinder::SEGMENTATION_ARBITRARY);
   }
   if(settings.contains("hcdfGaussianSize")){
-    core.setHcdfGaussianSize((unsigned)settings.value("hcdfGaussianSize").toInt());
+    core.setSegGaussianSize((unsigned)settings.value("hcdfGaussianSize").toInt());
   }
   if(settings.contains("hcdfGaussianSigma")){
-    core.setHcdfGaussianSigma(settings.value("hcdfGaussianSigma").toFloat());
+    core.setSegGaussianSigma(settings.value("hcdfGaussianSigma").toFloat());
   }
   if(settings.contains("hcdfPeakPickingNeighbours")){
-    core.setHcdfPeakPickingNeighbours((unsigned)settings.value("hcdfPeakPickingNeighbours").toInt());
+    core.setSegPeakPickingNeighbours((unsigned)settings.value("hcdfPeakPickingNeighbours").toInt());
   }
   if(settings.contains("hcdfArbitrarySegments")){
     core.setArbitrarySegments((unsigned)settings.value("hcdfArbitrarySegments").toInt());
@@ -117,19 +97,9 @@ Preferences::Preferences(){
   settings.beginGroup("keyClassification");
   if(settings.contains("toneProfile_1_14")){
     core.setToneProfile((KeyFinder::tone_profile_t)settings.value("toneProfile_1_14").toInt());
-  }else if(settings.contains("toneProfile")){
-    // backward compatibility for pre 1.14
-    core.setToneProfile((KeyFinder::tone_profile_t)(settings.value("toneProfile").toInt() + 1));
   }
   if(settings.contains("similarityMeasure_1_14")){
     core.setSimilarityMeasure((KeyFinder::similarity_measure_t)settings.value("similarityMeasure_1_14").toInt());
-  }else if(settings.contains("similarityMeasure")){
-    // backward compatibility for pre 1.14
-    QVariant val = settings.value("similarityMeasure");
-    if(val == 'c')
-      core.setSimilarityMeasure(KeyFinder::SIMILARITY_COSINE);
-    else if(val == 'k')
-      core.setSimilarityMeasure(KeyFinder::SIMILARITY_CORRELATION);
   }
   settings.endGroup();
 
@@ -203,35 +173,6 @@ Preferences::Preferences(){
     customKeyCodes.push_back(settings.value("Ab").toString());
     customKeyCodes.push_back(settings.value("Abm").toString());
     customKeyCodes.push_back(settings.value("SLNC").toString());
-  }else if(settings.contains("majKey0")){
-    // backward compatibility for pre 1.14
-    customKeyCodes = QStringList();
-    // key names/codes are stored interleaved, for ease of looping in classification
-    customKeyCodes.push_back(settings.value("majKey0").toString());
-    customKeyCodes.push_back(settings.value("minKey0").toString());
-    customKeyCodes.push_back(settings.value("majKey1").toString());
-    customKeyCodes.push_back(settings.value("minKey1").toString());
-    customKeyCodes.push_back(settings.value("majKey2").toString());
-    customKeyCodes.push_back(settings.value("minKey2").toString());
-    customKeyCodes.push_back(settings.value("majKey3").toString());
-    customKeyCodes.push_back(settings.value("minKey3").toString());
-    customKeyCodes.push_back(settings.value("majKey4").toString());
-    customKeyCodes.push_back(settings.value("minKey4").toString());
-    customKeyCodes.push_back(settings.value("majKey5").toString());
-    customKeyCodes.push_back(settings.value("minKey5").toString());
-    customKeyCodes.push_back(settings.value("majKey6").toString());
-    customKeyCodes.push_back(settings.value("minKey6").toString());
-    customKeyCodes.push_back(settings.value("majKey7").toString());
-    customKeyCodes.push_back(settings.value("minKey7").toString());
-    customKeyCodes.push_back(settings.value("majKey8").toString());
-    customKeyCodes.push_back(settings.value("minKey8").toString());
-    customKeyCodes.push_back(settings.value("majKey9").toString());
-    customKeyCodes.push_back(settings.value("minKey9").toString());
-    customKeyCodes.push_back(settings.value("majKey10").toString());
-    customKeyCodes.push_back(settings.value("minKey10").toString());
-    customKeyCodes.push_back(settings.value("majKey11").toString());
-    customKeyCodes.push_back(settings.value("minKey11").toString());
-    customKeyCodes.push_back(settings.value("silence").toString());
   }else{
     customKeyCodes = QStringList();
     for(int i=0; i<25; i++)
@@ -244,18 +185,6 @@ Preferences::Preferences(){
   settings.beginGroup("tags");
   if(settings.contains("metadataFormat")){
     metadataFormat = (metadata_format_t)settings.value("metadataFormat").toInt();
-  }else if(settings.contains("tagFormat_1_14")){
-    // backward compatibility for pre 1.16
-    metadataFormat = (metadata_format_t)settings.value("tagFormat_1_14").toInt();
-  }else if(settings.contains("tagFormat")){
-    // backward compatibility for pre 1.14
-    QVariant val = settings.value("tagFormat");
-    if(val == 'k')
-      metadataFormat = METADATA_FORMAT_KEYS;
-    else if(val == 'c')
-      metadataFormat = METADATA_FORMAT_CUSTOM;
-    else if(val == 'b')
-      metadataFormat = METADATA_FORMAT_BOTH;
   }else{
     metadataFormat = METADATA_FORMAT_KEYS;
   }
@@ -264,11 +193,6 @@ Preferences::Preferences(){
     metadataWriteComment = (metadata_write_t)settings.value("metadataWriteComment").toInt();
     metadataWriteGrouping = (metadata_write_t)settings.value("metadataWriteGrouping").toInt();
     metadataWriteKey = (metadata_write_t)settings.value("metadataWriteKey").toInt();
-  }else if(settings.contains("writeToTagComment")){
-    // backward compatibility for pre 1.16
-    metadataWriteComment = (settings.value("writeToTagComment").toBool() ? METADATA_WRITE_OVERWRITE : METADATA_WRITE_NONE);
-    metadataWriteGrouping = (settings.value("writeToTagGrouping").toBool() ? METADATA_WRITE_OVERWRITE : METADATA_WRITE_NONE);
-    metadataWriteKey = (settings.value("writeToTagKey").toBool() ? METADATA_WRITE_OVERWRITE : METADATA_WRITE_NONE);
   }else{
     metadataWriteComment = METADATA_WRITE_PREPEND;
     metadataWriteGrouping = METADATA_WRITE_NONE;
@@ -276,30 +200,16 @@ Preferences::Preferences(){
   }
   if(settings.contains("metadataWriteFilename")){
     metadataWriteFilename = (metadata_write_t)settings.value("metadataWriteFilename").toInt();
-  }else if(settings.contains("writeToFilePrefix")){
-    // backward compatibility for pre 1.16
-    if(settings.value("writeToFilePrefix").toBool())
-      metadataWriteFilename = METADATA_WRITE_PREPEND;
-    else if(settings.value("writeToFileSuffix").toBool())
-      metadataWriteFilename = METADATA_WRITE_APPEND;
-    else
-      metadataWriteFilename = METADATA_WRITE_NONE;
   }else{
     metadataWriteFilename = METADATA_WRITE_NONE;
   }
   if(settings.contains("metadataDelimiter")){
     metadataDelimiter = settings.value("metadataDelimiter").toString();
-  }else if(settings.contains("filenameDelimiter")){
-    // backward compatibility for pre 1.16
-    metadataDelimiter = settings.value("filenameDelimiter").toString();
   }else{
     metadataDelimiter = " - ";
   }
   if(settings.contains("writeToFilesAutomatically")){
     writeToFilesAutomatically = settings.value("writeToFilesAutomatically").toBool();
-  }else if(settings.contains("writeTagsAutomatically")){
-    // backward compatibility for pre 1.14
-    writeToFilesAutomatically = settings.value("writeTagsAutomatically").toBool();
   }else{
     writeToFilesAutomatically = false;
   }
@@ -437,9 +347,9 @@ void Preferences::save(){
 
   settings.beginGroup("harmonicChangeDetectionFunction");
   settings.setValue("segmentation", core.getSegmentation());
-  settings.setValue("hcdfGaussianSize", core.getHcdfGaussianSize());
-  settings.setValue("hcdfGaussianSigma", core.getHcdfGaussianSigma());
-  settings.setValue("hcdfPeakPickingNeighbours", core.getHcdfPeakPickingNeighbours());
+  settings.setValue("hcdfGaussianSize", core.getSegGaussianSize());
+  settings.setValue("hcdfGaussianSigma", core.getSegGaussianSigma());
+  settings.setValue("hcdfPeakPickingNeighbours", core.getSegPeakPickingNeighbours());
   settings.setValue("hcdfArbitrarySegments", core.getArbitrarySegments());
   settings.endGroup();
 
@@ -575,9 +485,9 @@ unsigned int                    Preferences::getHopsPerFrame()              cons
 unsigned int                    Preferences::getOctaves()                   const { return core.getOctaves(); }
 unsigned int                    Preferences::getBpo()                       const { return core.getBpo(); }
 unsigned int                    Preferences::getArbitrarySegments()         const { return core.getArbitrarySegments(); }
-unsigned int                    Preferences::getHcdfPeakPickingNeighbours() const { return core.getHcdfPeakPickingNeighbours(); }
-unsigned int                    Preferences::getHcdfGaussianSize()          const { return core.getHcdfGaussianSize(); }
-float                           Preferences::getHcdfGaussianSigma()         const { return core.getHcdfGaussianSigma(); }
+unsigned int                    Preferences::getSegPeakPickingNeighbours() const { return core.getSegPeakPickingNeighbours(); }
+unsigned int                    Preferences::getSegGaussianSize()          const { return core.getSegGaussianSize(); }
+float                           Preferences::getSegGaussianSigma()         const { return core.getSegGaussianSigma(); }
 float                           Preferences::getStartingFreqA()             const { return core.getStartingFreqA(); }
 float                           Preferences::getLastFreq()                  const { return core.getLastFreq(); }
 float                           Preferences::getDirectSkStretch()           const { return core.getDirectSkStretch(); }
@@ -612,9 +522,9 @@ void Preferences::setFftFrameSize(unsigned int framesize)                 { core
 void Preferences::setOctaves(unsigned int oct)                            { core.setOctaves(oct); }
 void Preferences::setBps(unsigned int bands)                              { core.setBps(bands); }
 void Preferences::setArbitrarySegments(unsigned int segments)             { core.setArbitrarySegments(segments); }
-void Preferences::setHcdfPeakPickingNeighbours(unsigned int neighbours)   { core.setHcdfPeakPickingNeighbours(neighbours); }
-void Preferences::setHcdfGaussianSize(unsigned int size)                  { core.setHcdfGaussianSize(size); }
-void Preferences::setHcdfGaussianSigma(float sigma)                       { core.setHcdfGaussianSigma(sigma); }
+void Preferences::setSegPeakPickingNeighbours(unsigned int neighbours)   { core.setSegPeakPickingNeighbours(neighbours); }
+void Preferences::setSegGaussianSize(unsigned int size)                  { core.setSegGaussianSize(size); }
+void Preferences::setSegGaussianSigma(float sigma)                       { core.setSegGaussianSigma(sigma); }
 void Preferences::setStartingFreqA(float a)                               { core.setStartingFreqA(a); }
 void Preferences::setDirectSkStretch(float stretch)                       { core.setDirectSkStretch(stretch); }
 void Preferences::setDetunedBandWeight(float weight)                      { core.setDetunedBandWeight(weight); }
