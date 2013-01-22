@@ -31,24 +31,43 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
   AudioFileDecoder* decoder = NULL;
   try{
     decoder = AudioFileDecoder::getDecoder();
-  }catch(KeyFinder::Exception& e){
+  }catch(std::exception& e){
     delete decoder;
-    result.errorMessage = QString(e.what().c_str());
+    result.errorMessage = QString(e.what());
+    return result;
+  }catch(...){
+    delete audio;
+    result.errorMessage = "Unknown exception initialising decoder";
     return result;
   }
 
   try{
     audio = decoder->decodeFile(object.filePath, object.prefs.getMaxDuration());
     delete decoder;
-  }catch(KeyFinder::Exception& e){
+  }catch(std::exception& e){
     delete audio;
     delete decoder;
-    result.errorMessage = QString(e.what().c_str());
+    result.errorMessage = QString(e.what());
+    return result;
+  }catch(...){
+    delete audio;
+    result.errorMessage = "Unknown exception from decoder";
     return result;
   }
 
   KeyFinder::KeyFinder* kf = LibKeyFinderSingleton::getInstance()->getKeyFinder();
-  result.core = kf->findKey(*audio, object.prefs.core);
+  try{
+    result.core = kf->findKey(*audio, object.prefs.core);
+  }catch(const std::exception& e){
+    delete audio;
+    result.errorMessage = QString(e.what());
+    return result;
+  }catch(...){
+    delete audio;
+    result.errorMessage = "Unknown exception from libKeyFinder";
+    return result;
+  }
+
 
   delete audio;
 

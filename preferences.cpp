@@ -135,10 +135,10 @@ Preferences::Preferences(){
     ctp.push_back(settings.value("min11").toFloat());
     try{
       core.setCustomToneProfile(ctp);
-    }catch(KeyFinder::Exception& e){
-      qDebug("LibKeyFinder Exception: %s", e.what().c_str());
+    }catch(std::exception& e){
+      qDebug("LibKeyFinder Exception: %s", e.what());
     }catch(...){
-      qDebug("Caught unknown exception setting custom tone profile.");
+      qDebug("Unknown exception setting custom tone profile.");
     }
   }
   settings.endGroup();
