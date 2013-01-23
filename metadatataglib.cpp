@@ -240,6 +240,16 @@ QString TagLibMetadata::getKey() const{
     }
   }
 
+  TagLib::FLAC::File* fileTestFlac = dynamic_cast<TagLib::FLAC::File*>(f);
+  if(fileTestFlac != NULL){
+    if(fileTestFlac->xiphComment()->contains("INITIALKEY")){
+      TagLib::String out = fileTestFlac->xiphComment()->fieldListMap()["INITIALKEY"].toString();
+      return QString::fromUtf8((out.toCString()));
+    }else{
+      return "";
+    }
+  }
+
   TagLib::RIFF::AIFF::File* fileTestAiff = dynamic_cast<TagLib::RIFF::AIFF::File*>(f);
   if(fileTestAiff != NULL){
     TagLib::ID3v2::Tag* tagTestId3v2 = fileTestAiff->tag();
@@ -501,6 +511,13 @@ int TagLibMetadata::setKey(const QString& key){
         return 1;
       }
     }
+  }
+
+  TagLib::FLAC::File* fileTestFlac = dynamic_cast<TagLib::FLAC::File*>(f);
+  if(fileTestFlac != NULL){
+    fileTestFlac->xiphComment()->addField("INITIALKEY",TagLib::String(key.toLocal8Bit().constData()),true);
+    f->save();
+    return 0;
   }
 
   TagLib::RIFF::AIFF::File* fileTestAiff = dynamic_cast<TagLib::RIFF::AIFF::File*>(f);
