@@ -26,7 +26,6 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
   KeyFinderResultWrapper result;
   result.batchRow = object.batchRow;
 
-  // initialise stream and decode file into it.
   KeyFinder::AudioData* audio = NULL;
   AudioFileDecoder* decoder = NULL;
   try{
@@ -36,7 +35,7 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
     result.errorMessage = QString(e.what());
     return result;
   }catch(...){
-    delete audio;
+    delete decoder;
     result.errorMessage = "Unknown exception initialising decoder";
     return result;
   }
@@ -45,13 +44,14 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
     audio = decoder->decodeFile(object.filePath, object.prefs.getMaxDuration());
     delete decoder;
   }catch(std::exception& e){
-    delete audio;
     delete decoder;
+    delete audio;
     result.errorMessage = QString(e.what());
     return result;
   }catch(...){
+    delete decoder;
     delete audio;
-    result.errorMessage = "Unknown exception from decoder";
+    result.errorMessage = "Unknown exception while decoding";
     return result;
   }
 
@@ -67,7 +67,6 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
     result.errorMessage = "Unknown exception from libKeyFinder";
     return result;
   }
-
 
   delete audio;
 
