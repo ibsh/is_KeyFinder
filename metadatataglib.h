@@ -98,9 +98,14 @@ public:
   QString writeKeyToMetadata(int, const Preferences&);
 private:
   TagLib::File* f;
-  int setComment(const QString&);
-  int setGrouping(const QString&);
-  int setKey(const QString&);
+  bool setComment(const QString&);
+  bool setGrouping(const QString&);
+  bool setKey(const QString&);
+  QString getGroupingId3(const TagLib::ID3v2::Tag*) const;
+  QString getKeyId3(const TagLib::ID3v2::Tag*) const;
+  void setITunesCommentId3(TagLib::ID3v2::Tag*, const QString&);
+  bool setGroupingId3(TagLib::ID3v2::Tag*, const QString&);
+  bool setKeyId3(TagLib::ID3v2::Tag*, const QString&);
 };
 
 #endif // METADATATAGLIB_H
