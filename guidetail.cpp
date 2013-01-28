@@ -129,7 +129,7 @@ void DetailWindow::analysisFinished(){
   int rateOfChangePrecision = 100;
   int size = (signed)analysisWatcher.result().core.harmonicChangeSignal.size();
   harmonicChangeImage = QImage(size*chromaScaleH,rateOfChangePrecision,QImage::Format_Indexed8);
-  prefs.setImageColours(harmonicChangeImage,ui->chromaColourCombo->currentIndex());
+  prefs.setImageColours(harmonicChangeImage, (chromagram_colour_t) ui->chromaColourCombo->currentIndex());
   for(int h=0; h<size; h++){
     int value = analysisWatcher.result().core.harmonicChangeSignal[h] * rateOfChangePrecision;
     for(int y=0; y<rateOfChangePrecision; y++)
@@ -191,7 +191,7 @@ QImage DetailWindow::imageFromChromagram(const KeyFinder::Chromagram& ch){
   // 64 colours (plus black at index 0)
   // don't draw individual pixels; draw blocks of chromaScaleV*chromaScaleH. Sharpens image.
   QImage img = QImage(ch.getHops()*chromaScaleH,ch.getBins()*chromaScaleV,QImage::Format_Indexed8);
-  prefs.setImageColours(img,ui->chromaColourCombo->currentIndex());
+  prefs.setImageColours(img, (chromagram_colour_t) ui->chromaColourCombo->currentIndex());
   // get max to normalise
   float max = 0;
   for(unsigned int h = 0; h < ch.getHops(); h++){
@@ -223,10 +223,10 @@ void DetailWindow::on_runButton_clicked(){
 }
 
 void DetailWindow::on_chromaColourCombo_currentIndexChanged(int index){
-  prefs.setImageColours(chromagramImage, index);
-  prefs.setImageColours(miniChromagramImage, index);
-  prefs.setImageColours(harmonicChangeImage, index);
-  prefs.setImageColours(colourScaleImage, index);
+  prefs.setImageColours(chromagramImage, (chromagram_colour_t) index);
+  prefs.setImageColours(miniChromagramImage, (chromagram_colour_t) index);
+  prefs.setImageColours(harmonicChangeImage, (chromagram_colour_t) index);
+  prefs.setImageColours(colourScaleImage, (chromagram_colour_t) index);
   ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
   ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
   ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
@@ -243,19 +243,19 @@ void DetailWindow::layoutScaling(){
 
 void DetailWindow::drawColourScale(){
   colourScaleImage = QImage(1, 65, QImage::Format_Indexed8);
-  prefs.setImageColours(colourScaleImage, ui->chromaColourCombo->currentIndex());
+  prefs.setImageColours(colourScaleImage, (chromagram_colour_t) ui->chromaColourCombo->currentIndex());
   for(int i=0; i<=64; i++)
     colourScaleImage.setPixel(0,64-i,i);
   ui->colourScaleLabel->setPixmap(QPixmap::fromImage(colourScaleImage));
 }
 
 void DetailWindow::blankVisualisations(){
-  chromagramImage = QImage(1,1,QImage::Format_Indexed8);
-  miniChromagramImage = QImage(1,1,QImage::Format_Indexed8);
-  harmonicChangeImage = QImage(1,1,QImage::Format_Indexed8);
-  prefs.setImageColours(chromagramImage,ui->chromaColourCombo->currentIndex());
-  prefs.setImageColours(miniChromagramImage,ui->chromaColourCombo->currentIndex());
-  prefs.setImageColours(harmonicChangeImage,ui->chromaColourCombo->currentIndex());
+  chromagramImage     = QImage(1, 1, QImage::Format_Indexed8);
+  miniChromagramImage = QImage(1, 1, QImage::Format_Indexed8);
+  harmonicChangeImage = QImage(1, 1, QImage::Format_Indexed8);
+  prefs.setImageColours(chromagramImage,     (chromagram_colour_t) ui->chromaColourCombo->currentIndex());
+  prefs.setImageColours(miniChromagramImage, (chromagram_colour_t) ui->chromaColourCombo->currentIndex());
+  prefs.setImageColours(harmonicChangeImage, (chromagram_colour_t) ui->chromaColourCombo->currentIndex());
   chromagramImage.setPixel(0,0,0);
   miniChromagramImage.setPixel(0,0,0);
   harmonicChangeImage.setPixel(0,0,0);

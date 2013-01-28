@@ -53,6 +53,14 @@ enum metadata_write_t{
   METADATA_WRITE_OVERWRITE
 };
 
+enum chromagram_colour_t{
+  CHROMA_COLOUR_IZO,
+  CHROMA_COLOUR_MONO,
+  CHROMA_COLOUR_PRED,
+  CHROMA_COLOUR_VBOY,
+  CHROMA_COLOUR_HACK
+};
+
 class Preferences{
 public:
   KeyFinder::Parameters core;
@@ -143,7 +151,7 @@ public:
   QString getKeyCode(int) const;
   QStringList getKeyCodeList() const;
   QColor getKeyColour(int) const;
-  void setImageColours(QImage&, int) const;
+  void setImageColours(QImage&, chromagram_colour_t) const;
 
 private:
   GuiStrings* strings;
@@ -167,6 +175,7 @@ private:
   QByteArray batchWindowState;
   QByteArray batchWindowGeometry;
   QByteArray batchWindowSplitterState;
+  int scaledSine(int, float, float, int, int) const;
 };
 
 #endif
