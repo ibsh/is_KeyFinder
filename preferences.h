@@ -175,6 +175,7 @@ private:
   QByteArray batchWindowState;
   QByteArray batchWindowGeometry;
   QByteArray batchWindowSplitterState;
+
   int scaledSine(int, float, float, int, int) const;
 };
 

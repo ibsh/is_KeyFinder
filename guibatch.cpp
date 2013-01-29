@@ -461,10 +461,10 @@ void BatchWindow::checkRowsForSkipping(){
       g == METADATA_WRITE_NONE &&
       k == METADATA_WRITE_NONE
     ) skip = false;
-    else if(f != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_FILENAME, f)     == false) skip = false;
-    else if(c != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_TAG_COMMENT, c)  == false) skip = false;
+    else if(f != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_FILENAME,     f) == false) skip = false;
+    else if(c != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_TAG_COMMENT,  c) == false) skip = false;
     else if(g != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_TAG_GROUPING, g) == false) skip = false;
-    else if(k != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_TAG_KEY, k)      == false) skip = false;
+    else if(k != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_TAG_KEY,      k) == false) skip = false;
 
     markRowSkipped(row, skip);
   }
@@ -534,7 +534,7 @@ void BatchWindow::on_cancelBatchButton_clicked(){
 void BatchWindow::analysisResultReadyAt(int index){
   QString error = analysisWatcher.resultAt(index).errorMessage;
   int row = analysisWatcher.resultAt(index).batchRow;
-  if(error == ""){
+  if(error.isEmpty()){
     int key = analysisWatcher.resultAt(index).core.globalKeyEstimate;
     ui->tableWidget->item(row, COL_STATUS)->setText(QString::number(key));
     ui->tableWidget->item(row, COL_KEY)->setText(prefs.getKeyCode(key));

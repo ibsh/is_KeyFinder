@@ -28,11 +28,11 @@ MetadataReadResult metadataReadProcess(const AsyncFileObject& object){
 
   TagLibMetadata md(object.filePath);
 
-  result.artist = md.getArtist();
-  result.title = md.getTitle();
-  result.comment = md.getComment();
+  result.artist   = md.getArtist();
+  result.title    = md.getTitle();
+  result.comment  = md.getComment();
   result.grouping = md.getGrouping();
-  result.key = md.getKey();
+  result.key      = md.getKey();
 
   return result;
 }

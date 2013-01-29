@@ -24,7 +24,6 @@
 
 #include "preferences.h"
 #include "metadatataglib.h"
-
 #include "asyncfileobject.h"
 #include "asyncmetadatareadresult.h"
 

@@ -26,6 +26,7 @@
 
 class MetadataReadResult{
 public:
+  MetadataReadResult() : batchRow(-1) {}
   int batchRow;
   QString artist;
   QString title;
