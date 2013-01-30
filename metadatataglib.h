@@ -85,6 +85,7 @@
 #endif
 
 #include "preferences.h"
+#include "metadatawriteresult.h"
 
 class TagLibMetadata{
 public:
@@ -95,7 +96,7 @@ public:
   QString getComment() const;
   QString getGrouping() const;
   QString getKey() const;
-  QString writeKeyToMetadata(int, const Preferences&);
+  MetadataWriteResult writeKeyToMetadata(int, const Preferences&);
 private:
   TagLib::File* f;
   bool setComment(const QString&);

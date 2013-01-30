@@ -596,23 +596,36 @@ void BatchWindow::writeDetectedToFiles(){
 
 bool BatchWindow::writeToTagsAtRow(int row, int key){
   TagLibMetadata md(ui->tableWidget->item(row, COL_FILEPATH)->text());
-  QString written = md.writeKeyToMetadata(key, prefs);
-  if(written.isEmpty()) return false;
+  MetadataWriteResult written = md.writeKeyToMetadata(key, prefs);
+
   // reflect changes in table widget
-  for(int i=0; i<(signed)written.size(); i++){
-    int col = COL_TAG_COMMENT; // default
-    if(written[i] == 'g') col = COL_TAG_GROUPING;
-    if(written[i] == 'k') col = COL_TAG_KEY;
-    if(ui->tableWidget->item(row, col) == 0)
-      ui->tableWidget->setItem(row, col, new QTableWidgetItem());
-    if(col == COL_TAG_KEY){
-      ui->tableWidget->item(row, col)->setText(prefs.getKeyCode(key).left(3));
-    }else{
-      ui->tableWidget->item(row, col)->setText(prefs.getKeyCode(key));
-    }
-    ui->tableWidget->item(row, col)->setForeground(textSuccess);
+  bool altered = false;
+
+  if(!written.newTagComment.isEmpty()){
+    if(ui->tableWidget->item(row, COL_TAG_COMMENT) == 0)
+      ui->tableWidget->setItem(row, COL_TAG_COMMENT, new QTableWidgetItem());
+    ui->tableWidget->item(row, COL_TAG_COMMENT)->setText(written.newTagComment);
+    ui->tableWidget->item(row, COL_TAG_COMMENT)->setForeground(textSuccess);
+    altered = true;
   }
-  return true;
+
+  if(!written.newTagGrouping.isEmpty()){
+    if(ui->tableWidget->item(row, COL_TAG_GROUPING) == 0)
+      ui->tableWidget->setItem(row, COL_TAG_GROUPING, new QTableWidgetItem());
+    ui->tableWidget->item(row, COL_TAG_GROUPING)->setText(written.newTagGrouping);
+    ui->tableWidget->item(row, COL_TAG_GROUPING)->setForeground(textSuccess);
+    altered = true;
+  }
+
+  if(!written.newTagKey.isEmpty()){
+    if(ui->tableWidget->item(row, COL_TAG_KEY) == 0)
+      ui->tableWidget->setItem(row, COL_TAG_KEY, new QTableWidgetItem());
+    ui->tableWidget->item(row, COL_TAG_KEY)->setText(written.newTagKey);
+    ui->tableWidget->item(row, COL_TAG_KEY)->setForeground(textSuccess);
+    altered = true;
+  }
+
+  return altered;
 }
 
 bool BatchWindow::writeToFilenameAtRow(int row, int key){

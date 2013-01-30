@@ -269,39 +269,43 @@ QString TagLibMetadata::getKeyId3(const TagLib::ID3v2::Tag* tag) const{
   return GuiStrings::getInstance()->notApplicable();
 }
 
-QString TagLibMetadata::writeKeyToMetadata(int key, const Preferences& prefs){
+MetadataWriteResult TagLibMetadata::writeKeyToMetadata(int key, const Preferences& prefs){
 
-  QString result = "";
+  MetadataWriteResult result;
 
   QString dataToWrite = prefs.getKeyCode(key);
   QString delim = prefs.getMetadataDelimiter();
 
   if(prefs.getMetadataWriteComment() == METADATA_WRITE_OVERWRITE){
     if(getComment() != dataToWrite && setComment(dataToWrite))
-      result += "c";
+      result.newTagComment = dataToWrite;
   }else if(prefs.getMetadataWriteComment() == METADATA_WRITE_PREPEND){
-    if(getComment().left(dataToWrite.length()) != dataToWrite && setComment(dataToWrite + delim + getComment()))
-      result += "c";
+    QString newTagComment = dataToWrite + delim + getComment();
+    if(getComment().left(dataToWrite.length()) != dataToWrite && setComment(newTagComment))
+      result.newTagComment = newTagComment;
   }else if(prefs.getMetadataWriteComment() == METADATA_WRITE_APPEND){
-    if(getComment().right(dataToWrite.length()) != dataToWrite && setComment(getComment() + delim + dataToWrite))
-      result += "c";
+    QString newTagComment = getComment() + delim + dataToWrite;
+    if(getComment().right(dataToWrite.length()) != dataToWrite && setComment(newTagComment))
+      result.newTagComment = newTagComment;
   }
 
   if(prefs.getMetadataWriteGrouping() == METADATA_WRITE_OVERWRITE){
     if(getGrouping() != dataToWrite && setGrouping(dataToWrite))
-      result += "g";
+      result.newTagGrouping = dataToWrite;
   }else if(prefs.getMetadataWriteGrouping() == METADATA_WRITE_PREPEND){
-    if(getGrouping().left(dataToWrite.length()) != dataToWrite && setGrouping(dataToWrite + delim + getGrouping()))
-      result += "g";
+    QString newTagGrouping = dataToWrite + delim + getGrouping();
+    if(getGrouping().left(dataToWrite.length()) != dataToWrite && setGrouping(newTagGrouping))
+      result.newTagGrouping = newTagGrouping;
   }else if(prefs.getMetadataWriteGrouping() == METADATA_WRITE_APPEND){
-    if(getGrouping().right(dataToWrite.length()) != dataToWrite && setGrouping(getGrouping() + delim + dataToWrite))
-      result += "g";
+    QString newTagGrouping = getGrouping() + delim + dataToWrite;
+    if(getGrouping().right(dataToWrite.length()) != dataToWrite && setGrouping(newTagGrouping))
+      result.newTagGrouping = newTagGrouping;
   }
 
   dataToWrite = dataToWrite.left(3); // Key field in ID3 holds only 3 chars
   if(prefs.getMetadataWriteKey() == METADATA_WRITE_OVERWRITE)
     if(getKey() != dataToWrite && setKey(dataToWrite))
-        result += "k";
+        result.newTagKey = dataToWrite;
 
   return result;
 
@@ -322,16 +326,18 @@ bool TagLibMetadata::setComment(const QString& cmt){
 
   // non-FLAC behaviour
   f->tag()->setComment(TagLib::String(cmt.toLocal8Bit().constData()));
-  f->save();
 
   // iTunes hack for MPEGs and AIFFs, but iTunes doesn't read WAV tags
   TagLib::MPEG::File* fileTestMpeg = dynamic_cast<TagLib::MPEG::File*>(f);
+  TagLib::RIFF::AIFF::File* fileTestAiff = dynamic_cast<TagLib::RIFF::AIFF::File*>(f);
   if(fileTestMpeg != NULL){
     setITunesCommentId3(fileTestMpeg->ID3v2Tag(), cmt);
-  }
-  TagLib::RIFF::AIFF::File* fileTestAiff = dynamic_cast<TagLib::RIFF::AIFF::File*>(f);
-  if(fileTestAiff != NULL){
+    fileTestMpeg->save(TagLib::MPEG::File::AllTags, true, fileTestMpeg->ID3v2Tag()->header()->majorVersion());
+  }else if(fileTestAiff != NULL){
     setITunesCommentId3(fileTestAiff->tag(), cmt);
+    f->save();
+  } else {
+    f->save();
   }
   return true;
 }
@@ -347,7 +353,7 @@ void TagLibMetadata::setITunesCommentId3(TagLib::ID3v2::Tag* tag, const QString&
         // TODO does this have implications for localisation?
         commFrame->setLanguage("eng");
         commFrame->setText(TagLib::String(cmt.toLocal8Bit().constData()));
-        f->save();
+        // we don't save here, because MPEGs need v2.3 / 2.4 handling.
         done = true;
       }
     }
@@ -356,7 +362,7 @@ void TagLibMetadata::setITunesCommentId3(TagLib::ID3v2::Tag* tag, const QString&
     frm->setText(TagLib::String(cmt.toLocal8Bit().constData()));
     frm->setLanguage("eng");
     tag->addFrame(frm);
-    f->save();
+    // again, don't save here.
     return;
   }
 }
@@ -368,18 +374,21 @@ bool TagLibMetadata::setGrouping(const QString& grp){
   }
 
   TagLib::MPEG::File* fileTestMpeg = dynamic_cast<TagLib::MPEG::File*>(f);
-  if(fileTestMpeg != NULL){
-    return setGroupingId3(fileTestMpeg->ID3v2Tag(), grp);
+  if(fileTestMpeg != NULL && setGroupingId3(fileTestMpeg->ID3v2Tag(), grp)){
+    fileTestMpeg->save(TagLib::MPEG::File::AllTags, true, fileTestMpeg->ID3v2Tag()->header()->majorVersion());
+    return true;
   }
 
   TagLib::RIFF::AIFF::File* fileTestAiff = dynamic_cast<TagLib::RIFF::AIFF::File*>(f);
-  if(fileTestAiff != NULL){
-    return setGroupingId3(fileTestAiff->tag(), grp);
+  if(fileTestAiff != NULL && setGroupingId3(fileTestAiff->tag(), grp)){
+    f->save();
+    return true;
   }
 
   TagLib::RIFF::WAV::File* fileTestWav = dynamic_cast<TagLib::RIFF::WAV::File*>(f);
-  if(fileTestWav != NULL){
-    return setGroupingId3(fileTestWav->tag(), grp);
+  if(fileTestWav != NULL && setGroupingId3(fileTestWav->tag(), grp)){
+    f->save();
+    return true;
   }
 
   TagLib::MP4::Tag* tagTestMp4 = dynamic_cast<TagLib::MP4::Tag*>(f->tag());
@@ -414,7 +423,7 @@ bool TagLibMetadata::setGroupingId3(TagLib::ID3v2::Tag* tag, const QString& grp)
     frm->setText(TagLib::String(grp.toLocal8Bit().constData()));
     tag->removeFrames("TIT1");
     tag->addFrame(frm);
-    f->save();
+    // again, don't save here
     return true;
   }else{
     // ID3v1 doesn't support Grouping
@@ -429,18 +438,21 @@ bool TagLibMetadata::setKey(const QString& key){
   }
 
   TagLib::MPEG::File* fileTestMpeg = dynamic_cast<TagLib::MPEG::File*>(f);
-  if(fileTestMpeg != NULL){
-    return setKeyId3(fileTestMpeg->ID3v2Tag(), key);
+  if(fileTestMpeg != NULL && setKeyId3(fileTestMpeg->ID3v2Tag(), key)){
+    fileTestMpeg->save(TagLib::MPEG::File::AllTags, true, fileTestMpeg->ID3v2Tag()->header()->majorVersion());
+    return true;
   }
 
   TagLib::RIFF::AIFF::File* fileTestAiff = dynamic_cast<TagLib::RIFF::AIFF::File*>(f);
-  if(fileTestAiff != NULL){
-    return setKeyId3(fileTestAiff->tag(), key);
+  if(fileTestAiff != NULL && setKeyId3(fileTestAiff->tag(), key)){
+    f->save();
+    return true;
   }
 
   TagLib::RIFF::WAV::File* fileTestWav = dynamic_cast<TagLib::RIFF::WAV::File*>(f);
-  if(fileTestWav != NULL){
-    return setKeyId3(fileTestWav->tag(), key);
+  if(fileTestWav != NULL && setKeyId3(fileTestWav->tag(), key)){
+    f->save();
+    return true;
   }
 
   TagLib::MP4::Tag* tagTestMp4 = dynamic_cast<TagLib::MP4::Tag*>(f->tag());
@@ -480,7 +492,7 @@ bool TagLibMetadata::setKeyId3(TagLib::ID3v2::Tag* tag, const QString& key){
     frm->setText(TagLib::String(key.toLocal8Bit().constData()));
     tag->removeFrames("TKEY");
     tag->addFrame(frm);
-    f->save();
+    // again, don't save in here
     return true;
   }else{
     // ID3v1 doesn't support Key

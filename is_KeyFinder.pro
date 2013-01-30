@@ -63,6 +63,7 @@ HEADERS  += \
     guiprefs.h \
     libkeyfindersingleton.h \
     metadatataglib.h \
+    metadatawriteresult.h \
     os_windows.h \
     preferences.h \
     strings.h
