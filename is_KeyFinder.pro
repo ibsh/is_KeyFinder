@@ -111,8 +111,7 @@ unix|macx{
   LIBS += -lavutil
   LIBS += -lsamplerate
   LIBS += -ltag
-  LIBS += -lxerces-c
-  LIBS += -lxqilla
+  LIBS += -lboost_system
 
   ICON = is_KeyFinder.icns
   QMAKE_INFO_PLIST =
@@ -123,6 +122,9 @@ macx{
   INCLUDEPATH += /usr/local/include
   CONFIG -= ppc ppc64
   CONFIG += x86 x86_64
+
+  LIBS += -lxerces-c
+  LIBS += -lxqilla
 }
 
 win32{
