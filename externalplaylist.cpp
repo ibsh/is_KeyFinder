@@ -292,7 +292,7 @@ QUrl ExternalPlaylist::fixTraktorAddressing(const QString& address){
 
 #ifndef Q_OS_MAC
 
-QStringList ExternalPlaylist::executeXmlQuery(const QString& libraryPath, const QString& xPath, const QStringList& parameters = QStringList()){
+QStringList ExternalPlaylist::executeXmlQuery(const QString& libraryPath, const QString& xPath, const QStringList& parameters){
 
   QStringList results;
 
