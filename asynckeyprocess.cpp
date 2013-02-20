@@ -33,7 +33,7 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
     decoder = AudioFileDecoder::getDecoder();
   }catch(KeyFinder::Exception& e){
     delete decoder;
-    result.errorMessage = QString(e.what().c_str());
+    result.errorMessage = QString::fromStdString(e.what());
     return result;
   }
 
@@ -43,7 +43,7 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
   }catch(KeyFinder::Exception& e){
     delete audio;
     delete decoder;
-    result.errorMessage = QString(e.what().c_str());
+    result.errorMessage = QString::fromStdString(e.what());
     return result;
   }
 
@@ -58,7 +58,7 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
     }catch(KeyFinder::Exception& e){
       delete audio;
       delete ds;
-      result.errorMessage = QString(e.what().c_str());
+      result.errorMessage = QString::fromStdString(e.what());
       return result;
     }
     delete ds;

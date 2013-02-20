@@ -176,7 +176,7 @@ Preferences::Preferences(){
     try{
       core.setCustomToneProfile(ctp);
     }catch(KeyFinder::Exception& e){
-      qDebug("LibKeyFinder Exception: %s", e.what().c_str());
+      qDebug("LibKeyFinder Exception: %s", e.what());
     }catch(...){
       qDebug("Caught unknown exception setting custom tone profile.");
     }
