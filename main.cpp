@@ -128,7 +128,7 @@ int main(int argc, char* argv[]){
   dir.cdUp();
   QString localePath = localeParam.arg(dir.absolutePath()).arg(QLocale::system().name());
 #elif defined Q_OS_LINUX
-  QString localePath = localeParam.arg(WORK_CACHEDIR).arg(QLocale::system().name());
+  QString localePath = localeParam.arg(QCoreApplication::applicationDirPath()).arg(QLocale::system().name());
 #else
   QString localePath = localeParam.arg(QCoreApplication::applicationDirPath()).arg(QLocale::system().name());
 #endif
