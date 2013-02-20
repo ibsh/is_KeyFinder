@@ -101,8 +101,8 @@ Preferences::Preferences(){
     QVariant val = settings.value("hcdf");
     if(val == 'n')
       core.setSegmentation(KeyFinder::SEGMENTATION_NONE);
-    else if(val == 'h')
-      core.setSegmentation(KeyFinder::SEGMENTATION_HARTE);
+//    else if(val == 'h')
+//      core.setSegmentation(KeyFinder::SEGMENTATION_HARTE);
     else if(val == 'c')
       core.setSegmentation(KeyFinder::SEGMENTATION_COSINE);
     else if(val == 'a')
