@@ -19,8 +19,8 @@
 
 *************************************************************************/
 
-#ifndef DOWNSAMPLER_H
-#define DOWNSAMPLER_H
+#ifndef IS_KEYFINDER_DOWNSAMPLER_H
+#define IS_KEYFINDER_DOWNSAMPLER_H
 
 #include "keyfinder/audiodata.h"
 #include "keyfinder/exception.h"
