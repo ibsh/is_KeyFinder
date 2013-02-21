@@ -63,7 +63,7 @@ Preferences::Preferences(){
     core.setFftFrameSize((unsigned)settings.value("fftFrameSize").toInt());
   }
   if(settings.contains("hopSize")){
-    core.setHopsPerFrame((unsigned)settings.value("hopSize").toInt());
+    //core.setHopsPerFrame((unsigned)settings.value("hopSize").toInt());
   }
   if(settings.contains("directSkStretch")){
     core.setDirectSkStretch(settings.value("directSkStretch").toFloat());
