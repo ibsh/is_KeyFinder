@@ -1661,11 +1661,6 @@
                </item>
                <item>
                 <property name="text">
-                 <string notr="true">Harte HCDF</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
                  <string>Cosine similarity CDF</string>
                 </property>
                </item>

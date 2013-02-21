@@ -65,7 +65,7 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   listTuningMethod << KeyFinder::TUNING_HARTE;
   listTuningMethod << KeyFinder::TUNING_BIN_ADAPTIVE;
   listSegmentation << KeyFinder::SEGMENTATION_NONE;
-  listSegmentation << KeyFinder::SEGMENTATION_HARTE;
+  //listSegmentation << KeyFinder::SEGMENTATION_HARTE;
   listSegmentation << KeyFinder::SEGMENTATION_COSINE;
   listSegmentation << KeyFinder::SEGMENTATION_ARBITRARY;
   listToneProfile << KeyFinder::TONE_PROFILE_KRUMHANSL;

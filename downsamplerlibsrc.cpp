@@ -33,8 +33,8 @@ KeyFinder::AudioData* SecretRabbitDownsampler::downsample(KeyFinder::AudioData* 
     throw e;
   }
   SRC_DATA srcData;
-  srcData.data_in = &audioIn->getSamples().front();
-  srcData.data_out = &audioOut->getSamples().front();
+//  srcData.data_in = &audioIn->getSamples().front();
+//  srcData.data_out = &audioOut->getSamples().front();
   srcData.input_frames = (long)(audioIn->getSampleCount() / audioIn->getChannels());
   srcData.output_frames = (long)(audioOut->getSampleCount() / audioOut->getChannels());
   srcData.src_ratio = 1.0/factor;
