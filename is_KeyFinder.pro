@@ -146,6 +146,11 @@ win32{
 	RC_FILE = win32.rc
 }
 
+unix {
+    target.path = $$[QT_INSTALL_PREFIX]/bin
+    INSTALLS += target
+}
+
 TRANSLATIONS = \
     is_keyfinder_en_GB.ts \
     is_keyfinder_en_US.ts \
