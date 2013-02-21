@@ -63,7 +63,7 @@ Preferences::Preferences(){
     core.setFftFrameSize((unsigned)settings.value("fftFrameSize").toInt());
   }
   if(settings.contains("hopSize")){
-    core.setHopSize((unsigned)settings.value("hopSize").toInt());
+    core.setHopsPerFrame((unsigned)settings.value("hopSize").toInt());
   }
   if(settings.contains("directSkStretch")){
     core.setDirectSkStretch(settings.value("directSkStretch").toFloat());
@@ -109,13 +109,13 @@ Preferences::Preferences(){
       core.setSegmentation(KeyFinder::SEGMENTATION_ARBITRARY);
   }
   if(settings.contains("hcdfGaussianSize")){
-    core.setHcdfGaussianSize((unsigned)settings.value("hcdfGaussianSize").toInt());
+    core.setSegGaussianSize((unsigned)settings.value("hcdfGaussianSize").toInt());
   }
   if(settings.contains("hcdfGaussianSigma")){
-    core.setHcdfGaussianSigma(settings.value("hcdfGaussianSigma").toFloat());
+    core.setSegGaussianSigma(settings.value("hcdfGaussianSigma").toFloat());
   }
   if(settings.contains("hcdfPeakPickingNeighbours")){
-    core.setHcdfPeakPickingNeighbours((unsigned)settings.value("hcdfPeakPickingNeighbours").toInt());
+    core.setSegPeakPickingNeighbours((unsigned)settings.value("hcdfPeakPickingNeighbours").toInt());
   }
   if(settings.contains("hcdfArbitrarySegments")){
     core.setArbitrarySegments((unsigned)settings.value("hcdfArbitrarySegments").toInt());
@@ -447,9 +447,9 @@ void Preferences::save(){
 
   settings.beginGroup("harmonicChangeDetectionFunction");
   settings.setValue("segmentation", core.getSegmentation());
-  settings.setValue("hcdfGaussianSize", core.getHcdfGaussianSize());
-  settings.setValue("hcdfGaussianSigma", core.getHcdfGaussianSigma());
-  settings.setValue("hcdfPeakPickingNeighbours", core.getHcdfPeakPickingNeighbours());
+  settings.setValue("hcdfGaussianSize", core.getSegGaussianSize());
+  settings.setValue("hcdfGaussianSigma", core.getSegGaussianSigma());
+  settings.setValue("hcdfPeakPickingNeighbours", core.getSegPeakPickingNeighbours());
   settings.setValue("hcdfArbitrarySegments", core.getArbitrarySegments());
   settings.endGroup();
 
@@ -587,9 +587,9 @@ unsigned int                    Preferences::getFftFrameSize()              cons
 unsigned int                    Preferences::getOctaves()                   const { return core.getOctaves(); }
 unsigned int                    Preferences::getBpo()                       const { return core.getBpo(); }
 unsigned int                    Preferences::getArbitrarySegments()         const { return core.getArbitrarySegments(); }
-unsigned int                    Preferences::getHcdfPeakPickingNeighbours() const { return core.getHcdfPeakPickingNeighbours(); }
-unsigned int                    Preferences::getHcdfGaussianSize()          const { return core.getHcdfGaussianSize(); }
-float                           Preferences::getHcdfGaussianSigma()         const { return core.getHcdfGaussianSigma(); }
+unsigned int                    Preferences::getHcdfPeakPickingNeighbours() const { return core.getSegPeakPickingNeighbours(); }
+unsigned int                    Preferences::getHcdfGaussianSize()          const { return core.getSegGaussianSize(); }
+float                           Preferences::getHcdfGaussianSigma()         const { return core.getSegGaussianSigma(); }
 float                           Preferences::getStartingFreqA()             const { return core.getStartingFreqA(); }
 float                           Preferences::getLastFreq()                  const { return core.getLastFreq(); }
 float                           Preferences::getDirectSkStretch()           const { return core.getDirectSkStretch(); }
@@ -620,14 +620,14 @@ void Preferences::setSegmentation(KeyFinder::segmentation_t h)            { core
 void Preferences::setSimilarityMeasure(KeyFinder::similarity_measure_t m) { core.setSimilarityMeasure(m); }
 void Preferences::setTuningMethod(KeyFinder::tuning_method_t t)           { core.setTuningMethod(t); }
 void Preferences::setToneProfile(KeyFinder::tone_profile_t profile)       { core.setToneProfile(profile); }
-void Preferences::setHopSize(unsigned int size)                           { core.setHopSize(size); }
+void Preferences::setHopSize(unsigned int size)                           { core.setHopsPerFrame(size); }
 void Preferences::setFftFrameSize(unsigned int framesize)                 { core.setFftFrameSize(framesize); }
 void Preferences::setOctaves(unsigned int oct)                            { core.setOctaves(oct); }
 void Preferences::setBps(unsigned int bands)                              { core.setBps(bands); }
 void Preferences::setArbitrarySegments(unsigned int segments)             { core.setArbitrarySegments(segments); }
-void Preferences::setHcdfPeakPickingNeighbours(unsigned int neighbours)   { core.setHcdfPeakPickingNeighbours(neighbours); }
-void Preferences::setHcdfGaussianSize(unsigned int size)                  { core.setHcdfGaussianSize(size); }
-void Preferences::setHcdfGaussianSigma(float sigma)                       { core.setHcdfGaussianSigma(sigma); }
+void Preferences::setHcdfPeakPickingNeighbours(unsigned int neighbours)   { core.setSegPeakPickingNeighbours(neighbours); }
+void Preferences::setHcdfGaussianSize(unsigned int size)                  { core.setSegGaussianSize(size); }
+void Preferences::setHcdfGaussianSigma(float sigma)                       { core.setSegGaussianSigma(sigma); }
 void Preferences::setStartingFreqA(float a)                               { core.setStartingFreqA(a); }
 void Preferences::setDirectSkStretch(float stretch)                       { core.setDirectSkStretch(stretch); }
 void Preferences::setDetunedBandWeight(float weight)                      { core.setDetunedBandWeight(weight); }
