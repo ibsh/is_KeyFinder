@@ -106,8 +106,7 @@ unix|macx{
   LIBS += -lavformat
   LIBS += -lavutil
   LIBS += -ltag
-  LIBS += -lxerces-c
-  LIBS += -lxqilla
+  LIBS += -lboost_system
 
   ICON = is_KeyFinder.icns
   QMAKE_INFO_PLIST =
@@ -118,6 +117,9 @@ macx{
   INCLUDEPATH += /usr/local/include
   CONFIG -= ppc ppc64
   CONFIG += x86 x86_64
+
+  LIBS += -lxerces-c
+  LIBS += -lxqilla
 }
 
 win32{
@@ -136,6 +138,11 @@ win32{
 
 	OTHER_FILES += is_KeyFinder.ico
 	RC_FILE = win32.rc
+}
+
+unix {
+    target.path = $$[QT_INSTALL_PREFIX]/bin
+    INSTALLS += target
 }
 
 TRANSLATIONS = \
