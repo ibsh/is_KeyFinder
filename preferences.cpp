@@ -31,7 +31,7 @@ Preferences::Preferences(){
 
   settings.beginGroup("analysisFrequencies");
   if(settings.contains("startingFrequencyA")){
-    core.setStartingFreqA(settings.value("startingFrequencyA").toFloat());
+    core.setStartingFrequencyA(settings.value("startingFrequencyA").toFloat());
   }
   if(settings.contains("numOctaves")){
     core.setOctaves((unsigned)settings.value("numOctaves").toInt());
@@ -40,7 +40,7 @@ Preferences::Preferences(){
     core.setOffsetToC(settings.value("offsetToC").toBool());
   }
   if(settings.contains("bandsPerSemitone")){
-    core.setBps((unsigned)settings.value("bandsPerSemitone").toInt());
+    core.setBandsPerSemitone((unsigned)settings.value("bandsPerSemitone").toInt());
   }
   settings.endGroup();
 
@@ -72,7 +72,7 @@ Preferences::Preferences(){
   }
   settings.endGroup();
 
-  // ================ Harmonic Change Detection Function =======================
+  // =========================== Segmentation ==================================
 
   settings.beginGroup("harmonicChangeDetectionFunction");
   if(settings.contains("segmentation")){
@@ -330,7 +330,7 @@ void Preferences::save(){
   settings.setValue("startingFrequencyA", core.getStartingFreqA());
   settings.setValue("numOctaves", core.getOctaves());
   settings.setValue("offsetToC", core.getOffsetToC());
-  settings.setValue("bandsPerSemitone", core.getBpo() / 12);
+  settings.setValue("bandsPerSemitone", core.getBandsPerOctave() / 12);
   settings.endGroup();
 
   settings.beginGroup("spectralAnalysis");
@@ -483,13 +483,13 @@ KeyFinder::tone_profile_t       Preferences::getToneProfile()              const
 unsigned int                    Preferences::getFftFrameSize()             const { return core.getFftFrameSize(); }
 unsigned int                    Preferences::getHopsPerFrame()             const { return core.getHopsPerFrame(); }
 unsigned int                    Preferences::getOctaves()                  const { return core.getOctaves(); }
-unsigned int                    Preferences::getBpo()                      const { return core.getBpo(); }
+unsigned int                    Preferences::getBpo()                      const { return core.getBandsPerOctave(); }
 unsigned int                    Preferences::getArbitrarySegments()        const { return core.getArbitrarySegments(); }
 unsigned int                    Preferences::getSegPeakPickingNeighbours() const { return core.getSegPeakPickingNeighbours(); }
 unsigned int                    Preferences::getSegGaussianSize()          const { return core.getSegGaussianSize(); }
 float                           Preferences::getSegGaussianSigma()         const { return core.getSegGaussianSigma(); }
 float                           Preferences::getStartingFreqA()            const { return core.getStartingFreqA(); }
-float                           Preferences::getLastFreq()                 const { return core.getLastFreq(); }
+float                           Preferences::getLastFreq()                 const { return core.getLastFrequency(); }
 float                           Preferences::getDirectSkStretch()          const { return core.getDirectSkStretch(); }
 float                           Preferences::getDetunedBandWeight()        const { return core.getDetunedBandWeight(); }
 std::vector<float>              Preferences::getCustomToneProfile()        const { return core.getCustomToneProfile(); }
@@ -520,12 +520,12 @@ void Preferences::setToneProfile(KeyFinder::tone_profile_t profile)       { core
 void Preferences::setHopsPerFrame(unsigned int hpf)                       { core.setHopsPerFrame(hpf); }
 void Preferences::setFftFrameSize(unsigned int framesize)                 { core.setFftFrameSize(framesize); }
 void Preferences::setOctaves(unsigned int oct)                            { core.setOctaves(oct); }
-void Preferences::setBps(unsigned int bands)                              { core.setBps(bands); }
+void Preferences::setBps(unsigned int bands)                              { core.setBandsPerSemitone(bands); }
 void Preferences::setArbitrarySegments(unsigned int segments)             { core.setArbitrarySegments(segments); }
 void Preferences::setSegPeakPickingNeighbours(unsigned int neighbours)    { core.setSegPeakPickingNeighbours(neighbours); }
 void Preferences::setSegGaussianSize(unsigned int size)                   { core.setSegGaussianSize(size); }
 void Preferences::setSegGaussianSigma(float sigma)                        { core.setSegGaussianSigma(sigma); }
-void Preferences::setStartingFreqA(float a)                               { core.setStartingFreqA(a); }
+void Preferences::setStartingFreqA(float a)                               { core.setStartingFrequencyA(a); }
 void Preferences::setDirectSkStretch(float stretch)                       { core.setDirectSkStretch(stretch); }
 void Preferences::setDetunedBandWeight(float weight)                      { core.setDetunedBandWeight(weight); }
 void Preferences::setCustomToneProfile(const std::vector<float>& profile) { core.setCustomToneProfile(profile); }
