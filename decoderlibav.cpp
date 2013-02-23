@@ -66,7 +66,8 @@ KeyFinder::AudioData* LibAvDecoder::decodeFile(const QString& filePath, const in
   // Determine duration
   int durationSeconds = fCtx->duration / AV_TIME_BASE;
   int durationMinutes = durationSeconds / 60;
-  if(durationSeconds > maxDuration * 60){
+  // First condition is a hack for bizarre overestimation of some MP3s
+  if(durationMinutes < 720 && durationSeconds > maxDuration * 60){
     av_close_input_file(fCtx);
     throw KeyFinder::Exception(GuiStrings::getInstance()->durationExceedsPreference(durationMinutes, durationSeconds % 60, maxDuration).toLocal8Bit().constData());
   }
