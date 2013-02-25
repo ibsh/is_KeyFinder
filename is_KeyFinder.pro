@@ -95,7 +95,7 @@ FORMS += \
     prefsdialog.ui
 
 OTHER_FILES += \
-		README \
+    README \
     win32.rc
 
 QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS # for libav
@@ -106,11 +106,8 @@ unix|macx{
   LIBS += -lavformat
   LIBS += -lavutil
   LIBS += -ltag
-  LIBS += -lxerces-c
-  LIBS += -lxqilla
 
   ICON = is_KeyFinder.icns
-  QMAKE_INFO_PLIST =
 }
 
 macx{
@@ -118,6 +115,9 @@ macx{
   INCLUDEPATH += /usr/local/include
   CONFIG -= ppc ppc64
   CONFIG += x86 x86_64
+
+  LIBS += -lxerces-c
+  LIBS += -lxqilla
 }
 
 win32{
@@ -136,6 +136,11 @@ win32{
 
 	OTHER_FILES += is_KeyFinder.ico
 	RC_FILE = win32.rc
+}
+
+unix {
+	target.path = $$[QT_INSTALL_PREFIX]/bin
+	INSTALLS += target
 }
 
 TRANSLATIONS = \
