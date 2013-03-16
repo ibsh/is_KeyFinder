@@ -2328,7 +2328,7 @@
                </item>
                <item>
                 <property name="text">
-                 <string>Bin-adaptive</string>
+                 <string>Band adaptive</string>
                 </property>
                </item>
               </widget>

@@ -28,6 +28,8 @@
 class KeyFinderResultWrapper{
 public:
   KeyFinder::KeyDetectionResult core;
+  KeyFinder::Chromagram fullChromagram;
+  KeyFinder::Chromagram oneOctaveChromagram;
   int batchRow;
   QString errorMessage;
 };

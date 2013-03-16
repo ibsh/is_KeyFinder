@@ -57,7 +57,7 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   listFftFrameSize << 131072;
   listFftFrameSize << 262144;
   listTuningMethod << KeyFinder::TUNING_HARTE;
-  listTuningMethod << KeyFinder::TUNING_BIN_ADAPTIVE;
+  listTuningMethod << KeyFinder::TUNING_BAND_ADAPTIVE;
   listSegmentation << KeyFinder::SEGMENTATION_NONE;
   listSegmentation << KeyFinder::SEGMENTATION_ARBITRARY;
   listSegmentation << KeyFinder::SEGMENTATION_COSINE;
@@ -272,7 +272,7 @@ void PrefsDialog::tuningEnabled(){
 void PrefsDialog::binAdaptiveTuningEnabled(){
   ui->detunedBandWeight->setEnabled(
     ui->tuningMethod->isEnabled() &&
-    listTuningMethod[ui->tuningMethod->currentIndex()] == KeyFinder::TUNING_BIN_ADAPTIVE
+    listTuningMethod[ui->tuningMethod->currentIndex()] == KeyFinder::TUNING_BAND_ADAPTIVE
   );
 }
 

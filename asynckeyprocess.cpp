@@ -57,7 +57,10 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
 
   KeyFinder::KeyFinder* kf = LibKeyFinderSingleton::getInstance()->getKeyFinder();
   try{
-    result.core = kf->findKey(*audio, object.prefs.core);
+    result.fullChromagram = kf->chromagramOfAudio(*audio, object.prefs.core);
+    result.oneOctaveChromagram = result.fullChromagram;
+    result.oneOctaveChromagram.reduceToOneOctave();
+    result.core = kf->keyOfChromagram(result.oneOctaveChromagram, object.prefs.core);
   }catch(const std::exception& e){
     delete audio;
     result.errorMessage = QString(e.what());
@@ -69,6 +72,5 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
   }
 
   delete audio;
-
   return result;
 }
