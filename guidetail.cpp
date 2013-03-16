@@ -138,10 +138,10 @@ void DetailWindow::analysisFinished(){
   }
   ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
   // Tooltip
-  if(prefs.getSegmentation() == 'n'){
+  if(prefs.getSegmentation() == KeyFinder::SEGMENTATION_NONE){
     //: A tooltip on the Detail window
     ui->harmonicChangeLabel->setToolTip(wrapToolTip(tr("You are not using segmentation, so there is no harmonic change data to display.")));
-  }else if(prefs.getSegmentation() == 'a'){
+  }else if(prefs.getSegmentation() == KeyFinder::SEGMENTATION_ARBITRARY){
     //: A tooltip on the Detail window
     ui->harmonicChangeLabel->setToolTip(wrapToolTip(tr("You are using arbitrary segmentation, so there is no harmonic change data to display.")));
   }else{
@@ -161,10 +161,10 @@ void DetailWindow::analysisFinished(){
     newLabel->setAutoFillBackground(true);
     newLabel->setMinimumHeight(20);
     newLabel->setMaximumHeight(30);
-    if(prefs.getSegmentation() == 'n'){
+    if(prefs.getSegmentation() == KeyFinder::SEGMENTATION_NONE){
       //: A tooltip on the Detail window
       newLabel->setToolTip(wrapToolTip(tr("This row shows the key estimate for the unsegmented chromagram.")));
-    }else if(prefs.getSegmentation() == 'a'){
+    }else if(prefs.getSegmentation() == KeyFinder::SEGMENTATION_ARBITRARY){
       //: A tooltip on the Detail window
       newLabel->setToolTip(wrapToolTip(tr("This row shows the key estimates for the arbitrary segments.")));
     }else{

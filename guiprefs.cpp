@@ -270,21 +270,24 @@ void PrefsDialog::tuningEnabled(){
 }
 
 void PrefsDialog::binAdaptiveTuningEnabled(){
-  ui->detunedBandWeight->setEnabled(ui->tuningMethod->isEnabled() && ui->tuningMethod->currentIndex() == 1);
+  ui->detunedBandWeight->setEnabled(
+    ui->tuningMethod->isEnabled() &&
+    listTuningMethod[ui->tuningMethod->currentIndex()] == KeyFinder::TUNING_BIN_ADAPTIVE
+  );
 }
 
 void PrefsDialog::segmentationEnabled(){
-  int chk = ui->segmentation->currentIndex();
-  bool e = (chk != 0 && chk != 3);
+  KeyFinder::segmentation_t chk = listSegmentation[ui->segmentation->currentIndex()];
+  bool e = (chk == KeyFinder::SEGMENTATION_COSINE);
   ui->hcdfGaussianSigma->setEnabled(e);
   ui->hcdfGaussianSize->setEnabled(e);
   ui->hcdfPeakPickingNeighbours->setEnabled(e);
-  e = (chk == 3);
+  e = (chk == KeyFinder::SEGMENTATION_ARBITRARY);
   ui->arbitrarySegments->setEnabled(e);
 }
 
 void PrefsDialog::customProfileEnabled(){
-  bool e = (ui->toneProfile->currentText() == "Custom");
+  bool e = (listToneProfile[ui->toneProfile->currentIndex()] == KeyFinder::TONE_PROFILE_CUSTOM);
   ui->maj0->setEnabled(e);
   ui->maj1->setEnabled(e);
   ui->maj2->setEnabled(e);
