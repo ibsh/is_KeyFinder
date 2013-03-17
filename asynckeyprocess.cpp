@@ -72,5 +72,19 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
   }
 
   delete audio;
+
+  for (unsigned int i = 0; i < result.core.segments.size(); i++) {
+    qDebug(
+      "Chroma vector for segment %d: [%.0f, %.0f, %.0f, %.0f, %.0f, %.0f, %.0f, %.0f, %.0f, %.0f, %.0f, %.0f]",
+      i,
+      result.core.segments[i].chromaVector[0],  result.core.segments[i].chromaVector[1],
+      result.core.segments[i].chromaVector[2],  result.core.segments[i].chromaVector[3],
+      result.core.segments[i].chromaVector[4],  result.core.segments[i].chromaVector[5],
+      result.core.segments[i].chromaVector[6],  result.core.segments[i].chromaVector[7],
+      result.core.segments[i].chromaVector[8],  result.core.segments[i].chromaVector[9],
+      result.core.segments[i].chromaVector[10], result.core.segments[i].chromaVector[11]
+    );
+  }
+
   return result;
 }
