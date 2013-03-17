@@ -125,29 +125,6 @@ void DetailWindow::analysisFinished(){
   ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
   //: A tooltip on the Detail window
   ui->miniChromagramLabel->setToolTip(wrapToolTip(tr("This is the same chromagram data, reduced to a single octave.")));
-  // harmonic change signal
-  int rateOfChangePrecision = 100;
-  int size = (signed)analysisWatcher.result().core.harmonicChangeSignal.size();
-  harmonicChangeImage = QImage(size*chromaScaleH,rateOfChangePrecision,QImage::Format_Indexed8);
-  prefs.setImageColours(harmonicChangeImage, (chromagram_colour_t) ui->chromaColourCombo->currentIndex());
-  for(int h=0; h<size; h++){
-    int value = analysisWatcher.result().core.harmonicChangeSignal[h] * rateOfChangePrecision;
-    for(int y=0; y<rateOfChangePrecision; y++)
-      for(int x=0; x<chromaScaleH; x++)
-        harmonicChangeImage.setPixel(h*chromaScaleH+x, y, (rateOfChangePrecision - y > value ? 0 : 50));
-  }
-  ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
-  // Tooltip
-  if(prefs.getSegmentation() == KeyFinder::SEGMENTATION_NONE){
-    //: A tooltip on the Detail window
-    ui->harmonicChangeLabel->setToolTip(wrapToolTip(tr("You are not using segmentation, so there is no harmonic change data to display.")));
-  }else if(prefs.getSegmentation() == KeyFinder::SEGMENTATION_ARBITRARY){
-    //: A tooltip on the Detail window
-    ui->harmonicChangeLabel->setToolTip(wrapToolTip(tr("You are using arbitrary segmentation, so there is no harmonic change data to display.")));
-  }else{
-    //: A tooltip on the Detail window
-    ui->harmonicChangeLabel->setToolTip(wrapToolTip(tr("This is the level of harmonic change detected in the chromagram over time. Peaks in this signal are used to segment the chromagram.")));
-  }
   // Key estimates
   deleteKeyLabels();
   int lastChange = -1; // enable correct stretch policy for first segment
@@ -229,7 +206,6 @@ void DetailWindow::on_chromaColourCombo_currentIndexChanged(int index){
   prefs.setImageColours(colourScaleImage, (chromagram_colour_t) index);
   ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
   ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
-  ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
   ui->colourScaleLabel->setPixmap(QPixmap::fromImage(colourScaleImage));
 }
 
@@ -261,12 +237,10 @@ void DetailWindow::blankVisualisations(){
   harmonicChangeImage.setPixel(0,0,0);
   ui->chromagramLabel->setPixmap(QPixmap::fromImage(chromagramImage));
   ui->miniChromagramLabel->setPixmap(QPixmap::fromImage(miniChromagramImage));
-  ui->harmonicChangeLabel->setPixmap(QPixmap::fromImage(harmonicChangeImage));
   //: The initial help tooltip on the Detail window
   QString blank = wrapToolTip(tr("Drag an audio file onto the window."));
   ui->chromagramLabel->setToolTip(blank);
   ui->miniChromagramLabel->setToolTip(blank);
-  ui->harmonicChangeLabel->setToolTip(blank);
 }
 
 void DetailWindow::deleteKeyLabels(){
