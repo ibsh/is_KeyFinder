@@ -88,9 +88,9 @@ TagLibMetadata::TagLibMetadata(const QString& filePath){
   // or else...
   f = NULL;
 #ifdef Q_OS_WIN
-  qDebug("TagLib returned NULL File for %s", utf16_to_utf8(filePathCh));
+  qWarning("TagLib returned NULL File for %s", utf16_to_utf8(filePathCh));
 #else
-  qDebug("TagLib returned NULL File for %s", filePathCh);
+  qWarning("TagLib returned NULL File for %s", filePathCh);
 #endif
   return;
 }

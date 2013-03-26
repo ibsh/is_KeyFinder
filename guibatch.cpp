@@ -42,19 +42,19 @@ const QString STATUS_FAILED = "-4";
 
 BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindow(parent), ui(new Ui::BatchWindow){
   // ASYNC
-  connect(&readLibraryWatcher, SIGNAL(finished()), this, SLOT(readLibraryFinished()));
+  connect(&readLibraryWatcher,  SIGNAL(finished()), this, SLOT(readLibraryFinished()));
   connect(&loadPlaylistWatcher, SIGNAL(finished()), this, SLOT(loadPlaylistFinished()));
-  connect(&addFilesWatcher, SIGNAL(finished()), this, SLOT(addFilesFinished()));
+  connect(&addFilesWatcher,     SIGNAL(finished()), this, SLOT(addFilesFinished()));
 
-  connect(&metadataReadWatcher, SIGNAL(resultReadyAt(int)), this, SLOT(metadataReadResultReadyAt(int)));
-  connect(&metadataReadWatcher, SIGNAL(finished()), this, SLOT(metadataReadFinished()));
-  connect(&metadataReadWatcher, SIGNAL(progressRangeChanged(int, int)), this, SLOT(progressRangeChanged(int,int)));
-  connect(&metadataReadWatcher, SIGNAL(progressValueChanged(int)), this, SLOT(progressValueChanged(int)));
+  connect(&metadataReadWatcher, SIGNAL(resultReadyAt(int)),             this, SLOT(metadataReadResultReadyAt(int)));
+  connect(&metadataReadWatcher, SIGNAL(finished()),                     this, SLOT(metadataReadFinished()));
+  connect(&metadataReadWatcher, SIGNAL(progressRangeChanged(int, int)), this, SLOT(progressRangeChanged(int, int)));
+  connect(&metadataReadWatcher, SIGNAL(progressValueChanged(int)),      this, SLOT(progressValueChanged(int)));
 
-  connect(&analysisWatcher, SIGNAL(resultReadyAt(int)), this, SLOT(analysisResultReadyAt(int)));
-  connect(&analysisWatcher, SIGNAL(finished()), this, SLOT(analysisFinished())); // takes care of cancelled too
-  connect(&analysisWatcher, SIGNAL(progressRangeChanged(int, int)), this, SLOT(progressRangeChanged(int,int)));
-  connect(&analysisWatcher, SIGNAL(progressValueChanged(int)), this, SLOT(progressValueChanged(int)));
+  connect(&analysisWatcher,     SIGNAL(resultReadyAt(int)),             this, SLOT(analysisResultReadyAt(int)));
+  connect(&analysisWatcher,     SIGNAL(finished()),                     this, SLOT(analysisFinished())); // takes care of cancelled too
+  connect(&analysisWatcher,     SIGNAL(progressRangeChanged(int, int)), this, SLOT(progressRangeChanged(int, int)));
+  connect(&analysisWatcher,     SIGNAL(progressValueChanged(int)),      this, SLOT(progressValueChanged(int)));
 
   // SETUP UI
   ui->setupUi(this);
@@ -291,7 +291,7 @@ bool BatchWindow::receiveUrls(const QList<QUrl>& urls){
   if(!addFilesWatcher.isRunning()){
     //: Text in the Batch window status bar
     setGuiRunning(tr("Loading files..."), false);
-    QFuture<void> addFileFuture = QtConcurrent::run(this,&BatchWindow::addDroppedFiles);
+    QFuture<void> addFileFuture = QtConcurrent::run(this, &BatchWindow::addDroppedFiles);
     addFilesWatcher.setFuture(addFileFuture);
   }
   return true;
