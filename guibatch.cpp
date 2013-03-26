@@ -40,7 +40,16 @@ const QString STATUS_TAGSREAD = "-2";
 const QString STATUS_SKIPPED = "-3";
 const QString STATUS_FAILED = "-4";
 
+/*
+ * This typedef and the qRegisterMetaType below stop the appearance of an
+ * inexplicable qWarning during the first call to addNewRow: "Cannot queue
+ * arguments of type 'QVector<int>'"
+ */
+typedef QVector<int> MyArray;
+
 BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindow(parent), ui(new Ui::BatchWindow){
+
+  qRegisterMetaType<MyArray>("MyArray");
   // ASYNC
   connect(&readLibraryWatcher,  SIGNAL(finished()), this, SLOT(readLibraryFinished()));
   connect(&loadPlaylistWatcher, SIGNAL(finished()), this, SLOT(loadPlaylistFinished()));
