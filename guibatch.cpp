@@ -48,9 +48,8 @@ const QString STATUS_FAILED = "-4";
 typedef QVector<int> MyArray;
 
 BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindow(parent), ui(new Ui::BatchWindow){
-
-  qRegisterMetaType<MyArray>("MyArray");
   // ASYNC
+  qRegisterMetaType<MyArray>("MyArray");
   connect(&readLibraryWatcher,  SIGNAL(finished()), this, SLOT(readLibraryFinished()));
   connect(&loadPlaylistWatcher, SIGNAL(finished()), this, SLOT(loadPlaylistFinished()));
   connect(&addFilesWatcher,     SIGNAL(finished()), this, SLOT(addFilesFinished()));
