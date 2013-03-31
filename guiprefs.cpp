@@ -264,6 +264,32 @@ void PrefsDialog::on_cancelButton_clicked(){
   this->close();
 }
 
+void PrefsDialog::on_advancedDefaultsButton_clicked(){
+  Preferences p;
+  // Musical range
+  ui->stFreq->setCurrentIndex(listStartingFreq.indexOf(p.core.getStartingFreqADefault()));
+  ui->octaves->setValue(p.core.getOctavesDefault());
+  ui->octaveOffset->setChecked(p.core.getOffsetToCDefault());
+  ui->bps->setValue(p.core.getBandsPerSemitoneDefault());
+  // Spectral analysis
+  ui->fftFrameSize->setCurrentIndex(listFftFrameSize.indexOf(p.core.getFftFrameSizeDefault()));
+  ui->hopsPerFrame->setCurrentIndex(listHopsPerFrame.indexOf(p.core.getHopsPerFrameDefault()));
+  ui->temporalWindow->setCurrentIndex(listTemporalWindow.indexOf(p.core.getTemporalWindowDefault()));
+  ui->directSkStretch->setValue(p.core.getDirectSkStretchDefault());
+  // Tuning
+  ui->tuningMethod->setCurrentIndex(listTuningMethod.indexOf(p.core.getTuningMethodDefault()));
+  ui->detunedBandWeight->setValue(p.core.getDetunedBandWeightDefault());
+  // Segmentation
+  ui->segmentation->setCurrentIndex(listSegmentation.indexOf(p.core.getSegmentationDefault()));
+  ui->hcdfGaussianSize->setValue(p.core.getSegGaussianSizeDefault());
+  ui->hcdfGaussianSigma->setValue(p.core.getSegGaussianSigmaDefault());
+  ui->hcdfPeakPickingNeighbours->setValue(p.core.getSegPeakPickingNeighboursDefault());
+  ui->arbitrarySegments->setValue(p.core.getArbitrarySegmentsDefault());
+  // Classification
+  ui->toneProfile->setCurrentIndex(listToneProfile.indexOf(p.core.getToneProfileDefault()));
+  ui->similarityMeasure->setCurrentIndex(listSimilarityMeasure.indexOf(p.core.getSimilarityMeasureDefault()));
+}
+
 void PrefsDialog::tuningEnabled(){
   ui->tuningMethod->setEnabled(ui->bps->value() > 1);
   binAdaptiveTuningEnabled();

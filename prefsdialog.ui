@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>831</width>
+    <width>802</width>
     <height>613</height>
    </rect>
   </property>
@@ -1190,6 +1190,64 @@
        <property name="topMargin">
         <number>8</number>
        </property>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayoutAdvancedHeader" stretch="1,0">
+         <item>
+          <widget class="QLabel" name="lbl_warning">
+           <property name="palette">
+            <palette>
+             <active>
+              <colorrole role="WindowText">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>0</green>
+                 <blue>0</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </active>
+             <inactive>
+              <colorrole role="WindowText">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>0</green>
+                 <blue>0</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </inactive>
+             <disabled>
+              <colorrole role="WindowText">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>69</red>
+                 <green>69</green>
+                 <blue>69</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </disabled>
+            </palette>
+           </property>
+           <property name="text">
+            <string>Changing these preferences may severely affect KeyFinder's accuracy. This is recommended for expert users only.</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="advancedDefaultsButton">
+           <property name="text">
+            <string>Reset to defaults</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
        <item>
         <widget class="QScrollArea" name="scrollArea">
          <property name="widgetResizable">

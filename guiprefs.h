@@ -59,6 +59,7 @@ private:
 private slots:
   void on_savePrefsButton_clicked();
   void on_cancelButton_clicked();
+  void on_advancedDefaultsButton_clicked();
   void on_bps_valueChanged(int arg1);
   void on_segmentation_currentIndexChanged(int);
   void on_toneProfile_currentIndexChanged(int);
