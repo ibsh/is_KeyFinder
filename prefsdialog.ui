@@ -1686,22 +1686,22 @@
                </property>
                <item>
                 <property name="text">
-                 <string>1</string>
+                 <string notr="true">1</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>2</string>
+                 <string notr="true">2</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>4</string>
+                 <string notr="true">4</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>8</string>
+                 <string notr="true">8</string>
                 </property>
                </item>
               </widget>

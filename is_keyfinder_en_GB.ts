@@ -66,7 +66,7 @@
     </message>
     <message>
         <location filename="batchwindow.ui" line="146"/>
-        <location filename="guibatch.cpp" line="182"/>
+        <location filename="guibatch.cpp" line="190"/>
         <source>Ready</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation></translation>
@@ -82,88 +82,88 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="62"/>
-        <location filename="guibatch.cpp" line="249"/>
-        <location filename="guibatch.cpp" line="348"/>
+        <location filename="guibatch.cpp" line="70"/>
+        <location filename="guibatch.cpp" line="257"/>
+        <location filename="guibatch.cpp" line="356"/>
         <source>Batch Analysis</source>
         <extracomment>The title of the Batch window</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="92"/>
+        <location filename="guibatch.cpp" line="100"/>
         <source>%1 drag and drop</source>
         <extracomment>The name of the drag-and-drop playlist; includes the app name at %1</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="110"/>
+        <location filename="guibatch.cpp" line="118"/>
         <source>Drag audio files here</source>
         <extracomment>The initial help label on the Batch window</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="129"/>
+        <location filename="guibatch.cpp" line="137"/>
         <source>Copy</source>
         <extracomment>An action in the Batch window context menu</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="134"/>
+        <location filename="guibatch.cpp" line="142"/>
         <source>Write key to file</source>
         <extracomment>An action in the Batch window context menu</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="139"/>
+        <location filename="guibatch.cpp" line="147"/>
         <source>Run detailed analysis</source>
         <extracomment>An action in the Batch window context menu</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="144"/>
+        <location filename="guibatch.cpp" line="152"/>
         <source>Delete selected rows</source>
         <extracomment>An action in the Batch window context menu</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="149"/>
+        <location filename="guibatch.cpp" line="157"/>
         <source>Clear detected keys</source>
         <extracomment>An action in the Batch window context menu</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="237"/>
+        <location filename="guibatch.cpp" line="245"/>
         <source>The drag and drop list will not be saved.</source>
         <extracomment>An alert message in the Batch window; first line</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="239"/>
+        <location filename="guibatch.cpp" line="247"/>
         <source>Are you sure you want to view another playlist?</source>
         <extracomment>An alert message in the Batch window; second line</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="255"/>
+        <location filename="guibatch.cpp" line="263"/>
         <source>Loading playlist...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="280"/>
-        <location filename="guibatch.cpp" line="672"/>
+        <location filename="guibatch.cpp" line="288"/>
+        <location filename="guibatch.cpp" line="693"/>
         <source>Cannot change an external playlist from %1</source>
         <extracomment>An alert message in the Batch window</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="293"/>
+        <location filename="guibatch.cpp" line="301"/>
         <source>Loading files...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation></translation>
     </message>
     <message numerus="yes">
-        <location filename="guibatch.cpp" line="351"/>
+        <location filename="guibatch.cpp" line="359"/>
         <source>%n file(s)</source>
         <extracomment>File count in the Batch window title bar</extracomment>
         <translation>
@@ -172,13 +172,13 @@
         </translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="394"/>
+        <location filename="guibatch.cpp" line="402"/>
         <source>Reading tags...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation></translation>
     </message>
     <message numerus="yes">
-        <location filename="guibatch.cpp" line="436"/>
+        <location filename="guibatch.cpp" line="444"/>
         <source>Analysing (%n thread(s))...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation>
@@ -187,37 +187,37 @@
         </translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="504"/>
+        <location filename="guibatch.cpp" line="512"/>
         <source>Skipped</source>
         <extracomment>Status of an individual file in the Batch window</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="529"/>
+        <location filename="guibatch.cpp" line="537"/>
         <source>Cancelling...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="548"/>
+        <location filename="guibatch.cpp" line="556"/>
         <source>Exception: %1</source>
         <extracomment>Status of an individual file in the Batch window; includes an exception message at %1</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="565"/>
+        <location filename="guibatch.cpp" line="573"/>
         <source>Writing to files...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="588"/>
+        <location filename="guibatch.cpp" line="596"/>
         <source>Data written to %1 and %2</source>
         <extracomment>An alert message in the Batch window; contains &quot;N tags&quot; at %1 and &quot;N filenames&quot; at %2</extracomment>
         <translation></translation>
     </message>
     <message numerus="yes">
-        <location filename="guibatch.cpp" line="590"/>
+        <location filename="guibatch.cpp" line="598"/>
         <source>%n tag(s)</source>
         <extracomment>Part of an alert message in the Batch window</extracomment>
         <translation>
@@ -226,7 +226,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="guibatch.cpp" line="592"/>
+        <location filename="guibatch.cpp" line="600"/>
         <source>%n filename(s)</source>
         <extracomment>Part of an alert message in the Batch window</extracomment>
         <translation>
@@ -235,25 +235,25 @@
         </translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="649"/>
+        <location filename="guibatch.cpp" line="670"/>
         <source>Clearing data...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="677"/>
+        <location filename="guibatch.cpp" line="698"/>
         <source>Deleting rows...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="733"/>
+        <location filename="guibatch.cpp" line="754"/>
         <source>Please select a single row for detailed analysis</source>
         <extracomment>An alert message in the Batch window</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="792"/>
+        <location filename="guibatch.cpp" line="810"/>
         <source>A new version, %1, is available on &lt;a href=&apos;%2&apos;&gt;the %3 website&lt;/a&gt;!</source>
         <extracomment>An alert message in the Batch window; includes a version number at %1, a URL at %2, and the app name at %3</extracomment>
         <translation></translation>
@@ -262,44 +262,49 @@
 <context>
     <name>DetailWindow</name>
     <message>
-        <location filename="detailwindow.ui" line="234"/>
+        <location filename="detailwindow.ui" line="212"/>
         <source>CHROMAGRAM COLOURS</source>
         <oldsource> CHROMAGRAM COLOURS</oldsource>
         <translation></translation>
     </message>
     <message>
-        <location filename="detailwindow.ui" line="257"/>
+        <location filename="detailwindow.ui" line="235"/>
         <source>Izo</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="detailwindow.ui" line="262"/>
+        <location filename="detailwindow.ui" line="240"/>
         <source>Mono</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="detailwindow.ui" line="267"/>
+        <location filename="detailwindow.ui" line="245"/>
         <source>Pred</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="detailwindow.ui" line="272"/>
+        <location filename="detailwindow.ui" line="250"/>
+        <source>VBoy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="detailwindow.ui" line="255"/>
         <source>Hack</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="detailwindow.ui" line="292"/>
+        <location filename="detailwindow.ui" line="275"/>
         <source>Run analysis</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="detailwindow.ui" line="317"/>
+        <location filename="detailwindow.ui" line="300"/>
         <source>Drag an audio file onto the window</source>
         <translation></translation>
     </message>
     <message>
         <location filename="guidetail.cpp" line="32"/>
-        <location filename="guidetail.cpp" line="118"/>
+        <location filename="guidetail.cpp" line="117"/>
         <source>Detailed Analysis</source>
         <extracomment>The title of the Detail window</extracomment>
         <translation></translation>
@@ -318,9 +323,10 @@
     </message>
     <message>
         <location filename="guidetail.cpp" line="89"/>
-        <source>This chromagram spans %1. The vertical axis represents musical frequencies as indicated by the piano keyboard. The horizontal axis splits the track into analysis windows of about %1 seconds each. The brighter the colour, the higher the energy found at that frequency during that window.</source>
+        <source>This chromagram spans %1. The vertical axis represents musical frequencies as indicated by the piano keyboard. The horizontal axis splits the track into analysis windows of a few seconds each. The brighter the colour, the higher the energy found at that frequency during that window.</source>
+        <oldsource>This chromagram spans %1. The vertical axis represents musical frequencies as indicated by the piano keyboard. The horizontal axis splits the track into analysis windows of about %1 seconds each. The brighter the colour, the higher the energy found at that frequency during that window.</oldsource>
         <extracomment>A tooltip on the Detail window</extracomment>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <location filename="guidetail.cpp" line="91"/>
@@ -332,62 +338,44 @@
         </translation>
     </message>
     <message>
-        <location filename="guidetail.cpp" line="95"/>
+        <location filename="guidetail.cpp" line="94"/>
         <source>Analysing... </source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guidetail.cpp" line="128"/>
+        <location filename="guidetail.cpp" line="127"/>
         <source>This is the same chromagram data, reduced to a single octave.</source>
         <extracomment>A tooltip on the Detail window</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guidetail.cpp" line="144"/>
-        <source>You are not using segmentation, so there is no harmonic change data to display.</source>
-        <extracomment>A tooltip on the Detail window</extracomment>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="guidetail.cpp" line="147"/>
-        <source>You are using arbitrary segmentation, so there is no harmonic change data to display.</source>
-        <extracomment>A tooltip on the Detail window</extracomment>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="guidetail.cpp" line="150"/>
-        <source>This is the level of harmonic change detected in the chromagram over time. Peaks in this signal are used to segment the chromagram.</source>
-        <extracomment>A tooltip on the Detail window</extracomment>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="guidetail.cpp" line="167"/>
+        <location filename="guidetail.cpp" line="143"/>
         <source>This row shows the key estimate for the unsegmented chromagram.</source>
         <extracomment>A tooltip on the Detail window</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guidetail.cpp" line="170"/>
+        <location filename="guidetail.cpp" line="146"/>
         <source>This row shows the key estimates for the arbitrary segments.</source>
         <extracomment>A tooltip on the Detail window</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guidetail.cpp" line="173"/>
+        <location filename="guidetail.cpp" line="149"/>
         <source>This row shows the key estimates for the segments between peak harmonic changes.</source>
         <extracomment>A tooltip on the Detail window</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guidetail.cpp" line="180"/>
+        <location filename="guidetail.cpp" line="156"/>
         <source>Key estimate: %1</source>
         <extracomment>Text in the Batch window status bar; includes a key code at %1</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guidetail.cpp" line="268"/>
-        <location filename="guidetail.cpp" line="290"/>
+        <location filename="guidetail.cpp" line="241"/>
+        <location filename="guidetail.cpp" line="262"/>
         <source>Drag an audio file onto the window.</source>
         <extracomment>The initial help tooltip on the Detail window</extracomment>
         <translation></translation>
@@ -640,320 +628,326 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="147"/>
-        <location filename="prefsdialog.ui" line="177"/>
-        <location filename="prefsdialog.ui" line="207"/>
+        <location filename="prefsdialog.ui" line="144"/>
+        <location filename="prefsdialog.ui" line="171"/>
+        <location filename="prefsdialog.ui" line="198"/>
         <source>Browse</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="154"/>
+        <location filename="prefsdialog.ui" line="151"/>
         <source>Traktor NML</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="184"/>
+        <location filename="prefsdialog.ui" line="178"/>
         <source>Serato database</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="227"/>
+        <location filename="prefsdialog.ui" line="218"/>
         <source>Tagging</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="245"/>
+        <location filename="prefsdialog.ui" line="236"/>
         <source>What to write</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="253"/>
+        <location filename="prefsdialog.ui" line="244"/>
         <source>Keys</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="258"/>
+        <location filename="prefsdialog.ui" line="249"/>
         <source>Custom codes</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="263"/>
+        <location filename="prefsdialog.ui" line="254"/>
         <source>Both</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="271"/>
+        <location filename="prefsdialog.ui" line="262"/>
         <source>Comment tag</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="278"/>
+        <location filename="prefsdialog.ui" line="269"/>
         <source>Delimiter</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="298"/>
+        <location filename="prefsdialog.ui" line="289"/>
         <source>Where to write</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="308"/>
+        <location filename="prefsdialog.ui" line="299"/>
         <source>Grouping tag</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="315"/>
+        <location filename="prefsdialog.ui" line="306"/>
         <source>Key tag</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="322"/>
+        <location filename="prefsdialog.ui" line="313"/>
         <source>Filename</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="330"/>
-        <location filename="prefsdialog.ui" line="354"/>
-        <location filename="prefsdialog.ui" line="368"/>
-        <location filename="prefsdialog.ui" line="387"/>
+        <location filename="prefsdialog.ui" line="321"/>
+        <location filename="prefsdialog.ui" line="345"/>
+        <location filename="prefsdialog.ui" line="359"/>
+        <location filename="prefsdialog.ui" line="378"/>
         <source>No</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="335"/>
-        <location filename="prefsdialog.ui" line="373"/>
-        <location filename="prefsdialog.ui" line="392"/>
+        <location filename="prefsdialog.ui" line="326"/>
+        <location filename="prefsdialog.ui" line="364"/>
+        <location filename="prefsdialog.ui" line="383"/>
         <source>Prepend</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="340"/>
-        <location filename="prefsdialog.ui" line="378"/>
-        <location filename="prefsdialog.ui" line="397"/>
+        <location filename="prefsdialog.ui" line="331"/>
+        <location filename="prefsdialog.ui" line="369"/>
+        <location filename="prefsdialog.ui" line="388"/>
         <source>Append</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="345"/>
-        <location filename="prefsdialog.ui" line="359"/>
-        <location filename="prefsdialog.ui" line="402"/>
+        <location filename="prefsdialog.ui" line="336"/>
+        <location filename="prefsdialog.ui" line="350"/>
+        <location filename="prefsdialog.ui" line="393"/>
         <source>Overwrite</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="439"/>
+        <location filename="prefsdialog.ui" line="430"/>
         <source>Custom key codes</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1166"/>
-        <location filename="prefsdialog.ui" line="1668"/>
+        <location filename="prefsdialog.ui" line="1157"/>
+        <location filename="prefsdialog.ui" line="1745"/>
         <source>None</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1196"/>
+        <location filename="prefsdialog.ui" line="1187"/>
         <source>Advanced</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1229"/>
+        <location filename="prefsdialog.ui" line="1245"/>
+        <source>Reset to defaults</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="prefsdialog.ui" line="1770"/>
         <source>Musical range</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1239"/>
+        <location filename="prefsdialog.ui" line="2261"/>
         <source>Starting frequency (Hz)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1283"/>
+        <location filename="prefsdialog.ui" line="1922"/>
         <source>Number of octaves</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1306"/>
+        <location filename="prefsdialog.ui" line="1271"/>
         <source>Offset to C</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1323"/>
+        <location filename="prefsdialog.ui" line="2222"/>
         <source>Bands per semitone</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1349"/>
-        <source>Downsample factor</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="prefsdialog.ui" line="1379"/>
+        <location filename="prefsdialog.ui" line="2347"/>
         <source>Spectral analysis</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1389"/>
-        <source>Hop size</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="prefsdialog.ui" line="1456"/>
+        <location filename="prefsdialog.ui" line="2427"/>
         <source>Temporal window</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1485"/>
+        <location filename="prefsdialog.ui" line="2330"/>
         <source>FFT frame size</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1552"/>
+        <location filename="prefsdialog.ui" line="2417"/>
         <source>Direct SK stretch</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1581"/>
+        <location filename="prefsdialog.ui" line="2407"/>
         <source>Tuning method</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1600"/>
-        <source>Bin-adaptive</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="prefsdialog.ui" line="1608"/>
+        <location filename="prefsdialog.ui" line="2370"/>
         <source>Detuned band weighting</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1644"/>
-        <location filename="prefsdialog.ui" line="1654"/>
+        <location filename="prefsdialog.ui" line="1912"/>
+        <location filename="prefsdialog.ui" line="2310"/>
         <source>Segmentation</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1678"/>
+        <location filename="prefsdialog.ui" line="1755"/>
         <source>Cosine similarity CDF</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1683"/>
+        <location filename="prefsdialog.ui" line="1750"/>
         <source>Arbitrary segmentation</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1691"/>
+        <location filename="prefsdialog.ui" line="2397"/>
         <source>Smoothing Gaussian size</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1714"/>
+        <location filename="prefsdialog.ui" line="1712"/>
         <source>Smoothing Gaussian sigma</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1740"/>
+        <location filename="prefsdialog.ui" line="2450"/>
         <source>Peak-picking threshold</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1763"/>
+        <location filename="prefsdialog.ui" line="1675"/>
         <source>Number of arbitrary segments</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1793"/>
+        <location filename="prefsdialog.ui" line="1858"/>
         <source>Classification</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1803"/>
+        <location filename="prefsdialog.ui" line="1868"/>
         <source>Tone profiles</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1837"/>
+        <location filename="prefsdialog.ui" line="2295"/>
         <source>Custom</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1845"/>
+        <location filename="prefsdialog.ui" line="1841"/>
         <source>Similarity measure</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1859"/>
+        <location filename="prefsdialog.ui" line="1828"/>
         <source>Cosine</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1864"/>
+        <location filename="prefsdialog.ui" line="1833"/>
         <source>Correlation</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="1872"/>
+        <location filename="prefsdialog.ui" line="1780"/>
         <source>Custom profile major</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="2452"/>
+        <location filename="prefsdialog.ui" line="1814"/>
         <source>Tuning</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="2462"/>
+        <location filename="prefsdialog.ui" line="1787"/>
         <source>Custom profile minor</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="2481"/>
+        <location filename="prefsdialog.ui" line="2320"/>
+        <source>Hops per frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="prefsdialog.ui" line="2389"/>
+        <source>Band adaptive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="prefsdialog.ui" line="2472"/>
         <source>Changes will not affect running batch jobs</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="2501"/>
+        <location filename="prefsdialog.ui" line="2492"/>
         <source>Cancel</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="prefsdialog.ui" line="2508"/>
+        <location filename="prefsdialog.ui" line="2499"/>
         <source>Save Preferences</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="guiprefs.cpp" line="381"/>
+        <location filename="guiprefs.cpp" line="178"/>
+        <source>Changing these preferences may severely affect %1&apos;s accuracy. This is recommended for expert users only.</source>
+        <extracomment>The warning text on the Advanced Preferences tab; includes the app name at %1</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="guiprefs.cpp" line="404"/>
         <source>Choose iTunes Library XML</source>
         <extracomment>File browse dialog launched from the Preferences window Title of file browse dialog launched from the Preferences window</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guiprefs.cpp" line="384"/>
+        <location filename="guiprefs.cpp" line="407"/>
         <source>iTunes XML (*.xml)</source>
         <extracomment>Filetype in file browse dialog launched from the Preferences window</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guiprefs.cpp" line="401"/>
+        <location filename="guiprefs.cpp" line="424"/>
         <source>Choose Traktor Library NML</source>
         <extracomment>Title of file browse dialog launched from the Preferences window</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guiprefs.cpp" line="404"/>
+        <location filename="guiprefs.cpp" line="427"/>
         <source>Traktor NML (*.nml)</source>
         <extracomment>Filetype in file browse dialog launched from the Preferences window</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guiprefs.cpp" line="421"/>
+        <location filename="guiprefs.cpp" line="444"/>
         <source>Choose Serato database</source>
         <extracomment>Title of file browse dialog launched from the Preferences window</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guiprefs.cpp" line="424"/>
+        <location filename="guiprefs.cpp" line="447"/>
         <source>Serato database (*)</source>
         <extracomment>Filetype in file browse dialog launched from the Preferences window</extracomment>
         <translation></translation>
