@@ -9,3 +9,5 @@ qrc_resources.cpp
 *.qm
 KeyFinder
 Makefile
+*.ts
+!is_keyfinder_en_GB.ts
