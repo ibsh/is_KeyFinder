@@ -1232,7 +1232,7 @@
             </palette>
            </property>
            <property name="text">
-            <string>Changing these preferences may severely affect KeyFinder's accuracy. This is recommended for expert users only.</string>
+            <string notr="true"/>
            </property>
            <property name="wordWrap">
             <bool>true</bool>

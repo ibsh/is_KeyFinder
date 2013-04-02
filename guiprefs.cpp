@@ -173,6 +173,9 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
       if(ui->customMinor->itemAt(i)->widget()->inherits("QLabel"))
         ui->customMinor->itemAt(i)->widget()->setFont(smallerFont);
 #endif
+
+  //: The warning text on the Advanced Preferences tab; includes the app name at %1
+  ui->lbl_warning->setText(tr("Changing these preferences may severely affect %1's accuracy. This is recommended for expert users only.").arg(GuiStrings::getInstance()->appName()));
 }
 
 PrefsDialog::~PrefsDialog(){
