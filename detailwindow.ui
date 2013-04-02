@@ -232,27 +232,27 @@
         </property>
         <item>
          <property name="text">
-          <string>Izo</string>
+          <string notr="true">Izo</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Mono</string>
+          <string notr="true">Mono</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Pred</string>
+          <string notr="true">Pred</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>VBoy</string>
+          <string notr="true">VBoy</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Hack</string>
+          <string notr="true">Hack</string>
          </property>
         </item>
        </widget>

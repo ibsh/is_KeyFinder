@@ -268,31 +268,6 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="detailwindow.ui" line="235"/>
-        <source>Izo</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="detailwindow.ui" line="240"/>
-        <source>Mono</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="detailwindow.ui" line="245"/>
-        <source>Pred</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="detailwindow.ui" line="250"/>
-        <source>VBoy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="detailwindow.ui" line="255"/>
-        <source>Hack</source>
-        <translation></translation>
-    </message>
-    <message>
         <location filename="detailwindow.ui" line="275"/>
         <source>Run analysis</source>
         <translation></translation>
