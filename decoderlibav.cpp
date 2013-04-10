@@ -135,7 +135,7 @@ KeyFinder::AudioData* LibAvDecoder::decodeFile(const QString& filePath, const in
           }
         }
       }catch(KeyFinder::Exception& e){
-            qWarning("Encountered KeyFinder::Exception (%s) while decoding file %s", e.what(), filePathCh);
+        qWarning("Encountered KeyFinder::Exception (%s) while decoding file %s", e.what(), filePathCh);
         throw e;
       }
     }
