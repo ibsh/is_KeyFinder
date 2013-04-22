@@ -23,7 +23,7 @@
 
 QMutex codecMutex; // I don't think this should be necessary if I get the lock manager right.
 
-KeyFinder::AudioData* LibAvDecoder::decodeFile(const QString& filePath, const int maxDuration){
+KeyFinder::AudioData LibAvDecoder::decodeFile(const QString& filePath, const int maxDuration){
 
   QMutexLocker codecMutexLocker(&codecMutex); // mutex the preparatory section of this method
 
@@ -110,9 +110,9 @@ KeyFinder::AudioData* LibAvDecoder::decodeFile(const QString& filePath, const in
   codecMutexLocker.unlock();
 
   // Prep buffer
-  KeyFinder::AudioData *audio = new KeyFinder::AudioData();
-  audio->setFrameRate(cCtx->sample_rate);
-  audio->setChannels(cCtx->channels);
+  KeyFinder::AudioData audio;
+  audio.setFrameRate(cCtx->sample_rate);
+  audio.setChannels(cCtx->channels);
   // Decode stream
   AVPacket avpkt;
   int badPacketCount = 0;
@@ -165,7 +165,7 @@ LibAvDecoder::~LibAvDecoder(){
   av_free(frameBufferConverted);
 }
 
-int LibAvDecoder::decodePacket(AVCodecContext* cCtx, ReSampleContext* rsCtx, AVPacket* originalPacket, KeyFinder::AudioData* audio){
+int LibAvDecoder::decodePacket(AVCodecContext* cCtx, ReSampleContext* rsCtx, AVPacket* originalPacket, KeyFinder::AudioData& audio){
   // copy packet so we can shift data pointer about without endangering garbage collection
   AVPacket tempPacket;
   tempPacket.size = originalPacket->size;
@@ -192,14 +192,14 @@ int LibAvDecoder::decodePacket(AVCodecContext* cCtx, ReSampleContext* rsCtx, AVP
       }
       dataBuffer = (int16_t*)frameBufferConverted;
     }
-    int oldSampleCount = audio->getSampleCount();
+    int oldSampleCount = audio.getSampleCount();
     try{
-      audio->addToSampleCount(newSamplesDecoded);
+      audio.addToSampleCount(newSamplesDecoded);
     }catch(KeyFinder::Exception& e){
       throw e;
     }
     for(int i = 0; i < newSamplesDecoded; i++){
-      audio->setSample(oldSampleCount+i, (float)dataBuffer[i]);
+      audio.setSample(oldSampleCount+i, (float)dataBuffer[i]);
     }
   }
   return 0;

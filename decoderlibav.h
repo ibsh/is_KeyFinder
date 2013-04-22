@@ -48,12 +48,12 @@ class LibAvDecoder : public AudioFileDecoder{
 public:
   LibAvDecoder();
   ~LibAvDecoder();
-  virtual KeyFinder::AudioData* decodeFile(const QString&, const int);
+  virtual KeyFinder::AudioData decodeFile(const QString&, const int);
 private:
   uint8_t* frameBuffer;
   uint8_t* frameBufferConverted;
   int frameBufferSize;
-  int decodePacket(AVCodecContext*, ReSampleContext*, AVPacket*, KeyFinder::AudioData*);
+  int decodePacket(AVCodecContext*, ReSampleContext*, AVPacket*, KeyFinder::AudioData&);
 };
 
 #endif

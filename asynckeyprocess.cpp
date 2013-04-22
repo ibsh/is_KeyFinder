@@ -26,7 +26,6 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
   KeyFinderResultWrapper result;
   result.batchRow = object.batchRow;
 
-  KeyFinder::AudioData* audio = NULL;
   AudioFileDecoder* decoder = NULL;
   try{
     decoder = AudioFileDecoder::getDecoder();
@@ -40,38 +39,34 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
     return result;
   }
 
+  KeyFinder::AudioData audio;
   try{
     audio = decoder->decodeFile(object.filePath, object.prefs.getMaxDuration());
     delete decoder;
   }catch(std::exception& e){
     delete decoder;
-    delete audio;
     result.errorMessage = QString(e.what());
     return result;
   }catch(...){
     delete decoder;
-    delete audio;
     result.errorMessage = "Unknown exception while decoding";
     return result;
   }
 
   KeyFinder::KeyFinder* kf = LibKeyFinderSingleton::getInstance()->getKeyFinder();
   try{
-    result.fullChromagram = kf->chromagramOfAudio(*audio, object.prefs.core);
+    KeyFinder::AudioData buffer;
+    result.fullChromagram = kf->progressiveChromagramOfAudio(audio, buffer, object.prefs.core);
     result.oneOctaveChromagram = result.fullChromagram;
     result.oneOctaveChromagram.reduceToOneOctave();
     result.core = kf->keyOfChromagram(result.oneOctaveChromagram, object.prefs.core);
   }catch(const std::exception& e){
-    delete audio;
     result.errorMessage = QString(e.what());
     return result;
   }catch(...){
-    delete audio;
     result.errorMessage = "Unknown exception from libKeyFinder";
     return result;
   }
-
-  delete audio;
 
   for (unsigned int i = 0; i < result.core.segments.size(); i++) {
     qDebug(

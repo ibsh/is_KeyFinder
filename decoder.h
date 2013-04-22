@@ -30,7 +30,7 @@
 
 class AudioFileDecoder{
 public:
-  virtual KeyFinder::AudioData* decodeFile(const QString&, const int) = 0;
+  virtual KeyFinder::AudioData decodeFile(const QString&, const int) = 0;
   static AudioFileDecoder* getDecoder();
   virtual ~AudioFileDecoder();
 };
