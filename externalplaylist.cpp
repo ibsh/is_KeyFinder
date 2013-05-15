@@ -375,7 +375,7 @@ QStringList ExternalPlaylist::executeXmlQuery(const QString& filePath, const QSt
       Result xQueryResults = xQuery->execute(xQueryContext);
       // iterate over results
       Item::Ptr item;
-      while(item = xQueryResults->next(xQueryContext)) {
+      while((item = xQueryResults->next(xQueryContext))) {
         results.push_back(QString::fromUtf8(UTF8(item->asString(xQueryContext))));
       }
     }

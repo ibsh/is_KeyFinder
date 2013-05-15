@@ -154,8 +154,6 @@ public:
   void setImageColours(QImage&, chromagram_colour_t) const;
 
 private:
-  GuiStrings* strings;
-
   bool writeToFilesAutomatically;
   bool parallelBatchJobs;
   metadata_write_t metadataWriteComment;

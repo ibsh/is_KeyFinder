@@ -106,6 +106,8 @@ unix|macx{
   LIBS += -lavformat
   LIBS += -lavutil
   LIBS += -ltag
+  LIBS += -lboost_system
+  LIBS += -lboost_thread
 
   ICON = is_KeyFinder.icns
 }
