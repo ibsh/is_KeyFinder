@@ -56,11 +56,12 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
   KeyFinder::KeyFinder* kf = LibKeyFinderSingleton::getInstance()->getKeyFinder();
   try{
     KeyFinder::Workspace workspace;
-    result.fullChromagram = kf->progressiveChromagramOfAudio(audio, workspace, object.prefs.core);
-    result.fullChromagram.append(kf->finalChromagramOfAudio(workspace, object.prefs.core));
+    kf->progressiveChromagram(audio, workspace, object.prefs.core);
+    kf->finalChromagram(workspace, object.prefs.core);
+    result.fullChromagram = KeyFinder::Chromagram(*workspace.chroma);
+    result.core = kf->keyOfChromagram(workspace, object.prefs.core);
     result.oneOctaveChromagram = result.fullChromagram;
     result.oneOctaveChromagram.reduceToOneOctave();
-    result.core = kf->keyOfChromagram(result.oneOctaveChromagram, object.prefs.core);
   }catch(const std::exception& e){
     result.errorMessage = QString(e.what());
     return result;
