@@ -253,6 +253,9 @@ void BatchWindow::on_libraryWidget_cellClicked(int row, int /*col*/){
       return;
     }
   }
+  if(initialHelpLabel){
+    initialHelpLabel->deleteLater();
+  }
   ui->tableWidget->setRowCount(0);
   this->setWindowTitle(GuiStrings::getInstance()->appName() + GuiStrings::getInstance()->delim() + tr("Batch Analysis"));
   libraryOldIndex = row;
