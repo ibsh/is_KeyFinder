@@ -146,10 +146,13 @@ unix {
 }
 
 TRANSLATIONS = \
+    is_keyfinder_da.ts \
+    is_keyfinder_de.ts \
     is_keyfinder_en_GB.ts \
     is_keyfinder_en_US.ts \
+    is_keyfinder_es.ts \
     is_keyfinder_fr.ts \
-    is_keyfinder_sv.ts \
-    is_keyfinder_da.ts \
+    is_keyfinder_hr.ts \
     is_keyfinder_it.ts \
-    is_keyfinder_pl.ts
+    is_keyfinder_pl.ts \
+    is_keyfinder_ru.ts

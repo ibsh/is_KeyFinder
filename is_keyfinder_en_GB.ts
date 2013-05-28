@@ -83,8 +83,8 @@
     </message>
     <message>
         <location filename="guibatch.cpp" line="70"/>
-        <location filename="guibatch.cpp" line="257"/>
-        <location filename="guibatch.cpp" line="356"/>
+        <location filename="guibatch.cpp" line="260"/>
+        <location filename="guibatch.cpp" line="359"/>
         <source>Batch Analysis</source>
         <extracomment>The title of the Batch window</extracomment>
         <translation></translation>
@@ -144,26 +144,26 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="263"/>
+        <location filename="guibatch.cpp" line="266"/>
         <source>Loading playlist...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="288"/>
-        <location filename="guibatch.cpp" line="693"/>
+        <location filename="guibatch.cpp" line="291"/>
+        <location filename="guibatch.cpp" line="696"/>
         <source>Cannot change an external playlist from %1</source>
         <extracomment>An alert message in the Batch window</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="301"/>
+        <location filename="guibatch.cpp" line="304"/>
         <source>Loading files...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation></translation>
     </message>
     <message numerus="yes">
-        <location filename="guibatch.cpp" line="359"/>
+        <location filename="guibatch.cpp" line="362"/>
         <source>%n file(s)</source>
         <extracomment>File count in the Batch window title bar</extracomment>
         <translation>
@@ -172,13 +172,13 @@
         </translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="402"/>
+        <location filename="guibatch.cpp" line="405"/>
         <source>Reading tags...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation></translation>
     </message>
     <message numerus="yes">
-        <location filename="guibatch.cpp" line="444"/>
+        <location filename="guibatch.cpp" line="447"/>
         <source>Analysing (%n thread(s))...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation>
@@ -187,37 +187,37 @@
         </translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="512"/>
+        <location filename="guibatch.cpp" line="515"/>
         <source>Skipped</source>
         <extracomment>Status of an individual file in the Batch window</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="537"/>
+        <location filename="guibatch.cpp" line="540"/>
         <source>Cancelling...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="556"/>
+        <location filename="guibatch.cpp" line="559"/>
         <source>Exception: %1</source>
         <extracomment>Status of an individual file in the Batch window; includes an exception message at %1</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="573"/>
+        <location filename="guibatch.cpp" line="576"/>
         <source>Writing to files...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="596"/>
+        <location filename="guibatch.cpp" line="599"/>
         <source>Data written to %1 and %2</source>
         <extracomment>An alert message in the Batch window; contains &quot;N tags&quot; at %1 and &quot;N filenames&quot; at %2</extracomment>
         <translation></translation>
     </message>
     <message numerus="yes">
-        <location filename="guibatch.cpp" line="598"/>
+        <location filename="guibatch.cpp" line="601"/>
         <source>%n tag(s)</source>
         <extracomment>Part of an alert message in the Batch window</extracomment>
         <translation>
@@ -226,7 +226,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="guibatch.cpp" line="600"/>
+        <location filename="guibatch.cpp" line="603"/>
         <source>%n filename(s)</source>
         <extracomment>Part of an alert message in the Batch window</extracomment>
         <translation>
@@ -235,25 +235,25 @@
         </translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="670"/>
+        <location filename="guibatch.cpp" line="673"/>
         <source>Clearing data...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="698"/>
+        <location filename="guibatch.cpp" line="701"/>
         <source>Deleting rows...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="754"/>
+        <location filename="guibatch.cpp" line="757"/>
         <source>Please select a single row for detailed analysis</source>
         <extracomment>An alert message in the Batch window</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="guibatch.cpp" line="810"/>
+        <location filename="guibatch.cpp" line="813"/>
         <source>A new version, %1, is available on &lt;a href=&apos;%2&apos;&gt;the %3 website&lt;/a&gt;!</source>
         <extracomment>An alert message in the Batch window; includes a version number at %1, a URL at %2, and the app name at %3</extracomment>
         <translation></translation>
