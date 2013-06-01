@@ -155,4 +155,5 @@ TRANSLATIONS = \
     is_keyfinder_hr.ts \
     is_keyfinder_it.ts \
     is_keyfinder_pl.ts \
-    is_keyfinder_ru.ts
+    is_keyfinder_ru.ts \
+    is_keyfinder_sv.ts
