@@ -193,15 +193,12 @@ int LibAvDecoder::decodePacket(AVCodecContext* cCtx, ReSampleContext* rsCtx, AVP
       dataBuffer = (int16_t*)frameBufferConverted;
     }
     int oldSampleCount = audio.getSampleCount();
-    try{
-      audio.addToSampleCount(newSamplesDecoded);
-    }catch(KeyFinder::Exception& e){
-      throw e;
-    }
+    audio.addToSampleCount(newSamplesDecoded);
     audio.resetIterators();
     audio.advanceWriteIterator(oldSampleCount);
     for(int i = 0; i < newSamplesDecoded; i++){
       audio.setSampleAtWriteIterator((float)dataBuffer[i]);
+      audio.advanceWriteIterator();
     }
   }
   return 0;
