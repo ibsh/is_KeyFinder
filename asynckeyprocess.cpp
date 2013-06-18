@@ -58,7 +58,7 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
     KeyFinder::Workspace workspace;
     kf->progressiveChromagram(audio, workspace, object.prefs.core);
     kf->finalChromagram(workspace, object.prefs.core);
-    result.fullChromagram = KeyFinder::Chromagram(*workspace.chroma);
+    result.fullChromagram = KeyFinder::Chromagram(*workspace.chromagram);
     result.core = kf->keyOfChromagram(workspace, object.prefs.core);
     result.oneOctaveChromagram = result.fullChromagram;
     result.oneOctaveChromagram.reduceToOneOctave();
