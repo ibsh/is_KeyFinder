@@ -228,6 +228,11 @@ Preferences::Preferences(){
   }else{
     skipFilesWithExistingTags = false;
   }
+  if(settings.contains("minimiseMemoryFootprint")){
+    minimiseMemoryFootprint = settings.value("minimiseMemoryFootprint").toBool();
+  }else{
+    minimiseMemoryFootprint = false;
+  }
   if(settings.contains("maxDuration")){
     maxDuration = settings.value("maxDuration").toInt();
   }else{
@@ -415,6 +420,7 @@ void Preferences::save(){
   settings.beginGroup("batch");
   settings.setValue("parallelBatchJobs", parallelBatchJobs);
   settings.setValue("skipFilesWithExistingTags", skipFilesWithExistingTags);
+  settings.setValue("minimiseMemoryFootprint", minimiseMemoryFootprint);
   settings.setValue("maxDuration", maxDuration);
   settings.endGroup();
 
@@ -458,6 +464,7 @@ Preferences& Preferences::operator=(const Preferences& that){
 
 bool              Preferences::getWriteToFilesAutomatically() const { return writeToFilesAutomatically; }
 bool              Preferences::getParallelBatchJobs()         const { return parallelBatchJobs; }
+bool              Preferences::getMinimiseMemoryFootprint()   const { return minimiseMemoryFootprint; }
 metadata_write_t  Preferences::getMetadataWriteComment()      const { return metadataWriteComment; }
 metadata_write_t  Preferences::getMetadataWriteGrouping()     const { return metadataWriteGrouping; }
 metadata_write_t  Preferences::getMetadataWriteKey()          const { return metadataWriteKey; }
@@ -495,6 +502,7 @@ float                           Preferences::getDetunedBandWeight()        const
 std::vector<float>              Preferences::getCustomToneProfile()        const { return core.getCustomToneProfile(); }
 
 void Preferences::setWriteToFilesAutomatically(bool autoWrite)     { writeToFilesAutomatically = autoWrite; }
+void Preferences::setMinimiseMemoryFootprint(bool minMemory)       { minimiseMemoryFootprint = minMemory; }
 void Preferences::setMetadataWriteComment(metadata_write_t cmt)    { metadataWriteComment = cmt; }
 void Preferences::setMetadataWriteGrouping(metadata_write_t grp)   { metadataWriteGrouping = grp; }
 void Preferences::setMetadataWriteKey(metadata_write_t key)        { metadataWriteKey = key; }

@@ -125,11 +125,9 @@ AudioFileDecoder::~AudioFileDecoder(){
   delete filePathCh;
 }
 
-KeyFinder::AudioData AudioFileDecoder::decodeFile(){
+KeyFinder::AudioData* AudioFileDecoder::decodeFile(const bool& justOnePacket){
   // Prep buffer
-  KeyFinder::AudioData audio;
-  audio.setFrameRate(cCtx->sample_rate);
-  audio.setChannels(cCtx->channels);
+  KeyFinder::AudioData* audio = NULL;
   // Decode stream
   AVPacket avpkt;
   while(true){
@@ -137,6 +135,11 @@ KeyFinder::AudioData AudioFileDecoder::decodeFile(){
     if(av_read_frame(fCtx, &avpkt) < 0) break;
     if(avpkt.stream_index == audioStream){
       try{
+        if (audio == NULL) {
+          audio = new KeyFinder::AudioData();
+          audio->setFrameRate(cCtx->sample_rate);
+          audio->setChannels(cCtx->channels);
+        }
         if(!decodePacket(&avpkt, audio)){
           badPacketCount++;
           if(badPacketCount > badPacketThreshold){
@@ -150,6 +153,7 @@ KeyFinder::AudioData AudioFileDecoder::decodeFile(){
       }
     }
     av_free_packet(&avpkt);
+    if (justOnePacket) break;
   }
   return audio;
 }
@@ -181,13 +185,13 @@ bool AudioFileDecoder::decodePacket(AVPacket* originalPacket, KeyFinder::AudioDa
       }
       dataBuffer = (int16_t*)frameBufferConverted;
     }
-    int oldSampleCount = audio.getSampleCount();
-    audio.addToSampleCount(newSamplesDecoded);
-    audio.resetIterators();
-    audio.advanceWriteIterator(oldSampleCount);
+    int oldSampleCount = audio->getSampleCount();
+    audio->addToSampleCount(newSamplesDecoded);
+    audio->resetIterators();
+    audio->advanceWriteIterator(oldSampleCount);
     for(int i = 0; i < newSamplesDecoded; i++){
-      audio.setSampleAtWriteIterator((float)dataBuffer[i]);
-      audio.advanceWriteIterator();
+      audio->setSampleAtWriteIterator((float)dataBuffer[i]);
+      audio->advanceWriteIterator();
     }
   }
   return true;

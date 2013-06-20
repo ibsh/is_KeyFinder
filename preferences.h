@@ -71,6 +71,7 @@ public:
   // accessors
   bool getWriteToFilesAutomatically() const;
   bool getParallelBatchJobs() const;
+  bool getMinimiseMemoryFootprint() const;
   metadata_write_t getMetadataWriteComment() const;
   metadata_write_t getMetadataWriteGrouping() const;
   metadata_write_t getMetadataWriteKey() const;
@@ -111,6 +112,7 @@ public:
   // mutators
   void setWriteToFilesAutomatically(bool);
   void setParallelBatchJobs(bool);
+  void setMinimiseMemoryFootprint(bool);
   void setMetadataWriteComment(metadata_write_t);
   void setMetadataWriteGrouping(metadata_write_t);
   void setMetadataWriteKey(metadata_write_t);
@@ -156,6 +158,7 @@ public:
 private:
   bool writeToFilesAutomatically;
   bool parallelBatchJobs;
+  bool minimiseMemoryFootprint;
   metadata_write_t metadataWriteComment;
   metadata_write_t metadataWriteGrouping;
   metadata_write_t metadataWriteKey;

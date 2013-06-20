@@ -77,6 +77,7 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   Preferences p;
   ui->writeToFilesAutomatically->setChecked(p.getWriteToFilesAutomatically());
   ui->parallelBatchJobs->setChecked(p.getParallelBatchJobs());
+  ui->minimiseMemoryFootprint->setChecked(p.getMinimiseMemoryFootprint());
   ui->skipFilesWithExistingTags->setChecked(p.getSkipFilesWithExistingTags());
   ui->maxDuration->setValue(p.getMaxDuration());
 
@@ -186,6 +187,7 @@ void PrefsDialog::on_savePrefsButton_clicked(){
   Preferences p;
   p.setWriteToFilesAutomatically(ui->writeToFilesAutomatically->isChecked());
   p.setParallelBatchJobs(ui->parallelBatchJobs->isChecked());
+  p.setMinimiseMemoryFootprint(ui->minimiseMemoryFootprint->isChecked());
   p.setMetadataFormat(listMetadataFormat[ui->tagFormat->currentIndex()]);
   p.setMetadataWriteComment(listMetadataWrite[ui->metadataWriteComment->currentIndex()]);
   p.setMetadataWriteGrouping(listMetadataWrite[ui->metadataWriteGrouping->currentIndex()]);
