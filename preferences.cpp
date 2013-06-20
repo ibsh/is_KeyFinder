@@ -452,6 +452,7 @@ Preferences& Preferences::operator=(const Preferences& that){
     skipFilesWithExistingTags = that.skipFilesWithExistingTags;
     maxDuration = that.maxDuration;
     parallelBatchJobs = that.parallelBatchJobs;
+    minimiseMemoryFootprint = that.minimiseMemoryFootprint;
     iTunesLibraryPath = that.iTunesLibraryPath;
     traktorLibraryPath = that.traktorLibraryPath;
     seratoLibraryPath = that.seratoLibraryPath;
