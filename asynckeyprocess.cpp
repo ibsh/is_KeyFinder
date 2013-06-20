@@ -28,7 +28,7 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
 
   AudioFileDecoder* decoder = NULL;
   try{
-      decoder = new AudioFileDecoder();
+    decoder = new AudioFileDecoder(object.filePath, object.prefs.getMaxDuration());
   }catch(std::exception& e){
     delete decoder;
     result.errorMessage = QString(e.what());
@@ -41,7 +41,7 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
 
   KeyFinder::AudioData audio;
   try{
-    audio = decoder->decodeFile(object.filePath, object.prefs.getMaxDuration());
+    audio = decoder->decodeFile();
     delete decoder;
   }catch(std::exception& e){
     delete decoder;

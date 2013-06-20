@@ -21,25 +21,25 @@
 
 #include "decoderlibav.h"
 
-QMutex codecMutex; // I don't think this should be necessary if I get the lock manager right.
+QMutex codecMutex;
 
-KeyFinder::AudioData AudioFileDecoder::decodeFile(const QString& filePath, const int maxDuration){
-
-  QMutexLocker codecMutexLocker(&codecMutex); // mutex the preparatory section of this method
-
-  AVCodec *codec = NULL;
-  AVFormatContext *fCtx = NULL;
-  AVCodecContext *cCtx = NULL;
-  AVDictionary* dict = NULL;
-
+AudioFileDecoder::AudioFileDecoder(const QString& filePath, const int maxDuration) :
+  audioStream(-1), codec(NULL), fCtx(NULL), cCtx(NULL), dict(NULL), rsCtx(NULL)
+{
   // convert filepath
 #ifdef Q_OS_WIN
   const wchar_t* filePathWc = reinterpret_cast<const wchar_t*>(filePath.constData());
-  const char* filePathCh = utf16_to_utf8(filePathWc);
+  filePathCh = qstrdup(utf16_to_utf8(filePathWc));
 #else
   QByteArray encodedPath = QFile::encodeName(filePath);
-  const char* filePathCh = encodedPath;
+  filePathCh = qstrdup(encodedPath.constData());
 #endif
+
+  frameBufferSize = ((AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2) * sizeof(uint8_t);
+  frameBuffer = (uint8_t*)av_malloc(frameBufferSize);
+  frameBufferConverted = (uint8_t*)av_malloc(frameBufferSize);
+
+  QMutexLocker codecMutexLocker(&codecMutex); // mutex the libAV preparation
 
   // open file
   int openInputResult = avformat_open_input(&fCtx, filePathCh, NULL, NULL);
@@ -53,13 +53,14 @@ KeyFinder::AudioData AudioFileDecoder::decodeFile(const QString& filePath, const
     qWarning("Could not find stream information for file %s", filePathCh);
     throw KeyFinder::Exception(GuiStrings::getInstance()->libavCouldNotFindStreamInformation().toLocal8Bit().constData());
   }
-  int audioStream = -1;
+
   for(int i=0; i<(signed)fCtx->nb_streams; i++){
     if(fCtx->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO){
       audioStream = i;
       break;
     }
   }
+
   if(audioStream == -1){
     av_close_input_file(fCtx);
     qWarning("Could not find an audio stream for file %s", filePathCh);
@@ -93,11 +94,10 @@ KeyFinder::AudioData AudioFileDecoder::decodeFile(const QString& filePath, const
     throw KeyFinder::Exception(GuiStrings::getInstance()->libavCouldNotOpenCodec(codec->long_name, codecOpenResult).toLocal8Bit().constData());
   }
 
-  ReSampleContext* rsCtx = av_audio_resample_init(
-        cCtx->channels, cCtx->channels,
-        cCtx->sample_rate, cCtx->sample_rate,
-        AV_SAMPLE_FMT_S16, cCtx->sample_fmt,
-        0, 0, 0, 0);
+  rsCtx = av_audio_resample_init(
+    cCtx->channels, cCtx->channels, cCtx->sample_rate, cCtx->sample_rate,
+    AV_SAMPLE_FMT_S16, cCtx->sample_fmt, 0, 0, 0, 0
+  );
   if(rsCtx == NULL){
     avcodec_close(cCtx);
     av_close_input_file(fCtx);
@@ -105,10 +105,26 @@ KeyFinder::AudioData AudioFileDecoder::decodeFile(const QString& filePath, const
     throw KeyFinder::Exception(GuiStrings::getInstance()->libavCouldNotCreateResampleContext().toLocal8Bit().constData());
   }
 
-  qDebug("Decoding %s (%s, %d)", filePathCh, av_get_sample_fmt_name(cCtx->sample_fmt), cCtx->sample_rate);
+  qDebug("Decoder prepared for %s (%s, %d)", filePathCh, av_get_sample_fmt_name(cCtx->sample_fmt), cCtx->sample_rate);
+}
 
+AudioFileDecoder::~AudioFileDecoder(){
+  av_free(frameBuffer);
+  av_free(frameBufferConverted);
+
+  QMutexLocker codecMutexLocker(&codecMutex);
+  audio_resample_close(rsCtx);
+  int codecCloseResult = avcodec_close(cCtx);
+  if(codecCloseResult < 0){
+    qCritical("Error closing audio codec: %s (%d)", codec->long_name, codecCloseResult);
+  }
   codecMutexLocker.unlock();
 
+  av_close_input_file(fCtx);
+  delete filePathCh;
+}
+
+KeyFinder::AudioData AudioFileDecoder::decodeFile(){
   // Prep buffer
   KeyFinder::AudioData audio;
   audio.setFrameRate(cCtx->sample_rate);
@@ -123,7 +139,7 @@ KeyFinder::AudioData AudioFileDecoder::decodeFile(const QString& filePath, const
       break;
     if(avpkt.stream_index == audioStream){
       try{
-        int result = decodePacket(cCtx, rsCtx, &avpkt, audio);
+        int result = decodePacket(&avpkt, audio);
         if(result != 0){
           if(badPacketCount < badPacketThreshold){
             badPacketCount++;
@@ -141,31 +157,10 @@ KeyFinder::AudioData AudioFileDecoder::decodeFile(const QString& filePath, const
     }
     av_free_packet(&avpkt);
   }
-
-  codecMutexLocker.relock();
-  audio_resample_close(rsCtx);
-  int codecCloseResult = avcodec_close(cCtx);
-  if(codecCloseResult < 0){
-    qCritical("Error closing audio codec: %s (%d)", codec->long_name, codecCloseResult);
-  }
-  codecMutexLocker.unlock();
-
-  av_close_input_file(fCtx);
   return audio;
 }
 
-AudioFileDecoder::AudioFileDecoder(){
-  frameBufferSize = ((AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2) * sizeof(uint8_t);
-  frameBuffer = (uint8_t*)av_malloc(frameBufferSize);
-  frameBufferConverted = (uint8_t*)av_malloc(frameBufferSize);
-}
-
-AudioFileDecoder::~AudioFileDecoder(){
-  av_free(frameBuffer);
-  av_free(frameBufferConverted);
-}
-
-int AudioFileDecoder::decodePacket(AVCodecContext* cCtx, ReSampleContext* rsCtx, AVPacket* originalPacket, KeyFinder::AudioData& audio){
+int AudioFileDecoder::decodePacket(AVPacket* originalPacket, KeyFinder::AudioData& audio){
   // copy packet so we can shift data pointer about without endangering garbage collection
   AVPacket tempPacket;
   tempPacket.size = originalPacket->size;
