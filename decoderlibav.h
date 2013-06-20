@@ -67,7 +67,7 @@ private:
   AVCodecContext* cCtx;
   AVDictionary* dict;
   ReSampleContext* rsCtx;
-  bool decodePacket(AVPacket*, KeyFinder::AudioData&);
+  bool decodePacket(AVPacket*, KeyFinder::AudioData*);
 };
 
 #endif

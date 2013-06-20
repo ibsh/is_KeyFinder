@@ -158,7 +158,7 @@ KeyFinder::AudioData* AudioFileDecoder::decodeFile(const bool& justOnePacket){
   return audio;
 }
 
-bool AudioFileDecoder::decodePacket(AVPacket* originalPacket, KeyFinder::AudioData& audio){
+bool AudioFileDecoder::decodePacket(AVPacket* originalPacket, KeyFinder::AudioData* audio){
   // copy packet so we can shift data pointer about without endangering garbage collection
   AVPacket tempPacket;
   tempPacket.size = originalPacket->size;
