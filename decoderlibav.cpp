@@ -24,7 +24,8 @@
 QMutex codecMutex;
 
 AudioFileDecoder::AudioFileDecoder(const QString& filePath, const int maxDuration) :
-  audioStream(-1), codec(NULL), fCtx(NULL), cCtx(NULL), dict(NULL), rsCtx(NULL)
+  audioStream(-1), badPacketCount(0), badPacketThreshold(100),
+  codec(NULL), fCtx(NULL), cCtx(NULL), dict(NULL), rsCtx(NULL)
 {
   // convert filepath
 #ifdef Q_OS_WIN
@@ -131,21 +132,14 @@ KeyFinder::AudioData AudioFileDecoder::decodeFile(){
   audio.setChannels(cCtx->channels);
   // Decode stream
   AVPacket avpkt;
-  int badPacketCount = 0;
-  int badPacketThreshold = 100;
   while(true){
     av_init_packet(&avpkt);
-    if(av_read_frame(fCtx, &avpkt) < 0)
-      break;
+    if(av_read_frame(fCtx, &avpkt) < 0) break;
     if(avpkt.stream_index == audioStream){
       try{
-        int result = decodePacket(&avpkt, audio);
-        if(result != 0){
-          if(badPacketCount < badPacketThreshold){
-            badPacketCount++;
-          }else{
-            avcodec_close(cCtx);
-            av_close_input_file(fCtx);
+        if(!decodePacket(&avpkt, audio)){
+          badPacketCount++;
+          if(badPacketCount > badPacketThreshold){
             qWarning("Too many bad packets (%d) while decoding file %s", badPacketCount, filePathCh);
             throw KeyFinder::Exception(GuiStrings::getInstance()->libavTooManyBadPackets(badPacketThreshold).toLocal8Bit().constData());
           }
@@ -160,7 +154,7 @@ KeyFinder::AudioData AudioFileDecoder::decodeFile(){
   return audio;
 }
 
-int AudioFileDecoder::decodePacket(AVPacket* originalPacket, KeyFinder::AudioData& audio){
+bool AudioFileDecoder::decodePacket(AVPacket* originalPacket, KeyFinder::AudioData& audio){
   // copy packet so we can shift data pointer about without endangering garbage collection
   AVPacket tempPacket;
   tempPacket.size = originalPacket->size;
@@ -172,7 +166,7 @@ int AudioFileDecoder::decodePacket(AVPacket* originalPacket, KeyFinder::AudioDat
     int bytesConsumed = avcodec_decode_audio3(cCtx, dataBuffer, &dataSize, &tempPacket);
     if(bytesConsumed < 0){ // error
       tempPacket.size = 0;
-      return 1;
+      return false;
     }
     tempPacket.data += bytesConsumed;
     tempPacket.size -= bytesConsumed;
@@ -196,5 +190,5 @@ int AudioFileDecoder::decodePacket(AVPacket* originalPacket, KeyFinder::AudioDat
       audio.advanceWriteIterator();
     }
   }
-  return 0;
+  return true;
 }

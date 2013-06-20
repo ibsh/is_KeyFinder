@@ -60,12 +60,14 @@ private:
   uint8_t* frameBufferConverted;
   int frameBufferSize;
   int audioStream;
+  int badPacketCount;
+  int badPacketThreshold;
   AVCodec* codec;
   AVFormatContext* fCtx;
   AVCodecContext* cCtx;
   AVDictionary* dict;
   ReSampleContext* rsCtx;
-  int decodePacket(AVPacket*, KeyFinder::AudioData&);
+  bool decodePacket(AVPacket*, KeyFinder::AudioData&);
 };
 
 #endif
