@@ -53,7 +53,7 @@ class AudioFileDecoder{
 public:
   AudioFileDecoder(const QString&, const int);
   ~AudioFileDecoder();
-  KeyFinder::AudioData decodeFile();
+  KeyFinder::AudioData* decodeFile();
 private:
   char* filePathCh;
   uint8_t* frameBuffer;
@@ -67,7 +67,7 @@ private:
   AVCodecContext* cCtx;
   AVDictionary* dict;
   ReSampleContext* rsCtx;
-  bool decodePacket(AVPacket*, KeyFinder::AudioData&);
+  bool decodePacket(AVPacket*, KeyFinder::AudioData*);
 };
 
 #endif

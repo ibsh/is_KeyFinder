@@ -39,10 +39,21 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
     return result;
   }
 
-  KeyFinder::AudioData audio;
+  KeyFinder::Workspace workspace;
+  KeyFinder::KeyFinder* kf = LibKeyFinderSingleton::getInstance()->getKeyFinder();
   try{
-    audio = decoder->decodeFile();
+    while(true){
+      KeyFinder::AudioData* tempAudio = decoder->decodeFile();
+      if(tempAudio == NULL) break;
+      kf->progressiveChromagram(*tempAudio, workspace, object.prefs.core);
+      delete tempAudio;
+    }
     delete decoder;
+    kf->finalChromagram(workspace, object.prefs.core);
+    result.fullChromagram = KeyFinder::Chromagram(*workspace.chromagram);
+    result.core = kf->keyOfChromagram(workspace, object.prefs.core);
+    result.oneOctaveChromagram = result.fullChromagram;
+    result.oneOctaveChromagram.reduceToOneOctave();
   }catch(std::exception& e){
     delete decoder;
     result.errorMessage = QString(e.what());
@@ -50,23 +61,6 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
   }catch(...){
     delete decoder;
     result.errorMessage = "Unknown exception while decoding";
-    return result;
-  }
-
-  KeyFinder::KeyFinder* kf = LibKeyFinderSingleton::getInstance()->getKeyFinder();
-  try{
-    KeyFinder::Workspace workspace;
-    kf->progressiveChromagram(audio, workspace, object.prefs.core);
-    kf->finalChromagram(workspace, object.prefs.core);
-    result.fullChromagram = KeyFinder::Chromagram(*workspace.chromagram);
-    result.core = kf->keyOfChromagram(workspace, object.prefs.core);
-    result.oneOctaveChromagram = result.fullChromagram;
-    result.oneOctaveChromagram.reduceToOneOctave();
-  }catch(const std::exception& e){
-    result.errorMessage = QString(e.what());
-    return result;
-  }catch(...){
-    result.errorMessage = "Unknown exception from libKeyFinder";
     return result;
   }
 
