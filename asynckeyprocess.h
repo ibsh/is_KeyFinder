@@ -33,7 +33,7 @@
 #include "keyfinder/keyfinderresult.h"
 
 #include "preferences.h"
-#include "decoder.h"
+#include "decoderlibav.h"
 #include "asyncfileobject.h"
 #include "asynckeyresult.h"
 #include "libkeyfindersingleton.h"

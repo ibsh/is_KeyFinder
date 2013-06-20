@@ -52,7 +52,6 @@ HEADERS  += \
     asynckeyresult.h \
     asyncmetadatareadprocess.h \
     asyncmetadatareadresult.h \
-    decoder.h \
     decoderlibav.h \
     externalplaylist.h \
     externalplaylistserato.h \
@@ -72,7 +71,6 @@ SOURCES += \
     asyncfileobject.cpp \
     asynckeyprocess.cpp \
     asyncmetadatareadprocess.cpp \
-    decoder.cpp \
     decoderlibav.cpp \
     externalplaylist.cpp \
     externalplaylistserato.cpp \

@@ -23,7 +23,7 @@
 
 QMutex codecMutex; // I don't think this should be necessary if I get the lock manager right.
 
-KeyFinder::AudioData LibAvDecoder::decodeFile(const QString& filePath, const int maxDuration){
+KeyFinder::AudioData AudioFileDecoder::decodeFile(const QString& filePath, const int maxDuration){
 
   QMutexLocker codecMutexLocker(&codecMutex); // mutex the preparatory section of this method
 
@@ -154,18 +154,18 @@ KeyFinder::AudioData LibAvDecoder::decodeFile(const QString& filePath, const int
   return audio;
 }
 
-LibAvDecoder::LibAvDecoder(){
+AudioFileDecoder::AudioFileDecoder(){
   frameBufferSize = ((AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2) * sizeof(uint8_t);
   frameBuffer = (uint8_t*)av_malloc(frameBufferSize);
   frameBufferConverted = (uint8_t*)av_malloc(frameBufferSize);
 }
 
-LibAvDecoder::~LibAvDecoder(){
+AudioFileDecoder::~AudioFileDecoder(){
   av_free(frameBuffer);
   av_free(frameBufferConverted);
 }
 
-int LibAvDecoder::decodePacket(AVCodecContext* cCtx, ReSampleContext* rsCtx, AVPacket* originalPacket, KeyFinder::AudioData& audio){
+int AudioFileDecoder::decodePacket(AVCodecContext* cCtx, ReSampleContext* rsCtx, AVPacket* originalPacket, KeyFinder::AudioData& audio){
   // copy packet so we can shift data pointer about without endangering garbage collection
   AVPacket tempPacket;
   tempPacket.size = originalPacket->size;

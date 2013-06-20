@@ -22,7 +22,15 @@
 #ifndef LIBAVDECODER_H
 #define LIBAVDECODER_H
 
-#include "decoder.h"
+#include <iomanip>
+
+#include <QString>
+#include <QMutex>
+#include <QFile>
+
+#include "keyfinder/exception.h"
+#include "keyfinder/audiodata.h"
+
 #include "strings.h"
 
 #ifndef INT64_C
@@ -37,18 +45,15 @@ extern "C"{
 #include <libavformat/avformat.h>
 }
 
-#include <QMutex>
-#include <QFile>
-
 #ifdef Q_OS_WIN
 #include "os_windows.h"
 #endif
 
-class LibAvDecoder : public AudioFileDecoder{
+class AudioFileDecoder{
 public:
-  LibAvDecoder();
-  ~LibAvDecoder();
-  virtual KeyFinder::AudioData decodeFile(const QString&, const int);
+  AudioFileDecoder();
+  ~AudioFileDecoder();
+  KeyFinder::AudioData decodeFile(const QString&, const int);
 private:
   uint8_t* frameBuffer;
   uint8_t* frameBufferConverted;
