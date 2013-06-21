@@ -60,7 +60,7 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
     return result;
   }catch(...){
     delete decoder;
-    result.errorMessage = "Unknown exception while decoding";
+    result.errorMessage = "Unknown exception while decoding / analysing";
     return result;
   }
 
