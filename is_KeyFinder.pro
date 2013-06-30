@@ -35,8 +35,6 @@ QT += \
     core \
     gui \
     widgets \
-    xml \
-    xmlpatterns \
     concurrent \
     network
 
@@ -121,6 +119,7 @@ macx{
 }
 
 win32{
+  QT += xml xmlpatterns
 	INCLUDEPATH += C:/MSYS/local/include
 	DEPENDPATH += C:/MSYS/local/bin
 	LIBS += -LC:/MSYS/local/bin
@@ -139,6 +138,7 @@ win32{
 }
 
 unix {
+  QT += xml xmlpatterns
 	target.path = $$[QT_INSTALL_PREFIX]/bin
 	INSTALLS += target
 }
