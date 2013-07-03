@@ -49,18 +49,23 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
       delete tempAudio;
     }
     delete decoder;
+    decoder = NULL;
     kf->finalChromagram(workspace, object.prefs.core);
     result.fullChromagram = KeyFinder::Chromagram(*workspace.chromagram);
     result.core = kf->keyOfChromagram(workspace, object.prefs.core);
     result.oneOctaveChromagram = result.fullChromagram;
     result.oneOctaveChromagram.reduceToOneOctave();
   }catch(std::exception& e){
-    delete decoder;
+    if (decoder != NULL) delete decoder;
     result.errorMessage = QString(e.what());
     return result;
   }catch(...){
-    delete decoder;
-    result.errorMessage = "Unknown exception while decoding / analysing";
+    if (decoder != NULL) {
+      delete decoder;
+      result.errorMessage = "Unknown exception while decoding";
+    } else {
+      result.errorMessage = "Unknown exception while analysing";
+    }
     return result;
   }
 
