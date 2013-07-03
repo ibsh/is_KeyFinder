@@ -120,27 +120,26 @@ macx{
 
 win32{
   QT += xml xmlpatterns
-	INCLUDEPATH += C:/MSYS/local/include
-	DEPENDPATH += C:/MSYS/local/bin
-	LIBS += -LC:/MSYS/local/bin
-	LIBS += -lkeyfinder0
-	LIBS += -lavcodec
-	LIBS += -lavformat
-	LIBS += -lavutil
+  INCLUDEPATH += C:\mingw\local/include
+  DEPENDPATH += C:\mingw\local/bin
+  LIBS += -LC:\mingw\local/bin
+  LIBS += -lkeyfinder0
+  LIBS += -lavcodec
+  LIBS += -lavformat
+  LIBS += -lavutil
+  LIBS += -llibtag
+  LIBS += -LC:\mingw\local/lib
+  LIBS += -lboost_system-47-mt-1_52
+  LIBS += -lboost_thread-47-mt-1_52
 
-	INCLUDEPATH += C:/MSYS/home/user/taglib-1.8
-	INCLUDEPATH += C:/MSYS/home/user/taglib-1.8/include
-	DEPENDPATH += C:/MSYS/home/user/taglib-1.8/taglib
-	LIBS += -LC:/MSYS/home/user/taglib-1.8/taglib -llibtag
-
-	OTHER_FILES += is_KeyFinder.ico
-	RC_FILE = win32.rc
+  OTHER_FILES += is_KeyFinder.ico
+  RC_FILE = win32.rc
 }
 
 unix {
   QT += xml xmlpatterns
-	target.path = $$[QT_INSTALL_PREFIX]/bin
-	INSTALLS += target
+  target.path = $$[QT_INSTALL_PREFIX]/bin
+  INSTALLS += target
 }
 
 TRANSLATIONS = \
