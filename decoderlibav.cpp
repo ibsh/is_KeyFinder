@@ -24,8 +24,10 @@
 QMutex codecMutex;
 
 AudioFileDecoder::AudioFileDecoder(const QString& filePath, const int maxDuration) :
+  filePathCh(NULL),
+  frameBufferSize(((AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2) * sizeof(uint8_t)),
   audioStream(-1), badPacketCount(0), badPacketThreshold(100),
-  codec(NULL), fCtx(NULL), cCtx(NULL), dict(NULL), rsCtx(NULL), filePathCh(NULL)
+  codec(NULL), fCtx(NULL), cCtx(NULL), dict(NULL), rsCtx(NULL)
 {
   // convert filepath
 #ifdef Q_OS_WIN
@@ -36,7 +38,6 @@ AudioFileDecoder::AudioFileDecoder(const QString& filePath, const int maxDuratio
   filePathCh = qstrdup(encodedPath.constData());
 #endif
 
-  frameBufferSize = ((AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2) * sizeof(uint8_t);
   frameBuffer = (uint8_t*)av_malloc(frameBufferSize);
   frameBufferConverted = (uint8_t*)av_malloc(frameBufferSize);
 
