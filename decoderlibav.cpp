@@ -25,7 +25,7 @@ QMutex codecMutex;
 
 AudioFileDecoder::AudioFileDecoder(const QString& filePath, const int maxDuration) :
   audioStream(-1), badPacketCount(0), badPacketThreshold(100),
-  codec(NULL), fCtx(NULL), cCtx(NULL), dict(NULL), rsCtx(NULL)
+  codec(NULL), fCtx(NULL), cCtx(NULL), dict(NULL), rsCtx(NULL), filePathCh(NULL)
 {
   // convert filepath
 #ifdef Q_OS_WIN
@@ -122,7 +122,7 @@ AudioFileDecoder::~AudioFileDecoder(){
   codecMutexLocker.unlock();
 
   av_close_input_file(fCtx);
-  delete filePathCh;
+  delete[] filePathCh;
 }
 
 KeyFinder::AudioData* AudioFileDecoder::decodeFile(){
