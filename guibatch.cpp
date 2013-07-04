@@ -401,6 +401,7 @@ void BatchWindow::addFilesFinished(){
 }
 
 void BatchWindow::readMetadata(){
+  prefs.setParallelBatchJobs(prefs.getParallelBatchJobs()); // This looks odd, but prefs sets the threadpool count.
   //: Text in the Batch window status bar
   setGuiRunning(tr("Reading tags..."), true);
   QList<AsyncFileObject> objects;
@@ -442,6 +443,7 @@ void BatchWindow::metadataReadFinished(){
 
 void BatchWindow::on_runBatchButton_clicked(){
   prefs = Preferences(); // Get a new preferences object in case they've changed since the last run.
+  prefs.setParallelBatchJobs(prefs.getParallelBatchJobs()); // This looks odd, but prefs sets the threadpool count.
   checkRowsForSkipping();
   //: Text in the Batch window status bar
   setGuiRunning(tr("Analysing (%n thread(s))...", "", QThreadPool::globalInstance()->maxThreadCount()), true);
