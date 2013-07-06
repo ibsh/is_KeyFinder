@@ -24,7 +24,7 @@
 # libkeyfinder    0.10.0
 #  |-> boost      1.52.0
 #  \-> fftw        3.3.2
-# libav            0.7.6
+# libav            0.7.7
 # taglib           1.8.0
 #
 # MAC ONLY:
