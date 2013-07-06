@@ -132,25 +132,30 @@ KeyFinder::AudioData* AudioFileDecoder::decodeFile(){
   // Decode stream
   AVPacket avpkt;
   av_init_packet(&avpkt);
-  if(av_read_frame(fCtx, &avpkt) < 0) return audio;
-  if(avpkt.stream_index == audioStream){
-    try{
-      audio = new KeyFinder::AudioData();
-      audio->setFrameRate(cCtx->sample_rate);
-      audio->setChannels(cCtx->channels);
-      if(!decodePacket(&avpkt, audio)){
-        badPacketCount++;
-        if(badPacketCount > badPacketThreshold){
-          qWarning("Too many bad packets (%d) while decoding file %s", badPacketCount, filePathCh);
-          throw KeyFinder::Exception(GuiStrings::getInstance()->libavTooManyBadPackets(badPacketThreshold).toLocal8Bit().constData());
-        }
-      }
-    }catch(KeyFinder::Exception& e){
-      qWarning("Encountered KeyFinder::Exception (%s) while decoding file %s", e.what(), filePathCh);
-      throw e;
+  bool foundAudio = false;
+  do {
+    if(av_read_frame(fCtx, &avpkt) < 0) return audio;
+    if(avpkt.stream_index == audioStream){
+      foundAudio = true;
+    }else{
+      av_free_packet(&avpkt);
     }
+  } while (!foundAudio);
+  try{
+    audio = new KeyFinder::AudioData();
+    audio->setFrameRate((unsigned int) cCtx->sample_rate);
+    audio->setChannels(cCtx->channels);
+    if(!decodePacket(&avpkt, audio)){
+      badPacketCount++;
+      if(badPacketCount > badPacketThreshold){
+        qWarning("Too many bad packets (%d) while decoding file %s", badPacketCount, filePathCh);
+        throw KeyFinder::Exception(GuiStrings::getInstance()->libavTooManyBadPackets(badPacketThreshold).toLocal8Bit().constData());
+      }
+    }
+  }catch(KeyFinder::Exception& e){
+    qWarning("Encountered KeyFinder::Exception (%s) while decoding file %s", e.what(), filePathCh);
+    throw e;
   }
-  av_free_packet(&avpkt);
   return audio;
 }
 
