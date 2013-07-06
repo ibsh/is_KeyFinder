@@ -21,8 +21,8 @@
 
 # CURRENT DEPENDENCIES:
 # qt               5.0.0
-# libkeyfinder     0.5.0
-#  |-> boost      1.49.0
+# libkeyfinder    0.10.0
+#  |-> boost      1.52.0
 #  \-> fftw        3.3.2
 # libav            0.7.6
 # taglib           1.8.0
