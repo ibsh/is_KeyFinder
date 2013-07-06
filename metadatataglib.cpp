@@ -395,7 +395,6 @@ bool TagLibMetadata::setGrouping(const QString& grp){
   if(tagTestMp4 != NULL){
     TagLib::StringList sl(TagLib::String(grp.toLocal8Bit().constData()));
     tagTestMp4->itemListMap()["\251grp"] = sl;
-    tagTestMp4->save();
     f->save();
     return true;
   }
@@ -459,7 +458,6 @@ bool TagLibMetadata::setKey(const QString& key){
   if(tagTestMp4 != NULL){
     TagLib::StringList sl(TagLib::String(key.toLocal8Bit().constData()));
     tagTestMp4->itemListMap()["----:com.apple.iTunes:initialkey"] = sl;
-    tagTestMp4->save();
     f->save();
     return true;
   }
