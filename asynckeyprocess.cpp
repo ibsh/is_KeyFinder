@@ -43,7 +43,7 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
   KeyFinder::KeyFinder* kf = LibKeyFinderSingleton::getInstance()->getKeyFinder();
   try{
     while(true){
-      KeyFinder::AudioData* tempAudio = decoder->decodeFile();
+      KeyFinder::AudioData* tempAudio = decoder->decodeNextAudioPacket();
       if(tempAudio == NULL) break;
       kf->progressiveChromagram(*tempAudio, workspace, object.prefs.core);
       delete tempAudio;

@@ -126,21 +126,16 @@ AudioFileDecoder::~AudioFileDecoder(){
   delete[] filePathCh;
 }
 
-KeyFinder::AudioData* AudioFileDecoder::decodeFile(){
+KeyFinder::AudioData* AudioFileDecoder::decodeNextAudioPacket(){
   // Prep buffer
   KeyFinder::AudioData* audio = NULL;
   // Decode stream
   AVPacket avpkt;
-  av_init_packet(&avpkt);
-  bool foundAudio = false;
   do {
+    av_init_packet(&avpkt);
     if(av_read_frame(fCtx, &avpkt) < 0) return audio;
-    if(avpkt.stream_index == audioStream){
-      foundAudio = true;
-    }else{
-      av_free_packet(&avpkt);
-    }
-  } while (!foundAudio);
+    if(avpkt.stream_index != audioStream) av_free_packet(&avpkt);
+  } while (avpkt.data == NULL);
   try{
     audio = new KeyFinder::AudioData();
     audio->setFrameRate((unsigned int) cCtx->sample_rate);
