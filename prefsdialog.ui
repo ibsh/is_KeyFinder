@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>802</width>
-    <height>613</height>
+    <height>713</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -72,17 +72,10 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="lbl_writeToFilesAutomatically">
+         <item row="3" column="0">
+          <widget class="QLabel" name="lbl_maxDuration">
            <property name="text">
-            <string>Write to tags/filenames automatically during batch jobs</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QCheckBox" name="writeToFilesAutomatically">
-           <property name="text">
-            <string/>
+            <string>Skip files longer than</string>
            </property>
           </widget>
          </item>
@@ -107,10 +100,17 @@
            </item>
           </layout>
          </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="lbl_maxDuration">
+         <item row="4" column="0">
+          <widget class="QLabel" name="lbl_writeToFilesAutomatically">
            <property name="text">
-            <string>Skip files longer than</string>
+            <string>Write to tags/filenames automatically during batch jobs</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QCheckBox" name="writeToFilesAutomatically">
+           <property name="text">
+            <string/>
            </property>
           </widget>
          </item>
@@ -118,26 +118,6 @@
        </item>
        <item>
         <layout class="QGridLayout" name="gridLayoutLibrary">
-         <item row="0" column="0">
-          <widget class="QLabel" name="lbl_iTunesLibrary">
-           <property name="text">
-            <string>iTunes XML</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="iTunesLibraryPath">
-           <property name="minimumSize">
-            <size>
-             <width>300</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="2">
           <widget class="QPushButton" name="findITunesLibraryButton">
            <property name="text">
@@ -179,6 +159,19 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="iTunesLibraryPath">
+           <property name="minimumSize">
+            <size>
+             <width>300</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
          <item row="2" column="1">
           <widget class="QLineEdit" name="seratoLibraryPath">
            <property name="minimumSize">
@@ -199,6 +192,13 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="lbl_iTunesLibrary">
+           <property name="text">
+            <string>iTunes XML</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
@@ -209,19 +209,9 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayoutBasic1">
+        <layout class="QHBoxLayout" name="horizontalLayoutTaggingAndCodes">
          <item>
           <layout class="QVBoxLayout" name="verticalLayoutTagging">
-           <item>
-            <widget class="QLabel" name="lbl_tagging">
-             <property name="text">
-              <string>Tagging</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
            <item>
             <layout class="QFormLayout" name="formLayoutTagging">
              <property name="fieldGrowthPolicy">
@@ -230,47 +220,14 @@
              <property name="formAlignment">
               <set>Qt::AlignHCenter|Qt::AlignTop</set>
              </property>
-             <item row="0" column="0">
-              <widget class="QLabel" name="lbl_tagWhat">
-               <property name="text">
-                <string>What to write</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QComboBox" name="tagFormat">
-               <item>
-                <property name="text">
-                 <string>Keys</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Custom codes</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Both</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="lbl_metadataWriteComment">
-               <property name="text">
-                <string>Comment tag</string>
-               </property>
-              </widget>
-             </item>
-             <item row="6" column="0">
+             <item row="11" column="0">
               <widget class="QLabel" name="lbl_metadataDelimiter">
                <property name="text">
                 <string>Delimiter</string>
                </property>
               </widget>
              </item>
-             <item row="6" column="1">
+             <item row="11" column="1">
               <widget class="QLineEdit" name="metadataDelimiter">
                <property name="maximumSize">
                 <size>
@@ -283,38 +240,132 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="0" colspan="2">
-              <widget class="QLabel" name="lbl_tagWhere">
+             <item row="6" column="1">
+              <widget class="QComboBox" name="metadataWriteAlbum">
+               <item>
+                <property name="text">
+                 <string>No</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Prepend</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Append</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="6" column="0">
+              <widget class="QLabel" name="lbl_metadataWriteAlbum">
                <property name="text">
-                <string>Where to write</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
+                <string>Album tag</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="lbl_metadataWriteGrouping">
-               <property name="text">
-                <string>Grouping tag</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QLabel" name="lbl_metadataWriteKey">
-               <property name="text">
-                <string>Key tag</string>
-               </property>
+             <item row="5" column="1">
+              <widget class="QComboBox" name="metadataWriteArtist">
+               <item>
+                <property name="text">
+                 <string>No</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Prepend</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Append</string>
+                </property>
+               </item>
               </widget>
              </item>
              <item row="5" column="0">
+              <widget class="QLabel" name="lbl_metadataWriteArtist">
+               <property name="text">
+                <string>Artist tag</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QComboBox" name="metadataWriteTitle">
+               <item>
+                <property name="text">
+                 <string>No</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Prepend</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Append</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="10" column="1">
+              <widget class="QComboBox" name="metadataWriteFilename">
+               <item>
+                <property name="text">
+                 <string>No</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Prepend</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Append</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="10" column="0">
               <widget class="QLabel" name="lbl_metadataWriteFilename">
                <property name="text">
                 <string>Filename</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="1">
+             <item row="4" column="0">
+              <widget class="QLabel" name="lbl_metadataWriteTitle">
+               <property name="text">
+                <string>Title tag</string>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="1">
+              <widget class="QComboBox" name="metadataWriteKey">
+               <item>
+                <property name="text">
+                 <string>No</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Overwrite</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="9" column="0">
+              <widget class="QLabel" name="lbl_metadataWriteKey">
+               <property name="text">
+                <string>Key tag</string>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="1">
               <widget class="QComboBox" name="metadataWriteGrouping">
                <item>
                 <property name="text">
@@ -338,40 +389,14 @@
                </item>
               </widget>
              </item>
-             <item row="4" column="1">
-              <widget class="QComboBox" name="metadataWriteKey">
-               <item>
-                <property name="text">
-                 <string>No</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Overwrite</string>
-                </property>
-               </item>
+             <item row="8" column="0">
+              <widget class="QLabel" name="lbl_metadataWriteGrouping">
+               <property name="text">
+                <string>Grouping tag</string>
+               </property>
               </widget>
              </item>
-             <item row="5" column="1">
-              <widget class="QComboBox" name="metadataWriteFilename">
-               <item>
-                <property name="text">
-                 <string>No</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Prepend</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Append</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="2" column="1">
+             <item row="7" column="1">
               <widget class="QComboBox" name="metadataWriteComment">
                <item>
                 <property name="text">
@@ -395,10 +420,63 @@
                </item>
               </widget>
              </item>
+             <item row="7" column="0">
+              <widget class="QLabel" name="lbl_metadataWriteComment">
+               <property name="text">
+                <string>Comment tag</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0" colspan="2">
+              <widget class="QLabel" name="lbl_tagWhere">
+               <property name="text">
+                <string>Where to write</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QComboBox" name="tagFormat">
+               <item>
+                <property name="text">
+                 <string>Keys</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Custom codes</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Both</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="lbl_tagWhat">
+               <property name="text">
+                <string>What to write</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0" colspan="2">
+              <widget class="QLabel" name="lbl_tagging">
+               <property name="text">
+                <string>Tagging</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
            <item>
-            <spacer name="verticalSpacer">
+            <spacer name="spacerTags">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
@@ -436,18 +514,8 @@
            </item>
            <item>
             <layout class="QGridLayout" name="gridLayoutKeyCodes">
-             <item row="0" column="0">
-              <widget class="QLabel" name="lbl_majKey0">
-               <property name="text">
-                <string notr="true">A</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLineEdit" name="majKey0">
+             <item row="4" column="11">
+              <widget class="QLineEdit" name="silence">
                <property name="minimumSize">
                 <size>
                  <width>34</width>
@@ -465,203 +533,10 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="2">
-              <widget class="QLabel" name="lbl_majKey1">
+             <item row="4" column="10">
+              <widget class="QLabel" name="lbl_silence">
                <property name="text">
-                <string notr="true">Bb</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="3">
-              <widget class="QLineEdit" name="majKey1">
-               <property name="minimumSize">
-                <size>
-                 <width>34</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>34</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="maxLength">
-                <number>50</number>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="4">
-              <widget class="QLabel" name="lbl_majKey2">
-               <property name="text">
-                <string notr="true">B</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="5">
-              <widget class="QLineEdit" name="majKey2">
-               <property name="minimumSize">
-                <size>
-                 <width>34</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>34</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="maxLength">
-                <number>50</number>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="6">
-              <widget class="QLabel" name="lbl_majKey3">
-               <property name="text">
-                <string notr="true">C</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="7">
-              <widget class="QLineEdit" name="majKey3">
-               <property name="minimumSize">
-                <size>
-                 <width>34</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>34</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="maxLength">
-                <number>50</number>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="8">
-              <widget class="QLabel" name="lbl_majKey4">
-               <property name="text">
-                <string notr="true">Db</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="9">
-              <widget class="QLineEdit" name="majKey4">
-               <property name="minimumSize">
-                <size>
-                 <width>34</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>34</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="maxLength">
-                <number>50</number>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="10">
-              <widget class="QLabel" name="lbl_majKey5">
-               <property name="text">
-                <string notr="true">D</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="11">
-              <widget class="QLineEdit" name="majKey5">
-               <property name="minimumSize">
-                <size>
-                 <width>34</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>34</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="maxLength">
-                <number>50</number>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="3">
-              <widget class="QLineEdit" name="majKey7">
-               <property name="minimumSize">
-                <size>
-                 <width>34</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>34</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="maxLength">
-                <number>50</number>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="2">
-              <widget class="QLabel" name="lbl_majKey7">
-               <property name="text">
-                <string notr="true">E</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLineEdit" name="majKey6">
-               <property name="minimumSize">
-                <size>
-                 <width>34</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>34</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="maxLength">
-                <number>50</number>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="lbl_majKey6">
-               <property name="text">
-                <string notr="true">Eb</string>
+                <string>None</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -675,327 +550,6 @@
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="5">
-              <widget class="QLineEdit" name="majKey8">
-               <property name="minimumSize">
-                <size>
-                 <width>34</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>34</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="maxLength">
-                <number>50</number>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="7">
-              <widget class="QLineEdit" name="majKey9">
-               <property name="minimumSize">
-                <size>
-                 <width>34</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>34</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="maxLength">
-                <number>50</number>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="6">
-              <widget class="QLabel" name="lbl_majKey9">
-               <property name="text">
-                <string notr="true">Gb</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="9">
-              <widget class="QLineEdit" name="majKey10">
-               <property name="minimumSize">
-                <size>
-                 <width>34</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>34</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="maxLength">
-                <number>50</number>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="8">
-              <widget class="QLabel" name="lbl_majKey10">
-               <property name="text">
-                <string notr="true">G</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="11">
-              <widget class="QLineEdit" name="majKey11">
-               <property name="minimumSize">
-                <size>
-                 <width>34</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>34</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="maxLength">
-                <number>50</number>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="10">
-              <widget class="QLabel" name="lbl_majKey11">
-               <property name="text">
-                <string notr="true">Ab</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="lbl_minKey0">
-               <property name="text">
-                <string notr="true">Am</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="2">
-              <widget class="QLabel" name="lbl_minKey1">
-               <property name="text">
-                <string notr="true">Bbm</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="4">
-              <widget class="QLabel" name="lbl_minKey2">
-               <property name="text">
-                <string notr="true">Bm</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="6">
-              <widget class="QLabel" name="lbl_minKey3">
-               <property name="text">
-                <string notr="true">Cm</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="8">
-              <widget class="QLabel" name="lbl_minKey4">
-               <property name="text">
-                <string notr="true">Dbm</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="10">
-              <widget class="QLabel" name="lbl_minKey5">
-               <property name="text">
-                <string notr="true">Dm</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="lbl_minKey6">
-               <property name="text">
-                <string notr="true">Ebm</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="2">
-              <widget class="QLabel" name="lbl_minKey7">
-               <property name="text">
-                <string notr="true">Em</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="4">
-              <widget class="QLabel" name="lbl_minKey8">
-               <property name="text">
-                <string notr="true">Fm</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="6">
-              <widget class="QLabel" name="lbl_minKey9">
-               <property name="text">
-                <string notr="true">Gbm</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="8">
-              <widget class="QLabel" name="lbl_minKey10">
-               <property name="text">
-                <string notr="true">Gm</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="10">
-              <widget class="QLabel" name="lbl_minKey11">
-               <property name="text">
-                <string notr="true">Abm</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QLineEdit" name="minKey0">
-               <property name="minimumSize">
-                <size>
-                 <width>34</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>34</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="maxLength">
-                <number>50</number>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="3">
-              <widget class="QLineEdit" name="minKey1">
-               <property name="minimumSize">
-                <size>
-                 <width>34</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>34</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="maxLength">
-                <number>50</number>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="5">
-              <widget class="QLineEdit" name="minKey2">
-               <property name="minimumSize">
-                <size>
-                 <width>34</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>34</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="maxLength">
-                <number>50</number>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="7">
-              <widget class="QLineEdit" name="minKey3">
-               <property name="minimumSize">
-                <size>
-                 <width>34</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>34</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="maxLength">
-                <number>50</number>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="9">
-              <widget class="QLineEdit" name="minKey4">
-               <property name="minimumSize">
-                <size>
-                 <width>34</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>34</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="maxLength">
-                <number>50</number>
                </property>
               </widget>
              </item>
@@ -1113,6 +667,35 @@
                </property>
               </widget>
              </item>
+             <item row="1" column="10">
+              <widget class="QLabel" name="lbl_majKey11">
+               <property name="text">
+                <string notr="true">Ab</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="3">
+              <widget class="QLineEdit" name="majKey7">
+               <property name="minimumSize">
+                <size>
+                 <width>34</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>34</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="maxLength">
+                <number>50</number>
+               </property>
+              </widget>
+             </item>
              <item row="3" column="11">
               <widget class="QLineEdit" name="minKey11">
                <property name="minimumSize">
@@ -1132,8 +715,18 @@
                </property>
               </widget>
              </item>
-             <item row="4" column="11">
-              <widget class="QLineEdit" name="silence">
+             <item row="1" column="6">
+              <widget class="QLabel" name="lbl_majKey9">
+               <property name="text">
+                <string notr="true">Gb</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="9">
+              <widget class="QLineEdit" name="majKey10">
                <property name="minimumSize">
                 <size>
                  <width>34</width>
@@ -1151,20 +744,505 @@
                </property>
               </widget>
              </item>
-             <item row="4" column="10">
-              <widget class="QLabel" name="lbl_silence">
+             <item row="2" column="7">
+              <widget class="QLineEdit" name="minKey3">
+               <property name="minimumSize">
+                <size>
+                 <width>34</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>34</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="maxLength">
+                <number>50</number>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="2">
+              <widget class="QLabel" name="lbl_minKey1">
                <property name="text">
-                <string>None</string>
+                <string notr="true">Bbm</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
+             <item row="0" column="6">
+              <widget class="QLabel" name="lbl_majKey3">
+               <property name="text">
+                <string notr="true">C</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="lbl_minKey0">
+               <property name="text">
+                <string notr="true">Am</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="10">
+              <widget class="QLabel" name="lbl_minKey11">
+               <property name="text">
+                <string notr="true">Abm</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="9">
+              <widget class="QLineEdit" name="minKey4">
+               <property name="minimumSize">
+                <size>
+                 <width>34</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>34</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="maxLength">
+                <number>50</number>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="4">
+              <widget class="QLabel" name="lbl_minKey2">
+               <property name="text">
+                <string notr="true">Bm</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="8">
+              <widget class="QLabel" name="lbl_majKey10">
+               <property name="text">
+                <string notr="true">G</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="7">
+              <widget class="QLineEdit" name="majKey9">
+               <property name="minimumSize">
+                <size>
+                 <width>34</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>34</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="maxLength">
+                <number>50</number>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="5">
+              <widget class="QLineEdit" name="minKey2">
+               <property name="minimumSize">
+                <size>
+                 <width>34</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>34</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="maxLength">
+                <number>50</number>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QLineEdit" name="minKey0">
+               <property name="minimumSize">
+                <size>
+                 <width>34</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>34</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="maxLength">
+                <number>50</number>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="5">
+              <widget class="QLineEdit" name="majKey8">
+               <property name="minimumSize">
+                <size>
+                 <width>34</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>34</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="maxLength">
+                <number>50</number>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="2">
+              <widget class="QLabel" name="lbl_minKey7">
+               <property name="text">
+                <string notr="true">Em</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="QLabel" name="lbl_majKey7">
+               <property name="text">
+                <string notr="true">E</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="majKey6">
+               <property name="minimumSize">
+                <size>
+                 <width>34</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>34</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="maxLength">
+                <number>50</number>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="lbl_majKey6">
+               <property name="text">
+                <string notr="true">Eb</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="3">
+              <widget class="QLineEdit" name="minKey1">
+               <property name="minimumSize">
+                <size>
+                 <width>34</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>34</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="maxLength">
+                <number>50</number>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="6">
+              <widget class="QLabel" name="lbl_minKey3">
+               <property name="text">
+                <string notr="true">Cm</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="8">
+              <widget class="QLabel" name="lbl_minKey4">
+               <property name="text">
+                <string notr="true">Dbm</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="10">
+              <widget class="QLabel" name="lbl_minKey5">
+               <property name="text">
+                <string notr="true">Dm</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="lbl_minKey6">
+               <property name="text">
+                <string notr="true">Ebm</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="4">
+              <widget class="QLabel" name="lbl_minKey8">
+               <property name="text">
+                <string notr="true">Fm</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="6">
+              <widget class="QLabel" name="lbl_minKey9">
+               <property name="text">
+                <string notr="true">Gbm</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="8">
+              <widget class="QLabel" name="lbl_minKey10">
+               <property name="text">
+                <string notr="true">Gm</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="11">
+              <widget class="QLineEdit" name="majKey11">
+               <property name="minimumSize">
+                <size>
+                 <width>34</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>34</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="maxLength">
+                <number>50</number>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="3">
+              <widget class="QLineEdit" name="majKey1">
+               <property name="minimumSize">
+                <size>
+                 <width>34</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>34</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="maxLength">
+                <number>50</number>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="9">
+              <widget class="QLineEdit" name="majKey4">
+               <property name="minimumSize">
+                <size>
+                 <width>34</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>34</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="maxLength">
+                <number>50</number>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="10">
+              <widget class="QLabel" name="lbl_majKey5">
+               <property name="text">
+                <string notr="true">D</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="5">
+              <widget class="QLineEdit" name="majKey2">
+               <property name="minimumSize">
+                <size>
+                 <width>34</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>34</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="maxLength">
+                <number>50</number>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="4">
+              <widget class="QLabel" name="lbl_majKey2">
+               <property name="text">
+                <string notr="true">B</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QLabel" name="lbl_majKey1">
+               <property name="text">
+                <string notr="true">Bb</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="lbl_majKey0">
+               <property name="text">
+                <string notr="true">A</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="11">
+              <widget class="QLineEdit" name="majKey5">
+               <property name="minimumSize">
+                <size>
+                 <width>34</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>34</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="maxLength">
+                <number>50</number>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="7">
+              <widget class="QLineEdit" name="majKey3">
+               <property name="minimumSize">
+                <size>
+                 <width>34</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>34</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="maxLength">
+                <number>50</number>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="8">
+              <widget class="QLabel" name="lbl_majKey4">
+               <property name="text">
+                <string notr="true">Db</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="majKey0">
+               <property name="minimumSize">
+                <size>
+                 <width>34</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>34</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="maxLength">
+                <number>50</number>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
            <item>
-            <spacer name="verticalSpacer_2">
+            <spacer name="spacerCodes">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
@@ -1258,7 +1336,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>744</width>
+            <width>715</width>
             <height>884</height>
            </rect>
           </property>
@@ -2474,7 +2552,7 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer">
+      <spacer name="spacerBottom">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>

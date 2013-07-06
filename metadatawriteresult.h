@@ -26,9 +26,7 @@
 
 class MetadataWriteResult{
 public:
-  QString newTagComment;
-  QString newTagGrouping;
-  QString newTagKey;
+  QStringList newTags;
 };
 
 #endif // METADATAWRITERESULT_H

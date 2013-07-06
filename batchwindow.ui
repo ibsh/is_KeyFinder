@@ -92,12 +92,17 @@
        </column>
        <column>
         <property name="text">
+         <string>Title Tag</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
          <string>Artist Tag</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>Title Tag</string>
+         <string>Album Tag</string>
         </property>
        </column>
        <column>

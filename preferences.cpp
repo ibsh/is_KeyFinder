@@ -189,13 +189,34 @@ Preferences::Preferences(){
     metadataFormat = METADATA_FORMAT_KEYS;
   }
 
+  if(settings.contains("metadataWriteTitle")){
+    metadataWriteTitle = (metadata_write_t)settings.value("metadataWriteTitle").toInt();
+  }else{
+    metadataWriteTitle = METADATA_WRITE_NONE;
+  }
+  if(settings.contains("metadataWriteArtist")){
+    metadataWriteArtist = (metadata_write_t)settings.value("metadataWriteArtist").toInt();
+  }else{
+    metadataWriteArtist = METADATA_WRITE_NONE;
+  }
+  if(settings.contains("metadataWriteAlbum")){
+    metadataWriteAlbum = (metadata_write_t)settings.value("metadataWriteAlbum").toInt();
+  }else{
+    metadataWriteAlbum = METADATA_WRITE_NONE;
+  }
   if(settings.contains("metadataWriteComment")){
     metadataWriteComment = (metadata_write_t)settings.value("metadataWriteComment").toInt();
-    metadataWriteGrouping = (metadata_write_t)settings.value("metadataWriteGrouping").toInt();
-    metadataWriteKey = (metadata_write_t)settings.value("metadataWriteKey").toInt();
   }else{
     metadataWriteComment = METADATA_WRITE_PREPEND;
+  }
+  if(settings.contains("metadataWriteGrouping")){
+    metadataWriteGrouping = (metadata_write_t)settings.value("metadataWriteGrouping").toInt();
+  }else{
     metadataWriteGrouping = METADATA_WRITE_NONE;
+  }
+  if(settings.contains("metadataWriteGrouping")){
+    metadataWriteKey = (metadata_write_t)settings.value("metadataWriteKey").toInt();
+  }else{
     metadataWriteKey = METADATA_WRITE_NONE;
   }
   if(settings.contains("metadataWriteFilename")){
@@ -404,6 +425,9 @@ void Preferences::save(){
 
   settings.beginGroup("tags");
   settings.setValue("metadataFormat", metadataFormat);
+  settings.setValue("metadataWriteTitle", metadataWriteTitle);
+  settings.setValue("metadataWriteArtist", metadataWriteArtist);
+  settings.setValue("metadataWriteAlbum", metadataWriteAlbum);
   settings.setValue("metadataWriteComment", metadataWriteComment);
   settings.setValue("metadataWriteGrouping", metadataWriteGrouping);
   settings.setValue("metadataWriteKey", metadataWriteKey);
@@ -437,6 +461,9 @@ Preferences& Preferences::operator=(const Preferences& that){
     core = that.core;
     customKeyCodes = that.customKeyCodes;
     metadataFormat = that.metadataFormat;
+    metadataWriteTitle = that.metadataWriteTitle;
+    metadataWriteArtist = that.metadataWriteArtist;
+    metadataWriteAlbum = that.metadataWriteAlbum;
     metadataWriteComment = that.metadataWriteComment;
     metadataWriteGrouping = that.metadataWriteGrouping;
     metadataWriteKey = that.metadataWriteKey;
@@ -456,8 +483,21 @@ Preferences& Preferences::operator=(const Preferences& that){
   return *this;
 }
 
+metadata_write_t Preferences::getMetadataWriteByTagEnum(metadata_tag_t tag) const {
+  if      (tag == METADATA_TAG_TITLE)    return getMetadataWriteTitle();
+  else if (tag == METADATA_TAG_ARTIST)   return getMetadataWriteArtist();
+  else if (tag == METADATA_TAG_ALBUM)    return getMetadataWriteAlbum();
+  else if (tag == METADATA_TAG_COMMENT)  return getMetadataWriteComment();
+  else if (tag == METADATA_TAG_GROUPING) return getMetadataWriteGrouping();
+  else if (tag == METADATA_TAG_KEY)      return getMetadataWriteKey();
+  return METADATA_WRITE_NONE;
+}
+
 bool              Preferences::getWriteToFilesAutomatically() const { return writeToFilesAutomatically; }
 bool              Preferences::getParallelBatchJobs()         const { return parallelBatchJobs; }
+metadata_write_t  Preferences::getMetadataWriteTitle()        const { return metadataWriteTitle; }
+metadata_write_t  Preferences::getMetadataWriteArtist()       const { return metadataWriteArtist; }
+metadata_write_t  Preferences::getMetadataWriteAlbum()        const { return metadataWriteAlbum; }
 metadata_write_t  Preferences::getMetadataWriteComment()      const { return metadataWriteComment; }
 metadata_write_t  Preferences::getMetadataWriteGrouping()     const { return metadataWriteGrouping; }
 metadata_write_t  Preferences::getMetadataWriteKey()          const { return metadataWriteKey; }
@@ -495,6 +535,9 @@ float                           Preferences::getDetunedBandWeight()        const
 std::vector<float>              Preferences::getCustomToneProfile()        const { return core.getCustomToneProfile(); }
 
 void Preferences::setWriteToFilesAutomatically(bool autoWrite)     { writeToFilesAutomatically = autoWrite; }
+void Preferences::setMetadataWriteTitle(metadata_write_t tit)      { metadataWriteTitle = tit; }
+void Preferences::setMetadataWriteArtist(metadata_write_t art)     { metadataWriteArtist = art; }
+void Preferences::setMetadataWriteAlbum(metadata_write_t alb)      { metadataWriteAlbum = alb; }
 void Preferences::setMetadataWriteComment(metadata_write_t cmt)    { metadataWriteComment = cmt; }
 void Preferences::setMetadataWriteGrouping(metadata_write_t grp)   { metadataWriteGrouping = grp; }
 void Preferences::setMetadataWriteKey(metadata_write_t key)        { metadataWriteKey = key; }
@@ -541,13 +584,13 @@ void Preferences::setParallelBatchJobs(bool parallel){
   }
 }
 
-QString Preferences::getKeyCode(int n) const{
-  if(n < 0 || n >= defaultKeyCodes.size()){
-    qDebug("Attempt to get name of out-of-bounds key (%d/%d)",n,(int)defaultKeyCodes.size());
+QString Preferences::getKeyCode(KeyFinder::key_t k) const{
+  if(k < 0 || k >= defaultKeyCodes.size()){
+    qDebug("Attempt to get name of out-of-bounds key (%d/%d)",k,(int)defaultKeyCodes.size());
     return "";
   }
-  QString defaultCode = defaultKeyCodes[n];
-  QString customCode = customKeyCodes[n];
+  QString defaultCode = defaultKeyCodes[k];
+  QString customCode = customKeyCodes[k];
   if(metadataFormat == METADATA_FORMAT_KEYS || customCode == "")
     return defaultCode;
   else if(metadataFormat == METADATA_FORMAT_CUSTOM)
@@ -559,16 +602,16 @@ QString Preferences::getKeyCode(int n) const{
 QStringList Preferences::getKeyCodeList() const{
   QStringList output;
   for(int i = 0; i < defaultKeyCodes.size(); i++)
-    output << getKeyCode(i);
+    output << getKeyCode((KeyFinder::key_t)i);
   return output;
 }
 
-QColor Preferences::getKeyColour(int n) const{
-  if(n < 0 || n >= keyColours.size()){
-    qDebug("Attempt to get colour of out-of-bounds key (%d/%d)",n,(int)keyColours.size());
+QColor Preferences::getKeyColour(KeyFinder::key_t k) const{
+  if(k >= keyColours.size()){
+    qDebug("Attempt to get colour of out-of-bounds key (%d/%d)",k,(int)keyColours.size());
     return qRgb(0,0,0);
   }
-  return keyColours[n];
+  return keyColours[k];
 }
 
 void Preferences::setImageColours(QImage& image, chromagram_colour_t scheme) const{

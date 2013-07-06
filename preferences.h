@@ -53,6 +53,16 @@ enum metadata_write_t{
   METADATA_WRITE_OVERWRITE
 };
 
+enum metadata_tag_t{
+  METADATA_TAG_TITLE,
+  METADATA_TAG_ARTIST,
+  METADATA_TAG_ALBUM,
+  METADATA_TAG_COMMENT,
+  METADATA_TAG_GROUPING,
+  METADATA_TAG_KEY
+};
+const unsigned int METADATA_TAG_T_COUNT = 6;
+
 enum chromagram_colour_t{
   CHROMA_COLOUR_IZO,
   CHROMA_COLOUR_MONO,
@@ -71,6 +81,10 @@ public:
   // accessors
   bool getWriteToFilesAutomatically() const;
   bool getParallelBatchJobs() const;
+  metadata_write_t getMetadataWriteByTagEnum(metadata_tag_t) const;
+  metadata_write_t getMetadataWriteTitle() const;
+  metadata_write_t getMetadataWriteArtist() const;
+  metadata_write_t getMetadataWriteAlbum() const;
   metadata_write_t getMetadataWriteComment() const;
   metadata_write_t getMetadataWriteGrouping() const;
   metadata_write_t getMetadataWriteKey() const;
@@ -111,6 +125,9 @@ public:
   // mutators
   void setWriteToFilesAutomatically(bool);
   void setParallelBatchJobs(bool);
+  void setMetadataWriteTitle(metadata_write_t);
+  void setMetadataWriteArtist(metadata_write_t);
+  void setMetadataWriteAlbum(metadata_write_t);
   void setMetadataWriteComment(metadata_write_t);
   void setMetadataWriteGrouping(metadata_write_t);
   void setMetadataWriteKey(metadata_write_t);
@@ -148,14 +165,17 @@ public:
   void setCustomToneProfile(const std::vector<float>&);
 
   // not necessarily related to user preferences, just here for convenience
-  QString getKeyCode(int) const;
+  QString getKeyCode(KeyFinder::key_t) const;
   QStringList getKeyCodeList() const;
-  QColor getKeyColour(int) const;
+  QColor getKeyColour(KeyFinder::key_t) const;
   void setImageColours(QImage&, chromagram_colour_t) const;
 
 private:
   bool writeToFilesAutomatically;
   bool parallelBatchJobs;
+  metadata_write_t metadataWriteTitle;
+  metadata_write_t metadataWriteArtist;
+  metadata_write_t metadataWriteAlbum;
   metadata_write_t metadataWriteComment;
   metadata_write_t metadataWriteGrouping;
   metadata_write_t metadataWriteKey;

@@ -86,11 +86,10 @@ int commandLineInterface(int argc, char* argv[]){
   if(writeToTags){
     TagLibMetadata md(filePath);
     MetadataWriteResult written = md.writeKeyToMetadata(result.core.globalKeyEstimate,prefs);
-    if(
-      written.newTagComment.isEmpty() &&
-      written.newTagGrouping.isEmpty() &&
-      written.newTagKey.isEmpty()
-    ){
+    bool found = false;
+    for(int i = 0; i < written.newTags.size(); i++)
+      if (!written.newTags[i].isEmpty()) found = true;
+    if(!found){
       std::cerr << "Could not write to tags" << std::endl;
       return 2;
     }

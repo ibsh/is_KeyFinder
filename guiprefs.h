@@ -67,6 +67,9 @@ private slots:
   void on_findITunesLibraryButton_clicked();
   void on_findTraktorLibraryButton_clicked();
   void on_findSeratoLibraryButton_clicked();
+  void on_metadataWriteTitle_currentIndexChanged(int index);
+  void on_metadataWriteArtist_currentIndexChanged(int index);
+  void on_metadataWriteAlbum_currentIndexChanged(int index);
   void on_metadataWriteComment_currentIndexChanged(int index);
   void on_metadataWriteGrouping_currentIndexChanged(int index);
   void on_metadataWriteKey_currentIndexChanged(int index);

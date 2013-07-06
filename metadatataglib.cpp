@@ -100,6 +100,16 @@ TagLibMetadata::~TagLibMetadata(){
     delete f;
 }
 
+QString TagLibMetadata::getByTagEnum(metadata_tag_t tag) const {
+  if      (tag == METADATA_TAG_TITLE)    return getTitle();
+  else if (tag == METADATA_TAG_ARTIST)   return getArtist();
+  else if (tag == METADATA_TAG_ALBUM)    return getAlbum();
+  else if (tag == METADATA_TAG_COMMENT)  return getComment();
+  else if (tag == METADATA_TAG_GROUPING) return getGrouping();
+  else if (tag == METADATA_TAG_KEY)      return getKey();
+  return QString("");
+}
+
 QString TagLibMetadata::getTitle() const{
   if(f == NULL || !f->isValid())
     return GuiStrings::getInstance()->notApplicable();
@@ -111,6 +121,13 @@ QString TagLibMetadata::getArtist() const{
   if(f == NULL || !f->isValid())
     return GuiStrings::getInstance()->notApplicable();
   TagLib::String out = f->tag()->artist();
+  return QString::fromUtf8(out.toCString(true));
+}
+
+QString TagLibMetadata::getAlbum() const{
+  if(f == NULL || !f->isValid())
+    return GuiStrings::getInstance()->notApplicable();
+  TagLib::String out = f->tag()->album();
   return QString::fromUtf8(out.toCString(true));
 }
 
@@ -269,63 +286,86 @@ QString TagLibMetadata::getKeyId3(const TagLib::ID3v2::Tag* tag) const{
   return GuiStrings::getInstance()->notApplicable();
 }
 
-MetadataWriteResult TagLibMetadata::writeKeyToMetadata(int key, const Preferences& prefs){
+MetadataWriteResult TagLibMetadata::writeKeyToMetadata(KeyFinder::key_t key, const Preferences& prefs){
 
   MetadataWriteResult result;
+  QString data = prefs.getKeyCode(key);
+  QString empty;
 
-  QString dataToWrite = prefs.getKeyCode(key);
-  QString delim = prefs.getMetadataDelimiter();
-
-  if(prefs.getMetadataWriteComment() == METADATA_WRITE_OVERWRITE){
-    if(getComment() != dataToWrite && setComment(dataToWrite))
-      result.newTagComment = dataToWrite;
-  }else if(prefs.getMetadataWriteComment() == METADATA_WRITE_PREPEND){
-    QString newTagComment = dataToWrite + delim + getComment();
-    if(getComment().left(dataToWrite.length()) != dataToWrite && setComment(newTagComment))
-      result.newTagComment = newTagComment;
-  }else if(prefs.getMetadataWriteComment() == METADATA_WRITE_APPEND){
-    QString newTagComment = getComment() + delim + dataToWrite;
-    if(getComment().right(dataToWrite.length()) != dataToWrite && setComment(newTagComment))
-      result.newTagComment = newTagComment;
+  for (unsigned int i = 0; i < METADATA_TAG_T_COUNT; i++) {
+    result.newTags.push_back(empty);
+    if ((metadata_tag_t)i == METADATA_TAG_KEY)
+      writeKeyByTagEnum(data.left(3), (metadata_tag_t)i, result, prefs); // Key field in ID3 holds only 3 chars
+    else
+      writeKeyByTagEnum(data, (metadata_tag_t)i, result, prefs);
   }
-
-  if(prefs.getMetadataWriteGrouping() == METADATA_WRITE_OVERWRITE){
-    if(getGrouping() != dataToWrite && setGrouping(dataToWrite))
-      result.newTagGrouping = dataToWrite;
-  }else if(prefs.getMetadataWriteGrouping() == METADATA_WRITE_PREPEND){
-    QString newTagGrouping = dataToWrite + delim + getGrouping();
-    if(getGrouping().left(dataToWrite.length()) != dataToWrite && setGrouping(newTagGrouping))
-      result.newTagGrouping = newTagGrouping;
-  }else if(prefs.getMetadataWriteGrouping() == METADATA_WRITE_APPEND){
-    QString newTagGrouping = getGrouping() + delim + dataToWrite;
-    if(getGrouping().right(dataToWrite.length()) != dataToWrite && setGrouping(newTagGrouping))
-      result.newTagGrouping = newTagGrouping;
-  }
-
-  dataToWrite = dataToWrite.left(3); // Key field in ID3 holds only 3 chars
-  if(prefs.getMetadataWriteKey() == METADATA_WRITE_OVERWRITE)
-    if(getKey() != dataToWrite && setKey(dataToWrite))
-        result.newTagKey = dataToWrite;
 
   return result;
+}
 
+void TagLibMetadata::writeKeyByTagEnum(const QString& data, metadata_tag_t tag, MetadataWriteResult& result, const Preferences& prefs) {
+  QString delim = prefs.getMetadataDelimiter();
+  metadata_write_t write = prefs.getMetadataWriteByTagEnum(tag);
+  if(write == METADATA_WRITE_OVERWRITE){
+    if(getByTagEnum(tag) != data && setByTagEnum(data, tag))
+      result.newTags[tag] = data;
+  }else if(write == METADATA_WRITE_PREPEND){
+    QString current = getByTagEnum(tag);
+    QString newData = (current.isEmpty() ? data : data + delim + current);
+    if(current.left(data.length()) != data && setByTagEnum(newData, tag))
+      result.newTags[tag] = newData ;
+  }else if(write == METADATA_WRITE_APPEND){
+    QString current = getByTagEnum(tag);
+    QString newData = (current.isEmpty() ? data : current + delim + data);
+    if(current.right(data.length()) != data && setByTagEnum(newData, tag))
+      result.newTags[tag] = newData;
+  }
+}
+
+bool TagLibMetadata::setByTagEnum(const QString& data, metadata_tag_t tag) {
+  if      (tag == METADATA_TAG_TITLE)    return setTitle(data);
+  else if (tag == METADATA_TAG_ARTIST)   return setArtist(data);
+  else if (tag == METADATA_TAG_ALBUM)    return setAlbum(data);
+  else if (tag == METADATA_TAG_COMMENT)  return setComment(data);
+  else if (tag == METADATA_TAG_GROUPING) return setGrouping(data);
+  else if (tag == METADATA_TAG_KEY)      return setKey(data);
+  return false;
+}
+
+bool TagLibMetadata::setTitle(const QString& tit){
+  if (f == NULL || !f->isValid()) return false;
+  f->tag()->setTitle(TagLib::String(tit.toUtf8().constData(), TagLib::String::UTF8));
+  f->save();
+  return true;
+}
+
+bool TagLibMetadata::setArtist(const QString& art){
+  if (f == NULL || !f->isValid()) return false;
+  f->tag()->setArtist(TagLib::String(art.toUtf8().constData(), TagLib::String::UTF8));
+  f->save();
+  return true;
+}
+
+bool TagLibMetadata::setAlbum(const QString& alb){
+  if (f == NULL || !f->isValid()) return false;
+  f->tag()->setAlbum(TagLib::String(alb.toUtf8().constData(), TagLib::String::UTF8));
+  f->save();
+  return true;
 }
 
 bool TagLibMetadata::setComment(const QString& cmt){
-  if(f == NULL || !f->isValid()){
-    return false;
-  }
+  if (f == NULL || !f->isValid()) return false;
 
   // TagLib's default behaviour for FLACs treats Description as Comment. Override.
   TagLib::FLAC::File* fileTestFlac = dynamic_cast<TagLib::FLAC::File*>(f);
   if(fileTestFlac != NULL){
-    fileTestFlac->xiphComment()->addField("COMMENT",TagLib::String(cmt.toLocal8Bit().constData()),true);
+    fileTestFlac->xiphComment()->addField("COMMENT",TagLib::String(cmt.toUtf8().constData(), TagLib::String::UTF8),true);
     f->save();
     return true;
   }
 
   // non-FLAC behaviour
-  f->tag()->setComment(TagLib::String(cmt.toLocal8Bit().constData()));
+  f->tag()->setComment(TagLib::String(cmt.toUtf8().constData(), TagLib::String::UTF8));
 
   // iTunes hack for MPEGs and AIFFs, but iTunes doesn't read WAV tags
   TagLib::MPEG::File* fileTestMpeg = dynamic_cast<TagLib::MPEG::File*>(f);
@@ -352,14 +392,14 @@ void TagLibMetadata::setITunesCommentId3(TagLib::ID3v2::Tag* tag, const QString&
       if(commFrame && commFrame->description().isEmpty()){
         // TODO does this have implications for localisation?
         commFrame->setLanguage("eng");
-        commFrame->setText(TagLib::String(cmt.toLocal8Bit().constData()));
+        commFrame->setText(TagLib::String(cmt.toUtf8().constData(), TagLib::String::UTF8));
         // we don't save here, because MPEGs need v2.3 / 2.4 handling.
         done = true;
       }
     }
     if(done) return;
     TagLib::ID3v2::CommentsFrame* frm = new TagLib::ID3v2::CommentsFrame();
-    frm->setText(TagLib::String(cmt.toLocal8Bit().constData()));
+    frm->setText(TagLib::String(cmt.toUtf8().constData(), TagLib::String::UTF8));
     frm->setLanguage("eng");
     tag->addFrame(frm);
     // again, don't save here.
@@ -368,10 +408,7 @@ void TagLibMetadata::setITunesCommentId3(TagLib::ID3v2::Tag* tag, const QString&
 }
 
 bool TagLibMetadata::setGrouping(const QString& grp){
-
-  if(f == NULL || !f->isValid()){
-    return false;
-  }
+  if (f == NULL || !f->isValid()) return false;
 
   TagLib::MPEG::File* fileTestMpeg = dynamic_cast<TagLib::MPEG::File*>(f);
   if(fileTestMpeg != NULL && setGroupingId3(fileTestMpeg->ID3v2Tag(), grp)){
@@ -393,7 +430,7 @@ bool TagLibMetadata::setGrouping(const QString& grp){
 
   TagLib::MP4::Tag* tagTestMp4 = dynamic_cast<TagLib::MP4::Tag*>(f->tag());
   if(tagTestMp4 != NULL){
-    TagLib::StringList sl(TagLib::String(grp.toLocal8Bit().constData()));
+    TagLib::StringList sl(TagLib::String(grp.toUtf8().constData(), TagLib::String::UTF8));
     tagTestMp4->itemListMap()["\251grp"] = sl;
     f->save();
     return true;
@@ -401,14 +438,14 @@ bool TagLibMetadata::setGrouping(const QString& grp){
 
   TagLib::ASF::Tag* tagTestAsf = dynamic_cast<TagLib::ASF::Tag*>(f->tag());
   if(tagTestAsf != NULL){
-    tagTestAsf->setAttribute("WM/ContentGroupDescription",TagLib::String(grp.toLocal8Bit().constData()));
+    tagTestAsf->setAttribute("WM/ContentGroupDescription",TagLib::String(grp.toUtf8().constData(), TagLib::String::UTF8));
     f->save();
     return true;
   }
 
   TagLib::APE::Tag* tagTestApe = dynamic_cast<TagLib::APE::Tag*>(f->tag());
   if(tagTestApe != NULL){
-    tagTestApe->addValue("GROUPING",TagLib::String(grp.toLocal8Bit().constData()));
+    tagTestApe->addValue("GROUPING",TagLib::String(grp.toUtf8().constData(), TagLib::String::UTF8));
     f->save();
     return true;
   }
@@ -419,7 +456,7 @@ bool TagLibMetadata::setGrouping(const QString& grp){
 bool TagLibMetadata::setGroupingId3(TagLib::ID3v2::Tag* tag, const QString& grp){
   if(tag != NULL){
     TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TIT1");
-    frm->setText(TagLib::String(grp.toLocal8Bit().constData()));
+    frm->setText(TagLib::String(grp.toUtf8().constData(), TagLib::String::UTF8));
     tag->removeFrames("TIT1");
     tag->addFrame(frm);
     // again, don't save here
@@ -431,10 +468,7 @@ bool TagLibMetadata::setGroupingId3(TagLib::ID3v2::Tag* tag, const QString& grp)
 }
 
 bool TagLibMetadata::setKey(const QString& key){
-
-  if(f == NULL || !f->isValid()){
-    return false;
-  }
+  if (f == NULL || !f->isValid()) return false;
 
   TagLib::MPEG::File* fileTestMpeg = dynamic_cast<TagLib::MPEG::File*>(f);
   if(fileTestMpeg != NULL && setKeyId3(fileTestMpeg->ID3v2Tag(), key)){
@@ -456,7 +490,7 @@ bool TagLibMetadata::setKey(const QString& key){
 
   TagLib::MP4::Tag* tagTestMp4 = dynamic_cast<TagLib::MP4::Tag*>(f->tag());
   if(tagTestMp4 != NULL){
-    TagLib::StringList sl(TagLib::String(key.toLocal8Bit().constData()));
+    TagLib::StringList sl(TagLib::String(key.toUtf8().constData(), TagLib::String::UTF8));
     tagTestMp4->itemListMap()["----:com.apple.iTunes:initialkey"] = sl;
     f->save();
     return true;
@@ -464,14 +498,14 @@ bool TagLibMetadata::setKey(const QString& key){
 
   TagLib::ASF::Tag* tagTestAsf = dynamic_cast<TagLib::ASF::Tag*>(f->tag());
   if(tagTestAsf != NULL){
-    tagTestAsf->setAttribute("WM/InitialKey",TagLib::String(key.toLocal8Bit().constData()));
+    tagTestAsf->setAttribute("WM/InitialKey",TagLib::String(key.toUtf8().constData(), TagLib::String::UTF8));
     f->save();
     return true;
   }
 
   TagLib::FLAC::File* fileTestFlac = dynamic_cast<TagLib::FLAC::File*>(f);
   if(fileTestFlac != NULL){
-    fileTestFlac->xiphComment()->addField("INITIALKEY",TagLib::String(key.toLocal8Bit().constData()),true);
+    fileTestFlac->xiphComment()->addField("INITIALKEY",TagLib::String(key.toUtf8().constData(), TagLib::String::UTF8),true);
     f->save();
     return true;
   }
@@ -487,7 +521,7 @@ bool TagLibMetadata::setKey(const QString& key){
 bool TagLibMetadata::setKeyId3(TagLib::ID3v2::Tag* tag, const QString& key){
   if(tag != NULL){
     TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TKEY");
-    frm->setText(TagLib::String(key.toLocal8Bit().constData()));
+    frm->setText(TagLib::String(key.toUtf8().constData(), TagLib::String::UTF8));
     tag->removeFrames("TKEY");
     tag->addFrame(frm);
     // again, don't save in here

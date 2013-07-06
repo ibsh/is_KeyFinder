@@ -65,14 +65,21 @@ class TagLibMetadata{
 public:
   TagLibMetadata(const QString&);
   ~TagLibMetadata();
+  QString getByTagEnum(metadata_tag_t) const;
   QString getTitle() const;
   QString getArtist() const;
+  QString getAlbum() const;
   QString getComment() const;
   QString getGrouping() const;
   QString getKey() const;
-  MetadataWriteResult writeKeyToMetadata(int, const Preferences&);
-private:
+  MetadataWriteResult writeKeyToMetadata(KeyFinder::key_t, const Preferences&);
+protected:
   TagLib::File* f;
+  bool setByTagEnum(const QString&, metadata_tag_t);
+  void writeKeyByTagEnum(const QString&, metadata_tag_t, MetadataWriteResult&, const Preferences&);
+  bool setTitle(const QString&);
+  bool setArtist(const QString&);
+  bool setAlbum(const QString&);
   bool setComment(const QString&);
   bool setGrouping(const QString&);
   bool setKey(const QString&);

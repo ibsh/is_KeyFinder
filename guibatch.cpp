@@ -22,18 +22,6 @@
 #include "guibatch.h"
 #include "ui_batchwindow.h"
 
-const int COL_PLAYLIST_SOURCE = 0;
-const int COL_PLAYLIST_NAME = 1;
-
-const int COL_STATUS = 0;
-const int COL_FILEPATH = 1;
-const int COL_FILENAME = 2;
-const int COL_TAG_ARTIST = 3;
-const int COL_TAG_TITLE = 4;
-const int COL_TAG_COMMENT = 5;
-const int COL_TAG_GROUPING = 6;
-const int COL_TAG_KEY = 7;
-const int COL_KEY = 8;
 // Statuses >= 0 are key codes
 const QString STATUS_NEW = "-1";
 const QString STATUS_TAGSREAD = "-2";
@@ -47,7 +35,11 @@ const QString STATUS_FAILED = "-4";
  */
 typedef QVector<int> MyArray;
 
-BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindow(parent), ui(new Ui::BatchWindow){
+BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) :
+  QMainWindow(parent),
+  ui(new Ui::BatchWindow),
+  metadataColumnMapping(METADATA_TAG_T_COUNT)
+{
   // ASYNC
   qRegisterMetaType<MyArray>("MyArray");
   connect(&readLibraryWatcher,  SIGNAL(finished()), this, SLOT(readLibraryFinished()));
@@ -89,6 +81,12 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) : QMainWindo
   textError       = QBrush(QColor(191,   0,   0));
   sortColumn = -1;
   allowSort = false;
+  metadataColumnMapping[METADATA_TAG_TITLE]    = COL_TAG_TITLE;
+  metadataColumnMapping[METADATA_TAG_ARTIST]   = COL_TAG_ARTIST;
+  metadataColumnMapping[METADATA_TAG_ALBUM]    = COL_TAG_ALBUM;
+  metadataColumnMapping[METADATA_TAG_COMMENT]  = COL_TAG_COMMENT;
+  metadataColumnMapping[METADATA_TAG_GROUPING] = COL_TAG_GROUPING;
+  metadataColumnMapping[METADATA_TAG_KEY]      = COL_TAG_KEY;
   connect(ui->tableWidget->horizontalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(headerClicked(int)));
 
   // Read music library
@@ -415,25 +413,12 @@ void BatchWindow::readMetadata(){
 
 void BatchWindow::metadataReadResultReadyAt(int index){
   int row = metadataReadWatcher.resultAt(index).batchRow;
-  if(metadataReadWatcher.resultAt(index).artist != ""){
-    ui->tableWidget->setItem(row, COL_TAG_ARTIST,new QTableWidgetItem());
-    ui->tableWidget->item(row, COL_TAG_ARTIST)->setText(metadataReadWatcher.resultAt(index).artist);
-  }
-  if(metadataReadWatcher.resultAt(index).title != ""){
-    ui->tableWidget->setItem(row, COL_TAG_TITLE,new QTableWidgetItem());
-    ui->tableWidget->item(row, COL_TAG_TITLE)->setText(metadataReadWatcher.resultAt(index).title);
-  }
-  if(metadataReadWatcher.resultAt(index).comment != ""){
-    ui->tableWidget->setItem(row, COL_TAG_COMMENT,new QTableWidgetItem());
-    ui->tableWidget->item(row, COL_TAG_COMMENT)->setText(metadataReadWatcher.resultAt(index).comment);
-  }
-  if(metadataReadWatcher.resultAt(index).grouping != ""){
-    ui->tableWidget->setItem(row, COL_TAG_GROUPING,new QTableWidgetItem());
-    ui->tableWidget->item(row, COL_TAG_GROUPING)->setText(metadataReadWatcher.resultAt(index).grouping);
-  }
-  if(metadataReadWatcher.resultAt(index).key != ""){
-    ui->tableWidget->setItem(row, COL_TAG_KEY,new QTableWidgetItem());
-    ui->tableWidget->item(row, COL_TAG_KEY)->setText(metadataReadWatcher.resultAt(index).key);
+  for (unsigned int i = 0; i < METADATA_TAG_T_COUNT; i++) {
+    QString data = metadataReadWatcher.resultAt(index).tags[i];
+    if(!data.isEmpty()){
+      ui->tableWidget->setItem(row, metadataColumnMapping[i],new QTableWidgetItem());
+      ui->tableWidget->item(row, metadataColumnMapping[i])->setText(data);
+    }
   }
 }
 
@@ -462,28 +447,37 @@ void BatchWindow::checkRowsForSkipping(){
       markRowSkipped(row, false);
       continue;
     }
+
     // otherwise, skip this file if the relevant tags already contain tag metadata
     bool skip = true;
-    metadata_write_t f = prefs.getMetadataWriteFilename();
-    metadata_write_t c = prefs.getMetadataWriteComment();
-    metadata_write_t g = prefs.getMetadataWriteGrouping();
-    metadata_write_t k = prefs.getMetadataWriteKey();
-    if(
-      f == METADATA_WRITE_NONE &&
-      c == METADATA_WRITE_NONE &&
-      g == METADATA_WRITE_NONE &&
-      k == METADATA_WRITE_NONE
+    std::vector<metadata_write_t> writePrefs(METADATA_TAG_T_COUNT + 1);
+    for (unsigned int i = 0; i < METADATA_TAG_T_COUNT; i++)
+      writePrefs[i] = prefs.getMetadataWriteByTagEnum((metadata_tag_t) i);
+    writePrefs[METADATA_TAG_T_COUNT] = prefs.getMetadataWriteFilename();
+
+    for (unsigned int i = 0; i < METADATA_TAG_T_COUNT; i++) {
+      if (
+        writePrefs[i] != METADATA_WRITE_NONE
+        && !fieldAlreadyHasKeyData(row, metadataColumnMapping[i], writePrefs[i])
+      ) skip = false;
+    }
+    if (
+      writePrefs[METADATA_TAG_T_COUNT] != METADATA_WRITE_NONE
+      && !fieldAlreadyHasKeyData(row, COL_FILENAME, writePrefs[METADATA_TAG_T_COUNT])
     ) skip = false;
-    else if(f != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_FILENAME,     f) == false) skip = false;
-    else if(c != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_TAG_COMMENT,  c) == false) skip = false;
-    else if(g != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_TAG_GROUPING, g) == false) skip = false;
-    else if(k != METADATA_WRITE_NONE && checkFieldForMetadata(row, COL_TAG_KEY,      k) == false) skip = false;
+
+    // special case; don't skip if all metadata write prefs are off
+    bool specialCase = true;
+    for (unsigned int i = 0; i < writePrefs.size(); i++)
+      if (writePrefs[i] != METADATA_WRITE_NONE)
+        specialCase = false;
+    if(specialCase) skip = false;
 
     markRowSkipped(row, skip);
   }
 }
 
-bool BatchWindow::checkFieldForMetadata(int row, int col, metadata_write_t t){
+bool BatchWindow::fieldAlreadyHasKeyData(int row, int col, metadata_write_t t){
   if(ui->tableWidget->item(row, col) == 0)
     return false;
   QString str = ui->tableWidget->item(row, col)->text();
@@ -492,20 +486,10 @@ bool BatchWindow::checkFieldForMetadata(int row, int col, metadata_write_t t){
   QStringList keyCodes = prefs.getKeyCodeList();
   for(int i = 0; i < keyCodes.size(); i++){
     QString chk = keyCodes[i];
-    if(col == COL_TAG_KEY){
-      if(str.indexOf(chk.left(3)) != -1)
-        return true;
-    }else if(t == METADATA_WRITE_OVERWRITE && str == chk){
-      return true;
-    }else if(t == METADATA_WRITE_PREPEND){
-      chk = prefs.getMetadataDelimiter() + chk;
-      if(str.left(chk.length()) == chk)
-        return true;
-    }else if(t == METADATA_WRITE_APPEND){
-      chk = prefs.getMetadataDelimiter() + chk;
-      if(str.right(chk.length()) == chk)
-        return true;
-    }
+    if(col == COL_TAG_KEY) chk = chk.left(3);
+    if(t == METADATA_WRITE_OVERWRITE && str                     == chk) return true;
+    if(t == METADATA_WRITE_PREPEND   && str.left(chk.length())  == chk) return true;
+    if(t == METADATA_WRITE_APPEND    && str.right(chk.length()) == chk) return true;
   }
   return false;
 }
@@ -548,7 +532,7 @@ void BatchWindow::analysisResultReadyAt(int index){
   QString error = analysisWatcher.resultAt(index).errorMessage;
   int row = analysisWatcher.resultAt(index).batchRow;
   if(error.isEmpty()){
-    int key = analysisWatcher.resultAt(index).core.globalKeyEstimate;
+    KeyFinder::key_t key = analysisWatcher.resultAt(index).core.globalKeyEstimate;
     ui->tableWidget->item(row, COL_STATUS)->setText(QString::number(key));
     ui->tableWidget->item(row, COL_KEY)->setText(prefs.getKeyCode(key));
     if(prefs.getWriteToFilesAutomatically()){
@@ -586,7 +570,7 @@ void BatchWindow::writeDetectedToFiles(){
     if(std::find(rowsTried.begin(), rowsTried.end(), row) == rowsTried.end()){
       // only write if there's a detected key
       bool toIntOk = false;
-      int key = ui->tableWidget->item(row, COL_STATUS)->text().toInt(&toIntOk);
+      KeyFinder::key_t key = (KeyFinder::key_t) ui->tableWidget->item(row, COL_STATUS)->text().toInt(&toIntOk);
       if(toIntOk && key >= 0){
         if(writeToTagsAtRow(row, key))
           successfullyWrittenToTags++;
@@ -607,41 +591,27 @@ void BatchWindow::writeDetectedToFiles(){
   setGuiDefaults();
 }
 
-bool BatchWindow::writeToTagsAtRow(int row, int key){
+bool BatchWindow::writeToTagsAtRow(int row, KeyFinder::key_t key){
   TagLibMetadata md(ui->tableWidget->item(row, COL_FILEPATH)->text());
   MetadataWriteResult written = md.writeKeyToMetadata(key, prefs);
 
   // reflect changes in table widget
   bool altered = false;
 
-  if(!written.newTagComment.isEmpty()){
-    if(ui->tableWidget->item(row, COL_TAG_COMMENT) == 0)
-      ui->tableWidget->setItem(row, COL_TAG_COMMENT, new QTableWidgetItem());
-    ui->tableWidget->item(row, COL_TAG_COMMENT)->setText(written.newTagComment);
-    ui->tableWidget->item(row, COL_TAG_COMMENT)->setForeground(textSuccess);
-    altered = true;
-  }
-
-  if(!written.newTagGrouping.isEmpty()){
-    if(ui->tableWidget->item(row, COL_TAG_GROUPING) == 0)
-      ui->tableWidget->setItem(row, COL_TAG_GROUPING, new QTableWidgetItem());
-    ui->tableWidget->item(row, COL_TAG_GROUPING)->setText(written.newTagGrouping);
-    ui->tableWidget->item(row, COL_TAG_GROUPING)->setForeground(textSuccess);
-    altered = true;
-  }
-
-  if(!written.newTagKey.isEmpty()){
-    if(ui->tableWidget->item(row, COL_TAG_KEY) == 0)
-      ui->tableWidget->setItem(row, COL_TAG_KEY, new QTableWidgetItem());
-    ui->tableWidget->item(row, COL_TAG_KEY)->setText(written.newTagKey);
-    ui->tableWidget->item(row, COL_TAG_KEY)->setForeground(textSuccess);
-    altered = true;
+  for (unsigned int i = 0; i < metadataColumnMapping.size(); i++) {
+    if(!written.newTags[i].isEmpty()){
+      if(ui->tableWidget->item(row, metadataColumnMapping[i]) == 0)
+        ui->tableWidget->setItem(row, metadataColumnMapping[i], new QTableWidgetItem());
+      ui->tableWidget->item(row, metadataColumnMapping[i])->setText(written.newTags[i]);
+      ui->tableWidget->item(row, metadataColumnMapping[i])->setForeground(textSuccess);
+      altered = true;
+    }
   }
 
   return altered;
 }
 
-bool BatchWindow::writeToFilenameAtRow(int row, int key){
+bool BatchWindow::writeToFilenameAtRow(int row, KeyFinder::key_t key){
   QString dataToWrite = prefs.getKeyCode(key);
   QFile file(ui->tableWidget->item(row, COL_FILEPATH)->text());
   QString path = file.fileName().left(file.fileName().lastIndexOf("/") + 1);

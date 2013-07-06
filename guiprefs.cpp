@@ -27,7 +27,7 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   listMetadataWrite << METADATA_WRITE_NONE;
   listMetadataWrite << METADATA_WRITE_PREPEND;
   listMetadataWrite << METADATA_WRITE_APPEND;
-  listMetadataWrite << METADATA_WRITE_OVERWRITE;
+  listMetadataWrite << METADATA_WRITE_OVERWRITE; // out of range for some fields
   listMetadataWriteKey << METADATA_WRITE_NONE;
   listMetadataWriteKey << METADATA_WRITE_OVERWRITE;
   listMetadataFormat << METADATA_FORMAT_KEYS;
@@ -81,6 +81,9 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   ui->maxDuration->setValue(p.getMaxDuration());
 
   ui->tagFormat->setCurrentIndex(listMetadataFormat.indexOf(p.getMetadataFormat()));
+  ui->metadataWriteTitle->setCurrentIndex(listMetadataWrite.indexOf(p.getMetadataWriteTitle()));
+  ui->metadataWriteArtist->setCurrentIndex(listMetadataWrite.indexOf(p.getMetadataWriteArtist()));
+  ui->metadataWriteAlbum->setCurrentIndex(listMetadataWrite.indexOf(p.getMetadataWriteAlbum()));
   ui->metadataWriteComment->setCurrentIndex(listMetadataWrite.indexOf(p.getMetadataWriteComment()));
   ui->metadataWriteGrouping->setCurrentIndex(listMetadataWrite.indexOf(p.getMetadataWriteGrouping()));
   ui->metadataWriteKey->setCurrentIndex(listMetadataWriteKey.indexOf(p.getMetadataWriteKey()));
@@ -187,6 +190,9 @@ void PrefsDialog::on_savePrefsButton_clicked(){
   p.setWriteToFilesAutomatically(ui->writeToFilesAutomatically->isChecked());
   p.setParallelBatchJobs(ui->parallelBatchJobs->isChecked());
   p.setMetadataFormat(listMetadataFormat[ui->tagFormat->currentIndex()]);
+  p.setMetadataWriteTitle(listMetadataWrite[ui->metadataWriteTitle->currentIndex()]);
+  p.setMetadataWriteArtist(listMetadataWrite[ui->metadataWriteArtist->currentIndex()]);
+  p.setMetadataWriteAlbum(listMetadataWrite[ui->metadataWriteAlbum->currentIndex()]);
   p.setMetadataWriteComment(listMetadataWrite[ui->metadataWriteComment->currentIndex()]);
   p.setMetadataWriteGrouping(listMetadataWrite[ui->metadataWriteGrouping->currentIndex()]);
   p.setMetadataWriteKey(listMetadataWriteKey[ui->metadataWriteKey->currentIndex()]);
@@ -345,17 +351,20 @@ void PrefsDialog::customProfileEnabled(){
 
 void PrefsDialog::metadataDelimiterEnabled(){
   QList<int> indices;
+  indices << ui->metadataWriteTitle->currentIndex();
+  indices << ui->metadataWriteArtist->currentIndex();
+  indices << ui->metadataWriteAlbum->currentIndex();
   indices << ui->metadataWriteComment->currentIndex();
   indices << ui->metadataWriteGrouping->currentIndex();
   indices << ui->metadataWriteFilename->currentIndex();
-  bool enable = false;
   for(int i = 0; i < indices.size(); i++){
-    if(listMetadataWrite[indices[i]] == METADATA_WRITE_PREPEND)
-      enable = true;
-    if(listMetadataWrite[indices[i]] == METADATA_WRITE_APPEND)
-      enable = true;
+    metadata_write_t chk = listMetadataWrite[indices[i]];
+    if(chk == METADATA_WRITE_PREPEND || chk == METADATA_WRITE_APPEND) {
+      ui->metadataDelimiter->setEnabled(true);
+      return;
+    }
   }
-  ui->metadataDelimiter->setEnabled(enable);
+  ui->metadataDelimiter->setEnabled(false);
 }
 
 void PrefsDialog::on_bps_valueChanged(int /*arg1*/){
@@ -372,6 +381,18 @@ void PrefsDialog::on_segmentation_currentIndexChanged(int /*index*/){
 
 void PrefsDialog::on_toneProfile_currentIndexChanged(int /*index*/){
   customProfileEnabled();
+}
+
+void PrefsDialog::on_metadataWriteTitle_currentIndexChanged(int /*index*/){
+  metadataDelimiterEnabled();
+}
+
+void PrefsDialog::on_metadataWriteArtist_currentIndexChanged(int /*index*/){
+  metadataDelimiterEnabled();
+}
+
+void PrefsDialog::on_metadataWriteAlbum_currentIndexChanged(int /*index*/){
+  metadataDelimiterEnabled();
 }
 
 void PrefsDialog::on_metadataWriteComment_currentIndexChanged(int /*index*/){

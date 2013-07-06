@@ -48,6 +48,24 @@ class MainMenuHandler;
 #include "externalplaylist.h"
 #include "_VERSION.h"
 
+enum playlist_columns_t{
+  COL_PLAYLIST_SOURCE,
+  COL_PLAYLIST_NAME
+};
+
+enum track_columns_t{
+  COL_STATUS,
+  COL_FILEPATH,
+  COL_FILENAME,
+  COL_TAG_TITLE,
+  COL_TAG_ARTIST,
+  COL_TAG_ALBUM,
+  COL_TAG_COMMENT,
+  COL_TAG_GROUPING,
+  COL_TAG_KEY,
+  COL_KEY
+};
+
 namespace Ui {
   class BatchWindow;
 }
@@ -91,12 +109,12 @@ private:
 
   QFutureWatcher<KeyFinderResultWrapper> analysisWatcher;
   void checkRowsForSkipping();
-  bool checkFieldForMetadata(int, int, metadata_write_t);
+  bool fieldAlreadyHasKeyData(int, int, metadata_write_t);
   void markRowSkipped(int,bool);
   void runAnalysis();
 
-  bool writeToTagsAtRow(int, int);
-  bool writeToFilenameAtRow(int, int);
+  bool writeToTagsAtRow(int, KeyFinder::key_t);
+  bool writeToFilenameAtRow(int, KeyFinder::key_t);
 
   // UI
   Ui::BatchWindow* ui;
@@ -109,6 +127,7 @@ private:
   QBrush textError;
   bool allowSort;
   int sortColumn;
+  std::vector<unsigned int> metadataColumnMapping;
 
 private slots:
 
