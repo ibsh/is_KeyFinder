@@ -69,7 +69,9 @@ QMenuBar* MainMenuHandler::newMenuBar(){
   //: An action on the menu bar
   menuHelp->addAction(tr("About"), this, SLOT(about()));
 #else
+  //: An action on the menu bar
   menuFile->addAction(tr("Preferences"), this, SLOT(preferences()));
+  //: An action on the menu bar
   menuFile->addAction(tr("About"), this, SLOT(about()));
 #endif
   return menuBar;
