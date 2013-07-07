@@ -59,6 +59,7 @@ HEADERS  += \
     guimenuhandler.h \
     guiprefs.h \
     libkeyfindersingleton.h \
+    metadatafilename.h \
     metadatataglib.h \
     metadatawriteresult.h \
     os_windows.h \
@@ -79,6 +80,7 @@ SOURCES += \
     guiprefs.cpp \
     libkeyfindersingleton.cpp \
     main.cpp \
+    metadatafilename.cpp \
     metadatataglib.cpp \
     os_windows.cpp \
     preferences.cpp \

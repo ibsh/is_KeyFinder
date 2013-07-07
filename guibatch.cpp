@@ -612,26 +612,15 @@ bool BatchWindow::writeToTagsAtRow(int row, KeyFinder::key_t key){
 }
 
 bool BatchWindow::writeToFilenameAtRow(int row, KeyFinder::key_t key){
-  QString dataToWrite = prefs.getKeyCode(key);
-  QFile file(ui->tableWidget->item(row, COL_FILEPATH)->text());
-  QString path = file.fileName().left(file.fileName().lastIndexOf("/") + 1);
-  QString extn = file.fileName().mid(file.fileName().lastIndexOf("."));
-  QString name = file.fileName().mid(file.fileName().lastIndexOf("/") + 1);
-  name = name.left(name.length() - extn.length());
-  bool written = false;
-  if(prefs.getMetadataWriteFilename() == METADATA_WRITE_PREPEND){
-    if(name.left(dataToWrite.length()) != dataToWrite){
-      name = dataToWrite + prefs.getMetadataDelimiter() + name;
-      written = file.rename(path + name + extn);
-    }
-  }else if(prefs.getMetadataWriteFilename() == METADATA_WRITE_APPEND){
-    if(name.right(dataToWrite.length()) != dataToWrite){
-      name = name + prefs.getMetadataDelimiter() + dataToWrite;
-      written = file.rename(path + name + extn);
-    }
-  }
-  if(written){
+
+  QString currentFilename = ui->tableWidget->item(row, COL_FILEPATH)->text();
+  QStringList newFilename = writeKeyToFilename(currentFilename, key, prefs);
+
+  if(newFilename.size() > 0){
     // reflect changes in table widget
+    QString path = newFilename[0];
+    QString name = newFilename[1];
+    QString extn = newFilename[2];
     ui->tableWidget->item(row, COL_FILEPATH)->setText(path + name + extn);
     ui->tableWidget->item(row, COL_FILENAME)->setText(name + extn);
     ui->tableWidget->item(row, COL_FILENAME)->setForeground(textSuccess);
