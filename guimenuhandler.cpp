@@ -55,12 +55,12 @@ QMenuBar* MainMenuHandler::newMenuBar(){
   QMenuBar* menuBar = new QMenuBar(0);
   QMenu* menuFile = menuBar->addMenu("File");
   //: An action on the menu bar
-  menuFile->addAction(tr("New Detail Window"), this, SLOT(new_Detail_Window()), QKeySequence("Ctrl+N"));
+  menuFile->addAction(tr("New Detail Window"), this, SLOT(new_Detail_Window()), QKeySequence::New);
   //: An action on the menu bar
   menuFile->addAction(tr("New Batch Window"), this, SLOT(new_Batch_Window()), QKeySequence("Ctrl+Shift+N"));
   menuFile->addSeparator();
   //: An action on the menu bar
-  menuFile->addAction(tr("Close Window"), this, SLOT(close_Window()), QKeySequence("Ctrl+W"));
+  menuFile->addAction(tr("Close Window"), this, SLOT(close_Window()), QKeySequence::Close);
 #ifdef Q_OS_WIN
   QMenu* menuEdit = menuBar->addMenu("Edit");
   //: An action on the menu bar
@@ -70,7 +70,7 @@ QMenuBar* MainMenuHandler::newMenuBar(){
   menuHelp->addAction(tr("About"), this, SLOT(about()));
 #else
   //: An action on the menu bar
-  menuFile->addAction(tr("Preferences"), this, SLOT(preferences()));
+  menuFile->addAction(tr("Preferences"), this, SLOT(preferences()), QKeySequence::Preferences);
   //: An action on the menu bar
   menuFile->addAction(tr("About"), this, SLOT(about()));
 #endif
