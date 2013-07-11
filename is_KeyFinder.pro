@@ -32,11 +32,11 @@
 # xqilla           2.3.0
 
 QT += \
-    core \
-    gui \
-    widgets \
-    concurrent \
-    network
+  core \
+  gui \
+  widgets \
+  concurrent \
+  network
 
 TEMPLATE = app
 DEPENDPATH += .
