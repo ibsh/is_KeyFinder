@@ -64,7 +64,7 @@ enum track_columns_t{
   COL_TAG_COMMENT,
   COL_TAG_GROUPING,
   COL_TAG_KEY,
-  COL_KEY
+  COL_DETECTED_KEY
 };
 
 namespace Ui {

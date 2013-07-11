@@ -395,17 +395,17 @@ void BatchWindow::addNewRow(QString fileUrl) {
   }
   int newRow = ui->tableWidget->rowCount();
   ui->tableWidget->insertRow(newRow);
-  ui->tableWidget->setItem(newRow, COL_STATUS,   new QTableWidgetItem());
-  ui->tableWidget->setItem(newRow, COL_FILEPATH, new QTableWidgetItem());
-  ui->tableWidget->setItem(newRow, COL_FILENAME, new QTableWidgetItem());
-  ui->tableWidget->setItem(newRow, COL_KEY,      new QTableWidgetItem());
+  ui->tableWidget->setItem(newRow, COL_STATUS,       new QTableWidgetItem());
+  ui->tableWidget->setItem(newRow, COL_FILEPATH,     new QTableWidgetItem());
+  ui->tableWidget->setItem(newRow, COL_FILENAME,     new QTableWidgetItem());
+  ui->tableWidget->setItem(newRow, COL_DETECTED_KEY, new QTableWidgetItem());
   ui->tableWidget->item(newRow, COL_STATUS)->setText(STATUS_NEW);
   ui->tableWidget->item(newRow, COL_FILEPATH)->setText(fileUrl);
   ui->tableWidget->item(newRow, COL_FILENAME)->setText(fileUrl.mid(fileUrl.lastIndexOf("/") + 1)); // note forwardslash not QDir::separator
   if (newRow % 2 == 0) {
-    ui->tableWidget->item(newRow, COL_KEY)->setBackground(keyFinderRow);
+    ui->tableWidget->item(newRow, COL_DETECTED_KEY)->setBackground(keyFinderRow);
   } else {
-    ui->tableWidget->item(newRow, COL_KEY)->setBackground(keyFinderAltRow);
+    ui->tableWidget->item(newRow, COL_DETECTED_KEY)->setBackground(keyFinderAltRow);
   }
 }
 
@@ -438,7 +438,7 @@ void BatchWindow::metadataReadResultReadyAt(int index) {
   for (unsigned int i = 0; i < METADATA_TAG_T_COUNT; i++) {
     QString data = metadataReadWatcher->resultAt(index).tags[i];
     if (!data.isEmpty()) {
-      ui->tableWidget->setItem(row, metadataColumnMapping[i],new QTableWidgetItem());
+      ui->tableWidget->setItem(row, metadataColumnMapping[i], new QTableWidgetItem());
       ui->tableWidget->item(row, metadataColumnMapping[i])->setText(data);
     }
   }
@@ -522,14 +522,14 @@ void BatchWindow::markRowSkipped(int row, bool skip) {
   if (skip && ui->tableWidget->item(row, COL_STATUS)->text() != STATUS_SKIPPED) {
     ui->tableWidget->item(row, COL_STATUS)->setText(STATUS_SKIPPED);
     //: Status of an individual file in the Batch window
-    ui->tableWidget->item(row, COL_KEY)->setText(tr("Skipped"));
-    ui->tableWidget->item(row, COL_KEY)->setForeground(textError);
+    ui->tableWidget->item(row, COL_DETECTED_KEY)->setText(tr("Skipped"));
+    ui->tableWidget->item(row, COL_DETECTED_KEY)->setForeground(textError);
     return;
   }
   if (!skip && ui->tableWidget->item(row, COL_STATUS)->text() == STATUS_SKIPPED) {
     ui->tableWidget->item(row, COL_STATUS)->setText(STATUS_TAGSREAD);
-    ui->tableWidget->item(row, COL_KEY)->setText("");
-    ui->tableWidget->item(row, COL_KEY)->setForeground(textDefault);
+    ui->tableWidget->item(row, COL_DETECTED_KEY)->setText("");
+    ui->tableWidget->item(row, COL_DETECTED_KEY)->setForeground(textDefault);
     return;
   }
 }
@@ -563,7 +563,7 @@ void BatchWindow::analysisResultReadyAt(int index) {
   if (error.isEmpty()) {
     KeyFinder::key_t key = analysisWatcher->resultAt(index).core.globalKeyEstimate;
     ui->tableWidget->item(row, COL_STATUS)->setText(QString::number(key));
-    ui->tableWidget->item(row, COL_KEY)->setText(prefs.getKeyCode(key));
+    ui->tableWidget->item(row, COL_DETECTED_KEY)->setText(prefs.getKeyCode(key));
     if (prefs.getWriteToFilesAutomatically()) {
       writeToTagsAtRow(row, key);
       writeToFilenameAtRow(row, key);
@@ -571,8 +571,8 @@ void BatchWindow::analysisResultReadyAt(int index) {
   } else {
     ui->tableWidget->item(row, COL_STATUS)->setText(STATUS_FAILED);
     //: Status of an individual file in the Batch window; includes an exception message at %1
-    ui->tableWidget->item(row, COL_KEY)->setText(tr("Exception: %1").arg(error));
-    ui->tableWidget->item(row, COL_KEY)->setForeground(textError);
+    ui->tableWidget->item(row, COL_DETECTED_KEY)->setText(tr("Exception: %1").arg(error));
+    ui->tableWidget->item(row, COL_DETECTED_KEY)->setForeground(textError);
     ui->tableWidget->item(row, COL_FILENAME)->setForeground(textError);
   }
 }
@@ -671,9 +671,9 @@ void BatchWindow::clearDetected() {
   foreach(QModelIndex selectedIndex,ui->tableWidget->selectionModel()->selectedIndexes()) {
     int row = selectedIndex.row();
     if (std::find(rowsCleared.begin(), rowsCleared.end(), row) == rowsCleared.end()) {
-      if (ui->tableWidget->item(row, COL_KEY) != 0) {
+      if (ui->tableWidget->item(row, COL_DETECTED_KEY) != 0) {
         ui->tableWidget->item(row, COL_STATUS)->setText(STATUS_TAGSREAD);
-        ui->tableWidget->item(row, COL_KEY)->setText("");
+        ui->tableWidget->item(row, COL_DETECTED_KEY)->setText("");
         // clear text colours
         for (int col = 0; col < ui->tableWidget->columnCount(); col++)
           if (!ui->tableWidget->isColumnHidden(col))
@@ -778,9 +778,9 @@ void BatchWindow::sortTableWidget() {
   ui->tableWidget->sortByColumn(sortColumn);
   for (int row = 0; row < ui->tableWidget->rowCount(); row++) {
     if (row % 2 == 0) {
-      ui->tableWidget->item(row, COL_KEY)->setBackground(keyFinderRow);
+      ui->tableWidget->item(row, COL_DETECTED_KEY)->setBackground(keyFinderRow);
     } else {
-      ui->tableWidget->item(row, COL_KEY)->setBackground(keyFinderAltRow);
+      ui->tableWidget->item(row, COL_DETECTED_KEY)->setBackground(keyFinderAltRow);
     }
   }
 }
