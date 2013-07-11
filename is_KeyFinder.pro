@@ -140,16 +140,16 @@ unix {
 }
 
 TRANSLATIONS = \
-    is_keyfinder_da.ts \
-    is_keyfinder_de.ts \
-    is_keyfinder_en_GB.ts \
-    is_keyfinder_en_US.ts \
-    is_keyfinder_es.ts \
-    is_keyfinder_fr.ts \
-    is_keyfinder_he.ts \
-    is_keyfinder_hr.ts \
-    is_keyfinder_it.ts \
-    is_keyfinder_nl.ts \
-    is_keyfinder_pl.ts \
-    is_keyfinder_ru.ts \
-    is_keyfinder_sv.ts
+  $$PWD/translations/is_keyfinder_en_GB.ts \
+  $$PWD/translations/is_keyfinder_da.ts \
+  $$PWD/translations/is_keyfinder_de.ts \
+  $$PWD/translations/is_keyfinder_en_US.ts \
+  $$PWD/translations/is_keyfinder_es.ts \
+  $$PWD/translations/is_keyfinder_fr.ts \
+  $$PWD/translations/is_keyfinder_he.ts \
+  $$PWD/translations/is_keyfinder_hr.ts \
+  $$PWD/translations/is_keyfinder_it.ts \
+  $$PWD/translations/is_keyfinder_nl.ts \
+  $$PWD/translations/is_keyfinder_pl.ts \
+  $$PWD/translations/is_keyfinder_ru.ts \
+  $$PWD/translations/is_keyfinder_sv.ts
