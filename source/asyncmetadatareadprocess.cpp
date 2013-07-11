@@ -21,7 +21,7 @@
 
 #include "asyncmetadatareadprocess.h"
 
-MetadataReadResult metadataReadProcess(const AsyncFileObject& object){
+MetadataReadResult metadataReadProcess(const AsyncFileObject& object) {
 
   MetadataReadResult result;
   result.batchRow = object.batchRow;

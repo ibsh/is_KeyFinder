@@ -22,32 +22,32 @@
 #include "strings.h"
 
 
-GuiStrings::GuiStrings(QObject *parent) : QObject(parent){
+GuiStrings::GuiStrings(QObject *parent) : QObject(parent) {
 }
 
-GuiStrings* GuiStrings::getInstance(){
+GuiStrings* GuiStrings::getInstance() {
   static GuiStrings instance;
   return &instance;
 }
 
-QString GuiStrings::appName() const{
+QString GuiStrings::appName() const {
   return "KeyFinder";
 }
 
-QString GuiStrings::appUrl() const{
+QString GuiStrings::appUrl() const {
   return "http://www.ibrahimshaath.co.uk/keyfinder/";
 }
 
-QString GuiStrings::delim() const{
+QString GuiStrings::delim() const {
   return " - ";
 }
 
-QString GuiStrings::notApplicable() const{
+QString GuiStrings::notApplicable() const {
   //: Status of an individual file in the Batch window
   return tr("N/A");
 }
 
-QStringList GuiStrings::iTunesDefaultPlaylists() const{
+QStringList GuiStrings::iTunesDefaultPlaylists() const {
   QStringList defaultPlaylists;
   //: Name of the main iTunes library (to exclude from the Batch window)
   defaultPlaylists << tr("Library");
@@ -74,7 +74,7 @@ QStringList GuiStrings::iTunesDefaultPlaylists() const{
   return defaultPlaylists;
 }
 
-QStringList GuiStrings::traktorDefaultPlaylists() const{
+QStringList GuiStrings::traktorDefaultPlaylists() const {
   QStringList defaultPlaylists;
   //: Name of a default Traktor playlist (to exclude from the Batch window)
   defaultPlaylists << tr("_LOOPS");
@@ -85,62 +85,62 @@ QStringList GuiStrings::traktorDefaultPlaylists() const{
   return defaultPlaylists;
 }
 
-QString GuiStrings::seratoSmartCratesDirName() const{
+QString GuiStrings::seratoSmartCratesDirName() const {
   //: Name of the Smart Crates subdirectory in Serato
   return tr("SmartCrates");
 }
 
-QString GuiStrings::seratoSubcratesDirName() const{
+QString GuiStrings::seratoSubcratesDirName() const {
   //: Name of the Subcrates subdirectory in Serato
   return tr("Subcrates");
 }
 
-QString GuiStrings::libsrcError() const{
+QString GuiStrings::libsrcError() const {
   //: Status of an individual file in the Batch window
   return tr("Error in LibSRC sample rate conversion");
 }
 
-QString GuiStrings::libavCouldNotOpenFile(int n) const{
+QString GuiStrings::libavCouldNotOpenFile(int n) const {
   //: Status of an individual file in the Batch window
   return tr("Could not open audio file (%1)").arg(QString::number(n));
 }
 
-QString GuiStrings::libavCouldNotFindStreamInformation() const{
+QString GuiStrings::libavCouldNotFindStreamInformation() const {
   //: Status of an individual file in the Batch window
   return tr("Could not find stream information");
 }
 
-QString GuiStrings::libavCouldNotFindAudioStream() const{
+QString GuiStrings::libavCouldNotFindAudioStream() const {
   //: Status of an individual file in the Batch window
   return tr("Could not find an audio stream");
 }
 
-QString GuiStrings::libavUnsupportedCodec() const{
+QString GuiStrings::libavUnsupportedCodec() const {
   //: Status of an individual file in the Batch window
   return tr("Audio stream has unsupported codec");
 }
 
-QString GuiStrings::libavCouldNotOpenCodec(const char* name, int result) const{
+QString GuiStrings::libavCouldNotOpenCodec(const char* name, int result) const {
   //: Status of an individual file in the Batch window
   return tr("Could not open audio codec %1 (%2)").arg(name).arg(QString::number(result));
 }
 
-QString GuiStrings::libavCouldNotCreateResampleContext() const{
+QString GuiStrings::libavCouldNotCreateResampleContext() const {
   //: Status of an individual file in the Batch window
   return tr("Could not create ReSampleContext");
 }
 
-QString GuiStrings::libavCouldNotResample() const{
+QString GuiStrings::libavCouldNotResample() const {
   //: Status of an individual file in the Batch window
   return tr("Could not resample");
 }
 
-QString GuiStrings::libavTooManyBadPackets(int n) const{
+QString GuiStrings::libavTooManyBadPackets(int n) const {
   //: Status of an individual file in the Batch window
   return tr("%n bad packet(s)", "", n);
 }
 
-QString GuiStrings::durationExceedsPreference(int mins, int secs, int max) const{
+QString GuiStrings::durationExceedsPreference(int mins, int secs, int max) const {
   //: Status of an individual file in the Batch window; includes minutes and seconds at %1:%2, and the max number of minutes at %3
   return tr("Duration (%1:%2) exceeds specified maximum (%3:00)")
     .arg(QString::number(mins), 2, '0')

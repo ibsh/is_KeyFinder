@@ -21,15 +21,15 @@
 
 #include "externalplaylistserato.h"
 
-QStringList SeratoDataStream::readCrate(QIODevice* device, CrateType ctype){
+QStringList SeratoDataStream::readCrate(QIODevice* device, CrateType ctype) {
   QStringList results;
   // crate type specific
   QString version;
   QString type;
-  if(ctype == SeratoDataStream::SUBCRATE){
+  if (ctype == SeratoDataStream::SUBCRATE) {
     version = "81.0";
     type = "/Serato ScratchLive Crate";
-  }else{
+  } else {
     version = "D1.0";
     type = "/Serato ScratchLive Smart Crate";
   }
@@ -39,15 +39,15 @@ QStringList SeratoDataStream::readCrate(QIODevice* device, CrateType ctype){
   skipBytes(2);
   readDoubleByteString(version.size() * 2);
   readDoubleByteString(type.size() * 2);
-  while(!strm->atEnd()){
+  while (!strm->atEnd()) {
     QString entryName = readSingleByteString(4);
     int length = readInt(4);
     QString entryData;
-    if(entryName.left(4) == "otrk"){ // bizarre lengthening in Windows
+    if (entryName.left(4) == "otrk") { // bizarre lengthening in Windows
       skipBytes(8);
       entryData = readDoubleByteString(length - 8);
       results.push_back(entryData);
-    }else{
+    } else {
       entryData = readSingleByteString(length);
     }
   }
@@ -55,7 +55,7 @@ QStringList SeratoDataStream::readCrate(QIODevice* device, CrateType ctype){
   return results;
 }
 
-QString SeratoDataStream::readSingleByteString(int chars){
+QString SeratoDataStream::readSingleByteString(int chars) {
   char* data = new char[chars];
   strm->readRawData(data, chars);
   QString stringRead(data);
@@ -63,9 +63,9 @@ QString SeratoDataStream::readSingleByteString(int chars){
   return stringRead;
 }
 
-QString SeratoDataStream::readDoubleByteString(int chars){
+QString SeratoDataStream::readDoubleByteString(int chars) {
   QString stringRead;
-  for(int i=0; i<(signed)chars; i += 2){
+  for (int i=0; i<(signed)chars; i += 2) {
     char* twoBytes = new char[2];
     strm->readRawData(twoBytes, 2);
     stringRead += QChar(twoBytes[1],twoBytes[0]);
@@ -74,9 +74,9 @@ QString SeratoDataStream::readDoubleByteString(int chars){
   return stringRead;
 }
 
-int SeratoDataStream::readInt(int bytes){
+int SeratoDataStream::readInt(int bytes) {
   int number = 0;
-  for(int i = 0; i < bytes; i++){
+  for (int i = 0; i < bytes; i++) {
     char* data = new char[1];
     strm->readRawData(data, 1);
     number *= 256;
@@ -87,6 +87,6 @@ int SeratoDataStream::readInt(int bytes){
   return number;
 }
 
-void SeratoDataStream::skipBytes(int bytesToSkip){
+void SeratoDataStream::skipBytes(int bytesToSkip) {
   strm->skipRawData(bytesToSkip);
 }

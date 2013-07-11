@@ -23,7 +23,7 @@
 
 #ifdef Q_OS_WIN
 
-char* utf16_to_utf8(const wchar_t* input){
+char* utf16_to_utf8(const wchar_t* input) {
   char* buffer;
   int buffSize, result;
   buffSize = WideCharToMultiByte(CP_UTF8, 0, input, -1, NULL, 0, NULL, NULL);
@@ -34,7 +34,7 @@ char* utf16_to_utf8(const wchar_t* input){
 
 #else
 
-char* utf16_to_utf8(const wchar_t* /*input*/){
+char* utf16_to_utf8(const wchar_t* /*input*/) {
   return NULL;
 }
 

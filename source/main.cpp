@@ -54,42 +54,42 @@ void LoggingHandler(QtMsgType type, const QMessageLogContext &context, const QSt
   }
   logfile << ": " << msg.toLocal8Bit().constData() << " (" << context.file << ":" << context.line << ")\n";
   logfile.close();
-  if(type == QtFatalMsg){
+  if (type == QtFatalMsg) {
     abort();
   }
 }
 
-int commandLineInterface(int argc, char* argv[]){
+int commandLineInterface(int argc, char* argv[]) {
 
   QString filePath = "";
   bool writeToTags = false;
 
-  for(int i = 1; i < argc; i++){
-    if(std::strcmp(argv[i], "-f") == 0 && i+1 < argc)
+  for (int i = 1; i < argc; i++) {
+    if (std::strcmp(argv[i], "-f") == 0 && i+1 < argc)
       filePath = argv[++i];
     else if (std::strcmp(argv[i], "-w") == 0)
       writeToTags = true;
   }
-  if(filePath.isEmpty())
+  if (filePath.isEmpty())
     return -1; // not a valid CLI attempt, launch GUI
 
   Preferences prefs;
   AsyncFileObject object(filePath, prefs, 0);
   KeyFinderResultWrapper result = keyDetectionProcess(object);
-  if(!result.errorMessage.isEmpty()){
+  if (!result.errorMessage.isEmpty()) {
     std::cerr << result.errorMessage.toLocal8Bit().constData();
     return 1;
   }
 
   std::cout << prefs.getKeyCode(result.core.globalKeyEstimate).toLocal8Bit().constData();
 
-  if(writeToTags){
+  if (writeToTags) {
     TagLibMetadata md(filePath);
     MetadataWriteResult written = md.writeKeyToMetadata(result.core.globalKeyEstimate,prefs);
     bool found = false;
-    for(int i = 0; i < written.newTags.size(); i++)
+    for (int i = 0; i < written.newTags.size(); i++)
       if (!written.newTags[i].isEmpty()) found = true;
-    if(!found){
+    if (!found) {
       std::cerr << "Could not write to tags" << std::endl;
       return 2;
     }
@@ -99,7 +99,7 @@ int commandLineInterface(int argc, char* argv[]){
 
 }
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[]) {
 
   QCoreApplication::setOrganizationName("Ibrahim Sha'ath");
   QCoreApplication::setOrganizationDomain("ibrahimshaath.co.uk");
@@ -111,9 +111,9 @@ int main(int argc, char* argv[]){
   av_lockmgr_register(NULL);
 
   // primitive command line use
-  if(argc > 2){
+  if (argc > 2) {
     int cliResult = commandLineInterface(argc,argv);
-    if(cliResult >= 0)
+    if (cliResult >= 0)
       return cliResult;
   }
 

@@ -45,25 +45,25 @@ AudioFileDecoder::AudioFileDecoder(const QString& filePath, const int maxDuratio
 
   // open file
   int openInputResult = avformat_open_input(&fCtx, filePathCh, NULL, NULL);
-  if(openInputResult != 0){
+  if (openInputResult != 0) {
     qWarning("Could not open file %s (%d)", filePathCh, openInputResult);
     throw KeyFinder::Exception(GuiStrings::getInstance()->libavCouldNotOpenFile(openInputResult).toLocal8Bit().constData());
   }
 
-  if(avformat_find_stream_info(fCtx, NULL) < 0){
+  if (avformat_find_stream_info(fCtx, NULL) < 0) {
     av_close_input_file(fCtx);
     qWarning("Could not find stream information for file %s", filePathCh);
     throw KeyFinder::Exception(GuiStrings::getInstance()->libavCouldNotFindStreamInformation().toLocal8Bit().constData());
   }
 
-  for(int i=0; i<(signed)fCtx->nb_streams; i++){
-    if(fCtx->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO){
+  for (int i=0; i<(signed)fCtx->nb_streams; i++) {
+    if (fCtx->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
       audioStream = i;
       break;
     }
   }
 
-  if(audioStream == -1){
+  if (audioStream == -1) {
     av_close_input_file(fCtx);
     qWarning("Could not find an audio stream for file %s", filePathCh);
     throw KeyFinder::Exception(GuiStrings::getInstance()->libavCouldNotFindAudioStream().toLocal8Bit().constData());
@@ -73,7 +73,7 @@ AudioFileDecoder::AudioFileDecoder(const QString& filePath, const int maxDuratio
   int durationSeconds = fCtx->duration / AV_TIME_BASE;
   int durationMinutes = durationSeconds / 60;
   // First condition is a hack for bizarre overestimation of some MP3s
-  if(durationMinutes < 720 && durationSeconds > maxDuration * 60){
+  if (durationMinutes < 720 && durationSeconds > maxDuration * 60) {
     av_close_input_file(fCtx);
     qWarning("Duration of file %s (%d:%d) exceeds specified maximum (%d:00)", filePathCh, durationMinutes, durationSeconds % 60, maxDuration);
     throw KeyFinder::Exception(GuiStrings::getInstance()->durationExceedsPreference(durationMinutes, durationSeconds % 60, maxDuration).toLocal8Bit().constData());
@@ -82,7 +82,7 @@ AudioFileDecoder::AudioFileDecoder(const QString& filePath, const int maxDuratio
   // Determine stream codec
   cCtx = fCtx->streams[audioStream]->codec;
   codec = avcodec_find_decoder(cCtx->codec_id);
-  if(codec == NULL){
+  if (codec == NULL) {
     av_close_input_file(fCtx);
     qWarning("Audio stream has unsupported codec in file %s", filePathCh);
     throw KeyFinder::Exception(GuiStrings::getInstance()->libavUnsupportedCodec().toLocal8Bit().constData());
@@ -90,7 +90,7 @@ AudioFileDecoder::AudioFileDecoder(const QString& filePath, const int maxDuratio
 
   // Open codec
   int codecOpenResult = avcodec_open2(cCtx, codec, &dict);
-  if(codecOpenResult < 0){
+  if (codecOpenResult < 0) {
     av_close_input_file(fCtx);
     qWarning("Could not open audio codec %s (%d) for file %s", codec->long_name, codecOpenResult, filePathCh);
     throw KeyFinder::Exception(GuiStrings::getInstance()->libavCouldNotOpenCodec(codec->long_name, codecOpenResult).toLocal8Bit().constData());
@@ -100,7 +100,7 @@ AudioFileDecoder::AudioFileDecoder(const QString& filePath, const int maxDuratio
     cCtx->channels, cCtx->channels, cCtx->sample_rate, cCtx->sample_rate,
     AV_SAMPLE_FMT_S16, cCtx->sample_fmt, 0, 0, 0, 0
   );
-  if(rsCtx == NULL){
+  if (rsCtx == NULL) {
     avcodec_close(cCtx);
     av_close_input_file(fCtx);
     qWarning("Could not create ReSampleContext for file %s", filePathCh);
@@ -110,14 +110,14 @@ AudioFileDecoder::AudioFileDecoder(const QString& filePath, const int maxDuratio
   qDebug("Decoder prepared for %s (%s, %d)", filePathCh, av_get_sample_fmt_name(cCtx->sample_fmt), cCtx->sample_rate);
 }
 
-AudioFileDecoder::~AudioFileDecoder(){
+AudioFileDecoder::~AudioFileDecoder() {
   av_free(frameBuffer);
   av_free(frameBufferConverted);
 
   QMutexLocker codecMutexLocker(&codecMutex);
   audio_resample_close(rsCtx);
   int codecCloseResult = avcodec_close(cCtx);
-  if(codecCloseResult < 0){
+  if (codecCloseResult < 0) {
     qCritical("Error closing audio codec: %s (%d)", codec->long_name, codecCloseResult);
   }
   codecMutexLocker.unlock();
@@ -126,29 +126,29 @@ AudioFileDecoder::~AudioFileDecoder(){
   delete[] filePathCh;
 }
 
-KeyFinder::AudioData* AudioFileDecoder::decodeNextAudioPacket(){
+KeyFinder::AudioData* AudioFileDecoder::decodeNextAudioPacket() {
   // Prep buffer
   KeyFinder::AudioData* audio = NULL;
   // Decode stream
   AVPacket avpkt;
   do {
     av_init_packet(&avpkt);
-    if(av_read_frame(fCtx, &avpkt) < 0) return audio;
-    if(avpkt.stream_index != audioStream) av_free_packet(&avpkt);
+    if (av_read_frame(fCtx, &avpkt) < 0) return audio;
+    if (avpkt.stream_index != audioStream) av_free_packet(&avpkt);
   } while (avpkt.data == NULL);
-  try{
+  try {
     audio = new KeyFinder::AudioData();
     audio->setFrameRate((unsigned int) cCtx->sample_rate);
     audio->setChannels(cCtx->channels);
-    if(!decodePacket(&avpkt, audio)){
+    if (!decodePacket(&avpkt, audio)) {
       badPacketCount++;
-      if(badPacketCount > badPacketThreshold){
+      if (badPacketCount > badPacketThreshold) {
         av_free_packet(&avpkt);
         qWarning("Too many bad packets (%d) while decoding file %s", badPacketCount, filePathCh);
         throw KeyFinder::Exception(GuiStrings::getInstance()->libavTooManyBadPackets(badPacketThreshold).toLocal8Bit().constData());
       }
     }
-  }catch(KeyFinder::Exception& e){
+  } catch (KeyFinder::Exception& e) {
     av_free_packet(&avpkt);
     qWarning("Encountered KeyFinder::Exception (%s) while decoding file %s", e.what(), filePathCh);
     throw e;
@@ -157,29 +157,29 @@ KeyFinder::AudioData* AudioFileDecoder::decodeNextAudioPacket(){
   return audio;
 }
 
-bool AudioFileDecoder::decodePacket(AVPacket* originalPacket, KeyFinder::AudioData* audio){
+bool AudioFileDecoder::decodePacket(AVPacket* originalPacket, KeyFinder::AudioData* audio) {
   // copy packet so we can shift data pointer about without endangering garbage collection
   AVPacket tempPacket;
   tempPacket.size = originalPacket->size;
   tempPacket.data = originalPacket->data;
   // loop in case audio packet contains multiple frames
-  while(tempPacket.size > 0){
+  while (tempPacket.size > 0) {
     int dataSize = frameBufferSize;
     int16_t* dataBuffer = (int16_t*)frameBuffer;
     int bytesConsumed = avcodec_decode_audio3(cCtx, dataBuffer, &dataSize, &tempPacket);
-    if(bytesConsumed < 0){ // error
+    if (bytesConsumed < 0) { // error
       tempPacket.size = 0;
       return false;
     }
     tempPacket.data += bytesConsumed;
     tempPacket.size -= bytesConsumed;
-    if(dataSize <= 0)
+    if (dataSize <= 0)
       continue; // nothing decoded
     int newSamplesDecoded = dataSize / av_get_bytes_per_sample(cCtx->sample_fmt);
     // Resample if necessary
-    if(cCtx->sample_fmt != AV_SAMPLE_FMT_S16){
+    if (cCtx->sample_fmt != AV_SAMPLE_FMT_S16) {
       int resampleResult = audio_resample(rsCtx, (short*)frameBufferConverted, (short*)frameBuffer, newSamplesDecoded);
-      if(resampleResult < 0){
+      if (resampleResult < 0) {
         throw KeyFinder::Exception(GuiStrings::getInstance()->libavCouldNotResample().toLocal8Bit().constData());
       }
       dataBuffer = (int16_t*)frameBufferConverted;
@@ -188,7 +188,7 @@ bool AudioFileDecoder::decodePacket(AVPacket* originalPacket, KeyFinder::AudioDa
     audio->addToSampleCount(newSamplesDecoded);
     audio->resetIterators();
     audio->advanceWriteIterator(oldSampleCount);
-    for(int i = 0; i < newSamplesDecoded; i++){
+    for (int i = 0; i < newSamplesDecoded; i++) {
       audio->setSampleAtWriteIterator((float)dataBuffer[i]);
       audio->advanceWriteIterator();
     }

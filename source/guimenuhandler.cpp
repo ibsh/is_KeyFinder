@@ -21,37 +21,37 @@
 
 #include "guimenuhandler.h"
 
-MainMenuHandler::MainMenuHandler(QObject *parent) : QObject(parent){}
+MainMenuHandler::MainMenuHandler(QObject *parent) : QObject(parent) {}
 
-void MainMenuHandler::about(){
+void MainMenuHandler::about() {
   AboutDialog* about = new AboutDialog(0);
   about->show();
 }
 
-void MainMenuHandler::preferences(){
+void MainMenuHandler::preferences() {
   PrefsDialog* prefs = new PrefsDialog(0);
   prefs->show();
 }
 
-void MainMenuHandler::new_Batch_Window(bool firstWindow){
+void MainMenuHandler::new_Batch_Window(bool firstWindow) {
   BatchWindow* newWin = new BatchWindow(this, 0);
   newWin->setMenuBar(newMenuBar());
   newWin->show();
-  if(firstWindow)
+  if (firstWindow)
     newWin->checkForNewVersion();
 }
 
-void MainMenuHandler::new_Detail_Window(QString path){
+void MainMenuHandler::new_Detail_Window(QString path) {
   DetailWindow* newWin = new DetailWindow(0, path);
   newWin->setMenuBar(newMenuBar());
   newWin->show();
 }
 
-void MainMenuHandler::close_Window(){
+void MainMenuHandler::close_Window() {
   QApplication::activeWindow()->close();
 }
 
-QMenuBar* MainMenuHandler::newMenuBar(){
+QMenuBar* MainMenuHandler::newMenuBar() {
   QMenuBar* menuBar = new QMenuBar(0);
   QMenu* menuFile = menuBar->addMenu("File");
   //: An action on the menu bar

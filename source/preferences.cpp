@@ -21,7 +21,7 @@
 
 #include "preferences.h"
 
-Preferences::Preferences(){
+Preferences::Preferences() {
 
   QSettings settings;
 
@@ -30,16 +30,16 @@ Preferences::Preferences(){
   // Bear in mind that KeyFinder params object has built in defaults
 
   settings.beginGroup("analysisFrequencies");
-  if(settings.contains("startingFrequencyA")){
+  if (settings.contains("startingFrequencyA")) {
     core.setStartingFrequencyA(settings.value("startingFrequencyA").toFloat());
   }
-  if(settings.contains("numOctaves")){
+  if (settings.contains("numOctaves")) {
     core.setOctaves((unsigned)settings.value("numOctaves").toInt());
   }
-  if(settings.contains("offsetToC")){
+  if (settings.contains("offsetToC")) {
     core.setOffsetToC(settings.value("offsetToC").toBool());
   }
-  if(settings.contains("bandsPerSemitone")){
+  if (settings.contains("bandsPerSemitone")) {
     core.setBandsPerSemitone((unsigned)settings.value("bandsPerSemitone").toInt());
   }
   settings.endGroup();
@@ -47,16 +47,16 @@ Preferences::Preferences(){
   // ======================== Spectral analysis ================================
 
   settings.beginGroup("spectralAnalysis");
-  if(settings.contains("temporalWindow_1_14")){
+  if (settings.contains("temporalWindow_1_14")) {
     core.setTemporalWindow((KeyFinder::temporal_window_t)settings.value("temporalWindow_1_14").toInt());
   }
-  if(settings.contains("fftFrameSize")){
+  if (settings.contains("fftFrameSize")) {
     core.setFftFrameSize((unsigned)settings.value("fftFrameSize").toInt());
   }
-  if(settings.contains("hopsPerFrame")){
+  if (settings.contains("hopsPerFrame")) {
     core.setHopsPerFrame((unsigned)settings.value("hopsPerFrame").toInt());
   }
-  if(settings.contains("directSkStretch")){
+  if (settings.contains("directSkStretch")) {
     core.setDirectSkStretch(settings.value("directSkStretch").toFloat());
   }
   settings.endGroup();
@@ -64,10 +64,10 @@ Preferences::Preferences(){
   // ============================= Tuning ======================================
 
   settings.beginGroup("tuning");
-  if(settings.contains("tuningMethod")){
+  if (settings.contains("tuningMethod")) {
     core.setTuningMethod((KeyFinder::tuning_method_t)settings.value("tuningMethod").toInt());
   }
-  if(settings.contains("detunedBandWeight")){
+  if (settings.contains("detunedBandWeight")) {
     core.setDetunedBandWeight(settings.value("detunedBandWeight").toFloat());
   }
   settings.endGroup();
@@ -75,19 +75,19 @@ Preferences::Preferences(){
   // =========================== Segmentation ==================================
 
   settings.beginGroup("harmonicChangeDetectionFunction");
-  if(settings.contains("segmentation")){
+  if (settings.contains("segmentation")) {
     core.setSegmentation((KeyFinder::segmentation_t)settings.value("segmentation").toInt());
   }
-  if(settings.contains("hcdfGaussianSize")){
+  if (settings.contains("hcdfGaussianSize")) {
     core.setSegGaussianSize((unsigned)settings.value("hcdfGaussianSize").toInt());
   }
-  if(settings.contains("hcdfGaussianSigma")){
+  if (settings.contains("hcdfGaussianSigma")) {
     core.setSegGaussianSigma(settings.value("hcdfGaussianSigma").toFloat());
   }
-  if(settings.contains("hcdfPeakPickingNeighbours")){
+  if (settings.contains("hcdfPeakPickingNeighbours")) {
     core.setSegPeakPickingNeighbours((unsigned)settings.value("hcdfPeakPickingNeighbours").toInt());
   }
-  if(settings.contains("hcdfArbitrarySegments")){
+  if (settings.contains("hcdfArbitrarySegments")) {
     core.setArbitrarySegments((unsigned)settings.value("hcdfArbitrarySegments").toInt());
   }
   settings.endGroup();
@@ -95,10 +95,10 @@ Preferences::Preferences(){
   // ========================= Key classification ==============================
 
   settings.beginGroup("keyClassification");
-  if(settings.contains("toneProfile_1_14")){
+  if (settings.contains("toneProfile_1_14")) {
     core.setToneProfile((KeyFinder::tone_profile_t)settings.value("toneProfile_1_14").toInt());
   }
-  if(settings.contains("similarityMeasure_1_14")){
+  if (settings.contains("similarityMeasure_1_14")) {
     core.setSimilarityMeasure((KeyFinder::similarity_measure_t)settings.value("similarityMeasure_1_14").toInt());
   }
   settings.endGroup();
@@ -106,7 +106,7 @@ Preferences::Preferences(){
   // ========================= Custom Tone Profile ==============================
 
   settings.beginGroup("customToneProfile");
-  if(settings.contains("maj0")){
+  if (settings.contains("maj0")) {
     std::vector<float> ctp;
     // Tone profiles are stored sequentially; major chroma vector then minor chroma vector
     ctp.push_back(settings.value("maj0").toFloat());
@@ -133,11 +133,11 @@ Preferences::Preferences(){
     ctp.push_back(settings.value("min9").toFloat());
     ctp.push_back(settings.value("min10").toFloat());
     ctp.push_back(settings.value("min11").toFloat());
-    try{
+    try {
       core.setCustomToneProfile(ctp);
-    }catch(std::exception& e){
+    } catch (std::exception& e) {
       qDebug("LibKeyFinder Exception: %s", e.what());
-    }catch(...){
+    } catch (...) {
       qDebug("Unknown exception setting custom tone profile.");
     }
   }
@@ -146,7 +146,7 @@ Preferences::Preferences(){
   // ========================== Custom Key Codes ===============================
 
   settings.beginGroup("customKeyCodes");
-  if(settings.contains("SLNC")){
+  if (settings.contains("SLNC")) {
     customKeyCodes = QStringList();
     customKeyCodes.push_back(settings.value("A").toString());
     customKeyCodes.push_back(settings.value("Am").toString());
@@ -173,9 +173,9 @@ Preferences::Preferences(){
     customKeyCodes.push_back(settings.value("Ab").toString());
     customKeyCodes.push_back(settings.value("Abm").toString());
     customKeyCodes.push_back(settings.value("SLNC").toString());
-  }else{
+  } else {
     customKeyCodes = QStringList();
-    for(int i=0; i<25; i++)
+    for (int i=0; i<25; i++)
       customKeyCodes << "";
   }
   settings.endGroup();
@@ -183,55 +183,55 @@ Preferences::Preferences(){
   // ============================ Metadata =================================
 
   settings.beginGroup("tags");
-  if(settings.contains("metadataFormat")){
+  if (settings.contains("metadataFormat")) {
     metadataFormat = (metadata_format_t)settings.value("metadataFormat").toInt();
-  }else{
+  } else {
     metadataFormat = METADATA_FORMAT_KEYS;
   }
 
-  if(settings.contains("metadataWriteTitle")){
+  if (settings.contains("metadataWriteTitle")) {
     metadataWriteTitle = (metadata_write_t)settings.value("metadataWriteTitle").toInt();
-  }else{
+  } else {
     metadataWriteTitle = METADATA_WRITE_NONE;
   }
-  if(settings.contains("metadataWriteArtist")){
+  if (settings.contains("metadataWriteArtist")) {
     metadataWriteArtist = (metadata_write_t)settings.value("metadataWriteArtist").toInt();
-  }else{
+  } else {
     metadataWriteArtist = METADATA_WRITE_NONE;
   }
-  if(settings.contains("metadataWriteAlbum")){
+  if (settings.contains("metadataWriteAlbum")) {
     metadataWriteAlbum = (metadata_write_t)settings.value("metadataWriteAlbum").toInt();
-  }else{
+  } else {
     metadataWriteAlbum = METADATA_WRITE_NONE;
   }
-  if(settings.contains("metadataWriteComment")){
+  if (settings.contains("metadataWriteComment")) {
     metadataWriteComment = (metadata_write_t)settings.value("metadataWriteComment").toInt();
-  }else{
+  } else {
     metadataWriteComment = METADATA_WRITE_PREPEND;
   }
-  if(settings.contains("metadataWriteGrouping")){
+  if (settings.contains("metadataWriteGrouping")) {
     metadataWriteGrouping = (metadata_write_t)settings.value("metadataWriteGrouping").toInt();
-  }else{
+  } else {
     metadataWriteGrouping = METADATA_WRITE_NONE;
   }
-  if(settings.contains("metadataWriteGrouping")){
+  if (settings.contains("metadataWriteGrouping")) {
     metadataWriteKey = (metadata_write_t)settings.value("metadataWriteKey").toInt();
-  }else{
+  } else {
     metadataWriteKey = METADATA_WRITE_NONE;
   }
-  if(settings.contains("metadataWriteFilename")){
+  if (settings.contains("metadataWriteFilename")) {
     metadataWriteFilename = (metadata_write_t)settings.value("metadataWriteFilename").toInt();
-  }else{
+  } else {
     metadataWriteFilename = METADATA_WRITE_NONE;
   }
-  if(settings.contains("metadataDelimiter")){
+  if (settings.contains("metadataDelimiter")) {
     metadataDelimiter = settings.value("metadataDelimiter").toString();
-  }else{
+  } else {
     metadataDelimiter = " - ";
   }
-  if(settings.contains("writeToFilesAutomatically")){
+  if (settings.contains("writeToFilesAutomatically")) {
     writeToFilesAutomatically = settings.value("writeToFilesAutomatically").toBool();
-  }else{
+  } else {
     writeToFilesAutomatically = false;
   }
   settings.endGroup();
@@ -239,19 +239,19 @@ Preferences::Preferences(){
   // =========================== Batch jobs ================================
 
   settings.beginGroup("batch");
-  if(settings.contains("parallelBatchJobs")){
+  if (settings.contains("parallelBatchJobs")) {
     parallelBatchJobs = settings.value("parallelBatchJobs").toBool();
-  }else{
+  } else {
     parallelBatchJobs = true;
   }
-  if(settings.contains("skipFilesWithExistingTags")){
+  if (settings.contains("skipFilesWithExistingTags")) {
     skipFilesWithExistingTags = settings.value("skipFilesWithExistingTags").toBool();
-  }else{
+  } else {
     skipFilesWithExistingTags = false;
   }
-  if(settings.contains("maxDuration")){
+  if (settings.contains("maxDuration")) {
     maxDuration = settings.value("maxDuration").toInt();
-  }else{
+  } else {
     maxDuration = 60;
   }
   settings.endGroup();
@@ -259,27 +259,27 @@ Preferences::Preferences(){
   // ============================= Library ==================================
 
   settings.beginGroup("library");
-  if(settings.contains("iTunesLibraryPath")){
+  if (settings.contains("iTunesLibraryPath")) {
     iTunesLibraryPath = settings.value("iTunesLibraryPath").toString();
-  }else{
+  } else {
 #ifdef Q_OS_WIN
     iTunesLibraryPath = QDir::homePath() + "/My Music/iTunes/iTunes Music Library.xml";
 #else
     iTunesLibraryPath = QDir::homePath() + "/Music/iTunes/iTunes Music Library.xml";
 #endif
   }
-  if(settings.contains("traktorLibraryPath")){
+  if (settings.contains("traktorLibraryPath")) {
     traktorLibraryPath = settings.value("traktorLibraryPath").toString();
-  }else{
+  } else {
 #ifdef Q_OS_WIN
     traktorLibraryPath = QDir::homePath() + "/My Documents/Native Instruments/Traktor 2.1.2/collection.nml";
 #else
     traktorLibraryPath = QDir::homePath() + "/Documents/Native Instruments/Traktor 2.1.2/collection.nml";
 #endif
   }
-  if(settings.contains("seratoLibraryPath")){
+  if (settings.contains("seratoLibraryPath")) {
     seratoLibraryPath = settings.value("seratoLibraryPath").toString();
-  }else{
+  } else {
 #ifdef Q_OS_WIN
     seratoLibraryPath = QDir::homePath() + "/My Music/_Serato_/database V2";
 #else
@@ -291,19 +291,19 @@ Preferences::Preferences(){
   // ============================= UIState ==================================
 
   settings.beginGroup("uistate");
-  if(settings.contains("batchWindowState")){
+  if (settings.contains("batchWindowState")) {
     batchWindowState = settings.value("batchWindowState").toByteArray();
-  }else{
+  } else {
     batchWindowState = QByteArray();
   }
-  if(settings.contains("batchWindowGeometry")){
+  if (settings.contains("batchWindowGeometry")) {
     batchWindowGeometry = settings.value("batchWindowGeometry").toByteArray();
-  }else{
+  } else {
     batchWindowGeometry = QByteArray();
   }
-  if(settings.contains("batchWindowSplitterState")){
+  if (settings.contains("batchWindowSplitterState")) {
     batchWindowSplitterState = settings.value("batchWindowSplitterState").toByteArray();
-  }else{
+  } else {
     batchWindowSplitterState = QByteArray();
   }
   settings.endGroup();
@@ -344,7 +344,7 @@ Preferences::Preferences(){
   keyColours.push_back(qRgb(a,a,a));
 }
 
-void Preferences::save(){
+void Preferences::save() {
   QSettings settings;
 
   settings.beginGroup("analysisFrequencies");
@@ -456,8 +456,8 @@ void Preferences::save(){
 
 }
 
-Preferences& Preferences::operator=(const Preferences& that){
-  if(this != &that){
+Preferences& Preferences::operator=(const Preferences& that) {
+  if (this != &that) {
     core = that.core;
     customKeyCodes            = that.customKeyCodes;
     metadataFormat            = that.metadataFormat;
@@ -574,49 +574,49 @@ void Preferences::setDetunedBandWeight(float weight)                      { core
 void Preferences::setCustomToneProfile(const std::vector<float>& profile) { core.setCustomToneProfile(profile); }
 
 
-void Preferences::setParallelBatchJobs(bool parallel){
+void Preferences::setParallelBatchJobs(bool parallel) {
   parallelBatchJobs = parallel;
   int numThreads = QThread::idealThreadCount();
-  if(numThreads == -1 || parallel == false){
+  if (numThreads == -1 || parallel == false) {
     QThreadPool::globalInstance()->setMaxThreadCount(1);
-  }else{
+  } else {
     QThreadPool::globalInstance()->setMaxThreadCount(numThreads);
   }
 }
 
-QString Preferences::getKeyCode(KeyFinder::key_t k) const{
-  if(k < 0 || k >= defaultKeyCodes.size()){
+QString Preferences::getKeyCode(KeyFinder::key_t k) const {
+  if (k < 0 || k >= defaultKeyCodes.size()) {
     qDebug("Attempt to get name of out-of-bounds key (%d/%d)",k,(int)defaultKeyCodes.size());
     return "";
   }
   QString defaultCode = defaultKeyCodes[k];
   QString customCode = customKeyCodes[k];
-  if(metadataFormat == METADATA_FORMAT_KEYS || customCode == "")
+  if (metadataFormat == METADATA_FORMAT_KEYS || customCode == "")
     return defaultCode;
-  else if(metadataFormat == METADATA_FORMAT_CUSTOM)
+  else if (metadataFormat == METADATA_FORMAT_CUSTOM)
     return customCode;
   else
     return customCode + " " + defaultCode;
 }
 
-QStringList Preferences::getKeyCodeList() const{
+QStringList Preferences::getKeyCodeList() const {
   QStringList output;
-  for(int i = 0; i < defaultKeyCodes.size(); i++)
+  for (int i = 0; i < defaultKeyCodes.size(); i++)
     output << getKeyCode((KeyFinder::key_t)i);
   return output;
 }
 
-QColor Preferences::getKeyColour(KeyFinder::key_t k) const{
-  if(k >= keyColours.size()){
+QColor Preferences::getKeyColour(KeyFinder::key_t k) const {
+  if (k >= keyColours.size()) {
     qDebug("Attempt to get colour of out-of-bounds key (%d/%d)",k,(int)keyColours.size());
     return qRgb(0,0,0);
   }
   return keyColours[k];
 }
 
-void Preferences::setImageColours(QImage& image, chromagram_colour_t scheme) const{
-  if(scheme == CHROMA_COLOUR_IZO){
-    for(int i=0; i<65; i++){
+void Preferences::setImageColours(QImage& image, chromagram_colour_t scheme) const {
+  if (scheme == CHROMA_COLOUR_IZO) {
+    for (int i=0; i<65; i++) {
       image.setColor(i,
         qRgb(
           scaledSine(i, 0.055, +4.50, 150, 130),
@@ -625,13 +625,13 @@ void Preferences::setImageColours(QImage& image, chromagram_colour_t scheme) con
         )
       );
     }
-  }else if(scheme == CHROMA_COLOUR_MONO){
-    for(int i=0; i<64; i++){
+  } else if (scheme == CHROMA_COLOUR_MONO) {
+    for (int i=0; i<64; i++) {
       image.setColor(i,qRgb(i*4,i*4,i*4));
     }
     image.setColor(64,qRgb(255,255,255));
-  }else if(scheme == CHROMA_COLOUR_PRED){
-    for(int i=0; i<65; i++){
+  } else if (scheme == CHROMA_COLOUR_PRED) {
+    for (int i=0; i<65; i++) {
       image.setColor(i,
         qRgb(
           scaledSine(i, 0.077, -2.30, 320, 0),
@@ -640,14 +640,14 @@ void Preferences::setImageColours(QImage& image, chromagram_colour_t scheme) con
         )
       );
     }
-  }else if(scheme == CHROMA_COLOUR_VBOY){
-    for(int i=0; i<64; i++){
+  } else if (scheme == CHROMA_COLOUR_VBOY) {
+    for (int i=0; i<64; i++) {
       image.setColor(i,qRgb(i*4,0,0));
     }
     image.setColor(64,qRgb(255,0,0));
-  }else{
+  } else {
     // Hack by default
-    for(int i=0; i<64; i++){
+    for (int i=0; i<64; i++) {
       image.setColor(i,qRgb(0,i*4,0));
     }
     image.setColor(64,qRgb(0,255,0));

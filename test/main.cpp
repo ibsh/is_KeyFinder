@@ -25,7 +25,7 @@
 
 #include "gtest/gtest.h"
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[]) {
   // libav setup, as per main.cpp
   av_register_all();
   av_log_set_level(AV_LOG_ERROR);

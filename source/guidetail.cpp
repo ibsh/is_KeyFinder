@@ -26,7 +26,7 @@ const int ROW_BIGCHROMA = 0;
 const int ROW_MINICHROMA = 1;
 const int ROW_RATEOFCHANGE = 2;
 
-DetailWindow::DetailWindow(QWidget *parent, QString path) : QMainWindow(parent), ui(new Ui::DetailWindow){
+DetailWindow::DetailWindow(QWidget *parent, QString path) : QMainWindow(parent), ui(new Ui::DetailWindow) {
   ui->setupUi(this);
   //: The title of the Detail window
   this->setWindowTitle(GuiStrings::getInstance()->appName() + GuiStrings::getInstance()->delim() + tr("Detailed Analysis"));
@@ -43,46 +43,46 @@ DetailWindow::DetailWindow(QWidget *parent, QString path) : QMainWindow(parent),
   drawPianoKeys();
   blankVisualisations();
   blankKeyLabel();
-  if(path != ""){
+  if (!path.isEmpty()) {
     filePath = path;
     runAnalysis();
   }
 }
 
-DetailWindow::~DetailWindow(){
+DetailWindow::~DetailWindow() {
   analysisWatcher.cancel();
   delete ui;
 }
 
-QString DetailWindow::wrapToolTip(const QString& str){
+QString DetailWindow::wrapToolTip(const QString& str) {
   // This makes a tooltip rich text, which enables wrapping
   return "<FONT COLOR=black>" + str + "</FONT>";
 }
 
-void DetailWindow::dragEnterEvent(QDragEnterEvent *e){
+void DetailWindow::dragEnterEvent(QDragEnterEvent *e) {
   // accept only single, local files
-  if(
+  if (
      allowDrops
      && e->mimeData()->hasUrls()
      && e->mimeData()->urls().size() == 1
      && !e->mimeData()->urls().at(0).toLocalFile().isEmpty()
-     ){
+     ) {
     e->acceptProposedAction();
   }
 }
 
-void DetailWindow::dropEvent(QDropEvent *e){
+void DetailWindow::dropEvent(QDropEvent *e) {
   allowDrops = false;
   filePath = e->mimeData()->urls().at(0).toLocalFile();
   runAnalysis();
 }
 
-void DetailWindow::runAnalysis(){
+void DetailWindow::runAnalysis() {
   // get latest preferences and redraw variable UI elements if they've changed since the last run.
   unsigned int chkOctaves = prefs.getOctaves();
   unsigned int chkOffset = prefs.getOffsetToC();
   prefs = Preferences();
-  if(chkOctaves != prefs.getOctaves() || chkOffset != prefs.getOffsetToC() || ui->chromagramLabel->toolTip().left(4) == "Drag"){
+  if (chkOctaves != prefs.getOctaves() || chkOffset != prefs.getOffsetToC() || ui->chromagramLabel->toolTip().left(4) == "Drag") {
     layoutScaling();
     drawPianoKeys();
     //: A tooltip on the Detail window
@@ -102,9 +102,9 @@ void DetailWindow::runAnalysis(){
   analysisWatcher.setFuture(analysisFuture);
 }
 
-void DetailWindow::analysisFinished(){
+void DetailWindow::analysisFinished() {
   QString error = analysisWatcher.result().errorMessage;
-  if(error != ""){
+  if (error != "") {
     say(error);
     cleanUpAfterRun();
     return;
@@ -112,7 +112,7 @@ void DetailWindow::analysisFinished(){
   // Title bar
   TagLibMetadata md(filePath);
   QString shortName = md.getTitle();
-  if(shortName == "")
+  if (shortName == "")
     shortName = filePath.mid(filePath.lastIndexOf("/") + 1);
   this->setWindowTitle(GuiStrings::getInstance()->appName() + GuiStrings::getInstance()->delim() + tr("Detailed Analysis") + GuiStrings::getInstance()->delim() + shortName);
   // full chromagram
@@ -128,7 +128,7 @@ void DetailWindow::analysisFinished(){
   // Key estimates
   deleteKeyLabels();
   int lastChange = -1; // enable correct stretch policy for first segment
-  for(int h = 0; h < (signed)analysisWatcher.result().core.segments.size(); h++){
+  for (int h = 0; h < (signed)analysisWatcher.result().core.segments.size(); h++) {
     QLabel* newLabel = new QLabel(prefs.getKeyCode(analysisWatcher.result().core.segments[h].key));
     newLabel->setAlignment(Qt::AlignCenter);
     QPalette pal = newLabel->palette();
@@ -138,13 +138,13 @@ void DetailWindow::analysisFinished(){
     newLabel->setAutoFillBackground(true);
     newLabel->setMinimumHeight(20);
     newLabel->setMaximumHeight(30);
-    if(prefs.getSegmentation() == KeyFinder::SEGMENTATION_NONE){
+    if (prefs.getSegmentation() == KeyFinder::SEGMENTATION_NONE) {
       //: A tooltip on the Detail window
       newLabel->setToolTip(wrapToolTip(tr("This row shows the key estimate for the unsegmented chromagram.")));
-    }else if(prefs.getSegmentation() == KeyFinder::SEGMENTATION_ARBITRARY){
+    } else if (prefs.getSegmentation() == KeyFinder::SEGMENTATION_ARBITRARY) {
       //: A tooltip on the Detail window
       newLabel->setToolTip(wrapToolTip(tr("This row shows the key estimates for the arbitrary segments.")));
-    }else{
+    } else {
       //: A tooltip on the Detail window
       newLabel->setToolTip(wrapToolTip(tr("This row shows the key estimates for the segments between peak harmonic changes.")));
     }
@@ -157,49 +157,49 @@ void DetailWindow::analysisFinished(){
   cleanUpAfterRun();
 }
 
-void DetailWindow::cleanUpAfterRun(){
+void DetailWindow::cleanUpAfterRun() {
   ui->progressBar->setVisible(false);
   ui->chromaColourCombo->setEnabled(true);
   ui->runButton->setEnabled(true);
   allowDrops = true;
 }
 
-QImage DetailWindow::imageFromChromagram(const KeyFinder::Chromagram& ch){
+QImage DetailWindow::imageFromChromagram(const KeyFinder::Chromagram& ch) {
   // 64 colours (plus black at index 0)
   // don't draw individual pixels; draw blocks of chromaScaleV*chromaScaleH. Sharpens image.
   QImage img = QImage(ch.getHops()*chromaScaleH,ch.getBands()*chromaScaleV,QImage::Format_Indexed8);
   prefs.setImageColours(img, (chromagram_colour_t) ui->chromaColourCombo->currentIndex());
   // get max to normalise
   float max = 0;
-  for(unsigned int h = 0; h < ch.getHops(); h++){
-    for(unsigned int b = 0; b < ch.getBands(); b++){
+  for (unsigned int h = 0; h < ch.getHops(); h++) {
+    for (unsigned int b = 0; b < ch.getBands(); b++) {
       float mag = ch.getMagnitude(h,b);
-      if(mag>max) max = mag;
+      if (mag>max) max = mag;
     }
   }
   // set pixels
-  for(unsigned int h = 0; h < ch.getHops(); h++){
-    for(unsigned int b = 0; b < ch.getBands(); b++){
+  for (unsigned int h = 0; h < ch.getHops(); h++) {
+    for (unsigned int b = 0; b < ch.getBands(); b++) {
       int pixVal = ch.getMagnitude(h,b) / max * img.colorCount() - 1;
-      if(pixVal<1)
+      if (pixVal<1)
         pixVal = 1;
-      for(int x=0; x<chromaScaleH; x++)
-        for(int y=0; y<chromaScaleV; y++)
+      for (int x=0; x<chromaScaleH; x++)
+        for (int y=0; y<chromaScaleV; y++)
           img.setPixel(h*chromaScaleH+x, (ch.getBands()-1-b)*chromaScaleV+y, pixVal);
     }
   }
   return img;
 }
 
-void DetailWindow::say(const QString& s){
+void DetailWindow::say(const QString& s) {
   ui->statusLabel->setText(s);
 }
 
-void DetailWindow::on_runButton_clicked(){
-  if(filePath != "") runAnalysis();
+void DetailWindow::on_runButton_clicked() {
+  if (filePath != "") runAnalysis();
 }
 
-void DetailWindow::on_chromaColourCombo_currentIndexChanged(int index){
+void DetailWindow::on_chromaColourCombo_currentIndexChanged(int index) {
   prefs.setImageColours(chromagramImage, (chromagram_colour_t) index);
   prefs.setImageColours(miniChromagramImage, (chromagram_colour_t) index);
   prefs.setImageColours(harmonicChangeImage, (chromagram_colour_t) index);
@@ -209,7 +209,7 @@ void DetailWindow::on_chromaColourCombo_currentIndexChanged(int index){
   ui->colourScaleLabel->setPixmap(QPixmap::fromImage(colourScaleImage));
 }
 
-void DetailWindow::layoutScaling(){
+void DetailWindow::layoutScaling() {
   ui->gridLayout_Visualisation->setRowStretch(ROW_BIGCHROMA, prefs.getOctaves() * 2);
   ui->gridLayout_Visualisation->setRowStretch(ROW_MINICHROMA, 2);
   ui->gridLayout_Visualisation->setRowStretch(ROW_RATEOFCHANGE, 1);
@@ -217,15 +217,15 @@ void DetailWindow::layoutScaling(){
   chromaScaleH = 8 / prefs.getHopsPerFrame();
 }
 
-void DetailWindow::drawColourScale(){
+void DetailWindow::drawColourScale() {
   colourScaleImage = QImage(1, 65, QImage::Format_Indexed8);
   prefs.setImageColours(colourScaleImage, (chromagram_colour_t) ui->chromaColourCombo->currentIndex());
-  for(int i=0; i<=64; i++)
+  for (int i=0; i<=64; i++)
     colourScaleImage.setPixel(0,64-i,i);
   ui->colourScaleLabel->setPixmap(QPixmap::fromImage(colourScaleImage));
 }
 
-void DetailWindow::blankVisualisations(){
+void DetailWindow::blankVisualisations() {
   chromagramImage     = QImage(1, 1, QImage::Format_Indexed8);
   miniChromagramImage = QImage(1, 1, QImage::Format_Indexed8);
   harmonicChangeImage = QImage(1, 1, QImage::Format_Indexed8);
@@ -243,14 +243,14 @@ void DetailWindow::blankVisualisations(){
   ui->miniChromagramLabel->setToolTip(blank);
 }
 
-void DetailWindow::deleteKeyLabels(){
-  for(int i = keyLabels.size()-1; i >= 0; i--){
+void DetailWindow::deleteKeyLabels() {
+  for (int i = keyLabels.size()-1; i >= 0; i--) {
     delete keyLabels[i];
     keyLabels.pop_back();
   }
 }
 
-void DetailWindow::blankKeyLabel(){
+void DetailWindow::blankKeyLabel() {
   deleteKeyLabels();
   QLabel* dummyLabel = new QLabel();
   QPalette pal = dummyLabel->palette();
@@ -264,7 +264,7 @@ void DetailWindow::blankKeyLabel(){
   keyLabels.push_back(dummyLabel);
 }
 
-void DetailWindow::drawPianoKeys(){
+void DetailWindow::drawPianoKeys() {
   int scale = 10;
   QImage pianoImage = QImage(1,prefs.getOctaves()*12*scale,QImage::Format_Indexed8);
   QImage miniPianoImage = QImage(1,12*scale,QImage::Format_Indexed8);
@@ -276,11 +276,11 @@ void DetailWindow::drawPianoKeys(){
   miniPianoImage.setColor(2,qRgb(127,127,127));
   // reverse of octave for visual representation (ending at A by default)
   QString octaveRev = "bwbwwbwbwwbw";
-  if(prefs.getOffsetToC())
+  if (prefs.getOffsetToC())
     octaveRev = octaveRev.right(3) + octaveRev.left(9);
-  for(unsigned int o = 0; o < prefs.getOctaves(); o++){
-    for(int s = 0; s < 12; s++){
-      for(int px = 0; px < scale-1; px++){
+  for (unsigned int o = 0; o < prefs.getOctaves(); o++) {
+    for (int s = 0; s < 12; s++) {
+      for (int px = 0; px < scale-1; px++) {
         pianoImage.setPixel(0,(o*12*scale)+(s*scale)+px,(octaveRev[s] == 'b' ? 1 : 0));
         miniPianoImage.setPixel(0,(s*scale)+px,(octaveRev[s] == 'b' ? 1 : 0));
       }

@@ -22,7 +22,7 @@
 #include "guiprefs.h"
 #include "ui_prefsdialog.h"
 
-PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialog){
+PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialog) {
   // map dropdown values to indices
   listMetadataWrite << METADATA_WRITE_NONE;
   listMetadataWrite << METADATA_WRITE_PREPEND;
@@ -163,17 +163,17 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 #ifndef Q_OS_WIN
   QFont smallerFont;
   smallerFont.setPointSize(smallerFont.pointSize() - 2);
-  for(int i=0; i<ui->gridLayoutKeyCodes->count(); i++)
-    if(!ui->gridLayoutKeyCodes->itemAt(i)->isEmpty())
-      if(ui->gridLayoutKeyCodes->itemAt(i)->widget()->inherits("QLabel"))
+  for (int i=0; i<ui->gridLayoutKeyCodes->count(); i++)
+    if (!ui->gridLayoutKeyCodes->itemAt(i)->isEmpty())
+      if (ui->gridLayoutKeyCodes->itemAt(i)->widget()->inherits("QLabel"))
         ui->gridLayoutKeyCodes->itemAt(i)->widget()->setFont(smallerFont);
-  for(int i=0; i<ui->customMajor->count(); i++)
-    if(!ui->customMajor->itemAt(i)->isEmpty())
-      if(ui->customMajor->itemAt(i)->widget()->inherits("QLabel"))
+  for (int i=0; i<ui->customMajor->count(); i++)
+    if (!ui->customMajor->itemAt(i)->isEmpty())
+      if (ui->customMajor->itemAt(i)->widget()->inherits("QLabel"))
         ui->customMajor->itemAt(i)->widget()->setFont(smallerFont);
-  for(int i=0; i<ui->customMinor->count(); i++)
-    if(!ui->customMinor->itemAt(i)->isEmpty())
-      if(ui->customMinor->itemAt(i)->widget()->inherits("QLabel"))
+  for (int i=0; i<ui->customMinor->count(); i++)
+    if (!ui->customMinor->itemAt(i)->isEmpty())
+      if (ui->customMinor->itemAt(i)->widget()->inherits("QLabel"))
         ui->customMinor->itemAt(i)->widget()->setFont(smallerFont);
 #endif
 
@@ -181,11 +181,11 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   ui->lbl_warning->setText(tr("Changing these preferences may severely affect %1's accuracy. This is recommended for expert users only.").arg(GuiStrings::getInstance()->appName()));
 }
 
-PrefsDialog::~PrefsDialog(){
+PrefsDialog::~PrefsDialog() {
   delete ui;
 }
 
-void PrefsDialog::on_savePrefsButton_clicked(){
+void PrefsDialog::on_savePrefsButton_clicked() {
   Preferences p;
   p.setWriteToFilesAutomatically(ui->writeToFilesAutomatically->isChecked());
   p.setParallelBatchJobs(ui->parallelBatchJobs->isChecked());
@@ -269,11 +269,11 @@ void PrefsDialog::on_savePrefsButton_clicked(){
   this->close();
 }
 
-void PrefsDialog::on_cancelButton_clicked(){
+void PrefsDialog::on_cancelButton_clicked() {
   this->close();
 }
 
-void PrefsDialog::on_advancedDefaultsButton_clicked(){
+void PrefsDialog::on_advancedDefaultsButton_clicked() {
   Preferences p;
   // Musical range
   ui->stFreq->setCurrentIndex(listStartingFreq.indexOf(p.core.getStartingFreqADefault()));
@@ -299,19 +299,19 @@ void PrefsDialog::on_advancedDefaultsButton_clicked(){
   ui->similarityMeasure->setCurrentIndex(listSimilarityMeasure.indexOf(p.core.getSimilarityMeasureDefault()));
 }
 
-void PrefsDialog::tuningEnabled(){
+void PrefsDialog::tuningEnabled() {
   ui->tuningMethod->setEnabled(ui->bps->value() > 1);
   binAdaptiveTuningEnabled();
 }
 
-void PrefsDialog::binAdaptiveTuningEnabled(){
+void PrefsDialog::binAdaptiveTuningEnabled() {
   ui->detunedBandWeight->setEnabled(
     ui->tuningMethod->isEnabled() &&
     listTuningMethod[ui->tuningMethod->currentIndex()] == KeyFinder::TUNING_BAND_ADAPTIVE
   );
 }
 
-void PrefsDialog::segmentationEnabled(){
+void PrefsDialog::segmentationEnabled() {
   KeyFinder::segmentation_t chk = listSegmentation[ui->segmentation->currentIndex()];
   bool e = (chk == KeyFinder::SEGMENTATION_COSINE);
   ui->hcdfGaussianSigma->setEnabled(e);
@@ -321,7 +321,7 @@ void PrefsDialog::segmentationEnabled(){
   ui->arbitrarySegments->setEnabled(e);
 }
 
-void PrefsDialog::customProfileEnabled(){
+void PrefsDialog::customProfileEnabled() {
   bool e = (listToneProfile[ui->toneProfile->currentIndex()] == KeyFinder::TONE_PROFILE_CUSTOM);
   ui->maj0->setEnabled(e);
   ui->maj1->setEnabled(e);
@@ -349,7 +349,7 @@ void PrefsDialog::customProfileEnabled(){
   ui->min11->setEnabled(e);
 }
 
-void PrefsDialog::metadataDelimiterEnabled(){
+void PrefsDialog::metadataDelimiterEnabled() {
   QList<int> indices;
   indices << ui->metadataWriteTitle->currentIndex();
   indices << ui->metadataWriteArtist->currentIndex();
@@ -357,9 +357,9 @@ void PrefsDialog::metadataDelimiterEnabled(){
   indices << ui->metadataWriteComment->currentIndex();
   indices << ui->metadataWriteGrouping->currentIndex();
   indices << ui->metadataWriteFilename->currentIndex();
-  for(int i = 0; i < indices.size(); i++){
+  for (int i = 0; i < indices.size(); i++) {
     metadata_write_t chk = listMetadataWrite[indices[i]];
-    if(chk == METADATA_WRITE_PREPEND || chk == METADATA_WRITE_APPEND) {
+    if (chk == METADATA_WRITE_PREPEND || chk == METADATA_WRITE_APPEND) {
       ui->metadataDelimiter->setEnabled(true);
       return;
     }
@@ -367,51 +367,51 @@ void PrefsDialog::metadataDelimiterEnabled(){
   ui->metadataDelimiter->setEnabled(false);
 }
 
-void PrefsDialog::on_bps_valueChanged(int /*arg1*/){
+void PrefsDialog::on_bps_valueChanged(int /*arg1*/) {
   tuningEnabled();
 }
 
-void PrefsDialog::on_tuningMethod_currentIndexChanged(int /*index*/){
+void PrefsDialog::on_tuningMethod_currentIndexChanged(int /*index*/) {
   binAdaptiveTuningEnabled();
 }
 
-void PrefsDialog::on_segmentation_currentIndexChanged(int /*index*/){
+void PrefsDialog::on_segmentation_currentIndexChanged(int /*index*/) {
   segmentationEnabled();
 }
 
-void PrefsDialog::on_toneProfile_currentIndexChanged(int /*index*/){
+void PrefsDialog::on_toneProfile_currentIndexChanged(int /*index*/) {
   customProfileEnabled();
 }
 
-void PrefsDialog::on_metadataWriteTitle_currentIndexChanged(int /*index*/){
+void PrefsDialog::on_metadataWriteTitle_currentIndexChanged(int /*index*/) {
   metadataDelimiterEnabled();
 }
 
-void PrefsDialog::on_metadataWriteArtist_currentIndexChanged(int /*index*/){
+void PrefsDialog::on_metadataWriteArtist_currentIndexChanged(int /*index*/) {
   metadataDelimiterEnabled();
 }
 
-void PrefsDialog::on_metadataWriteAlbum_currentIndexChanged(int /*index*/){
+void PrefsDialog::on_metadataWriteAlbum_currentIndexChanged(int /*index*/) {
   metadataDelimiterEnabled();
 }
 
-void PrefsDialog::on_metadataWriteComment_currentIndexChanged(int /*index*/){
+void PrefsDialog::on_metadataWriteComment_currentIndexChanged(int /*index*/) {
   metadataDelimiterEnabled();
 }
 
-void PrefsDialog::on_metadataWriteGrouping_currentIndexChanged(int /*index*/){
+void PrefsDialog::on_metadataWriteGrouping_currentIndexChanged(int /*index*/) {
   metadataDelimiterEnabled();
 }
 
-void PrefsDialog::on_metadataWriteKey_currentIndexChanged(int /*index*/){
+void PrefsDialog::on_metadataWriteKey_currentIndexChanged(int /*index*/) {
   metadataDelimiterEnabled();
 }
 
-void PrefsDialog::on_metadataWriteFilename_currentIndexChanged(int /*index*/){
+void PrefsDialog::on_metadataWriteFilename_currentIndexChanged(int /*index*/) {
   metadataDelimiterEnabled();
 }
 
-void PrefsDialog::on_findITunesLibraryButton_clicked(){
+void PrefsDialog::on_findITunesLibraryButton_clicked() {
   QString initDir;
 #ifdef Q_OS_WIN
   initDir = QDir::homePath() + "/My Music";
@@ -427,12 +427,12 @@ void PrefsDialog::on_findITunesLibraryButton_clicked(){
     //: Filetype in file browse dialog launched from the Preferences window
     tr("iTunes XML (*.xml)")
   );
-  if(iTunesLibraryPath.isEmpty())
+  if (iTunesLibraryPath.isEmpty())
     return;
   ui->iTunesLibraryPath->setText(iTunesLibraryPath);
 }
 
-void PrefsDialog::on_findTraktorLibraryButton_clicked(){
+void PrefsDialog::on_findTraktorLibraryButton_clicked() {
   QString initDir;
 #ifdef Q_OS_WIN
   initDir = QDir::homePath() + "/My Music";
@@ -447,12 +447,12 @@ void PrefsDialog::on_findTraktorLibraryButton_clicked(){
     //: Filetype in file browse dialog launched from the Preferences window
     tr("Traktor NML (*.nml)")
   );
-  if(traktorLibraryPath.isEmpty())
+  if (traktorLibraryPath.isEmpty())
     return;
   ui->traktorLibraryPath->setText(traktorLibraryPath);
 }
 
-void PrefsDialog::on_findSeratoLibraryButton_clicked(){
+void PrefsDialog::on_findSeratoLibraryButton_clicked() {
   QString initDir;
 #ifdef Q_OS_WIN
   initDir = QDir::homePath() + "/My Music";
@@ -467,7 +467,7 @@ void PrefsDialog::on_findSeratoLibraryButton_clicked(){
     //: Filetype in file browse dialog launched from the Preferences window
     tr("Serato database (*)")
   );
-  if(seratoLibraryPath.isEmpty())
+  if (seratoLibraryPath.isEmpty())
     return;
   ui->seratoLibraryPath->setText(seratoLibraryPath);
 }

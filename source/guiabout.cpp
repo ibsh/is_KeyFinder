@@ -22,7 +22,7 @@
 #include "guiabout.h"
 #include "ui_aboutdialog.h"
 
-AboutDialog::AboutDialog(QWidget *parent): QDialog(parent),ui(new Ui::AboutDialog){
+AboutDialog::AboutDialog(QWidget *parent): QDialog(parent),ui(new Ui::AboutDialog) {
   ui->setupUi(this);
   //: The title of the About window; includes the app name at %1
   this->setWindowTitle(tr("About %1").arg(GuiStrings::getInstance()->appName()));
@@ -55,6 +55,6 @@ AboutDialog::AboutDialog(QWidget *parent): QDialog(parent),ui(new Ui::AboutDialo
 #endif
 }
 
-AboutDialog::~AboutDialog(){
+AboutDialog::~AboutDialog() {
   delete ui;
 }
