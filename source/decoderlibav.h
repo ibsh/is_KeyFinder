@@ -65,7 +65,7 @@ private:
   AVCodec* codec;
   AVFormatContext* fCtx;
   AVCodecContext* cCtx;
-  AVDictionary* dict;
+  AVDictionary* dict; // stays NULL, just here for legibility
   ReSampleContext* rsCtx;
   bool decodePacket(AVPacket*, KeyFinder::AudioData*);
 };
