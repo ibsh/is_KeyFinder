@@ -43,7 +43,6 @@ HEADERS  += \
   $$PWD/strings.h
 
 SOURCES += \
-  $$PWD/asyncfileobject.cpp \
   $$PWD/asynckeyprocess.cpp \
   $$PWD/asyncmetadatareadprocess.cpp \
   $$PWD/decoderlibav.cpp \

@@ -27,7 +27,8 @@
 
 class AsyncFileObject{
 public:
-  AsyncFileObject(const QString&, const Preferences&, int);
+  AsyncFileObject(const QString& path, const Preferences& p, int row) :
+    filePath(path), prefs(p), batchRow(row) { }
   QString filePath;
   Preferences prefs;
   int batchRow;

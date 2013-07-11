@@ -26,7 +26,7 @@
 
 class MetadataReadResult{
 public:
-  MetadataReadResult() : batchRow(-1) {}
+    MetadataReadResult() : batchRow(-1), tags(0) {}
   int batchRow;
   QStringList tags;
 };
