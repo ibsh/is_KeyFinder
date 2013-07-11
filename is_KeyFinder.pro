@@ -40,61 +40,16 @@ QT += \
 
 TEMPLATE = app
 TARGET = KeyFinder
+DEPENDPATH += .
 UI_DIR = ui
-RESOURCES += resources.qrc
 
-HEADERS  += \
-    _VERSION.h \
-    asyncfileobject.h \
-    asynckeyprocess.h \
-    asynckeyresult.h \
-    asyncmetadatareadprocess.h \
-    asyncmetadatareadresult.h \
-    decoderlibav.h \
-    externalplaylist.h \
-    externalplaylistserato.h \
-    guiabout.h \
-    guibatch.h \
-    guidetail.h \
-    guimenuhandler.h \
-    guiprefs.h \
-    libkeyfindersingleton.h \
-    metadatafilename.h \
-    metadatataglib.h \
-    metadatawriteresult.h \
-    os_windows.h \
-    preferences.h \
-    strings.h
+include(./source/source.pri)
+include(./forms/forms.pri)
+include(./resources/resources.pri)
 
-SOURCES += \
-    asyncfileobject.cpp \
-    asynckeyprocess.cpp \
-    asyncmetadatareadprocess.cpp \
-    decoderlibav.cpp \
-    externalplaylist.cpp \
-    externalplaylistserato.cpp \
-    guiabout.cpp \
-    guibatch.cpp \
-    guidetail.cpp \
-    guimenuhandler.cpp \
-    guiprefs.cpp \
-    libkeyfindersingleton.cpp \
-    main.cpp \
-    metadatafilename.cpp \
-    metadatataglib.cpp \
-    os_windows.cpp \
-    preferences.cpp \
-    strings.cpp
+SOURCES += $$PWD/source/main.cpp
 
-FORMS += \
-    aboutdialog.ui \
-    batchwindow.ui \
-    detailwindow.ui \
-    prefsdialog.ui
-
-OTHER_FILES += \
-    README \
-    win32.rc
+OTHER_FILES += README
 
 QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS # for libav
 
@@ -106,8 +61,6 @@ unix|macx{
   LIBS += -ltag
   LIBS += -lboost_system
   LIBS += -lboost_thread
-
-  ICON = is_KeyFinder.icns
 }
 
 macx{
@@ -133,9 +86,6 @@ win32{
   LIBS += -LC:/mingw/local/lib
   LIBS += -lboost_system-47-mt-1_52
   LIBS += -lboost_thread-47-mt-1_52
-
-  OTHER_FILES += is_KeyFinder.ico
-  RC_FILE = win32.rc
 }
 
 unix {
@@ -145,16 +95,16 @@ unix {
 }
 
 TRANSLATIONS = \
-    is_keyfinder_da.ts \
-    is_keyfinder_de.ts \
-    is_keyfinder_en_GB.ts \
-    is_keyfinder_en_US.ts \
-    is_keyfinder_es.ts \
-    is_keyfinder_fr.ts \
-    is_keyfinder_he.ts \
-    is_keyfinder_hr.ts \
-    is_keyfinder_it.ts \
-    is_keyfinder_nl.ts \
-    is_keyfinder_pl.ts \
-    is_keyfinder_ru.ts \
-    is_keyfinder_sv.ts
+  $$PWD/translations/is_keyfinder_en_GB.ts \
+  $$PWD/translations/is_keyfinder_da.ts \
+  $$PWD/translations/is_keyfinder_de.ts \
+  $$PWD/translations/is_keyfinder_en_US.ts \
+  $$PWD/translations/is_keyfinder_es.ts \
+  $$PWD/translations/is_keyfinder_fr.ts \
+  $$PWD/translations/is_keyfinder_he.ts \
+  $$PWD/translations/is_keyfinder_hr.ts \
+  $$PWD/translations/is_keyfinder_it.ts \
+  $$PWD/translations/is_keyfinder_nl.ts \
+  $$PWD/translations/is_keyfinder_pl.ts \
+  $$PWD/translations/is_keyfinder_ru.ts \
+  $$PWD/translations/is_keyfinder_sv.ts
