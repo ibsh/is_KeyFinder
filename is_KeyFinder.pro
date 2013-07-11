@@ -39,15 +39,24 @@ QT += \
     network
 
 TEMPLATE = app
-TARGET = KeyFinder
 DEPENDPATH += .
-UI_DIR = ui
 
 include(./source/source.pri)
 include(./forms/forms.pri)
-include(./resources/resources.pri)
 
-SOURCES += $$PWD/source/main.cpp
+CONFIG(test) {
+  TARGET = KeyFinderTests
+  include(./test/test.pri)
+  SOURCES += $$PWD/test/main.cpp
+  CONFIG += console
+  CONFIG -= app_bundle
+  LIBS += -lgtest
+} else {
+  TARGET = KeyFinder
+  SOURCES += $$PWD/source/main.cpp
+  include(./resources/resources.pri)
+  UI_DIR = ui
+}
 
 OTHER_FILES += README
 
