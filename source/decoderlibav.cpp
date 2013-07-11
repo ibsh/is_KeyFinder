@@ -143,14 +143,17 @@ KeyFinder::AudioData* AudioFileDecoder::decodeNextAudioPacket(){
     if(!decodePacket(&avpkt, audio)){
       badPacketCount++;
       if(badPacketCount > badPacketThreshold){
+        av_free_packet(&avpkt);
         qWarning("Too many bad packets (%d) while decoding file %s", badPacketCount, filePathCh);
         throw KeyFinder::Exception(GuiStrings::getInstance()->libavTooManyBadPackets(badPacketThreshold).toLocal8Bit().constData());
       }
     }
   }catch(KeyFinder::Exception& e){
+    av_free_packet(&avpkt);
     qWarning("Encountered KeyFinder::Exception (%s) while decoding file %s", e.what(), filePathCh);
     throw e;
   }
+  av_free_packet(&avpkt);
   return audio;
 }
 
