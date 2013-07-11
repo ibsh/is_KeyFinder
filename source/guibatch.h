@@ -94,21 +94,21 @@ private:
   void sortTableWidget();
 
   int libraryOldIndex;
-  QFutureWatcher<QList<ExternalPlaylistObject> > readLibraryWatcher;
-  QFutureWatcher<QList<QUrl> > loadPlaylistWatcher;
+  QFutureWatcher<QList<ExternalPlaylistObject> >* readLibraryWatcher;
+  QFutureWatcher<QList<QUrl> >* loadPlaylistWatcher;
 
   void dragEnterEvent(QDragEnterEvent*);
   void dropEvent(QDropEvent*);
   QList<QUrl> droppedFiles;
   void addDroppedFiles();
-  QFutureWatcher<void> addFilesWatcher;
+  QFutureWatcher<void>* addFilesWatcher;
   QList<QUrl> getDirectoryContents(QDir) const;
 
   void addNewRow(QString);
-  QFutureWatcher<MetadataReadResult> metadataReadWatcher;
+  QFutureWatcher<MetadataReadResult>* metadataReadWatcher;
   void readMetadata();
 
-  QFutureWatcher<KeyFinderResultWrapper> analysisWatcher;
+  QFutureWatcher<KeyFinderResultWrapper>* analysisWatcher;
   void checkRowsForSkipping();
   bool fieldAlreadyHasKeyData(int, int, metadata_write_t);
   void markRowSkipped(int,bool);

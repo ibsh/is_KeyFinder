@@ -37,24 +37,13 @@ typedef QVector<int> MyArray;
 
 BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) :
   QMainWindow(parent),
+  readLibraryWatcher(NULL), loadPlaylistWatcher(NULL), addFilesWatcher(NULL),
+  metadataReadWatcher(NULL), analysisWatcher(NULL),
   ui(new Ui::BatchWindow),
   metadataColumnMapping(METADATA_TAG_T_COUNT)
 {
   // ASYNC
   qRegisterMetaType<MyArray>("MyArray");
-  connect(&readLibraryWatcher,  SIGNAL(finished()), this, SLOT(readLibraryFinished()));
-  connect(&loadPlaylistWatcher, SIGNAL(finished()), this, SLOT(loadPlaylistFinished()));
-  connect(&addFilesWatcher,     SIGNAL(finished()), this, SLOT(addFilesFinished()));
-
-  connect(&metadataReadWatcher, SIGNAL(resultReadyAt(int)),             this, SLOT(metadataReadResultReadyAt(int)));
-  connect(&metadataReadWatcher, SIGNAL(finished()),                     this, SLOT(metadataReadFinished()));
-  connect(&metadataReadWatcher, SIGNAL(progressRangeChanged(int, int)), this, SLOT(progressRangeChanged(int, int)));
-  connect(&metadataReadWatcher, SIGNAL(progressValueChanged(int)),      this, SLOT(progressValueChanged(int)));
-
-  connect(&analysisWatcher,     SIGNAL(resultReadyAt(int)),             this, SLOT(analysisResultReadyAt(int)));
-  connect(&analysisWatcher,     SIGNAL(finished()),                     this, SLOT(analysisFinished())); // takes care of cancelled too
-  connect(&analysisWatcher,     SIGNAL(progressRangeChanged(int, int)), this, SLOT(progressRangeChanged(int, int)));
-  connect(&analysisWatcher,     SIGNAL(progressValueChanged(int)),      this, SLOT(progressValueChanged(int)));
 
   // SETUP UI
   ui->setupUi(this);
@@ -101,7 +90,9 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) :
   ui->libraryWidget->setColumnWidth(0,170);
   libraryOldIndex = 0;
   QFuture<QList<ExternalPlaylistObject> > readLibraryFuture = QtConcurrent::run(ExternalPlaylist::readLibrary, prefs);
-  readLibraryWatcher.setFuture(readLibraryFuture);
+  readLibraryWatcher = new QFutureWatcher<QList<ExternalPlaylistObject> >();
+  connect(readLibraryWatcher, SIGNAL(finished()), this, SLOT(readLibraryFinished()));
+  readLibraryWatcher->setFuture(readLibraryFuture);
 
   //relative sizing on Mac/Linux only
 #ifndef Q_OS_WIN
@@ -162,12 +153,26 @@ BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) :
 }
 
 BatchWindow::~BatchWindow(){
-  addFilesWatcher.cancel();
-  metadataReadWatcher.cancel();
-  analysisWatcher.cancel();
-  addFilesWatcher.waitForFinished();
-  metadataReadWatcher.waitForFinished();
-  analysisWatcher.waitForFinished();
+  if (readLibraryWatcher != NULL) {
+    readLibraryWatcher->cancel();
+    readLibraryWatcher->waitForFinished();
+  }
+  if (loadPlaylistWatcher != NULL) {
+    loadPlaylistWatcher->cancel();
+    loadPlaylistWatcher->waitForFinished();
+  }
+  if (addFilesWatcher != NULL) {
+    addFilesWatcher->cancel();
+    addFilesWatcher->waitForFinished();
+  }
+  if (metadataReadWatcher != NULL) {
+    metadataReadWatcher->cancel();
+    metadataReadWatcher->waitForFinished();
+  }
+  if (analysisWatcher != NULL) {
+    analysisWatcher->cancel();
+    analysisWatcher->waitForFinished();
+  }
   delete ui;
 }
 
@@ -213,7 +218,9 @@ void BatchWindow::setGuiRunning(const QString& msg, bool cancellable){
 }
 
 void BatchWindow::readLibraryFinished(){
-  QList<ExternalPlaylistObject> libraryPlaylists = readLibraryWatcher.result();
+  QList<ExternalPlaylistObject> libraryPlaylists = readLibraryWatcher->result();
+  delete readLibraryWatcher;
+  readLibraryWatcher = NULL;
   for(int i=0; i<(signed)libraryPlaylists.size(); i++){
     int newRow = ui->libraryWidget->rowCount();
     ui->libraryWidget->insertRow(newRow);
@@ -266,14 +273,18 @@ void BatchWindow::on_libraryWidget_cellClicked(int row, int /*col*/){
   QString playlistName = ui->libraryWidget->item(row, COL_PLAYLIST_NAME)->text();
   QString playlistSource = ui->libraryWidget->item(row, COL_PLAYLIST_SOURCE)->text();
   QFuture<QList<QUrl> > loadPlaylistFuture = QtConcurrent::run(ExternalPlaylist::readLibraryPlaylist, playlistName, playlistSource, prefs);
-  loadPlaylistWatcher.setFuture(loadPlaylistFuture);
+  loadPlaylistWatcher = new QFutureWatcher<QList<QUrl> >();
+  connect(loadPlaylistWatcher, SIGNAL(finished()), this, SLOT(loadPlaylistFinished()));
+  loadPlaylistWatcher->setFuture(loadPlaylistFuture);
 }
 
 void BatchWindow::loadPlaylistFinished(){
-  if(loadPlaylistWatcher.result().size() > 0)
-    receiveUrls(loadPlaylistWatcher.result());
+  if(loadPlaylistWatcher->result().size() > 0)
+    receiveUrls(loadPlaylistWatcher->result());
   else
     setGuiDefaults();
+  delete loadPlaylistWatcher;
+  loadPlaylistWatcher = NULL;
 }
 
 void BatchWindow::dragEnterEvent(QDragEnterEvent *e){
@@ -294,14 +305,18 @@ void BatchWindow::dropEvent(QDropEvent *e){
 }
 
 bool BatchWindow::receiveUrls(const QList<QUrl>& urls){
-  if(metadataReadWatcher.isRunning() || analysisWatcher.isRunning())
-    return false;
+  if (
+    (metadataReadWatcher != NULL && metadataReadWatcher->isRunning()) ||
+    (analysisWatcher     != NULL && analysisWatcher->isRunning())
+  ) return false;
   droppedFiles << urls;
-  if(!addFilesWatcher.isRunning()){
+  if(addFilesWatcher == NULL){
     //: Text in the Batch window status bar
     setGuiRunning(tr("Loading files..."), false);
     QFuture<void> addFileFuture = QtConcurrent::run(this, &BatchWindow::addDroppedFiles);
-    addFilesWatcher.setFuture(addFileFuture);
+    addFilesWatcher = new QFutureWatcher<void>();
+    connect(addFilesWatcher, SIGNAL(finished()), this, SLOT(addFilesFinished()));
+    addFilesWatcher->setFuture(addFileFuture);
   }
   return true;
 }
@@ -395,6 +410,8 @@ void BatchWindow::addNewRow(QString fileUrl){
 }
 
 void BatchWindow::addFilesFinished(){
+  delete addFilesWatcher;
+  addFilesWatcher = NULL;
   readMetadata();
 }
 
@@ -408,13 +425,18 @@ void BatchWindow::readMetadata(){
       objects.push_back(AsyncFileObject(ui->tableWidget->item(row, COL_FILEPATH)->text(), prefs, row));
   }
   QFuture<MetadataReadResult> metadataReadFuture = QtConcurrent::mapped(objects, metadataReadProcess);
-  metadataReadWatcher.setFuture(metadataReadFuture);
+  metadataReadWatcher = new QFutureWatcher<MetadataReadResult>();
+  connect(metadataReadWatcher, SIGNAL(resultReadyAt(int)),             this, SLOT(metadataReadResultReadyAt(int)));
+  connect(metadataReadWatcher, SIGNAL(finished()),                     this, SLOT(metadataReadFinished()));
+  connect(metadataReadWatcher, SIGNAL(progressRangeChanged(int, int)), this, SLOT(progressRangeChanged(int, int)));
+  connect(metadataReadWatcher, SIGNAL(progressValueChanged(int)),      this, SLOT(progressValueChanged(int)));
+  metadataReadWatcher->setFuture(metadataReadFuture);
 }
 
 void BatchWindow::metadataReadResultReadyAt(int index){
-  int row = metadataReadWatcher.resultAt(index).batchRow;
+  int row = metadataReadWatcher->resultAt(index).batchRow;
   for (unsigned int i = 0; i < METADATA_TAG_T_COUNT; i++) {
-    QString data = metadataReadWatcher.resultAt(index).tags[i];
+    QString data = metadataReadWatcher->resultAt(index).tags[i];
     if(!data.isEmpty()){
       ui->tableWidget->setItem(row, metadataColumnMapping[i],new QTableWidgetItem());
       ui->tableWidget->item(row, metadataColumnMapping[i])->setText(data);
@@ -423,6 +445,8 @@ void BatchWindow::metadataReadResultReadyAt(int index){
 }
 
 void BatchWindow::metadataReadFinished(){
+  delete metadataReadWatcher;
+  metadataReadWatcher = NULL;
   setGuiDefaults();
 }
 
@@ -518,21 +542,26 @@ void BatchWindow::runAnalysis(){
       objects.push_back(AsyncFileObject(ui->tableWidget->item(row, COL_FILEPATH)->text(), prefs, row));
   }
   QFuture<KeyFinderResultWrapper> analysisFuture = QtConcurrent::mapped(objects, keyDetectionProcess);
-  analysisWatcher.setFuture(analysisFuture);
+  analysisWatcher = new QFutureWatcher<KeyFinderResultWrapper>();
+  connect(analysisWatcher, SIGNAL(resultReadyAt(int)),             this, SLOT(analysisResultReadyAt(int)));
+  connect(analysisWatcher, SIGNAL(finished()),                     this, SLOT(analysisFinished())); // takes care of cancelled too
+  connect(analysisWatcher, SIGNAL(progressRangeChanged(int, int)), this, SLOT(progressRangeChanged(int, int)));
+  connect(analysisWatcher, SIGNAL(progressValueChanged(int)),      this, SLOT(progressValueChanged(int)));
+  analysisWatcher->setFuture(analysisFuture);
 }
 
 void BatchWindow::on_cancelBatchButton_clicked(){
   //: Text in the Batch window status bar
   setGuiRunning(tr("Cancelling..."), false);
-  metadataReadWatcher.cancel();
-  analysisWatcher.cancel();
+  if (metadataReadWatcher != NULL) metadataReadWatcher->cancel();
+  if (analysisWatcher != NULL) analysisWatcher->cancel();
 }
 
 void BatchWindow::analysisResultReadyAt(int index){
-  QString error = analysisWatcher.resultAt(index).errorMessage;
-  int row = analysisWatcher.resultAt(index).batchRow;
+  QString error = analysisWatcher->resultAt(index).errorMessage;
+  int row = analysisWatcher->resultAt(index).batchRow;
   if(error.isEmpty()){
-    KeyFinder::key_t key = analysisWatcher.resultAt(index).core.globalKeyEstimate;
+    KeyFinder::key_t key = analysisWatcher->resultAt(index).core.globalKeyEstimate;
     ui->tableWidget->item(row, COL_STATUS)->setText(QString::number(key));
     ui->tableWidget->item(row, COL_KEY)->setText(prefs.getKeyCode(key));
     if(prefs.getWriteToFilesAutomatically()){
@@ -549,12 +578,18 @@ void BatchWindow::analysisResultReadyAt(int index){
 }
 
 void BatchWindow::analysisFinished(){
+  delete analysisWatcher;
+  analysisWatcher = NULL;
   setGuiDefaults();
   QApplication::beep();
 }
 
 void BatchWindow::writeDetectedToFiles(){
-  if(addFilesWatcher.isRunning() || metadataReadWatcher.isRunning() || analysisWatcher.isRunning()){
+  if (
+    (addFilesWatcher     != NULL && addFilesWatcher->isRunning()) ||
+    (metadataReadWatcher != NULL && metadataReadWatcher->isRunning()) ||
+    (analysisWatcher     != NULL && analysisWatcher->isRunning())
+  ) {
     QApplication::beep();
     return;
   }
