@@ -145,5 +145,5 @@ QString GuiStrings::durationExceedsPreference(int mins, int secs, int max) const
   return tr("Duration (%1:%2) exceeds specified maximum (%3:00)")
     .arg(QString::number(mins), 2, '0')
     .arg(QString::number(secs), 2, '0')
-    .arg(QString::number(max), 2, '0');
+    .arg(QString::number(max),  2, '0');
 }

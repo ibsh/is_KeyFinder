@@ -311,36 +311,36 @@ Preferences::Preferences(){
   // ================================ End ======================================
 
   // default key codes
-  defaultKeyCodes.push_back("A");		defaultKeyCodes.push_back("Am");
-  defaultKeyCodes.push_back("Bb");	defaultKeyCodes.push_back("Bbm");
-  defaultKeyCodes.push_back("B");		defaultKeyCodes.push_back("Bm");
-  defaultKeyCodes.push_back("C");		defaultKeyCodes.push_back("Cm");
-  defaultKeyCodes.push_back("Db");	defaultKeyCodes.push_back("Dbm");
-  defaultKeyCodes.push_back("D");		defaultKeyCodes.push_back("Dm");
-  defaultKeyCodes.push_back("Eb");	defaultKeyCodes.push_back("Ebm");
-  defaultKeyCodes.push_back("E");		defaultKeyCodes.push_back("Em");
-  defaultKeyCodes.push_back("F");		defaultKeyCodes.push_back("Fm");
-  defaultKeyCodes.push_back("Gb");	defaultKeyCodes.push_back("Gbm");
-  defaultKeyCodes.push_back("G");		defaultKeyCodes.push_back("Gm");
-  defaultKeyCodes.push_back("Ab");	defaultKeyCodes.push_back("Abm");
+  defaultKeyCodes.push_back("A");   defaultKeyCodes.push_back("Am");
+  defaultKeyCodes.push_back("Bb");  defaultKeyCodes.push_back("Bbm");
+  defaultKeyCodes.push_back("B");   defaultKeyCodes.push_back("Bm");
+  defaultKeyCodes.push_back("C");   defaultKeyCodes.push_back("Cm");
+  defaultKeyCodes.push_back("Db");  defaultKeyCodes.push_back("Dbm");
+  defaultKeyCodes.push_back("D");   defaultKeyCodes.push_back("Dm");
+  defaultKeyCodes.push_back("Eb");  defaultKeyCodes.push_back("Ebm");
+  defaultKeyCodes.push_back("E");   defaultKeyCodes.push_back("Em");
+  defaultKeyCodes.push_back("F");   defaultKeyCodes.push_back("Fm");
+  defaultKeyCodes.push_back("Gb");  defaultKeyCodes.push_back("Gbm");
+  defaultKeyCodes.push_back("G");   defaultKeyCodes.push_back("Gm");
+  defaultKeyCodes.push_back("Ab");  defaultKeyCodes.push_back("Abm");
   defaultKeyCodes.push_back("...");
   // key colours for display
   int a = 127;
   int b = 191;
   int c = 223;
   int d = 255;
-  keyColours.push_back(qRgb(c,d,a));	keyColours.push_back(qRgb(b,c,a));
-  keyColours.push_back(qRgb(d,a,d));	keyColours.push_back(qRgb(c,a,c));
-  keyColours.push_back(qRgb(a,d,c));	keyColours.push_back(qRgb(a,c,b));
-  keyColours.push_back(qRgb(d,a,a));	keyColours.push_back(qRgb(c,a,a));
-  keyColours.push_back(qRgb(a,c,d));	keyColours.push_back(qRgb(a,b,c));
-  keyColours.push_back(qRgb(d,d,a));	keyColours.push_back(qRgb(c,c,a));
-  keyColours.push_back(qRgb(c,a,d));	keyColours.push_back(qRgb(b,a,c));
-  keyColours.push_back(qRgb(a,d,a));	keyColours.push_back(qRgb(a,c,a));
-  keyColours.push_back(qRgb(d,a,c));	keyColours.push_back(qRgb(c,a,b));
-  keyColours.push_back(qRgb(a,d,d));	keyColours.push_back(qRgb(a,c,c));
-  keyColours.push_back(qRgb(d,c,a));	keyColours.push_back(qRgb(c,b,a));
-  keyColours.push_back(qRgb(a,a,c));	keyColours.push_back(qRgb(a,a,c));
+  keyColours.push_back(qRgb(c,d,a)); keyColours.push_back(qRgb(b,c,a));
+  keyColours.push_back(qRgb(d,a,d)); keyColours.push_back(qRgb(c,a,c));
+  keyColours.push_back(qRgb(a,d,c)); keyColours.push_back(qRgb(a,c,b));
+  keyColours.push_back(qRgb(d,a,a)); keyColours.push_back(qRgb(c,a,a));
+  keyColours.push_back(qRgb(a,c,d)); keyColours.push_back(qRgb(a,b,c));
+  keyColours.push_back(qRgb(d,d,a)); keyColours.push_back(qRgb(c,c,a));
+  keyColours.push_back(qRgb(c,a,d)); keyColours.push_back(qRgb(b,a,c));
+  keyColours.push_back(qRgb(a,d,a)); keyColours.push_back(qRgb(a,c,a));
+  keyColours.push_back(qRgb(d,a,c)); keyColours.push_back(qRgb(c,a,b));
+  keyColours.push_back(qRgb(a,d,d)); keyColours.push_back(qRgb(a,c,c));
+  keyColours.push_back(qRgb(d,c,a)); keyColours.push_back(qRgb(c,b,a));
+  keyColours.push_back(qRgb(a,a,c)); keyColours.push_back(qRgb(a,a,c));
   keyColours.push_back(qRgb(a,a,a));
 }
 
@@ -459,26 +459,26 @@ void Preferences::save(){
 Preferences& Preferences::operator=(const Preferences& that){
   if(this != &that){
     core = that.core;
-    customKeyCodes = that.customKeyCodes;
-    metadataFormat = that.metadataFormat;
-    metadataWriteTitle = that.metadataWriteTitle;
-    metadataWriteArtist = that.metadataWriteArtist;
-    metadataWriteAlbum = that.metadataWriteAlbum;
-    metadataWriteComment = that.metadataWriteComment;
-    metadataWriteGrouping = that.metadataWriteGrouping;
-    metadataWriteKey = that.metadataWriteKey;
-    metadataWriteFilename = that.metadataWriteFilename;
-    metadataDelimiter = that.metadataDelimiter;
+    customKeyCodes            = that.customKeyCodes;
+    metadataFormat            = that.metadataFormat;
+    metadataWriteTitle        = that.metadataWriteTitle;
+    metadataWriteArtist       = that.metadataWriteArtist;
+    metadataWriteAlbum        = that.metadataWriteAlbum;
+    metadataWriteComment      = that.metadataWriteComment;
+    metadataWriteGrouping     = that.metadataWriteGrouping;
+    metadataWriteKey          = that.metadataWriteKey;
+    metadataWriteFilename     = that.metadataWriteFilename;
+    metadataDelimiter         = that.metadataDelimiter;
     writeToFilesAutomatically = that.writeToFilesAutomatically;
     skipFilesWithExistingTags = that.skipFilesWithExistingTags;
-    maxDuration = that.maxDuration;
-    parallelBatchJobs = that.parallelBatchJobs;
-    iTunesLibraryPath = that.iTunesLibraryPath;
-    traktorLibraryPath = that.traktorLibraryPath;
-    seratoLibraryPath = that.seratoLibraryPath;
-    batchWindowState = that.batchWindowState;
-    batchWindowGeometry = that.batchWindowGeometry;
-    batchWindowSplitterState = that.batchWindowSplitterState;
+    maxDuration               = that.maxDuration;
+    parallelBatchJobs         = that.parallelBatchJobs;
+    iTunesLibraryPath         = that.iTunesLibraryPath;
+    traktorLibraryPath        = that.traktorLibraryPath;
+    seratoLibraryPath         = that.seratoLibraryPath;
+    batchWindowState          = that.batchWindowState;
+    batchWindowGeometry       = that.batchWindowGeometry;
+    batchWindowSplitterState  = that.batchWindowSplitterState;
   }
   return *this;
 }
