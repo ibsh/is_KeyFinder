@@ -43,6 +43,7 @@ TARGET = KeyFinder
 DEPENDPATH += .
 UI_DIR = ui
 
+include(./forms/forms.pri)
 include(./resources/resources.pri)
 
 HEADERS  += \
@@ -87,12 +88,6 @@ SOURCES += \
     os_windows.cpp \
     preferences.cpp \
     strings.cpp
-
-FORMS += \
-    aboutdialog.ui \
-    batchwindow.ui \
-    detailwindow.ui \
-    prefsdialog.ui
 
 OTHER_FILES += README
 
