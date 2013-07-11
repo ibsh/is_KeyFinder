@@ -40,8 +40,10 @@ QT += \
 
 TEMPLATE = app
 TARGET = KeyFinder
+DEPENDPATH += .
 UI_DIR = ui
-RESOURCES += resources.qrc
+
+include(./resources/resources.pri)
 
 HEADERS  += \
     _VERSION.h \
@@ -92,9 +94,7 @@ FORMS += \
     detailwindow.ui \
     prefsdialog.ui
 
-OTHER_FILES += \
-    README \
-    win32.rc
+OTHER_FILES += README
 
 QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS # for libav
 
@@ -106,8 +106,6 @@ unix|macx{
   LIBS += -ltag
   LIBS += -lboost_system
   LIBS += -lboost_thread
-
-  ICON = is_KeyFinder.icns
 }
 
 macx{
@@ -133,9 +131,6 @@ win32{
   LIBS += -LC:/mingw/local/lib
   LIBS += -lboost_system-47-mt-1_52
   LIBS += -lboost_thread-47-mt-1_52
-
-  OTHER_FILES += is_KeyFinder.ico
-  RC_FILE = win32.rc
 }
 
 unix {
