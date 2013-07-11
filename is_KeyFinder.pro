@@ -43,51 +43,11 @@ TARGET = KeyFinder
 DEPENDPATH += .
 UI_DIR = ui
 
+include(./source/source.pri)
 include(./forms/forms.pri)
 include(./resources/resources.pri)
 
-HEADERS  += \
-    _VERSION.h \
-    asyncfileobject.h \
-    asynckeyprocess.h \
-    asynckeyresult.h \
-    asyncmetadatareadprocess.h \
-    asyncmetadatareadresult.h \
-    decoderlibav.h \
-    externalplaylist.h \
-    externalplaylistserato.h \
-    guiabout.h \
-    guibatch.h \
-    guidetail.h \
-    guimenuhandler.h \
-    guiprefs.h \
-    libkeyfindersingleton.h \
-    metadatafilename.h \
-    metadatataglib.h \
-    metadatawriteresult.h \
-    os_windows.h \
-    preferences.h \
-    strings.h
-
-SOURCES += \
-    asyncfileobject.cpp \
-    asynckeyprocess.cpp \
-    asyncmetadatareadprocess.cpp \
-    decoderlibav.cpp \
-    externalplaylist.cpp \
-    externalplaylistserato.cpp \
-    guiabout.cpp \
-    guibatch.cpp \
-    guidetail.cpp \
-    guimenuhandler.cpp \
-    guiprefs.cpp \
-    libkeyfindersingleton.cpp \
-    main.cpp \
-    metadatafilename.cpp \
-    metadatataglib.cpp \
-    os_windows.cpp \
-    preferences.cpp \
-    strings.cpp
+SOURCES += $$PWD/source/main.cpp
 
 OTHER_FILES += README
 
