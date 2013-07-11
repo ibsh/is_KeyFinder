@@ -34,7 +34,6 @@ HEADERS  += \
   $$PWD/guidetail.h \
   $$PWD/guimenuhandler.h \
   $$PWD/guiprefs.h \
-  $$PWD/libkeyfindersingleton.h \
   $$PWD/metadatafilename.h \
   $$PWD/metadatataglib.h \
   $$PWD/metadatawriteresult.h \
@@ -53,7 +52,6 @@ SOURCES += \
   $$PWD/guidetail.cpp \
   $$PWD/guimenuhandler.cpp \
   $$PWD/guiprefs.cpp \
-  $$PWD/libkeyfindersingleton.cpp \
   $$PWD/metadatafilename.cpp \
   $$PWD/metadatataglib.cpp \
   $$PWD/os_windows.cpp \

@@ -40,19 +40,19 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object){
   }
 
   KeyFinder::Workspace workspace;
-  KeyFinder::KeyFinder* kf = LibKeyFinderSingleton::getInstance()->getKeyFinder();
+  static KeyFinder::KeyFinder kf;
   try{
     while(true){
       KeyFinder::AudioData* tempAudio = decoder->decodeNextAudioPacket();
       if(tempAudio == NULL) break;
-      kf->progressiveChromagram(*tempAudio, workspace, object.prefs.core);
+      kf.progressiveChromagram(*tempAudio, workspace, object.prefs.core);
       delete tempAudio;
     }
     delete decoder;
     decoder = NULL;
-    kf->finalChromagram(workspace, object.prefs.core);
+    kf.finalChromagram(workspace, object.prefs.core);
     result.fullChromagram = KeyFinder::Chromagram(*workspace.chromagram);
-    result.core = kf->keyOfChromagram(workspace, object.prefs.core);
+    result.core = kf.keyOfChromagram(workspace, object.prefs.core);
     result.oneOctaveChromagram = result.fullChromagram;
     result.oneOctaveChromagram.reduceToOneOctave();
   }catch(std::exception& e){
