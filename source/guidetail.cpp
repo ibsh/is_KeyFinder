@@ -79,16 +79,16 @@ void DetailWindow::dropEvent(QDropEvent *e) {
 
 void DetailWindow::runAnalysis() {
   // get latest preferences and redraw variable UI elements if they've changed since the last run.
-  unsigned int chkOctaves = prefs.getOctaves();
-  unsigned int chkOffset = prefs.getOffsetToC();
+  unsigned int chkOctaves = prefs.core.getOctaves();
+  unsigned int chkOffset = prefs.core.getOffsetToC();
   prefs = Preferences();
-  if (chkOctaves != prefs.getOctaves() || chkOffset != prefs.getOffsetToC() || ui->chromagramLabel->toolTip().left(4) == "Drag") {
+  if (chkOctaves != prefs.core.getOctaves() || chkOffset != prefs.core.getOffsetToC() || ui->chromagramLabel->toolTip().left(4) == "Drag") {
     layoutScaling();
     drawPianoKeys();
     //: A tooltip on the Detail window
     ui->chromagramLabel->setToolTip(wrapToolTip(tr("This chromagram spans %1. The vertical axis represents musical frequencies as indicated by the piano keyboard. The horizontal axis splits the track into analysis windows of a few seconds each. The brighter the colour, the higher the energy found at that frequency during that window.")
       //: Part of a tooltip on the Detail window
-      .arg(tr("%n octave(s)", "", prefs.getOctaves()))));
+      .arg(tr("%n octave(s)", "", prefs.core.getOctaves()))));
   }
   //: Text in the Batch window status bar
   say(tr("Analysing... "));
@@ -138,10 +138,10 @@ void DetailWindow::analysisFinished() {
     newLabel->setAutoFillBackground(true);
     newLabel->setMinimumHeight(20);
     newLabel->setMaximumHeight(30);
-    if (prefs.getSegmentation() == KeyFinder::SEGMENTATION_NONE) {
+    if (prefs.core.getSegmentation() == KeyFinder::SEGMENTATION_NONE) {
       //: A tooltip on the Detail window
       newLabel->setToolTip(wrapToolTip(tr("This row shows the key estimate for the unsegmented chromagram.")));
-    } else if (prefs.getSegmentation() == KeyFinder::SEGMENTATION_ARBITRARY) {
+    } else if (prefs.core.getSegmentation() == KeyFinder::SEGMENTATION_ARBITRARY) {
       //: A tooltip on the Detail window
       newLabel->setToolTip(wrapToolTip(tr("This row shows the key estimates for the arbitrary segments.")));
     } else {
@@ -210,11 +210,11 @@ void DetailWindow::on_chromaColourCombo_currentIndexChanged(int index) {
 }
 
 void DetailWindow::layoutScaling() {
-  ui->gridLayout_Visualisation->setRowStretch(ROW_BIGCHROMA, prefs.getOctaves() * 2);
+  ui->gridLayout_Visualisation->setRowStretch(ROW_BIGCHROMA, prefs.core.getOctaves() * 2);
   ui->gridLayout_Visualisation->setRowStretch(ROW_MINICHROMA, 2);
   ui->gridLayout_Visualisation->setRowStretch(ROW_RATEOFCHANGE, 1);
   chromaScaleV = 5;
-  chromaScaleH = 8 / prefs.getHopsPerFrame();
+  chromaScaleH = 8 / prefs.core.getHopsPerFrame();
 }
 
 void DetailWindow::drawColourScale() {
@@ -266,7 +266,7 @@ void DetailWindow::blankKeyLabel() {
 
 void DetailWindow::drawPianoKeys() {
   int scale = 10;
-  QImage pianoImage = QImage(1,prefs.getOctaves()*12*scale,QImage::Format_Indexed8);
+  QImage pianoImage = QImage(1,prefs.core.getOctaves()*12*scale,QImage::Format_Indexed8);
   QImage miniPianoImage = QImage(1,12*scale,QImage::Format_Indexed8);
   pianoImage.setColor(0,qRgb(255,255,255));	// white key
   pianoImage.setColor(1,qRgb(0,0,0));				// black key
@@ -276,9 +276,9 @@ void DetailWindow::drawPianoKeys() {
   miniPianoImage.setColor(2,qRgb(127,127,127));
   // reverse of octave for visual representation (ending at A by default)
   QString octaveRev = "bwbwwbwbwwbw";
-  if (prefs.getOffsetToC())
+  if (prefs.core.getOffsetToC())
     octaveRev = octaveRev.right(3) + octaveRev.left(9);
-  for (unsigned int o = 0; o < prefs.getOctaves(); o++) {
+  for (unsigned int o = 0; o < prefs.core.getOctaves(); o++) {
     for (int s = 0; s < 12; s++) {
       for (int px = 0; px < scale-1; px++) {
         pianoImage.setPixel(0,(o*12*scale)+(s*scale)+px,(octaveRev[s] == 'b' ? 1 : 0));

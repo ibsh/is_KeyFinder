@@ -74,7 +74,7 @@ enum chromagram_colour_t{
 class Preferences{
 public:
   KeyFinder::Parameters core;
-  Preferences();
+  Preferences(QSettings* = NULL);
   Preferences& operator=(const Preferences&);
   void save();
 
@@ -101,27 +101,6 @@ public:
   QByteArray getBatchWindowGeometry() const;
   QByteArray getBatchWindowSplitterState() const;
 
-  // accessors tied to KeyFinder::Parameters object
-  bool getOffsetToC() const;
-  KeyFinder::temporal_window_t getTemporalWindow() const;
-  KeyFinder::segmentation_t getSegmentation() const;
-  KeyFinder::similarity_measure_t getSimilarityMeasure() const;
-  KeyFinder::tuning_method_t getTuningMethod() const;
-  KeyFinder::tone_profile_t getToneProfile() const;
-  unsigned int getFftFrameSize() const;
-  unsigned int getHopsPerFrame() const;
-  unsigned int getOctaves() const;
-  unsigned int getBpo() const;
-  unsigned int getArbitrarySegments() const;
-  unsigned int getSegPeakPickingNeighbours() const;
-  unsigned int getSegGaussianSize() const;
-  float getSegGaussianSigma() const;
-  float getStartingFreqA() const;
-  float getLastFreq() const;
-  float getDirectSkStretch() const;
-  float getDetunedBandWeight() const;
-  std::vector<float> getCustomToneProfile() const;
-
   // mutators
   void setWriteToFilesAutomatically(bool);
   void setParallelBatchJobs(bool);
@@ -144,26 +123,6 @@ public:
   void setBatchWindowGeometry(const QByteArray&);
   void setBatchWindowSplitterState(const QByteArray&);
 
-  // mutators tied to KeyFinder::Parameters object
-  void setOffsetToC(bool);
-  void setTemporalWindow(KeyFinder::temporal_window_t);
-  void setSegmentation(KeyFinder::segmentation_t);
-  void setSimilarityMeasure(KeyFinder::similarity_measure_t);
-  void setTuningMethod(KeyFinder::tuning_method_t);
-  void setToneProfile(KeyFinder::tone_profile_t);
-  void setFftFrameSize(unsigned int);
-  void setHopsPerFrame(unsigned int);
-  void setOctaves(unsigned int);
-  void setBps(unsigned int);
-  void setArbitrarySegments(unsigned int);
-  void setSegPeakPickingNeighbours(unsigned int);
-  void setSegGaussianSize(unsigned int);
-  void setSegGaussianSigma(float);
-  void setStartingFreqA(float);
-  void setDirectSkStretch(float);
-  void setDetunedBandWeight(float);
-  void setCustomToneProfile(const std::vector<float>&);
-
   // not necessarily related to user preferences, just here for convenience
   QString getKeyCode(KeyFinder::key_t) const;
   QStringList getKeyCodeList() const;
@@ -171,6 +130,9 @@ public:
   void setImageColours(QImage&, chromagram_colour_t) const;
 
 private:
+  QSettings* settings;
+  void load();
+
   bool writeToFilesAutomatically;
   bool parallelBatchJobs;
   metadata_write_t metadataWriteTitle;
