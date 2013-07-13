@@ -20,7 +20,9 @@
 #*************************************************************************
 
 HEADERS  += \
-  $$PWD/asyncfileobjecttest.h
+  $$PWD/asyncfileobjecttest.h \
+  $$PWD/preferencestest.h
 
 SOURCES += \
-  $$PWD/asyncfileobjecttest.cpp
+  $$PWD/asyncfileobjecttest.cpp \
+  $$PWD/preferencestest.cpp
