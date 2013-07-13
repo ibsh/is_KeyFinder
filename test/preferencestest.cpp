@@ -62,19 +62,30 @@ public:
   QString prefix;
 };
 
-TEST (PreferencesTest, ConstructorDefaults) {
+TEST (PreferencesTest, ConstructorDefaultsCore) {
   QSettingsFake* fakeSettings = new QSettingsFake();
   Preferences p((QSettings*)fakeSettings);
 
-  // core: defaults from LibKeyFinder
-  KeyFinder::Parameters core;
-  ASSERT_FLOAT_EQ(core.getStartingFreqADefault(), p.core.getStartingFreqA());
-  ASSERT_EQ(core.getOctavesDefault(), p.core.getOctaves());
-  ASSERT_EQ(core.getOffsetToCDefault(), p.core.getOffsetToC());
-  ASSERT_EQ(core.getBandsPerOctaveDefault(), p.core.getBandsPerOctave());
-  ASSERT_EQ(core.getTemporalWindowDefault(), p.core.getTemporalWindow());
-  ASSERT_EQ(core.getFftFrameSizeDefault(), p.core.getFftFrameSize());
-  ASSERT_EQ(core.getHopsPerFrameDefault(), p.core.getHopsPerFrame());
-  ASSERT_FLOAT_EQ(core.getDirectSkStretchDefault(), p.core.getDirectSkStretch());
-  // TODO: finish me.
+  ASSERT_FLOAT_EQ(p.core.getStartingFreqADefault(), p.core.getStartingFreqA());
+  ASSERT_EQ(p.core.getOctavesDefault(), p.core.getOctaves());
+  ASSERT_EQ(p.core.getOffsetToCDefault(), p.core.getOffsetToC());
+  ASSERT_EQ(p.core.getBandsPerOctaveDefault(), p.core.getBandsPerOctave());
+  ASSERT_EQ(p.core.getTemporalWindowDefault(), p.core.getTemporalWindow());
+  ASSERT_EQ(p.core.getFftFrameSizeDefault(), p.core.getFftFrameSize());
+  ASSERT_EQ(p.core.getHopsPerFrameDefault(), p.core.getHopsPerFrame());
+  ASSERT_FLOAT_EQ(p.core.getDirectSkStretchDefault(), p.core.getDirectSkStretch());
+  ASSERT_EQ(p.core.getTuningMethodDefault(), p.core.getTuningMethod());
+  ASSERT_FLOAT_EQ(p.core.getDetunedBandWeightDefault(), p.core.getDetunedBandWeight());
+  ASSERT_EQ(p.core.getSegmentationDefault(), p.core.getSegmentation());
+  ASSERT_EQ(p.core.getSegGaussianSizeDefault(), p.core.getSegGaussianSize());
+  ASSERT_FLOAT_EQ(p.core.getSegGaussianSigmaDefault(), p.core.getSegGaussianSigma());
+  ASSERT_EQ(p.core.getSegPeakPickingNeighboursDefault(), p.core.getSegPeakPickingNeighbours());
+  ASSERT_EQ(p.core.getArbitrarySegmentsDefault(), p.core.getArbitrarySegments());
+  ASSERT_EQ(p.core.getToneProfileDefault(), p.core.getToneProfile());
+  ASSERT_EQ(p.core.getSimilarityMeasureDefault(), p.core.getSimilarityMeasure());
+  std::vector<float> ctpDefault = p.core.getCustomToneProfileDefault();
+  std::vector<float> ctp = p.core.getCustomToneProfile();
+  ASSERT_EQ(ctpDefault.size(), ctp.size());
+  for (unsigned int i = 0; i < ctp.size(); i++)
+    ASSERT_FLOAT_EQ(ctpDefault[i], ctp[i]);
 }
