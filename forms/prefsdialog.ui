@@ -2607,8 +2607,72 @@
   <tabstop>minKey9</tabstop>
   <tabstop>minKey10</tabstop>
   <tabstop>minKey11</tabstop>
+  <tabstop>silence</tabstop>
+  <tabstop>parallelBatchJobs</tabstop>
+  <tabstop>skipFilesWithExistingTags</tabstop>
+  <tabstop>maxDuration</tabstop>
+  <tabstop>writeToFilesAutomatically</tabstop>
+  <tabstop>iTunesLibraryPath</tabstop>
+  <tabstop>findITunesLibraryButton</tabstop>
+  <tabstop>traktorLibraryPath</tabstop>
+  <tabstop>findTraktorLibraryButton</tabstop>
+  <tabstop>seratoLibraryPath</tabstop>
+  <tabstop>findSeratoLibraryButton</tabstop>
+  <tabstop>tagFormat</tabstop>
+  <tabstop>metadataWriteTitle</tabstop>
+  <tabstop>metadataWriteArtist</tabstop>
+  <tabstop>metadataWriteAlbum</tabstop>
+  <tabstop>metadataWriteComment</tabstop>
+  <tabstop>metadataWriteGrouping</tabstop>
+  <tabstop>metadataWriteKey</tabstop>
+  <tabstop>metadataWriteFilename</tabstop>
+  <tabstop>metadataDelimiter</tabstop>
   <tabstop>cancelButton</tabstop>
   <tabstop>savePrefsButton</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>advancedDefaultsButton</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>min0</tabstop>
+  <tabstop>min1</tabstop>
+  <tabstop>min2</tabstop>
+  <tabstop>min3</tabstop>
+  <tabstop>min4</tabstop>
+  <tabstop>min5</tabstop>
+  <tabstop>min6</tabstop>
+  <tabstop>min7</tabstop>
+  <tabstop>min8</tabstop>
+  <tabstop>min9</tabstop>
+  <tabstop>min10</tabstop>
+  <tabstop>min11</tabstop>
+  <tabstop>fftFrameSize</tabstop>
+  <tabstop>detunedBandWeight</tabstop>
+  <tabstop>hcdfGaussianSigma</tabstop>
+  <tabstop>temporalWindow</tabstop>
+  <tabstop>hopsPerFrame</tabstop>
+  <tabstop>directSkStretch</tabstop>
+  <tabstop>segmentation</tabstop>
+  <tabstop>octaves</tabstop>
+  <tabstop>similarityMeasure</tabstop>
+  <tabstop>stFreq</tabstop>
+  <tabstop>maj0</tabstop>
+  <tabstop>maj1</tabstop>
+  <tabstop>maj2</tabstop>
+  <tabstop>maj3</tabstop>
+  <tabstop>maj4</tabstop>
+  <tabstop>maj5</tabstop>
+  <tabstop>maj6</tabstop>
+  <tabstop>maj7</tabstop>
+  <tabstop>maj8</tabstop>
+  <tabstop>maj9</tabstop>
+  <tabstop>maj10</tabstop>
+  <tabstop>maj11</tabstop>
+  <tabstop>octaveOffset</tabstop>
+  <tabstop>arbitrarySegments</tabstop>
+  <tabstop>bps</tabstop>
+  <tabstop>toneProfile</tabstop>
+  <tabstop>hcdfGaussianSize</tabstop>
+  <tabstop>tuningMethod</tabstop>
+  <tabstop>hcdfPeakPickingNeighbours</tabstop>
  </tabstops>
  <resources/>
  <connections/>
