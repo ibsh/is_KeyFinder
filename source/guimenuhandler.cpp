@@ -24,17 +24,17 @@
 MainMenuHandler::MainMenuHandler(QObject *parent) : QObject(parent) {}
 
 void MainMenuHandler::about() {
-  AboutDialog* about = new AboutDialog(0);
+  AboutDialog* about = new AboutDialog(NULL);
   about->show();
 }
 
 void MainMenuHandler::preferences() {
-  PrefsDialog* prefs = new PrefsDialog(0);
+  PrefsDialog* prefs = new PrefsDialog(NULL);
   prefs->show();
 }
 
 void MainMenuHandler::new_Batch_Window(bool firstWindow) {
-  BatchWindow* newWin = new BatchWindow(this, 0);
+  BatchWindow* newWin = new BatchWindow(NULL, this);
   newWin->setMenuBar(newMenuBar());
   newWin->show();
   if (firstWindow)
@@ -42,7 +42,7 @@ void MainMenuHandler::new_Batch_Window(bool firstWindow) {
 }
 
 void MainMenuHandler::new_Detail_Window(QString path) {
-  DetailWindow* newWin = new DetailWindow(0, path);
+  DetailWindow* newWin = new DetailWindow(NULL, path);
   newWin->setMenuBar(newMenuBar());
   newWin->show();
 }
@@ -52,7 +52,7 @@ void MainMenuHandler::close_Window() {
 }
 
 QMenuBar* MainMenuHandler::newMenuBar() {
-  QMenuBar* menuBar = new QMenuBar(0);
+  QMenuBar* menuBar = new QMenuBar(NULL);
   QMenu* menuFile = menuBar->addMenu("File");
   //: An action on the menu bar
   menuFile->addAction(tr("New Detail Window"), this, SLOT(new_Detail_Window()), QKeySequence::New);

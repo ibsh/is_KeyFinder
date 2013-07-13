@@ -35,7 +35,7 @@ const QString STATUS_FAILED = "-4";
  */
 typedef QVector<int> MyArray;
 
-BatchWindow::BatchWindow(MainMenuHandler* handler, QWidget* parent) :
+BatchWindow::BatchWindow(QWidget* parent, MainMenuHandler* handler) :
   QMainWindow(parent),
   readLibraryWatcher(NULL), loadPlaylistWatcher(NULL), addFilesWatcher(NULL),
   metadataReadWatcher(NULL), analysisWatcher(NULL),

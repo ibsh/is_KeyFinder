@@ -35,7 +35,7 @@ namespace Ui {
 class PrefsDialog : public QDialog{
   Q_OBJECT
 public:
-  explicit PrefsDialog(QWidget *parent = 0);
+  explicit PrefsDialog(QWidget* parent = 0);
   ~PrefsDialog();
 private:
   // map combobox indices to useful values

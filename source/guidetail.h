@@ -45,7 +45,7 @@ namespace Ui {
 class DetailWindow : public QMainWindow{
   Q_OBJECT
 public:
-  explicit DetailWindow(QWidget *parent = 0, QString path = "");
+  explicit DetailWindow(QWidget* parent = 0, QString path = "");
   ~DetailWindow();
 private:
   Preferences prefs;

@@ -76,7 +76,7 @@ class BatchWindow : public QMainWindow{
 
 public:
 
-  explicit BatchWindow(MainMenuHandler* handler, QWidget* parent = 0);
+  explicit BatchWindow(QWidget* parent, MainMenuHandler* handler);
   bool receiveUrls(const QList<QUrl>&);
   ~BatchWindow();
 
