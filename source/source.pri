@@ -39,6 +39,7 @@ HEADERS  += \
   $$PWD/metadatawriteresult.h \
   $$PWD/os_windows.h \
   $$PWD/preferences.h \
+  $$PWD/settingswrapper.h \
   $$PWD/strings.h
 
 SOURCES += \
@@ -56,4 +57,5 @@ SOURCES += \
   $$PWD/metadatataglib.cpp \
   $$PWD/os_windows.cpp \
   $$PWD/preferences.cpp \
+  $$PWD/settingswrapper.cpp \
   $$PWD/strings.cpp

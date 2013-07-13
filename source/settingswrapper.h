@@ -19,25 +19,30 @@
 
 *************************************************************************/
 
-#ifndef PREFERENCESTEST_H
-#define PREFERENCESTEST_H
+#ifndef SETTINGSWRAPPER_H
+#define SETTINGSWRAPPER_H
 
-#include "gtest/gtest.h"
+#include <QSettings>
+#include <QStringList>
 
-#include "../source/preferences.h"
-
-class SettingsWrapperFake : public SettingsWrapper {
+class SettingsWrapper {
 public:
-  virtual void beginGroup(const QString& g);
+  virtual void beginGroup(const QString& group) = 0;
+  virtual void endGroup() = 0;
+  virtual QVariant value(const QString &key, const QVariant &defaultValue) const = 0;
+  virtual void setValue(const QString& key, const QVariant& value) = 0;
+  virtual QStringList allKeys() const = 0;
+};
+
+class SettingsWrapperQt : public SettingsWrapper {
+public:
+  virtual void beginGroup(const QString& group);
   virtual void endGroup();
   virtual QVariant value(const QString &key, const QVariant &defaultValue) const;
   virtual void setValue(const QString& key, const QVariant& value);
   virtual QStringList allKeys() const;
 private:
-  QHash<QString, QVariant> hash;
-  QString prefix;
+  QSettings priv;
 };
 
-class PreferencesTest : public ::testing::Test { };
-
-#endif // PREFERENCESTEST_H
+#endif // SETTINGSWRAPPER_H

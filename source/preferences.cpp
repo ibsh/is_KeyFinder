@@ -21,9 +21,9 @@
 
 #include "preferences.h"
 
-Preferences::Preferences(QSettings* s) {
+Preferences::Preferences(SettingsWrapper* s) {
 
-  settings = (s == NULL ? new QSettings() : s);
+  settings = (s == NULL ? new SettingsWrapperQt() : s);
   load();
 
   // default key codes

@@ -21,6 +21,18 @@
 
 #include "preferencestest.h"
 
+void SettingsWrapperFake::beginGroup(const QString& g) { prefix = g; }
+void SettingsWrapperFake::endGroup() { prefix.clear(); }
+QVariant SettingsWrapperFake::value(const QString &key, const QVariant &defaultValue) const {
+  return (hash.contains(prefix + key) ? hash[prefix + key] : defaultValue);
+}
+void SettingsWrapperFake::setValue(const QString &key, const QVariant &value) {
+  hash[prefix + key] = value;
+}
+QStringList SettingsWrapperFake::allKeys() const {
+  return hash.uniqueKeys();
+}
+
 TEST (PreferencesTest, ConstantsMetadataFormat) {
   ASSERT_EQ(0, (int) METADATA_FORMAT_KEYS);
   ASSERT_EQ(1, (int) METADATA_FORMAT_CUSTOM);
@@ -44,27 +56,9 @@ TEST (PreferencesTest, ConstantsMetadataTag) {
   ASSERT_EQ(6, METADATA_TAG_T_COUNT);
 }
 
-class QSettingsFake : public QSettings {
-public:
-  QSettingsFake() : QSettings("fake", QSettings::IniFormat, NULL) { }
-  void beginGroup(const QString& p) { prefix = p; }
-  void endGroup() { prefix.clear(); }
-  QVariant value(const QString &key, const QVariant& /* defaultValue */) const {
-    return hash[prefix + key];
-  }
-  void setValue(const QString& key, const QVariant& value) {
-    hash[prefix + key] = value;
-  }
-  QStringList allKeys() const {
-    return hash.keys();
-  }
-  QHash<QString, QVariant> hash;
-  QString prefix;
-};
-
 TEST (PreferencesTest, ConstructorDefaultsCore) {
-  QSettingsFake* fakeSettings = new QSettingsFake();
-  Preferences p((QSettings*)fakeSettings);
+  SettingsWrapper* fakeSettings = new SettingsWrapperFake();
+  Preferences p(fakeSettings);
 
   ASSERT_FLOAT_EQ(p.core.getStartingFreqADefault(), p.core.getStartingFreqA());
   ASSERT_EQ(p.core.getOctavesDefault(), p.core.getOctaves());
@@ -88,4 +82,48 @@ TEST (PreferencesTest, ConstructorDefaultsCore) {
   ASSERT_EQ(ctpDefault.size(), ctp.size());
   for (unsigned int i = 0; i < ctp.size(); i++)
     ASSERT_FLOAT_EQ(ctpDefault[i], ctp[i]);
+}
+
+TEST (PreferencesTest, ConstructorDefaultsGui) {
+  SettingsWrapper* fakeSettings = new SettingsWrapperFake();
+  Preferences p(fakeSettings);
+
+  ASSERT_EQ(false, p.getWriteToFilesAutomatically());
+  ASSERT_EQ(true, p.getParallelBatchJobs());
+  ASSERT_EQ(METADATA_WRITE_NONE, p.getMetadataWriteTitle());
+  ASSERT_EQ(METADATA_WRITE_NONE, p.getMetadataWriteArtist());
+  ASSERT_EQ(METADATA_WRITE_NONE, p.getMetadataWriteAlbum());
+  ASSERT_EQ(METADATA_WRITE_PREPEND, p.getMetadataWriteComment());
+  ASSERT_EQ(METADATA_WRITE_NONE, p.getMetadataWriteGrouping());
+  ASSERT_EQ(METADATA_WRITE_NONE, p.getMetadataWriteKey());
+  ASSERT_EQ(METADATA_WRITE_NONE, p.getMetadataWriteFilename());
+  ASSERT_EQ(METADATA_FORMAT_KEYS, p.getMetadataFormat());
+  ASSERT_EQ(false, p.getSkipFilesWithExistingTags());
+  ASSERT_EQ(60, p.getMaxDuration());
+#ifdef Q_OS_WIN
+  QString iTunesLibraryPathDefault = QDir::homePath() + "/My Music/iTunes/iTunes Music Library.xml";
+  QString traktorLibraryPathDefault = QDir::homePath() + "/My Documents/Native Instruments/Traktor 2.1.2/collection.nml";
+  QString seratoLibraryPathDefault = QDir::homePath() + "/My Music/_Serato_/database V2";
+#else
+  QString iTunesLibraryPathDefault = QDir::homePath() + "/Music/iTunes/iTunes Music Library.xml";
+  QString traktorLibraryPathDefault = QDir::homePath() + "/Documents/Native Instruments/Traktor 2.1.2/collection.nml";
+  QString seratoLibraryPathDefault = QDir::homePath() + "/Music/_Serato_/database V2";
+#endif
+  ASSERT_EQ(iTunesLibraryPathDefault, p.getITunesLibraryPath());
+  ASSERT_EQ(traktorLibraryPathDefault, p.getTraktorLibraryPath());
+  ASSERT_EQ(seratoLibraryPathDefault, p.getSeratoLibraryPath());
+  QStringList customKeyCodes = p.getCustomKeyCodes();
+  ASSERT_EQ(25, customKeyCodes.length());
+  for (int i = 0; i < customKeyCodes.length(); i++)
+    ASSERT_EQ(QString(), customKeyCodes[i]);
+  ASSERT_EQ(QByteArray(), p.getBatchWindowState());
+  ASSERT_EQ(QByteArray(), p.getBatchWindowGeometry());
+  ASSERT_EQ(QByteArray(), p.getBatchWindowSplitterState());
+}
+
+TEST (PreferencesTest, QSettingsInteraction) {
+  SettingsWrapper* fakeSettings = new SettingsWrapperFake();
+  Preferences p(fakeSettings);
+  p.save();
+  ASSERT_FLOAT_EQ(27.5, fakeSettings->value("corestartingFrequencyA", 0).toFloat());
 }

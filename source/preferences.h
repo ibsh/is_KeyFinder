@@ -25,7 +25,6 @@
 #include <QtGlobal>
 #include <QDebug>
 #include <QThreadPool>
-#include <QSettings>
 #include <QString>
 #include <QImage>
 #include <QColor>
@@ -38,6 +37,8 @@
 #include <cstring>
 
 #include "keyfinder/parameters.h"
+
+#include "settingswrapper.h"
 #include "strings.h"
 
 enum metadata_format_t{
@@ -74,7 +75,7 @@ enum chromagram_colour_t{
 class Preferences{
 public:
   KeyFinder::Parameters core;
-  Preferences(QSettings* = NULL);
+  Preferences(SettingsWrapper* = NULL);
   Preferences& operator=(const Preferences&);
   void save();
 
@@ -130,7 +131,7 @@ public:
   void setImageColours(QImage&, chromagram_colour_t) const;
 
 private:
-  QSettings* settings;
+  SettingsWrapper* settings;
   void load();
 
   bool writeToFilesAutomatically;
