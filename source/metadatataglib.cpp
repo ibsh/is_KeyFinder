@@ -29,7 +29,7 @@
 
 QMutex constructor_mutex; // global mutex on file resolution
 
-TagLibMetadata::TagLibMetadata(const QString& filePath) {
+TagLibMetadata::TagLibMetadata(const QString& filePath) : f(NULL) {
 
   QMutexLocker locker(&constructor_mutex); // mutex the constructor
 
@@ -42,8 +42,6 @@ TagLibMetadata::TagLibMetadata(const QString& filePath) {
   QByteArray encodedPath = QFile::encodeName(filePath);
   const char* filePathCh = encodedPath;
 #endif
-
-  f = NULL;
 
   if (fileExt == "mp3")
     f = new TagLib::MPEG::File(filePathCh);
@@ -82,11 +80,15 @@ TagLibMetadata::TagLibMetadata(const QString& filePath) {
 
   locker.~QMutexLocker(); // unlock mutex
 
-  if (f != NULL && f->isValid())
-    return; // everything's fine.
+  if (f != NULL) {
+    if (f->isValid()) {
+      return; // everything's fine.
+    } else {
+      delete f;
+      f = NULL;
+    }
+  }
 
-  // or else...
-  f = NULL;
 #ifdef Q_OS_WIN
   qWarning("TagLib returned NULL File for %s", utf16_to_utf8(filePathCh));
 #else
@@ -96,8 +98,7 @@ TagLibMetadata::TagLibMetadata(const QString& filePath) {
 }
 
 TagLibMetadata::~TagLibMetadata() {
-  if (f != NULL)
-    delete f;
+  if (f != NULL) delete f;
 }
 
 QString TagLibMetadata::getByTagEnum(metadata_tag_t tag) const {
