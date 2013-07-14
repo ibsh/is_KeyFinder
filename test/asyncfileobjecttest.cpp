@@ -24,5 +24,6 @@
 TEST (AsyncFileObjectTest, ConstructorDefaultsWork) {
   Preferences p;
   AsyncFileObject a(QString("path"), p, -1);
-  ASSERT_EQ(a.filePath, QString("path"));
+  ASSERT_EQ(QString("path"), a.filePath);
+  ASSERT_EQ(-1, a.batchRow);
 }

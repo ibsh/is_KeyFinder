@@ -74,10 +74,13 @@ enum chromagram_colour_t{
 
 class Preferences{
 public:
-  KeyFinder::Parameters core;
   Preferences(SettingsWrapper* = NULL);
+  Preferences(const Preferences& that);
+  ~Preferences();
   Preferences& operator=(const Preferences&);
   void save();
+
+  KeyFinder::Parameters core;
 
   // accessors
   bool getWriteToFilesAutomatically() const;
@@ -133,6 +136,7 @@ public:
 private:
   SettingsWrapper* settings;
   void load();
+  void copy(const Preferences& that);
 
   bool writeToFilesAutomatically;
   bool parallelBatchJobs;

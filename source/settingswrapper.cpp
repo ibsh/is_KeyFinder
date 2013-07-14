@@ -1,5 +1,7 @@
 #include "settingswrapper.h"
 
+SettingsWrapper::~SettingsWrapper() { }
+
 void SettingsWrapperQt::beginGroup(const QString& g) {
   priv.beginGroup(g);
 }

@@ -60,6 +60,47 @@ Preferences::Preferences(SettingsWrapper* s) {
   keyColours.push_back(qRgb(a,a,a));
 }
 
+Preferences::Preferences(const Preferences &that) {
+  settings = new SettingsWrapperQt();
+  copy(that);
+}
+
+Preferences::~Preferences() {
+  delete settings;
+}
+
+
+void Preferences::copy(const Preferences &that) {
+  core = that.core;
+  customKeyCodes            = that.customKeyCodes;
+  metadataFormat            = that.metadataFormat;
+  metadataWriteTitle        = that.metadataWriteTitle;
+  metadataWriteArtist       = that.metadataWriteArtist;
+  metadataWriteAlbum        = that.metadataWriteAlbum;
+  metadataWriteComment      = that.metadataWriteComment;
+  metadataWriteGrouping     = that.metadataWriteGrouping;
+  metadataWriteKey          = that.metadataWriteKey;
+  metadataWriteFilename     = that.metadataWriteFilename;
+  metadataDelimiter         = that.metadataDelimiter;
+  writeToFilesAutomatically = that.writeToFilesAutomatically;
+  skipFilesWithExistingTags = that.skipFilesWithExistingTags;
+  maxDuration               = that.maxDuration;
+  parallelBatchJobs         = that.parallelBatchJobs;
+  iTunesLibraryPath         = that.iTunesLibraryPath;
+  traktorLibraryPath        = that.traktorLibraryPath;
+  seratoLibraryPath         = that.seratoLibraryPath;
+  batchWindowState          = that.batchWindowState;
+  batchWindowGeometry       = that.batchWindowGeometry;
+  batchWindowSplitterState  = that.batchWindowSplitterState;
+}
+
+Preferences& Preferences::operator=(const Preferences& that) {
+  if (this != &that) {
+    copy(that);
+  }
+  return *this;
+}
+
 void Preferences::load() {
 
   settings->beginGroup("core");
@@ -249,33 +290,6 @@ void Preferences::save() {
   settings->setValue("batchWindowSplitterState", batchWindowSplitterState);
   settings->endGroup();
 
-}
-
-Preferences& Preferences::operator=(const Preferences& that) {
-  if (this != &that) {
-    core = that.core;
-    customKeyCodes            = that.customKeyCodes;
-    metadataFormat            = that.metadataFormat;
-    metadataWriteTitle        = that.metadataWriteTitle;
-    metadataWriteArtist       = that.metadataWriteArtist;
-    metadataWriteAlbum        = that.metadataWriteAlbum;
-    metadataWriteComment      = that.metadataWriteComment;
-    metadataWriteGrouping     = that.metadataWriteGrouping;
-    metadataWriteKey          = that.metadataWriteKey;
-    metadataWriteFilename     = that.metadataWriteFilename;
-    metadataDelimiter         = that.metadataDelimiter;
-    writeToFilesAutomatically = that.writeToFilesAutomatically;
-    skipFilesWithExistingTags = that.skipFilesWithExistingTags;
-    maxDuration               = that.maxDuration;
-    parallelBatchJobs         = that.parallelBatchJobs;
-    iTunesLibraryPath         = that.iTunesLibraryPath;
-    traktorLibraryPath        = that.traktorLibraryPath;
-    seratoLibraryPath         = that.seratoLibraryPath;
-    batchWindowState          = that.batchWindowState;
-    batchWindowGeometry       = that.batchWindowGeometry;
-    batchWindowSplitterState  = that.batchWindowSplitterState;
-  }
-  return *this;
 }
 
 metadata_write_t Preferences::getMetadataWriteByTagEnum(metadata_tag_t tag) const {
