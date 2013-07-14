@@ -55,6 +55,7 @@ public:
   ~AudioFileDecoder();
   KeyFinder::AudioData* decodeNextAudioPacket();
 private:
+  void free();
   char* filePathCh;
   uint8_t* frameBuffer;
   uint8_t* frameBufferConverted;
