@@ -35,7 +35,7 @@ QStringList SeratoDataStream::readCrate(QIODevice* device, CrateType ctype) {
   }
   // open stream and read necessary headers
   strm = new QDataStream(device);
-  readSingleByteString(4).toLocal8Bit().constData();
+  readSingleByteString(4).toUtf8().constData();
   skipBytes(2);
   readDoubleByteString(version.size() * 2);
   readDoubleByteString(type.size() * 2);

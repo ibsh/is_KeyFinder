@@ -34,14 +34,14 @@
 void LoggingHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
   std::ofstream logfile;
 #if defined Q_OS_MAC
-  logfile.open(QDir::homePath().toLocal8Bit() + "/Library/Logs/KeyFinder.log", std::ios::app);
+  logfile.open(QDir::homePath().toUtf8() + "/Library/Logs/KeyFinder.log", std::ios::app);
 #elif defined Q_OS_LINUX
   logfile.open("KeyFinder.log", std::ios::app);
 #else
   logfile.open("KeyFinder_log.txt", std::ios::app);
 #endif
-  logfile << QDate::currentDate().toString("yyyy-MM-dd").toLocal8Bit().constData() << " ";
-  logfile << QTime::currentTime().toString("hh:mm:ss.zzz").toLocal8Bit().constData() << " ";
+  logfile << QDate::currentDate().toString("yyyy-MM-dd").toUtf8().constData() << " ";
+  logfile << QTime::currentTime().toString("hh:mm:ss.zzz").toUtf8().constData() << " ";
   switch (type) {
   case QtDebugMsg:
     logfile << "Debug";    break;
@@ -52,7 +52,7 @@ void LoggingHandler(QtMsgType type, const QMessageLogContext &context, const QSt
   case QtFatalMsg:
     logfile << "Fatal";    break;
   }
-  logfile << ": " << msg.toLocal8Bit().constData() << " (" << context.file << ":" << context.line << ")\n";
+  logfile << ": " << msg.toUtf8().constData() << " (" << context.file << ":" << context.line << ")\n";
   logfile.close();
   if (type == QtFatalMsg) {
     abort();
@@ -77,11 +77,11 @@ int commandLineInterface(int argc, char* argv[]) {
   AsyncFileObject object(filePath, prefs, 0);
   KeyFinderResultWrapper result = keyDetectionProcess(object);
   if (!result.errorMessage.isEmpty()) {
-    std::cerr << result.errorMessage.toLocal8Bit().constData();
+    std::cerr << result.errorMessage.toUtf8().constData();
     return 1;
   }
 
-  std::cout << prefs.getKeyCode(result.core.globalKeyEstimate).toLocal8Bit().constData();
+  std::cout << prefs.getKeyCode(result.core.globalKeyEstimate).toUtf8().constData();
 
   if (writeToTags) {
     TagLibMetadata md(filePath);

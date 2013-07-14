@@ -277,7 +277,7 @@ QList<QUrl> ExternalPlaylist::readM3uStandalonePlaylist(const QString& m3uPath) 
 QUrl ExternalPlaylist::fixITunesAddressing(const QString& address) {
   QString addressCopy = address;
   addressCopy = addressCopy.replace(QString("file://localhost"), QString(""));
-  addressCopy = QUrl::fromPercentEncoding(addressCopy.toLocal8Bit().constData());
+  addressCopy = QUrl::fromPercentEncoding(addressCopy.toUtf8().constData());
   return QUrl::fromLocalFile(addressCopy);
 }
 
@@ -338,13 +338,13 @@ QStringList ExternalPlaylist::executeXmlQuery(const QString& filePath, const QSt
     // disable remote DTD resolution
     parser->getDomConfig()->setParameter(xercesc_3_1::XMLUni::fgXercesLoadExternalDTD, false);
     // parse the XML document
-    xercesc_3_1::DOMDocument *document = parser->parseURI(X(filePath.toLocal8Bit().constData()));
+    xercesc_3_1::DOMDocument *document = parser->parseURI(X(filePath.toUtf8().constData()));
     if (document == 0)
       throw XQillaException(99,X("No XML document found"));
     // determine whether to use lightweight query model
     if (parameters.isEmpty()) {
       // parse XPath
-      AutoRelease<xercesc_3_1::DOMXPathExpression> expression(document->createExpression(X(xPath.toLocal8Bit().constData()), 0));
+      AutoRelease<xercesc_3_1::DOMXPathExpression> expression(document->createExpression(X(xPath.toUtf8().constData()), 0));
       // execute query
       AutoRelease<xercesc_3_1::DOMXPathResult> result(expression->evaluate(document, xercesc_3_1::DOMXPathResult::ITERATOR_RESULT_TYPE, 0));
       // iterate over results
@@ -353,7 +353,7 @@ QStringList ExternalPlaylist::executeXmlQuery(const QString& filePath, const QSt
     } else {
       // set up a simple API query and context to evaluate the parsed document
       XQilla xqilla;
-      AutoDelete<XQQuery> xQuery(xqilla.parse(X(xPath.toLocal8Bit().constData())));
+      AutoDelete<XQQuery> xQuery(xqilla.parse(X(xPath.toUtf8().constData())));
       AutoDelete<DynamicContext> xQueryContext(xQuery->createDynamicContext());
       // grab document from xerces API
       XercesConfiguration xc;
@@ -367,8 +367,8 @@ QStringList ExternalPlaylist::executeXmlQuery(const QString& filePath, const QSt
         for (int i=0; i<(signed)parameters.size(); i += 2) {
           if (i + 1 >= (signed)parameters.size())
             break;
-          Item::Ptr value = xQueryContext->getItemFactory()->createString(X(parameters[i+1].toLocal8Bit().constData()), xQueryContext.get());
-          xQueryContext->setExternalVariable(X(parameters[i].toLocal8Bit().constData()), value);
+          Item::Ptr value = xQueryContext->getItemFactory()->createString(X(parameters[i+1].toUtf8().constData()), xQueryContext.get());
+          xQueryContext->setExternalVariable(X(parameters[i].toUtf8().constData()), value);
         }
       }
       // execute query

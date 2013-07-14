@@ -72,7 +72,7 @@ KeyFinderResultWrapper keyDetectionProcess(const AsyncFileObject& object) {
   for (unsigned int i = 0; i < result.core.segments.size(); i++) {
     qDebug(
       "Chroma vector for segment %d of file %s: [%.0f, %.0f, %.0f, %.0f, %.0f, %.0f, %.0f, %.0f, %.0f, %.0f, %.0f, %.0f]",
-      i, object.filePath.toLocal8Bit().constData(),
+      i, object.filePath.toUtf8().constData(),
       result.core.segments[i].chromaVector[0],  result.core.segments[i].chromaVector[1],
       result.core.segments[i].chromaVector[2],  result.core.segments[i].chromaVector[3],
       result.core.segments[i].chromaVector[4],  result.core.segments[i].chromaVector[5],
