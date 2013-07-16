@@ -126,19 +126,19 @@ int main(int argc, char* argv[]) {
   localeId.replace(QRegExp("[a-z]+_"), QString(languageId +"_"));
   QLocale myMacLocale(localeId);
 
-  QString localeParam = "%1/Translations/is_keyfinder_%2.qm";
+  QString appTranslationPathBase = "%1/Translations/is_keyfinder_%2.qm";
 #if defined Q_OS_MAC
   QDir dir(QApplication::applicationDirPath());
   dir.cdUp();
-  QString appTranslationPath = localeParam.arg(dir.absolutePath()).arg(myMacLocale.name());
-  QString systemTranslationName = "qt_" + myMacLocale.name();
+  QString appTranslationPath = appTranslationPathBase.arg(dir.absolutePath()).arg(myMacLocale.name());
+  QString qtTranslationName = "qt_" + myMacLocale.name();
 #else
   QString appTranslationPath = localeParam.arg(QCoreApplication::applicationDirPath()).arg(QLocale::system().name());
-  QString systemTranslationName = "qt_" + QLocale::system().name();
+  QString qtTranslationName = "qt_" + QLocale::system().name();
 #endif
 
   QTranslator qtTranslator;
-  qtTranslator.load(systemTranslationName, QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+  qtTranslator.load(qtTranslationName, QLibraryInfo::location(QLibraryInfo::TranslationsPath));
   a.installTranslator(&qtTranslator);
 
   QTranslator myappTranslator;
