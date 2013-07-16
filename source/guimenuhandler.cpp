@@ -64,15 +64,15 @@ QMenuBar* MainMenuHandler::newMenuBar() {
 #ifdef Q_OS_WIN
   QMenu* menuEdit = menuBar->addMenu("Edit");
   //: An action on the menu bar
-  menuEdit->addAction(tr("Preferences"), this, SLOT(preferences()));
+  menuEdit->addAction(GuiStrings::getInstance()->preferences(), this, SLOT(preferences()));
   QMenu* menuHelp = menuBar->addMenu("Help");
   //: An action on the menu bar
-  menuHelp->addAction(tr("About"), this, SLOT(about()));
+  menuHelp->addAction(GuiStrings::getInstance()->about(), this, SLOT(about()));
 #else
   //: An action on the menu bar
-  menuFile->addAction(tr("Preferences"), this, SLOT(preferences()), QKeySequence::Preferences);
+  menuFile->addAction(GuiStrings::getInstance()->preferences(), this, SLOT(preferences()), QKeySequence::Preferences);
   //: An action on the menu bar
-  menuFile->addAction(tr("About"), this, SLOT(about()));
+  menuFile->addAction(GuiStrings::getInstance()->about(), this, SLOT(about()));
 #endif
   return menuBar;
 }

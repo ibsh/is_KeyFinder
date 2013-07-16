@@ -22,6 +22,7 @@
 #ifndef STRINGS_H
 #define STRINGS_H
 
+#include <QCoreApplication>
 #include <QObject>
 #include <QString>
 #include <QStringList>
@@ -43,6 +44,8 @@ public:
   QString appUrl() const;
   QString delim() const;
   QString notApplicable() const;
+  QString preferences() const;
+  QString about() const;
   QStringList iTunesDefaultPlaylists() const;
   QStringList traktorDefaultPlaylists() const;
   QString seratoSmartCratesDirName() const;

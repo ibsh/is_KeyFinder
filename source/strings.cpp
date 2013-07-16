@@ -47,6 +47,16 @@ QString GuiStrings::notApplicable() const {
   return tr("N/A");
 }
 
+QString GuiStrings::preferences() const {
+  //: Main menu option
+  return QString(QT_TRANSLATE_NOOP("MAC_APPLICATION_MENU","Preferences..."));
+}
+
+QString GuiStrings::about() const {
+  //: Main menu option and title of About window, contains the app name at %1
+  return QString(QT_TRANSLATE_NOOP("MAC_APPLICATION_MENU","About %1"));
+}
+
 QStringList GuiStrings::iTunesDefaultPlaylists() const {
   QStringList defaultPlaylists;
   //: Name of the main iTunes library (to exclude from the Batch window)
