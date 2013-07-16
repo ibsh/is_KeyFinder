@@ -129,7 +129,7 @@ int main(int argc, char* argv[]) {
 #if defined Q_OS_MAC
   QDir dir(QApplication::applicationDirPath());
   dir.cdUp();
-  QString localePath = localeParam.arg(dir.absolutePath()).arg(QLocale::system().name());
+  QString localePath = localeParam.arg(dir.absolutePath()).arg(QLocale::system().uiLanguages().first());
 #else
   QString localePath = localeParam.arg(QCoreApplication::applicationDirPath()).arg(QLocale::system().name());
 #endif
