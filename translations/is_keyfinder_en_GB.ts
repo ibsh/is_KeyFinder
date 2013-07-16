@@ -273,12 +273,12 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/detailwindow.ui" line="275"/>
+        <location filename="../forms/detailwindow.ui" line="263"/>
         <source>Run analysis</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/detailwindow.ui" line="300"/>
+        <location filename="../forms/detailwindow.ui" line="288"/>
         <source>Drag an audio file onto the window</source>
         <translation></translation>
     </message>

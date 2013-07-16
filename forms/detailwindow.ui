@@ -259,18 +259,6 @@
       </item>
       <item row="1" column="2">
        <widget class="QPushButton" name="runButton">
-        <property name="minimumSize">
-         <size>
-          <width>120</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>120</width>
-          <height>16777215</height>
-         </size>
-        </property>
         <property name="text">
          <string>Run analysis</string>
         </property>
