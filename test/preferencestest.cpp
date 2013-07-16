@@ -121,9 +121,22 @@ TEST (PreferencesTest, ConstructorDefaultsGui) {
   ASSERT_EQ(QByteArray(), p.getBatchWindowSplitterState());
 }
 
-TEST (PreferencesTest, QSettingsInteraction) {
+TEST (PreferencesTest, QSettingsWrite) {
   SettingsWrapper* fakeSettings = new SettingsWrapperFake();
-  Preferences p(fakeSettings);
-  p.save();
+  ASSERT_FLOAT_EQ(0, fakeSettings->value("corestartingFrequencyA", 0).toFloat());
+  Preferences writer(fakeSettings);
+  writer.save();
   ASSERT_FLOAT_EQ(27.5, fakeSettings->value("corestartingFrequencyA", 0).toFloat());
+  writer.core.setStartingFrequencyA(55.0);
+  writer.save();
+  ASSERT_FLOAT_EQ(55.0, fakeSettings->value("corestartingFrequencyA", 0).toFloat());
+}
+
+TEST (PreferencesTest, QSettingsRead) {
+  SettingsWrapper* fakeSettings = new SettingsWrapperFake();
+  fakeSettings->beginGroup("core");
+  fakeSettings->setValue("startingFrequencyA", (float)110.0);
+  fakeSettings->endGroup();
+  Preferences reader(fakeSettings);
+  ASSERT_FLOAT_EQ(110.0, reader.core.getStartingFreqA());
 }
