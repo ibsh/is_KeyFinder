@@ -65,7 +65,6 @@ AudioFileDecoder::AudioFileDecoder(const QString& filePath, const int maxDuratio
   }
 
   if (audioStream == -1) {
-    av_close_input_file(fCtx);
     qWarning("Could not find an audio stream for file %s", filePathCh);
     free();
     throw KeyFinder::Exception(GuiStrings::getInstance()->libavCouldNotFindAudioStream().toUtf8().constData());
@@ -76,7 +75,6 @@ AudioFileDecoder::AudioFileDecoder(const QString& filePath, const int maxDuratio
   int durationMinutes = durationSeconds / 60;
   // First condition is a hack for bizarre overestimation of some MP3s
   if (durationMinutes < 720 && durationSeconds > maxDuration * 60) {
-    av_close_input_file(fCtx);
     qWarning("Duration of file %s (%d:%d) exceeds specified maximum (%d:00)", filePathCh, durationMinutes, durationSeconds % 60, maxDuration);
     free();
     throw KeyFinder::Exception(GuiStrings::getInstance()->durationExceedsPreference(durationMinutes, durationSeconds % 60, maxDuration).toUtf8().constData());
@@ -86,7 +84,6 @@ AudioFileDecoder::AudioFileDecoder(const QString& filePath, const int maxDuratio
   cCtx = fCtx->streams[audioStream]->codec;
   codec = avcodec_find_decoder(cCtx->codec_id);
   if (codec == NULL) {
-    av_close_input_file(fCtx);
     qWarning("Audio stream has unsupported codec in file %s", filePathCh);
     free();
     throw KeyFinder::Exception(GuiStrings::getInstance()->libavUnsupportedCodec().toUtf8().constData());
@@ -95,7 +92,6 @@ AudioFileDecoder::AudioFileDecoder(const QString& filePath, const int maxDuratio
   // Open codec
   int codecOpenResult = avcodec_open2(cCtx, codec, &dict);
   if (codecOpenResult < 0) {
-    av_close_input_file(fCtx);
     qWarning("Could not open audio codec %s (%d) for file %s", codec->long_name, codecOpenResult, filePathCh);
     free();
     throw KeyFinder::Exception(GuiStrings::getInstance()->libavCouldNotOpenCodec(codec->long_name, codecOpenResult).toUtf8().constData());
@@ -106,8 +102,6 @@ AudioFileDecoder::AudioFileDecoder(const QString& filePath, const int maxDuratio
     AV_SAMPLE_FMT_S16, cCtx->sample_fmt, 0, 0, 0, 0
   );
   if (rsCtx == NULL) {
-    avcodec_close(cCtx);
-    av_close_input_file(fCtx);
     qWarning("Could not create ReSampleContext for file %s", filePathCh);
     free();
     throw KeyFinder::Exception(GuiStrings::getInstance()->libavCouldNotCreateResampleContext().toUtf8().constData());
