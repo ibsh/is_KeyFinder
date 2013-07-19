@@ -21,8 +21,10 @@
 
 HEADERS  += \
   $$PWD/asyncfileobjecttest.h \
+  $$PWD/decoderlibavtest.h \
   $$PWD/preferencestest.h
 
 SOURCES += \
   $$PWD/asyncfileobjecttest.cpp \
+  $$PWD/decoderlibavtest.cpp \
   $$PWD/preferencestest.cpp
