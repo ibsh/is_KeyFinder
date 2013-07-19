@@ -60,7 +60,7 @@ TEST (PreferencesTest, ConstructorDefaultsCore) {
   SettingsWrapper* fakeSettings = new SettingsWrapperFake();
   Preferences p(fakeSettings);
 
-  ASSERT_FLOAT_EQ(p.core.getStartingFreqADefault(), p.core.getStartingFreqA());
+  ASSERT_FLOAT_EQ(p.core.getStartingFrequencyADefault(), p.core.getStartingFrequencyA());
   ASSERT_EQ(p.core.getOctavesDefault(), p.core.getOctaves());
   ASSERT_EQ(p.core.getOffsetToCDefault(), p.core.getOffsetToC());
   ASSERT_EQ(p.core.getBandsPerOctaveDefault(), p.core.getBandsPerOctave());
@@ -138,5 +138,17 @@ TEST (PreferencesTest, QSettingsRead) {
   fakeSettings->setValue("startingFrequencyA", (float)110.0);
   fakeSettings->endGroup();
   Preferences reader(fakeSettings);
-  ASSERT_FLOAT_EQ(110.0, reader.core.getStartingFreqA());
+  ASSERT_FLOAT_EQ(110.0, reader.core.getStartingFrequencyA());
+}
+
+TEST (PreferencesTest, Equality) {
+    Preferences a;
+    Preferences b;
+    ASSERT_TRUE(a.equivalentTo(b));
+    a.core.setStartingFrequencyA(55.0);
+    ASSERT_FALSE(a.equivalentTo(b));
+    a.core.setStartingFrequencyA(27.5);
+    ASSERT_TRUE(a.equivalentTo(b));
+    a.setMaxDuration(61);
+    ASSERT_FALSE(a.equivalentTo(b));
 }

@@ -104,7 +104,7 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   ui->hcdfGaussianSize->setValue(p.core.getSegGaussianSize());
   ui->tuningMethod->setCurrentIndex(listTuningMethod.indexOf(p.core.getTuningMethod()));
   ui->hcdfGaussianSigma->setValue(p.core.getSegGaussianSigma());
-  ui->stFreq->setCurrentIndex(listStartingFreq.indexOf(p.core.getStartingFreqA()));
+  ui->stFreq->setCurrentIndex(listStartingFreq.indexOf(p.core.getStartingFrequencyA()));
   ui->directSkStretch->setValue(p.core.getDirectSkStretch());
   ui->detunedBandWeight->setValue(p.core.getDetunedBandWeight());
   ui->iTunesLibraryPath->setText(p.getITunesLibraryPath());
@@ -276,7 +276,7 @@ void PrefsDialog::on_cancelButton_clicked() {
 void PrefsDialog::on_advancedDefaultsButton_clicked() {
   Preferences p;
   // Musical range
-  ui->stFreq->setCurrentIndex(listStartingFreq.indexOf(p.core.getStartingFreqADefault()));
+  ui->stFreq->setCurrentIndex(listStartingFreq.indexOf(p.core.getStartingFrequencyADefault()));
   ui->octaves->setValue(p.core.getOctavesDefault());
   ui->octaveOffset->setChecked(p.core.getOffsetToCDefault());
   ui->bps->setValue(p.core.getBandsPerSemitoneDefault());

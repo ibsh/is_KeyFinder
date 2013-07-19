@@ -101,10 +101,35 @@ Preferences& Preferences::operator=(const Preferences& that) {
   return *this;
 }
 
+bool Preferences::equivalentTo(const Preferences& that) const {
+  if (!core.equivalentTo(that.core)) return false;
+  if (customKeyCodes            != that.customKeyCodes) return false;
+  if (metadataFormat            != that.metadataFormat) return false;
+  if (metadataWriteTitle        != that.metadataWriteTitle) return false;
+  if (metadataWriteArtist       != that.metadataWriteArtist) return false;
+  if (metadataWriteAlbum        != that.metadataWriteAlbum) return false;
+  if (metadataWriteComment      != that.metadataWriteComment) return false;
+  if (metadataWriteGrouping     != that.metadataWriteGrouping) return false;
+  if (metadataWriteKey          != that.metadataWriteKey) return false;
+  if (metadataWriteFilename     != that.metadataWriteFilename) return false;
+  if (metadataDelimiter         != that.metadataDelimiter) return false;
+  if (writeToFilesAutomatically != that.writeToFilesAutomatically) return false;
+  if (skipFilesWithExistingTags != that.skipFilesWithExistingTags) return false;
+  if (maxDuration               != that.maxDuration) return false;
+  if (parallelBatchJobs         != that.parallelBatchJobs) return false;
+  if (iTunesLibraryPath         != that.iTunesLibraryPath) return false;
+  if (traktorLibraryPath        != that.traktorLibraryPath) return false;
+  if (seratoLibraryPath         != that.seratoLibraryPath) return false;
+  if (batchWindowState          != that.batchWindowState) return false;
+  if (batchWindowGeometry       != that.batchWindowGeometry) return false;
+  if (batchWindowSplitterState  != that.batchWindowSplitterState) return false;
+  return true;
+}
+
 void Preferences::load() {
 
   settings->beginGroup("core");
-  core.setStartingFrequencyA(settings->value("startingFrequencyA", core.getStartingFreqADefault()).toFloat());
+  core.setStartingFrequencyA(settings->value("startingFrequencyA", core.getStartingFrequencyADefault()).toFloat());
   core.setOctaves((unsigned)settings->value("octaves", core.getOctavesDefault()).toInt());
   core.setOffsetToC(settings->value("offsetToC", core.getOffsetToCDefault()).toBool());
   core.setBandsPerSemitone((unsigned)settings->value("bandsPerSemitone", core.getBandsPerSemitoneDefault()).toInt());
@@ -218,7 +243,7 @@ void Preferences::load() {
 void Preferences::save() {
 
   settings->beginGroup("core");
-  settings->setValue("startingFrequencyA", core.getStartingFreqA());
+  settings->setValue("startingFrequencyA", core.getStartingFrequencyA());
   settings->setValue("octaves", core.getOctaves());
   settings->setValue("offsetToC", core.getOffsetToC());
   settings->setValue("bandsPerSemitone", core.getBandsPerSemitone());

@@ -78,6 +78,7 @@ public:
   Preferences(const Preferences& that);
   ~Preferences();
   Preferences& operator=(const Preferences&);
+  bool equivalentTo(const Preferences&) const;
   void save();
 
   KeyFinder::Parameters core;
