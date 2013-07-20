@@ -24,6 +24,7 @@
 
 #include <QUrl>
 #include <QMutex>
+#include <QRegularExpressionMatch>
 #ifndef Q_OS_MAC
 #include <QtXml/QtXml>
 #include <QtXmlPatterns/QtXmlPatterns>

@@ -212,6 +212,11 @@ QList<QUrl> ExternalPlaylist::readSeratoLibraryPlaylist(const QString& playlistN
   }
   // Serato path stuff
   QString pathPrefix = "/";
+  #ifdef Q_OS_MAC
+  QRegularExpression regex("^(/Volumes/[^/]+/)");
+  QRegularExpressionMatch match = regex.match(prefs.getSeratoLibraryPath());
+  if (match.hasMatch()) pathPrefix = match.captured();
+  #endif
   #ifdef Q_OS_WIN
   pathPrefix = prefs.getSeratoLibraryPath().left(3);
   #endif
