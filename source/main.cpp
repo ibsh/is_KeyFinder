@@ -121,19 +121,18 @@ int main(int argc, char* argv[]) {
 
   QApplication a(argc, argv);
 
+  QString appTranslationPathBase = "%1/Translations/is_keyfinder_%2.qm";
+#if defined Q_OS_MAC
   QString localeId = QLocale::system().name();
   QString languageId = QLocale::system().uiLanguages().first();
   localeId.replace(QRegExp("[a-z]+_"), QString(languageId +"_"));
   QLocale myMacLocale(localeId);
-
-  QString appTranslationPathBase = "%1/Translations/is_keyfinder_%2.qm";
-#if defined Q_OS_MAC
   QDir dir(QApplication::applicationDirPath());
   dir.cdUp();
   QString appTranslationPath = appTranslationPathBase.arg(dir.absolutePath()).arg(myMacLocale.name());
   QString qtTranslationName = "qt_" + myMacLocale.name();
 #else
-  QString appTranslationPath = localeParam.arg(QCoreApplication::applicationDirPath()).arg(QLocale::system().name());
+  QString appTranslationPath = appTranslationPathBase.arg(QCoreApplication::applicationDirPath()).arg(QLocale::system().name());
   QString qtTranslationName = "qt_" + QLocale::system().name();
 #endif
 
