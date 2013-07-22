@@ -85,7 +85,7 @@ protected:
   bool setKey(const QString&);
   QString getGroupingId3(const TagLib::ID3v2::Tag*) const;
   QString getKeyId3(const TagLib::ID3v2::Tag*) const;
-  void setITunesCommentId3(TagLib::ID3v2::Tag*, const QString&);
+  void setITunesCommentId3v2(TagLib::ID3v2::Tag*, const QString&);
   bool setGroupingId3(TagLib::ID3v2::Tag*, const QString&);
   bool setKeyId3(TagLib::ID3v2::Tag*, const QString&);
 };
