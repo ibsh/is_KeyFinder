@@ -60,7 +60,8 @@ TagLibMetadata::TagLibMetadata(const QString& filePath) : f(NULL) {
   }
   if (fileExt == "flac")
     f = new TagLib::FLAC::File(filePathCh);
-  //  if (fileExt == "ape") f = new TagLib::APE::File(filePathCh);
+  if (fileExt == "ape")
+    f = new TagLib::APE::File(filePathCh);
   if (fileExt == "mpc")
     f = new TagLib::MPC::File(filePathCh);
   if (fileExt == "wv")
