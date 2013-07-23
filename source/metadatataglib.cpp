@@ -54,7 +54,7 @@ TagLibMetadata::TagLibMetadata(const QString& filePath) : f(NULL) {
   if (fileExt == "oga") {
     f = new TagLib::Ogg::FLAC::File(filePathCh);
     if (f == NULL || !f->isValid()) {
-      delete f;
+      if (!f->isValid()) delete f;
       f = new TagLib::Ogg::Vorbis::File(filePathCh);
     }
   }
