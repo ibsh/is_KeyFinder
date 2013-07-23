@@ -78,7 +78,7 @@ TagLibMetadata::TagLibMetadata(const QString& filePath) : f(NULL) {
     f = new TagLib::ASF::File(filePathCh);
 #endif
 
-  locker.~QMutexLocker(); // unlock mutex
+  locker.unlock();
 
   if (f != NULL) {
     if (f->isValid()) {
@@ -173,31 +173,25 @@ QString TagLibMetadata::getGrouping() const {
   TagLib::MP4::Tag* tagTestMp4 = dynamic_cast<TagLib::MP4::Tag*>(f->tag());
   if (tagTestMp4 != NULL) {
     TagLib::MP4::Item m = tagTestMp4->itemListMap()["\251grp"];
-    if (m.isValid()) {
-      TagLib::String out = m.toStringList().front();
-      return QString::fromUtf8((out.toCString(true)));
-    }
-    return "";
+    if (!m.isValid()) return "";
+    TagLib::String out = m.toStringList().front();
+    return QString::fromUtf8((out.toCString(true)));
   }
 
   TagLib::ASF::Tag* tagTestAsf = dynamic_cast<TagLib::ASF::Tag*>(f->tag());
   if (tagTestAsf != NULL) {
     TagLib::ASF::AttributeList l = tagTestAsf->attributeListMap()["WM/ContentGroupDescription"];
-    if (!l.isEmpty()) {
-      TagLib::String out = l.front().toString();
-      return QString::fromUtf8((out.toCString(true)));
-    }
-    return "";
+    if (l.isEmpty()) return "";
+    TagLib::String out = l.front().toString();
+    return QString::fromUtf8((out.toCString(true)));
   }
 
   TagLib::APE::Tag* tagTestApe = dynamic_cast<TagLib::APE::Tag*>(f->tag());
   if (tagTestApe != NULL) {
     TagLib::APE::Item m = tagTestApe->itemListMap()["Grouping"];
-    if (!m.isEmpty()) {
-      TagLib::String out = m.toStringList().front();
-      return QString::fromUtf8((out.toCString(true)));
-    }
-    return "";
+    if (m.isEmpty()) return "";
+    TagLib::String out = m.toStringList().front();
+    return QString::fromUtf8((out.toCString(true)));
   }
 
   return GuiStrings::getInstance()->notApplicable();
@@ -207,8 +201,7 @@ QString TagLibMetadata::getGroupingId3(const TagLib::ID3v2::Tag* tag) const {
   if (tag->isEmpty()) // ID3v1 doesn't support the Grouping tag
     return GuiStrings::getInstance()->notApplicable();
   TagLib::ID3v2::FrameList l = tag->frameListMap()["TIT1"];
-  if (l.isEmpty())
-    return "";
+  if (l.isEmpty()) return "";
   TagLib::String out = l.front()->toString();
   return QString::fromUtf8((out.toCString(true)));
 }
@@ -236,31 +229,24 @@ QString TagLibMetadata::getKey() const {
   TagLib::MP4::Tag* tagTestMp4 = dynamic_cast<TagLib::MP4::Tag*>(f->tag());
   if (tagTestMp4 != NULL) {
     TagLib::MP4::Item m = tagTestMp4->itemListMap()["----:com.apple.iTunes:initialkey"];
-    if (m.isValid()) {
-      TagLib::String out = m.toStringList().front();
-      return QString::fromUtf8((out.toCString(true)));
-    }
-    return "";
+    if (!m.isValid()) return "";
+    TagLib::String out = m.toStringList().front();
+    return QString::fromUtf8((out.toCString(true)));
   }
 
   TagLib::ASF::Tag* tagTestAsf = dynamic_cast<TagLib::ASF::Tag*>(f->tag());
   if (tagTestAsf != NULL) {
     TagLib::ASF::AttributeList l = tagTestAsf->attributeListMap()["WM/InitialKey"];
-    if (!l.isEmpty()) {
-      TagLib::String out = l.front().toString();
-      return QString::fromUtf8((out.toCString(true)));
-    }
-    return "";
+    if (l.isEmpty()) return "";
+    TagLib::String out = l.front().toString();
+    return QString::fromUtf8((out.toCString(true)));
   }
 
   TagLib::FLAC::File* fileTestFlac = dynamic_cast<TagLib::FLAC::File*>(f);
   if (fileTestFlac != NULL) {
-    if (fileTestFlac->xiphComment()->contains("INITIALKEY")) {
-      TagLib::String out = fileTestFlac->xiphComment()->fieldListMap()["INITIALKEY"].toString();
-      return QString::fromUtf8((out.toCString(true)));
-    } else {
-      return "";
-    }
+    if (!fileTestFlac->xiphComment()->contains("INITIALKEY")) return "";
+    TagLib::String out = fileTestFlac->xiphComment()->fieldListMap()["INITIALKEY"].toString();
+    return QString::fromUtf8((out.toCString(true)));
   }
 
   TagLib::APE::Tag* tagTestApe = dynamic_cast<TagLib::APE::Tag*>(f->tag());
@@ -275,27 +261,23 @@ QString TagLibMetadata::getKeyId3(const TagLib::ID3v2::Tag* tag) const {
   if (tag->isEmpty()) // ID3v1 doesn't support the Key tag
     return GuiStrings::getInstance()->notApplicable();
   TagLib::ID3v2::FrameList l = tag->frameListMap()["TKEY"];
-  if (!l.isEmpty()) {
-    TagLib::String out = l.front()->toString();
-    return QString::fromUtf8((out.toCString(true)));
-  }
-  return "";
+  if (l.isEmpty()) return "";
+  TagLib::String out = l.front()->toString();
+  return QString::fromUtf8((out.toCString(true)));
 }
 
 MetadataWriteResult TagLibMetadata::writeKeyToMetadata(KeyFinder::key_t key, const Preferences& prefs) {
-
   MetadataWriteResult result;
   QString data = prefs.getKeyCode(key);
   QString empty;
-
   for (unsigned int i = 0; i < METADATA_TAG_T_COUNT; i++) {
     result.newTags.push_back(empty);
-    if ((metadata_tag_t)i == METADATA_TAG_KEY)
+    if ((metadata_tag_t)i == METADATA_TAG_KEY) {
       writeKeyByTagEnum(data.left(3), (metadata_tag_t)i, result, prefs); // Key field in ID3 holds only 3 chars
-    else
+    } else {
       writeKeyByTagEnum(data, (metadata_tag_t)i, result, prefs);
+    }
   }
-
   return result;
 }
 
@@ -455,8 +437,7 @@ bool TagLibMetadata::setGrouping(const QString& grp) {
 }
 
 bool TagLibMetadata::setGroupingId3(TagLib::ID3v2::Tag* tag, const QString& grp) {
-  if (tag->isEmpty()) // ID3v1 doesn't support Grouping
-    return false;
+  if (tag->isEmpty()) return false; // ID3v1 doesn't support Grouping
   TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TIT1");
   frm->setText(TagLib::String(grp.toUtf8().constData(), TagLib::String::UTF8));
   tag->removeFrames("TIT1");
@@ -517,8 +498,7 @@ bool TagLibMetadata::setKey(const QString& key) {
 }
 
 bool TagLibMetadata::setKeyId3(TagLib::ID3v2::Tag* tag, const QString& key) {
-  if (tag->isEmpty()) // ID3v1 doesn't support Key
-    return false;
+  if (tag->isEmpty()) return false; // ID3v1 doesn't support Key
   TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame("TKEY");
   frm->setText(TagLib::String(key.toUtf8().constData(), TagLib::String::UTF8));
   tag->removeFrames("TKEY");
