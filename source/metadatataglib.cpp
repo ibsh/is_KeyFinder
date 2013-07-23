@@ -173,24 +173,27 @@ QString TagLibMetadata::getGrouping() const {
 
   TagLib::MP4::Tag* tagTestMp4 = dynamic_cast<TagLib::MP4::Tag*>(f->tag());
   if (tagTestMp4 != NULL) {
+    if (!tagTestMp4->itemListMap().contains("\251grp"))
+      return "";
     TagLib::MP4::Item m = tagTestMp4->itemListMap()["\251grp"];
-    if (!m.isValid()) return "";
     TagLib::String out = m.toStringList().front();
     return QString::fromUtf8((out.toCString(true)));
   }
 
   TagLib::ASF::Tag* tagTestAsf = dynamic_cast<TagLib::ASF::Tag*>(f->tag());
   if (tagTestAsf != NULL) {
+    if (!tagTestAsf->attributeListMap().contains("WM/ContentGroupDescription"))
+      return "";
     TagLib::ASF::AttributeList l = tagTestAsf->attributeListMap()["WM/ContentGroupDescription"];
-    if (l.isEmpty()) return "";
     TagLib::String out = l.front().toString();
     return QString::fromUtf8((out.toCString(true)));
   }
 
   TagLib::APE::Tag* tagTestApe = dynamic_cast<TagLib::APE::Tag*>(f->tag());
   if (tagTestApe != NULL) {
+    if (!tagTestApe->itemListMap().contains("Grouping"))
+      return "";
     TagLib::APE::Item m = tagTestApe->itemListMap()["Grouping"];
-    if (m.isEmpty()) return "";
     TagLib::String out = m.toStringList().front();
     return QString::fromUtf8((out.toCString(true)));
   }
@@ -201,8 +204,9 @@ QString TagLibMetadata::getGrouping() const {
 QString TagLibMetadata::getGroupingId3(const TagLib::ID3v2::Tag* tag) const {
   if (tag->isEmpty()) // ID3v1 doesn't support the Grouping tag
     return GuiStrings::getInstance()->notApplicable();
+  if (!tag->frameListMap().contains("TIT1"))
+    return "";
   TagLib::ID3v2::FrameList l = tag->frameListMap()["TIT1"];
-  if (l.isEmpty()) return "";
   TagLib::String out = l.front()->toString();
   return QString::fromUtf8((out.toCString(true)));
 }
@@ -229,24 +233,28 @@ QString TagLibMetadata::getKey() const {
 
   TagLib::MP4::Tag* tagTestMp4 = dynamic_cast<TagLib::MP4::Tag*>(f->tag());
   if (tagTestMp4 != NULL) {
+    if (!tagTestMp4->itemListMap().contains("----:com.apple.iTunes:initialkey"))
+      return "";
     TagLib::MP4::Item m = tagTestMp4->itemListMap()["----:com.apple.iTunes:initialkey"];
-    if (!m.isValid()) return "";
     TagLib::String out = m.toStringList().front();
     return QString::fromUtf8((out.toCString(true)));
   }
 
   TagLib::ASF::Tag* tagTestAsf = dynamic_cast<TagLib::ASF::Tag*>(f->tag());
   if (tagTestAsf != NULL) {
+    if (!tagTestAsf->attributeListMap().contains("WM/InitialKey"))
+      return "";
     TagLib::ASF::AttributeList l = tagTestAsf->attributeListMap()["WM/InitialKey"];
-    if (l.isEmpty()) return "";
     TagLib::String out = l.front().toString();
     return QString::fromUtf8((out.toCString(true)));
   }
 
   TagLib::FLAC::File* fileTestFlac = dynamic_cast<TagLib::FLAC::File*>(f);
   if (fileTestFlac != NULL) {
-    if (!fileTestFlac->xiphComment()->contains("INITIALKEY")) return "";
-    TagLib::String out = fileTestFlac->xiphComment()->fieldListMap()["INITIALKEY"].toString();
+    TagLib::Ogg::XiphComment* c = fileTestFlac->xiphComment();
+    if (!c->fieldListMap().contains("INITIALKEY"))
+      return "";
+    TagLib::String out = c->fieldListMap()["INITIALKEY"].toString();
     return QString::fromUtf8((out.toCString(true)));
   }
 
@@ -261,8 +269,9 @@ QString TagLibMetadata::getKey() const {
 QString TagLibMetadata::getKeyId3(const TagLib::ID3v2::Tag* tag) const {
   if (tag->isEmpty()) // ID3v1 doesn't support the Key tag
     return GuiStrings::getInstance()->notApplicable();
+  if (!tag->frameListMap().contains("TKEY"))
+    return "";
   TagLib::ID3v2::FrameList l = tag->frameListMap()["TKEY"];
-  if (l.isEmpty()) return "";
   TagLib::String out = l.front()->toString();
   return QString::fromUtf8((out.toCString(true)));
 }
@@ -369,20 +378,21 @@ bool TagLibMetadata::setComment(const QString& cmt) {
 }
 
 void TagLibMetadata::setITunesCommentId3v2(TagLib::ID3v2::Tag* tag, const QString& cmt) {
-  const TagLib::ID3v2::FrameList &comments = tag->frameListMap()["COMM"];
-  bool done = false;
-  for (TagLib::ID3v2::FrameList::ConstIterator it = comments.begin(); it != comments.end(); it++) {
-    // overwrite all appropriate comment elements
-    TagLib::ID3v2::CommentsFrame *commFrame = dynamic_cast<TagLib::ID3v2::CommentsFrame *>(*it);
-    if (commFrame && commFrame->description().isEmpty()) {
-      // TODO does this have implications for localisation?
-      commFrame->setLanguage("eng");
-      commFrame->setText(TagLib::String(cmt.toUtf8().constData(), TagLib::String::UTF8));
-      // we don't save here, because MPEGs need v2.3 / 2.4 handling.
-      done = true;
+  if (tag->frameListMap().contains("COMM")) {
+    const TagLib::ID3v2::FrameList &comments = tag->frameListMap()["COMM"];
+    bool done = false;
+    for (TagLib::ID3v2::FrameList::ConstIterator it = comments.begin(); it != comments.end(); it++) {
+      // overwrite all appropriate comment elements
+      TagLib::ID3v2::CommentsFrame *commFrame = dynamic_cast<TagLib::ID3v2::CommentsFrame *>(*it);
+      if (commFrame && commFrame->description().isEmpty()) {
+        commFrame->setLanguage("eng");
+        commFrame->setText(TagLib::String(cmt.toUtf8().constData(), TagLib::String::UTF8));
+        // we don't save here, because MPEGs need v2.3 / 2.4 handling.
+        done = true;
+      }
     }
+    if (done) return;
   }
-  if (done) return;
   TagLib::ID3v2::CommentsFrame* frm = new TagLib::ID3v2::CommentsFrame();
   frm->setText(TagLib::String(cmt.toUtf8().constData(), TagLib::String::UTF8));
   frm->setLanguage("eng");
@@ -415,7 +425,7 @@ bool TagLibMetadata::setGrouping(const QString& grp) {
   TagLib::MP4::Tag* tagTestMp4 = dynamic_cast<TagLib::MP4::Tag*>(f->tag());
   if (tagTestMp4 != NULL) {
     TagLib::StringList sl(TagLib::String(grp.toUtf8().constData(), TagLib::String::UTF8));
-    tagTestMp4->itemListMap()["\251grp"] = sl;
+    tagTestMp4->itemListMap().insert("\251grp", sl);
     f->save();
     return true;
   }
@@ -471,7 +481,7 @@ bool TagLibMetadata::setKey(const QString& key) {
   TagLib::MP4::Tag* tagTestMp4 = dynamic_cast<TagLib::MP4::Tag*>(f->tag());
   if (tagTestMp4 != NULL) {
     TagLib::StringList sl(TagLib::String(key.toUtf8().constData(), TagLib::String::UTF8));
-    tagTestMp4->itemListMap()["----:com.apple.iTunes:initialkey"] = sl;
+    tagTestMp4->itemListMap().insert("----:com.apple.iTunes:initialkey", sl);
     f->save();
     return true;
   }
