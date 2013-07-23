@@ -84,7 +84,10 @@ TagLibMetadata::TagLibMetadata(const QString& filePath) : f(NULL) {
   if (fileExt == "tta")
     f = new TagLib::TrueAudio::File(filePathCh);
 #ifdef TAGLIB_WITH_MP4
-  if (fileExt == "m4a" || fileExt == "m4b" || fileExt == "m4p" || fileExt == "mp4" || fileExt == "3g2")
+  if (
+    fileExt == "m4a" || fileExt == "m4b" || fileExt == "m4p" ||
+    fileExt == "mp4" || fileExt == "3g2"
+  )
     f = new TagLib::MP4::File(filePathCh);
 #endif
 #ifdef TAGLIB_WITH_ASF
@@ -289,14 +292,18 @@ QString TagLibMetadata::getKeyId3(const TagLib::ID3v2::Tag* tag) const {
   return QString::fromUtf8((out.toCString(true)));
 }
 
-MetadataWriteResult TagLibMetadata::writeKeyToMetadata(KeyFinder::key_t key, const Preferences& prefs) {
+MetadataWriteResult TagLibMetadata::writeKeyToMetadata(
+  KeyFinder::key_t key,
+  const Preferences& prefs
+) {
   MetadataWriteResult result;
   QString data = prefs.getKeyCode(key);
   QString empty;
   for (unsigned int i = 0; i < METADATA_TAG_T_COUNT; i++) {
     result.newTags.push_back(empty);
     if ((metadata_tag_t)i == METADATA_TAG_KEY) {
-      writeKeyByTagEnum(data.left(3), (metadata_tag_t)i, result, prefs); // Key field in ID3 holds only 3 chars
+      // Key field in ID3 holds only 3 chars
+      writeKeyByTagEnum(data.left(3), (metadata_tag_t)i, result, prefs);
     } else {
       writeKeyByTagEnum(data, (metadata_tag_t)i, result, prefs);
     }
@@ -304,7 +311,12 @@ MetadataWriteResult TagLibMetadata::writeKeyToMetadata(KeyFinder::key_t key, con
   return result;
 }
 
-void TagLibMetadata::writeKeyByTagEnum(const QString& data, metadata_tag_t tag, MetadataWriteResult& result, const Preferences& prefs) {
+void TagLibMetadata::writeKeyByTagEnum(
+  const QString& data,
+  metadata_tag_t tag,
+  MetadataWriteResult& result,
+  const Preferences& prefs
+) {
   QString delim = prefs.getMetadataDelimiter();
   metadata_write_t write = prefs.getMetadataWriteByTagEnum(tag);
   if (write == METADATA_WRITE_OVERWRITE) {
@@ -335,21 +347,27 @@ bool TagLibMetadata::setByTagEnum(const QString& data, metadata_tag_t tag) {
 
 bool TagLibMetadata::setTitle(const QString& tit) {
   if (f == NULL || !f->isValid()) return false;
-  f->tag()->setTitle(TagLib::String(tit.toUtf8().constData(), TagLib::String::UTF8));
+  f->tag()->setTitle(
+    TagLib::String(tit.toUtf8().constData(), TagLib::String::UTF8)
+  );
   f->save();
   return true;
 }
 
 bool TagLibMetadata::setArtist(const QString& art) {
   if (f == NULL || !f->isValid()) return false;
-  f->tag()->setArtist(TagLib::String(art.toUtf8().constData(), TagLib::String::UTF8));
+  f->tag()->setArtist(
+    TagLib::String(art.toUtf8().constData(), TagLib::String::UTF8)
+  );
   f->save();
   return true;
 }
 
 bool TagLibMetadata::setAlbum(const QString& alb) {
   if (f == NULL || !f->isValid()) return false;
-  f->tag()->setAlbum(TagLib::String(alb.toUtf8().constData(), TagLib::String::UTF8));
+  f->tag()->setAlbum(
+    TagLib::String(alb.toUtf8().constData(), TagLib::String::UTF8)
+  );
   f->save();
   return true;
 }
@@ -372,19 +390,27 @@ bool TagLibMetadata::setComment(const QString& cmt) {
   // TagLib's default behaviour will write a v2 ID3 tag where none exists
   TagLib::MPEG::File* fileTestMpeg = dynamic_cast<TagLib::MPEG::File*>(f);
   if (fileTestMpeg != NULL && fileTestMpeg->ID3v2Tag()->isEmpty()) {
-    fileTestMpeg->ID3v1Tag()->setComment(TagLib::String(cmt.toUtf8().constData(), TagLib::String::UTF8));
+    fileTestMpeg->ID3v1Tag()->setComment(
+      TagLib::String(cmt.toUtf8().constData(), TagLib::String::UTF8)
+    );
     fileTestMpeg->save(TagLib::MPEG::File::ID3v1, false);
     return true;
   }
 
   // non-FLAC behaviour
-  f->tag()->setComment(TagLib::String(cmt.toUtf8().constData(), TagLib::String::UTF8));
+  f->tag()->setComment(
+    TagLib::String(cmt.toUtf8().constData(), TagLib::String::UTF8)
+  );
 
   // iTunes hack for ID3v2 in MPEGs and AIFFs, but iTunes doesn't read WAV tags
   TagLib::RIFF::AIFF::File* fileTestAiff = dynamic_cast<TagLib::RIFF::AIFF::File*>(f);
   if (fileTestMpeg != NULL && !fileTestMpeg->ID3v2Tag()->isEmpty()) {
     setITunesCommentId3v2(fileTestMpeg->ID3v2Tag(), cmt);
-    fileTestMpeg->save(TagLib::MPEG::File::ID3v2, false, fileTestMpeg->ID3v2Tag()->header()->majorVersion());
+    fileTestMpeg->save(
+      TagLib::MPEG::File::ID3v2,
+      false,
+      fileTestMpeg->ID3v2Tag()->header()->majorVersion()
+    );
   } else if (fileTestAiff != NULL) {
     setITunesCommentId3v2(fileTestAiff->tag(), cmt);
     f->save();
@@ -397,7 +423,7 @@ bool TagLibMetadata::setComment(const QString& cmt) {
 void TagLibMetadata::setITunesCommentId3v2(TagLib::ID3v2::Tag* tag, const QString& cmt) {
   if (tag->frameListMap().contains(keyId3TagiTunesComment)) {
     const TagLib::ID3v2::FrameList &comments = tag->frameListMap()[keyId3TagiTunesComment];
-    bool done = false;
+    bool found = false;
     for (TagLib::ID3v2::FrameList::ConstIterator it = comments.begin(); it != comments.end(); it++) {
       // overwrite all appropriate comment elements
       TagLib::ID3v2::CommentsFrame *commFrame = dynamic_cast<TagLib::ID3v2::CommentsFrame *>(*it);
@@ -405,10 +431,10 @@ void TagLibMetadata::setITunesCommentId3v2(TagLib::ID3v2::Tag* tag, const QStrin
         commFrame->setLanguage(lngId3TagiTunesComment);
         commFrame->setText(TagLib::String(cmt.toUtf8().constData(), TagLib::String::UTF8));
         // we don't save here, because MPEGs need v2.3 / 2.4 handling.
-        done = true;
+        found = true;
       }
     }
-    if (done) return;
+    if (found) return;
   }
   TagLib::ID3v2::CommentsFrame* frm = new TagLib::ID3v2::CommentsFrame();
   frm->setText(TagLib::String(cmt.toUtf8().constData(), TagLib::String::UTF8));
@@ -423,7 +449,11 @@ bool TagLibMetadata::setGrouping(const QString& grp) {
 
   TagLib::MPEG::File* fileTestMpeg = dynamic_cast<TagLib::MPEG::File*>(f);
   if (fileTestMpeg != NULL && setGroupingId3(fileTestMpeg->ID3v2Tag(), grp)) {
-    fileTestMpeg->save(TagLib::MPEG::File::AllTags, true, fileTestMpeg->ID3v2Tag()->header()->majorVersion());
+    fileTestMpeg->save(
+      TagLib::MPEG::File::AllTags,
+      true,
+      fileTestMpeg->ID3v2Tag()->header()->majorVersion()
+    );
     return true;
   }
 
@@ -485,7 +515,11 @@ bool TagLibMetadata::setKey(const QString& key) {
 
   TagLib::MPEG::File* fileTestMpeg = dynamic_cast<TagLib::MPEG::File*>(f);
   if (fileTestMpeg != NULL && setKeyId3(fileTestMpeg->ID3v2Tag(), key)) {
-    fileTestMpeg->save(TagLib::MPEG::File::ID3v2, false, fileTestMpeg->ID3v2Tag()->header()->majorVersion());
+    fileTestMpeg->save(
+      TagLib::MPEG::File::ID3v2,
+      false,
+      fileTestMpeg->ID3v2Tag()->header()->majorVersion()
+    );
     return true;
   }
 
