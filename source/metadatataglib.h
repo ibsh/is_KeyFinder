@@ -74,6 +74,7 @@ public:
   QString getKey() const;
   MetadataWriteResult writeKeyToMetadata(KeyFinder::key_t, const Preferences&);
 protected:
+  TagLib::FileRef* fr;
   TagLib::File* f;
   bool setByTagEnum(const QString&, metadata_tag_t);
   void writeKeyByTagEnum(const QString&, metadata_tag_t, MetadataWriteResult&, const Preferences&);

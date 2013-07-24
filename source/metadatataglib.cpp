@@ -56,44 +56,8 @@ TagLibMetadata::TagLibMetadata(const QString& filePath) : f(NULL) {
   const char* filePathCh = encodedPath;
 #endif
 
-  if (fileExt == "mp3")
-    f = new TagLib::MPEG::File(filePathCh);
-  if (fileExt == "aif" || fileExt == "aiff")
-    f = new TagLib::RIFF::AIFF::File(filePathCh);
-  if (fileExt == "wav")
-    f = new TagLib::RIFF::WAV::File(filePathCh);
-  if (fileExt == "ogg")
-    f = new TagLib::Ogg::Vorbis::File(filePathCh);
-  if (fileExt == "oga") {
-    f = new TagLib::Ogg::FLAC::File(filePathCh);
-    if (f == NULL || !f->isValid()) {
-      if (!f->isValid()) delete f;
-      f = new TagLib::Ogg::Vorbis::File(filePathCh);
-    }
-  }
-  if (fileExt == "flac")
-    f = new TagLib::FLAC::File(filePathCh);
-  if (fileExt == "ape")
-    f = new TagLib::APE::File(filePathCh);
-  if (fileExt == "mpc")
-    f = new TagLib::MPC::File(filePathCh);
-  if (fileExt == "wv")
-    f = new TagLib::WavPack::File(filePathCh);
-  if (fileExt == "spx")
-    f = new TagLib::Ogg::Speex::File(filePathCh);
-  if (fileExt == "tta")
-    f = new TagLib::TrueAudio::File(filePathCh);
-#ifdef TAGLIB_WITH_MP4
-  if (
-    fileExt == "m4a" || fileExt == "m4b" || fileExt == "m4p" ||
-    fileExt == "mp4" || fileExt == "3g2"
-  )
-    f = new TagLib::MP4::File(filePathCh);
-#endif
-#ifdef TAGLIB_WITH_ASF
-  if (fileExt == "wma" || fileExt == "asf")
-    f = new TagLib::ASF::File(filePathCh);
-#endif
+  fr = new TagLib::FileRef(filePathCh);
+  if (!fr->isNull()) f = fr->file();
 
   locker.unlock();
 
@@ -115,7 +79,7 @@ TagLibMetadata::TagLibMetadata(const QString& filePath) : f(NULL) {
 }
 
 TagLibMetadata::~TagLibMetadata() {
-  if (f != NULL) delete f;
+  if (fr != NULL) delete fr;
 }
 
 QString TagLibMetadata::getByTagEnum(metadata_tag_t tag) const {
