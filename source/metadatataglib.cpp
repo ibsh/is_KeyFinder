@@ -21,12 +21,6 @@
 
 #include "metadatataglib.h"
 
-/*
-  Note that a lot remains untested here. For example, I didn't have any ASF or
-  APE files to hand while writing it, and I wouldn't be surprised if there are
-  many edge cases, though they should at least fail gracefully.
-*/
-
 QMutex constructor_mutex; // global mutex on file resolution
 
 const QString emptyString = "";
@@ -45,8 +39,6 @@ const char* keyAsfTagKey           = "WM/InitialKey";
 TagLibMetadata::TagLibMetadata(const QString& filePath) : f(NULL) {
 
   QMutexLocker locker(&constructor_mutex); // mutex the constructor
-
-  QString fileExt = filePath.mid(filePath.lastIndexOf(".") + 1).toLower();
 
 #ifdef Q_OS_WIN
   // Using utf16_to_utf8 here, as per decoderlibav, leads to a null file reference.
