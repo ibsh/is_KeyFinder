@@ -19,14 +19,14 @@
 
 *************************************************************************/
 
-#ifndef ASYNCMETADATAREADPROCESS_H
-#define ASYNCMETADATAREADPROCESS_H
+#ifndef AVFILEMETADATAFACTORY_H
+#define AVFILEMETADATAFACTORY_H
 
-#include "preferences.h"
-#include "avfilemetadatafactory.h"
-#include "asyncfileobject.h"
-#include "asyncmetadatareadresult.h"
+#include "avfilemetadata.h"
 
-MetadataReadResult metadataReadProcess(const AsyncFileObject&);
+class AVFileMetadataFactory{
+public:
+  AVFileMetadata* createAVFileMetadata(const QString&) const;
+};
 
-#endif // ASYNCMETADATAREADPROCESS_H
+#endif // AVFILEMETADATAFACTORY_H

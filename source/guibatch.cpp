@@ -627,8 +627,10 @@ void BatchWindow::writeDetectedToFiles() {
 }
 
 bool BatchWindow::writeToTagsAtRow(int row, KeyFinder::key_t key) {
-  TagLibMetadata md(ui->tableWidget->item(row, COL_FILEPATH)->text());
-  MetadataWriteResult written = md.writeKeyToMetadata(key, prefs);
+  AVFileMetadataFactory factory;
+  AVFileMetadata* md = factory.createAVFileMetadata(ui->tableWidget->item(row, COL_FILEPATH)->text());
+  MetadataWriteResult written = md->writeKeyToMetadata(key, prefs);
+  delete md;
 
   // reflect changes in table widget
   bool altered = false;

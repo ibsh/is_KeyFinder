@@ -110,8 +110,10 @@ void DetailWindow::analysisFinished() {
     return;
   }
   // Title bar
-  TagLibMetadata md(filePath);
-  QString shortName = md.getTitle();
+  AVFileMetadataFactory factory;
+  AVFileMetadata* md = factory.createAVFileMetadata(filePath);
+  QString shortName = md->getTitle();
+  delete md;
   if (shortName == "")
     shortName = filePath.mid(filePath.lastIndexOf("/") + 1);
   this->setWindowTitle(GuiStrings::getInstance()->appName() + GuiStrings::getInstance()->delim() + tr("Detailed Analysis") + GuiStrings::getInstance()->delim() + shortName);
