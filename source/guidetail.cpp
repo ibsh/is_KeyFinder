@@ -72,12 +72,12 @@ void DetailWindow::dragEnterEvent(QDragEnterEvent *e) {
 }
 
 void DetailWindow::dropEvent(QDropEvent *e) {
-  allowDrops = false;
   filePath = e->mimeData()->urls().at(0).toLocalFile();
   runAnalysis();
 }
 
 void DetailWindow::runAnalysis() {
+  allowDrops = false;
   // get latest preferences and redraw variable UI elements if they've changed since the last run.
   unsigned int chkOctaves = prefs.core.getOctaves();
   unsigned int chkOffset = prefs.core.getOffsetToC();
