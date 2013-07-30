@@ -323,6 +323,10 @@ bool BatchWindow::receiveUrls(const QList<QUrl>& urls) {
 
 void BatchWindow::addDroppedFiles() {
 
+  // get a new preferences object in case they've changed since the last file drop.
+  prefs = Preferences();
+  QStringList filterFileExtensions = prefs.getFilterFileExtensions();
+
   // ensure no infinite loops if circular symlinking encountered
   QList<QFileInfo> symLinks;
 
@@ -343,7 +347,7 @@ void BatchWindow::addDroppedFiles() {
     // check if it's a symlink (.isSymLink doesn't seem to work on Lion)
     if (fileInfo.isSymLink() || fileInfo.symLinkTarget() != "") {
       bool isNewSymLink = true;
-      for (int j=0; j<symLinks.size(); j++) {
+      for (int j = 0; j < symLinks.size(); j++) {
         if (symLinks[j] == fileInfo) {
           isNewSymLink = false;
           break;
@@ -366,9 +370,21 @@ void BatchWindow::addDroppedFiles() {
       continue;
     }
 
+    // check if it matches the extension filters
+    if (prefs.getApplyFileExtensionFilter()) {
+      bool match = false;
+      for (int j = 0; j < filterFileExtensions.length(); j++) {
+        if (fileExt == filterFileExtensions[j]) {
+          match = true;
+          break;
+        }
+      }
+      if (!match) continue;
+    }
+
     // check if it's a duplicate
     bool isNewFile = true;
-    for (int j=0; j<(signed)ui->tableWidget->rowCount(); j++) {
+    for (int j = 0; j < ui->tableWidget->rowCount(); j++) {
       if (ui->tableWidget->item(j, COL_FILEPATH)->text() == filePath) {
         isNewFile = false;
         break;

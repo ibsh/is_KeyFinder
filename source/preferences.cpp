@@ -22,7 +22,6 @@
 #include "preferences.h"
 
 Preferences::Preferences(SettingsWrapper* s) {
-
   settings = (s == NULL ? new SettingsWrapperQt() : s);
   load();
 
@@ -72,8 +71,10 @@ Preferences::~Preferences() {
 
 void Preferences::copy(const Preferences &that) {
   core = that.core;
-  customKeyCodes            = that.customKeyCodes;
-  metadataFormat            = that.metadataFormat;
+  writeToFilesAutomatically = that.writeToFilesAutomatically;
+  parallelBatchJobs         = that.parallelBatchJobs;
+  skipFilesWithExistingTags = that.skipFilesWithExistingTags;
+  applyFileExtensionFilter  = that.applyFileExtensionFilter;
   metadataWriteTitle        = that.metadataWriteTitle;
   metadataWriteArtist       = that.metadataWriteArtist;
   metadataWriteAlbum        = that.metadataWriteAlbum;
@@ -81,14 +82,14 @@ void Preferences::copy(const Preferences &that) {
   metadataWriteGrouping     = that.metadataWriteGrouping;
   metadataWriteKey          = that.metadataWriteKey;
   metadataWriteFilename     = that.metadataWriteFilename;
-  metadataDelimiter         = that.metadataDelimiter;
-  writeToFilesAutomatically = that.writeToFilesAutomatically;
-  skipFilesWithExistingTags = that.skipFilesWithExistingTags;
+  metadataFormat            = that.metadataFormat;
   maxDuration               = that.maxDuration;
-  parallelBatchJobs         = that.parallelBatchJobs;
   iTunesLibraryPath         = that.iTunesLibraryPath;
   traktorLibraryPath        = that.traktorLibraryPath;
   seratoLibraryPath         = that.seratoLibraryPath;
+  metadataDelimiter         = that.metadataDelimiter;
+  customKeyCodes            = that.customKeyCodes;
+  filterFileExtensions      = that.filterFileExtensions;
   batchWindowState          = that.batchWindowState;
   batchWindowGeometry       = that.batchWindowGeometry;
   batchWindowSplitterState  = that.batchWindowSplitterState;
@@ -103,8 +104,10 @@ Preferences& Preferences::operator=(const Preferences& that) {
 
 bool Preferences::equivalentTo(const Preferences& that) const {
   if (!core.equivalentTo(that.core)) return false;
-  if (customKeyCodes            != that.customKeyCodes) return false;
-  if (metadataFormat            != that.metadataFormat) return false;
+  if (writeToFilesAutomatically != that.writeToFilesAutomatically) return false;
+  if (parallelBatchJobs         != that.parallelBatchJobs) return false;
+  if (skipFilesWithExistingTags != that.skipFilesWithExistingTags) return false;
+  if (applyFileExtensionFilter  != that.applyFileExtensionFilter) return false;
   if (metadataWriteTitle        != that.metadataWriteTitle) return false;
   if (metadataWriteArtist       != that.metadataWriteArtist) return false;
   if (metadataWriteAlbum        != that.metadataWriteAlbum) return false;
@@ -112,14 +115,14 @@ bool Preferences::equivalentTo(const Preferences& that) const {
   if (metadataWriteGrouping     != that.metadataWriteGrouping) return false;
   if (metadataWriteKey          != that.metadataWriteKey) return false;
   if (metadataWriteFilename     != that.metadataWriteFilename) return false;
-  if (metadataDelimiter         != that.metadataDelimiter) return false;
-  if (writeToFilesAutomatically != that.writeToFilesAutomatically) return false;
-  if (skipFilesWithExistingTags != that.skipFilesWithExistingTags) return false;
+  if (metadataFormat            != that.metadataFormat) return false;
   if (maxDuration               != that.maxDuration) return false;
-  if (parallelBatchJobs         != that.parallelBatchJobs) return false;
   if (iTunesLibraryPath         != that.iTunesLibraryPath) return false;
   if (traktorLibraryPath        != that.traktorLibraryPath) return false;
   if (seratoLibraryPath         != that.seratoLibraryPath) return false;
+  if (metadataDelimiter         != that.metadataDelimiter) return false;
+  if (customKeyCodes            != that.customKeyCodes) return false;
+  if (filterFileExtensions      != that.filterFileExtensions) return false;
   if (batchWindowState          != that.batchWindowState) return false;
   if (batchWindowGeometry       != that.batchWindowGeometry) return false;
   if (batchWindowSplitterState  != that.batchWindowSplitterState) return false;
@@ -209,7 +212,12 @@ void Preferences::load() {
   settings->beginGroup("batch");
   parallelBatchJobs = settings->value("parallelBatchJobs", true).toBool();
   skipFilesWithExistingTags = settings->value("skipFilesWithExistingTags", false).toBool();
+  applyFileExtensionFilter = settings->value("applyFileExtensionFilter", false).toBool();
   maxDuration = settings->value("maxDuration", 60).toInt();
+  QStringList defaultFilterFileExtensions;
+  defaultFilterFileExtensions << "mp3" << "m4a" << "mp4" << "wma";
+  defaultFilterFileExtensions << "flac" << "aif" << "aiff" << "wav";
+  filterFileExtensions = (settings->value("filterFileExtensions", defaultFilterFileExtensions).toStringList());
   settings->endGroup();
 
   // ============================= Library ==================================
@@ -300,7 +308,9 @@ void Preferences::save() {
   settings->beginGroup("batch");
   settings->setValue("parallelBatchJobs", parallelBatchJobs);
   settings->setValue("skipFilesWithExistingTags", skipFilesWithExistingTags);
+  settings->setValue("applyFileExtensionFilter", applyFileExtensionFilter);
   settings->setValue("maxDuration", maxDuration);
+  settings->setValue("filterFileExtensions", filterFileExtensions);
   settings->endGroup();
 
   settings->beginGroup("library");
@@ -329,6 +339,7 @@ metadata_write_t Preferences::getMetadataWriteByTagEnum(metadata_tag_t tag) cons
 
 bool              Preferences::getWriteToFilesAutomatically() const { return writeToFilesAutomatically; }
 bool              Preferences::getParallelBatchJobs()         const { return parallelBatchJobs; }
+bool              Preferences::getApplyFileExtensionFilter()  const { return applyFileExtensionFilter; }
 metadata_write_t  Preferences::getMetadataWriteTitle()        const { return metadataWriteTitle; }
 metadata_write_t  Preferences::getMetadataWriteArtist()       const { return metadataWriteArtist; }
 metadata_write_t  Preferences::getMetadataWriteAlbum()        const { return metadataWriteAlbum; }
@@ -344,11 +355,13 @@ QString           Preferences::getTraktorLibraryPath()        const { return tra
 QString           Preferences::getSeratoLibraryPath()         const { return seratoLibraryPath; }
 QString           Preferences::getMetadataDelimiter()         const { return metadataDelimiter; }
 QStringList       Preferences::getCustomKeyCodes()            const { return customKeyCodes; }
+QStringList       Preferences::getFilterFileExtensions()      const { return filterFileExtensions; }
 QByteArray        Preferences::getBatchWindowState()          const { return batchWindowState; }
 QByteArray        Preferences::getBatchWindowGeometry()       const { return batchWindowGeometry; }
 QByteArray        Preferences::getBatchWindowSplitterState()  const { return batchWindowSplitterState; }
 
 void Preferences::setWriteToFilesAutomatically(bool autoWrite)     { writeToFilesAutomatically = autoWrite; }
+void Preferences::setApplyFileExtensionFilter(bool apply)          { applyFileExtensionFilter = apply; }
 void Preferences::setMetadataWriteTitle(metadata_write_t tit)      { metadataWriteTitle = tit; }
 void Preferences::setMetadataWriteArtist(metadata_write_t art)     { metadataWriteArtist = art; }
 void Preferences::setMetadataWriteAlbum(metadata_write_t alb)      { metadataWriteAlbum = alb; }
@@ -364,6 +377,7 @@ void Preferences::setTraktorLibraryPath(const QString& path)       { traktorLibr
 void Preferences::setSeratoLibraryPath(const QString& path)        { seratoLibraryPath = path; }
 void Preferences::setMetadataDelimiter(const QString & delim)      { metadataDelimiter = delim; }
 void Preferences::setCustomKeyCodes(const QStringList& codes)      { customKeyCodes = codes; }
+void Preferences::setFilterFileExtensions(const QStringList& exts) { filterFileExtensions = exts; }
 void Preferences::setBatchWindowState(const QByteArray& a)         { batchWindowState = a; }
 void Preferences::setBatchWindowGeometry(const QByteArray& a)      { batchWindowGeometry = a; }
 void Preferences::setBatchWindowSplitterState(const QByteArray& a) { batchWindowSplitterState = a; }

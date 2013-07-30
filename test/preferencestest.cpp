@@ -90,6 +90,7 @@ TEST (PreferencesTest, ConstructorDefaultsGui) {
 
   ASSERT_EQ(false, p.getWriteToFilesAutomatically());
   ASSERT_EQ(true, p.getParallelBatchJobs());
+  ASSERT_EQ(false, p.getApplyFileExtensionFilter());
   ASSERT_EQ(METADATA_WRITE_NONE, p.getMetadataWriteTitle());
   ASSERT_EQ(METADATA_WRITE_NONE, p.getMetadataWriteArtist());
   ASSERT_EQ(METADATA_WRITE_NONE, p.getMetadataWriteAlbum());
@@ -116,6 +117,16 @@ TEST (PreferencesTest, ConstructorDefaultsGui) {
   ASSERT_EQ(25, customKeyCodes.length());
   for (int i = 0; i < customKeyCodes.length(); i++)
     ASSERT_EQ(QString(), customKeyCodes[i]);
+  QStringList fileExtensions = p.getFilterFileExtensions();
+  ASSERT_EQ(8, fileExtensions.length());
+  ASSERT_EQ("mp3", fileExtensions[0]);
+  ASSERT_EQ("m4a", fileExtensions[1]);
+  ASSERT_EQ("mp4", fileExtensions[2]);
+  ASSERT_EQ("wma", fileExtensions[3]);
+  ASSERT_EQ("flac", fileExtensions[4]);
+  ASSERT_EQ("aif", fileExtensions[5]);
+  ASSERT_EQ("aiff", fileExtensions[6]);
+  ASSERT_EQ("wav", fileExtensions[7]);
   ASSERT_EQ(QByteArray(), p.getBatchWindowState());
   ASSERT_EQ(QByteArray(), p.getBatchWindowGeometry());
   ASSERT_EQ(QByteArray(), p.getBatchWindowSplitterState());

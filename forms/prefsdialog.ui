@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>802</width>
+    <width>821</width>
     <height>713</height>
    </rect>
   </property>
@@ -65,13 +65,6 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
-          <widget class="QCheckBox" name="skipFilesWithExistingTags">
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
          <item row="3" column="0">
           <widget class="QLabel" name="lbl_maxDuration">
            <property name="text">
@@ -109,6 +102,13 @@
          </item>
          <item row="4" column="1">
           <widget class="QCheckBox" name="writeToFilesAutomatically">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QCheckBox" name="skipFilesWithExistingTags">
            <property name="text">
             <string/>
            </property>
@@ -502,6 +502,51 @@
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayoutKeyCodes">
+           <item>
+            <widget class="QLabel" name="lbl_fileExtensionFilter">
+             <property name="text">
+              <string>File extension filter during batch jobs</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QFormLayout" name="formLayoutFileExtensionFilter">
+             <item row="0" column="1">
+              <widget class="QCheckBox" name="applyFileExtensionFilter">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="lbl_skipFilesWithExistingTags_2">
+               <property name="text">
+                <string>Filter files by extension</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="lbl_skipFilesWithExistingTags_3">
+               <property name="text">
+                <string>Extensions (comma separated)</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="filterFileExtensions">
+               <property name="minimumSize">
+                <size>
+                 <width>300</width>
+                 <height>0</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
            <item>
             <widget class="QLabel" name="lbl_keyCodes">
              <property name="text">
@@ -1336,8 +1381,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>715</width>
-            <height>872</height>
+            <width>734</width>
+            <height>884</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
@@ -2583,6 +2628,7 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>tabWidget</tabstop>
   <tabstop>majKey0</tabstop>
   <tabstop>majKey1</tabstop>
   <tabstop>majKey2</tabstop>
@@ -2618,6 +2664,8 @@
   <tabstop>findTraktorLibraryButton</tabstop>
   <tabstop>seratoLibraryPath</tabstop>
   <tabstop>findSeratoLibraryButton</tabstop>
+  <tabstop>applyFileExtensionFilter</tabstop>
+  <tabstop>filterFileExtensions</tabstop>
   <tabstop>tagFormat</tabstop>
   <tabstop>metadataWriteTitle</tabstop>
   <tabstop>metadataWriteArtist</tabstop>
@@ -2627,33 +2675,25 @@
   <tabstop>metadataWriteKey</tabstop>
   <tabstop>metadataWriteFilename</tabstop>
   <tabstop>metadataDelimiter</tabstop>
-  <tabstop>cancelButton</tabstop>
-  <tabstop>savePrefsButton</tabstop>
-  <tabstop>tabWidget</tabstop>
   <tabstop>advancedDefaultsButton</tabstop>
   <tabstop>scrollArea</tabstop>
-  <tabstop>min0</tabstop>
-  <tabstop>min1</tabstop>
-  <tabstop>min2</tabstop>
-  <tabstop>min3</tabstop>
-  <tabstop>min4</tabstop>
-  <tabstop>min5</tabstop>
-  <tabstop>min6</tabstop>
-  <tabstop>min7</tabstop>
-  <tabstop>min8</tabstop>
-  <tabstop>min9</tabstop>
-  <tabstop>min10</tabstop>
-  <tabstop>min11</tabstop>
-  <tabstop>fftFrameSize</tabstop>
-  <tabstop>detunedBandWeight</tabstop>
-  <tabstop>hcdfGaussianSigma</tabstop>
-  <tabstop>temporalWindow</tabstop>
-  <tabstop>hopsPerFrame</tabstop>
-  <tabstop>directSkStretch</tabstop>
-  <tabstop>segmentation</tabstop>
-  <tabstop>octaves</tabstop>
-  <tabstop>similarityMeasure</tabstop>
   <tabstop>stFreq</tabstop>
+  <tabstop>octaves</tabstop>
+  <tabstop>octaveOffset</tabstop>
+  <tabstop>bps</tabstop>
+  <tabstop>fftFrameSize</tabstop>
+  <tabstop>hopsPerFrame</tabstop>
+  <tabstop>temporalWindow</tabstop>
+  <tabstop>directSkStretch</tabstop>
+  <tabstop>tuningMethod</tabstop>
+  <tabstop>detunedBandWeight</tabstop>
+  <tabstop>segmentation</tabstop>
+  <tabstop>hcdfGaussianSize</tabstop>
+  <tabstop>hcdfGaussianSigma</tabstop>
+  <tabstop>hcdfPeakPickingNeighbours</tabstop>
+  <tabstop>arbitrarySegments</tabstop>
+  <tabstop>toneProfile</tabstop>
+  <tabstop>similarityMeasure</tabstop>
   <tabstop>maj0</tabstop>
   <tabstop>maj1</tabstop>
   <tabstop>maj2</tabstop>
@@ -2666,13 +2706,20 @@
   <tabstop>maj9</tabstop>
   <tabstop>maj10</tabstop>
   <tabstop>maj11</tabstop>
-  <tabstop>octaveOffset</tabstop>
-  <tabstop>arbitrarySegments</tabstop>
-  <tabstop>bps</tabstop>
-  <tabstop>toneProfile</tabstop>
-  <tabstop>hcdfGaussianSize</tabstop>
-  <tabstop>tuningMethod</tabstop>
-  <tabstop>hcdfPeakPickingNeighbours</tabstop>
+  <tabstop>min0</tabstop>
+  <tabstop>min1</tabstop>
+  <tabstop>min2</tabstop>
+  <tabstop>min3</tabstop>
+  <tabstop>min4</tabstop>
+  <tabstop>min5</tabstop>
+  <tabstop>min6</tabstop>
+  <tabstop>min7</tabstop>
+  <tabstop>min8</tabstop>
+  <tabstop>min9</tabstop>
+  <tabstop>min10</tabstop>
+  <tabstop>min11</tabstop>
+  <tabstop>cancelButton</tabstop>
+  <tabstop>savePrefsButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>

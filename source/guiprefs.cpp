@@ -78,6 +78,7 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   ui->writeToFilesAutomatically->setChecked(p.getWriteToFilesAutomatically());
   ui->parallelBatchJobs->setChecked(p.getParallelBatchJobs());
   ui->skipFilesWithExistingTags->setChecked(p.getSkipFilesWithExistingTags());
+  ui->applyFileExtensionFilter->setChecked(p.getApplyFileExtensionFilter());
   ui->maxDuration->setValue(p.getMaxDuration());
 
   ui->tagFormat->setCurrentIndex(listMetadataFormat.indexOf(p.getMetadataFormat()));
@@ -152,12 +153,15 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
   ui->majKey11->setText(ckc[22]); ui->minKey11->setText(ckc[23]);
   ui->silence->setText(ckc[24]);
 
+  ui->filterFileExtensions->setText(p.getFilterFileExtensions().join(","));
+
   // enable/disable fields as necessary
   tuningEnabled();
   binAdaptiveTuningEnabled();
   segmentationEnabled();
   customProfileEnabled();
   metadataDelimiterEnabled();
+  applyFileExtensionFilterEnabled();
 
   //relative sizing on Mac/Linux only
 #ifndef Q_OS_WIN
@@ -179,6 +183,11 @@ PrefsDialog::PrefsDialog(QWidget *parent): QDialog(parent),ui(new Ui::PrefsDialo
 
   //: The warning text on the Advanced Preferences tab; includes the app name at %1
   ui->lbl_warning->setText(tr("Changing these preferences may severely affect %1's accuracy. This is recommended for expert users only.").arg(GuiStrings::getInstance()->appName()));
+
+  // validation of file extension filtering
+  QRegExp regex("^([a-z0-9]+,?)*$");
+  QValidator *validator = new QRegExpValidator(regex, this);
+  ui->filterFileExtensions->setValidator(validator);
 }
 
 PrefsDialog::~PrefsDialog() {
@@ -189,6 +198,7 @@ void PrefsDialog::on_savePrefsButton_clicked() {
   Preferences p;
   p.setWriteToFilesAutomatically(ui->writeToFilesAutomatically->isChecked());
   p.setParallelBatchJobs(ui->parallelBatchJobs->isChecked());
+  p.setApplyFileExtensionFilter(ui->applyFileExtensionFilter->isChecked());
   p.setMetadataFormat(listMetadataFormat[ui->tagFormat->currentIndex()]);
   p.setMetadataWriteTitle(listMetadataWrite[ui->metadataWriteTitle->currentIndex()]);
   p.setMetadataWriteArtist(listMetadataWrite[ui->metadataWriteArtist->currentIndex()]);
@@ -263,6 +273,8 @@ void PrefsDialog::on_savePrefsButton_clicked() {
   ckc << ui->majKey11->text() << ui->minKey11->text();
   ckc << ui->silence->text();
   p.setCustomKeyCodes(ckc);
+
+  p.setFilterFileExtensions(ui->filterFileExtensions->text().split(","));
 
   // save to QSettings and close window
   p.save();
@@ -367,7 +379,11 @@ void PrefsDialog::metadataDelimiterEnabled() {
   ui->metadataDelimiter->setEnabled(false);
 }
 
-void PrefsDialog::on_bps_valueChanged(int /*arg1*/) {
+void PrefsDialog::applyFileExtensionFilterEnabled() {
+  ui->filterFileExtensions->setEnabled(ui->applyFileExtensionFilter->isChecked());
+}
+
+void PrefsDialog::on_bps_valueChanged(int /*bps*/) {
   tuningEnabled();
 }
 
@@ -410,6 +426,11 @@ void PrefsDialog::on_metadataWriteKey_currentIndexChanged(int /*index*/) {
 void PrefsDialog::on_metadataWriteFilename_currentIndexChanged(int /*index*/) {
   metadataDelimiterEnabled();
 }
+
+void PrefsDialog::on_applyFileExtensionFilter_stateChanged(int /*state*/) {
+  applyFileExtensionFilterEnabled();
+}
+
 
 void PrefsDialog::on_findITunesLibraryButton_clicked() {
   QString initDir;

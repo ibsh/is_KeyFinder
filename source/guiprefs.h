@@ -56,11 +56,12 @@ private:
   void segmentationEnabled();
   void customProfileEnabled();
   void metadataDelimiterEnabled();
+  void applyFileExtensionFilterEnabled();
 private slots:
   void on_savePrefsButton_clicked();
   void on_cancelButton_clicked();
   void on_advancedDefaultsButton_clicked();
-  void on_bps_valueChanged(int arg1);
+  void on_bps_valueChanged(int bps);
   void on_segmentation_currentIndexChanged(int);
   void on_toneProfile_currentIndexChanged(int);
   void on_tuningMethod_currentIndexChanged(int);
@@ -74,6 +75,7 @@ private slots:
   void on_metadataWriteGrouping_currentIndexChanged(int index);
   void on_metadataWriteKey_currentIndexChanged(int index);
   void on_metadataWriteFilename_currentIndexChanged(int index);
+  void on_applyFileExtensionFilter_stateChanged(int state);
 private:
   Ui::PrefsDialog *ui;
 };

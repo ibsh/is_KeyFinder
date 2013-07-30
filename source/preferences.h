@@ -86,6 +86,8 @@ public:
   // accessors
   bool getWriteToFilesAutomatically() const;
   bool getParallelBatchJobs() const;
+  bool getSkipFilesWithExistingTags() const;
+  bool getApplyFileExtensionFilter() const;
   metadata_write_t getMetadataWriteByTagEnum(metadata_tag_t) const;
   metadata_write_t getMetadataWriteTitle() const;
   metadata_write_t getMetadataWriteArtist() const;
@@ -95,13 +97,13 @@ public:
   metadata_write_t getMetadataWriteKey() const;
   metadata_write_t getMetadataWriteFilename() const;
   metadata_format_t getMetadataFormat() const;
-  bool getSkipFilesWithExistingTags() const;
   int getMaxDuration() const;
   QString getITunesLibraryPath() const;
   QString getTraktorLibraryPath() const;
   QString getSeratoLibraryPath() const;
   QString getMetadataDelimiter() const;
   QStringList getCustomKeyCodes() const;
+  QStringList getFilterFileExtensions() const;
   QByteArray getBatchWindowState() const;
   QByteArray getBatchWindowGeometry() const;
   QByteArray getBatchWindowSplitterState() const;
@@ -109,6 +111,8 @@ public:
   // mutators
   void setWriteToFilesAutomatically(bool);
   void setParallelBatchJobs(bool);
+  void setSkipFilesWithExistingTags(bool);
+  void setApplyFileExtensionFilter(bool);
   void setMetadataWriteTitle(metadata_write_t);
   void setMetadataWriteArtist(metadata_write_t);
   void setMetadataWriteAlbum(metadata_write_t);
@@ -117,13 +121,13 @@ public:
   void setMetadataWriteKey(metadata_write_t);
   void setMetadataWriteFilename(metadata_write_t);
   void setMetadataFormat(metadata_format_t);
-  void setSkipFilesWithExistingTags(bool);
   void setMaxDuration(int);
   void setITunesLibraryPath(const QString&);
   void setTraktorLibraryPath(const QString&);
   void setSeratoLibraryPath(const QString&);
   void setMetadataDelimiter(const QString&);
   void setCustomKeyCodes(const QStringList&);
+  void setFilterFileExtensions(const QStringList&);
   void setBatchWindowState(const QByteArray&);
   void setBatchWindowGeometry(const QByteArray&);
   void setBatchWindowSplitterState(const QByteArray&);
@@ -141,6 +145,8 @@ private:
 
   bool writeToFilesAutomatically;
   bool parallelBatchJobs;
+  bool skipFilesWithExistingTags;
+  bool applyFileExtensionFilter;
   metadata_write_t metadataWriteTitle;
   metadata_write_t metadataWriteArtist;
   metadata_write_t metadataWriteAlbum;
@@ -149,7 +155,6 @@ private:
   metadata_write_t metadataWriteKey;
   metadata_write_t metadataWriteFilename;
   metadata_format_t metadataFormat;
-  bool skipFilesWithExistingTags;
   int maxDuration;
   QString iTunesLibraryPath;
   QString traktorLibraryPath;
@@ -157,6 +162,7 @@ private:
   QString metadataDelimiter;
   QStringList customKeyCodes;
   QStringList defaultKeyCodes;
+  QStringList filterFileExtensions;
   QList<QColor> keyColours;
   QByteArray batchWindowState;
   QByteArray batchWindowGeometry;
