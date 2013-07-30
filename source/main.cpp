@@ -84,8 +84,10 @@ int commandLineInterface(int argc, char* argv[]) {
   std::cout << prefs.getKeyCode(result.core.globalKeyEstimate).toUtf8().constData();
 
   if (writeToTags) {
-    TagLibMetadata md(filePath);
-    MetadataWriteResult written = md.writeKeyToMetadata(result.core.globalKeyEstimate,prefs);
+    AVFileMetadataFactory factory;
+    AVFileMetadata* md = factory.createAVFileMetadata(filePath);
+    MetadataWriteResult written = md->writeKeyToMetadata(result.core.globalKeyEstimate,prefs);
+    delete md;
     bool found = false;
     for (int i = 0; i < written.newTags.size(); i++)
       if (!written.newTags[i].isEmpty()) found = true;

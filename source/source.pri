@@ -26,6 +26,8 @@ HEADERS  += \
   $$PWD/asynckeyresult.h \
   $$PWD/asyncmetadatareadprocess.h \
   $$PWD/asyncmetadatareadresult.h \
+  $$PWD/avfilemetadata.h \
+  $$PWD/avfilemetadatafactory.h \
   $$PWD/decoderlibav.h \
   $$PWD/externalplaylist.h \
   $$PWD/externalplaylistserato.h \
@@ -35,7 +37,6 @@ HEADERS  += \
   $$PWD/guimenuhandler.h \
   $$PWD/guiprefs.h \
   $$PWD/metadatafilename.h \
-  $$PWD/metadatataglib.h \
   $$PWD/metadatawriteresult.h \
   $$PWD/os_windows.h \
   $$PWD/preferences.h \
@@ -45,6 +46,8 @@ HEADERS  += \
 SOURCES += \
   $$PWD/asynckeyprocess.cpp \
   $$PWD/asyncmetadatareadprocess.cpp \
+  $$PWD/avfilemetadata.cpp \
+  $$PWD/avfilemetadatafactory.cpp \
   $$PWD/decoderlibav.cpp \
   $$PWD/externalplaylist.cpp \
   $$PWD/externalplaylistserato.cpp \
@@ -54,7 +57,6 @@ SOURCES += \
   $$PWD/guimenuhandler.cpp \
   $$PWD/guiprefs.cpp \
   $$PWD/metadatafilename.cpp \
-  $$PWD/metadatataglib.cpp \
   $$PWD/os_windows.cpp \
   $$PWD/preferences.cpp \
   $$PWD/settingswrapper.cpp \

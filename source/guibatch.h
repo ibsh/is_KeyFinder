@@ -44,7 +44,6 @@ class MainMenuHandler;
 #include "preferences.h"
 #include "asynckeyprocess.h"
 #include "asyncmetadatareadprocess.h"
-#include "metadatataglib.h"
 #include "metadatafilename.h"
 #include "externalplaylist.h"
 #include "_VERSION.h"
