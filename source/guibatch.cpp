@@ -322,28 +322,41 @@ bool BatchWindow::receiveUrls(const QList<QUrl>& urls) {
 }
 
 void BatchWindow::addDroppedFiles() {
+
+  // ensure no infinite loops if circular symlinking encountered
+  QList<QFileInfo> symLinks;
+
   while (!droppedFiles.isEmpty()) {
 
     // check URL resolves to local file
     QString filePath = droppedFiles.first().toLocalFile();
     droppedFiles.removeFirst();
-    if (filePath.isEmpty())
-      continue;
+    if (filePath.isEmpty()) continue;
 
-    // check for directory
+    // check if it's a directory
     QFileInfo fileInfo(filePath);
     if (fileInfo.isDir()) {
       droppedFiles << getDirectoryContents(QDir(filePath));
       continue;
     }
 
-    // check for symlink (.isSymLink doesn't seem to work on Lion)
+    // check if it's a symlink (.isSymLink doesn't seem to work on Lion)
     if (fileInfo.isSymLink() || fileInfo.symLinkTarget() != "") {
-      droppedFiles.push_back(QUrl::fromLocalFile(fileInfo.symLinkTarget()));
+      bool isNewSymLink = true;
+      for (int j=0; j<symLinks.size(); j++) {
+        if (symLinks[j] == fileInfo) {
+          isNewSymLink = false;
+          break;
+        }
+      }
+      if (isNewSymLink) {
+        symLinks.push_back(fileInfo);
+        droppedFiles.push_back(QUrl::fromLocalFile(fileInfo.symLinkTarget()));
+      }
       continue;
     }
 
-    // check for playlist
+    // check if it's a playlist
     QString fileExt = filePath.right(3);
     if (fileExt == "m3u") {
       droppedFiles << ExternalPlaylist::readM3uStandalonePlaylist(filePath);
@@ -353,17 +366,16 @@ void BatchWindow::addDroppedFiles() {
       continue;
     }
 
-    // check for duplicate
-    bool isNew = true;
+    // check if it's a duplicate
+    bool isNewFile = true;
     for (int j=0; j<(signed)ui->tableWidget->rowCount(); j++) {
       if (ui->tableWidget->item(j, COL_FILEPATH)->text() == filePath) {
-        isNew = false;
+        isNewFile = false;
         break;
       }
     }
 
-    if (isNew)
-      addNewRow(filePath);
+    if (isNewFile) addNewRow(filePath);
 
   }
   this->setWindowTitle(
@@ -627,8 +639,10 @@ void BatchWindow::writeDetectedToFiles() {
 }
 
 bool BatchWindow::writeToTagsAtRow(int row, KeyFinder::key_t key) {
-  TagLibMetadata md(ui->tableWidget->item(row, COL_FILEPATH)->text());
-  MetadataWriteResult written = md.writeKeyToMetadata(key, prefs);
+  AVFileMetadataFactory factory;
+  AVFileMetadata* md = factory.createAVFileMetadata(ui->tableWidget->item(row, COL_FILEPATH)->text());
+  MetadataWriteResult written = md->writeKeyToMetadata(key, prefs);
+  delete md;
 
   // reflect changes in table widget
   bool altered = false;
