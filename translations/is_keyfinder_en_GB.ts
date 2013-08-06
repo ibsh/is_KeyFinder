@@ -89,7 +89,7 @@
     <message>
         <location filename="../source/guibatch.cpp" line="51"/>
         <location filename="../source/guibatch.cpp" line="265"/>
-        <location filename="../source/guibatch.cpp" line="372"/>
+        <location filename="../source/guibatch.cpp" line="400"/>
         <source>Batch Analysis</source>
         <extracomment>The title of the Batch window</extracomment>
         <translation>Batch Analysis</translation>
@@ -156,7 +156,7 @@
     </message>
     <message>
         <location filename="../source/guibatch.cpp" line="300"/>
-        <location filename="../source/guibatch.cpp" line="692"/>
+        <location filename="../source/guibatch.cpp" line="722"/>
         <source>Cannot change an external playlist from %1</source>
         <extracomment>An alert message in the Batch window</extracomment>
         <translation>Cannot change an external playlist from %1</translation>
@@ -168,7 +168,7 @@
         <translation>Loading files...</translation>
     </message>
     <message numerus="yes">
-        <location filename="../source/guibatch.cpp" line="375"/>
+        <location filename="../source/guibatch.cpp" line="403"/>
         <source>%n file(s)</source>
         <extracomment>File count in the Batch window title bar</extracomment>
         <translation>
@@ -177,13 +177,13 @@
         </translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="421"/>
+        <location filename="../source/guibatch.cpp" line="449"/>
         <source>Reading tags...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation>Reading tags...</translation>
     </message>
     <message numerus="yes">
-        <location filename="../source/guibatch.cpp" line="458"/>
+        <location filename="../source/guibatch.cpp" line="486"/>
         <source>Analysing (%n thread(s))...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation>
@@ -192,37 +192,37 @@
         </translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="525"/>
+        <location filename="../source/guibatch.cpp" line="553"/>
         <source>Skipped</source>
         <extracomment>Status of an individual file in the Batch window</extracomment>
         <translation>Skipped</translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="555"/>
+        <location filename="../source/guibatch.cpp" line="583"/>
         <source>Cancelling...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation>Cancelling...</translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="574"/>
+        <location filename="../source/guibatch.cpp" line="602"/>
         <source>Exception: %1</source>
         <extracomment>Status of an individual file in the Batch window; includes an exception message at %1</extracomment>
         <translation>Exception: %1</translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="597"/>
+        <location filename="../source/guibatch.cpp" line="625"/>
         <source>Writing to files...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation>Writing to files...</translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="620"/>
+        <location filename="../source/guibatch.cpp" line="648"/>
         <source>Data written to %1 and %2</source>
         <extracomment>An alert message in the Batch window; contains &quot;N tags&quot; at %1 and &quot;N filenames&quot; at %2</extracomment>
         <translation>Data written to %1 and %2</translation>
     </message>
     <message numerus="yes">
-        <location filename="../source/guibatch.cpp" line="622"/>
+        <location filename="../source/guibatch.cpp" line="650"/>
         <source>%n tag(s)</source>
         <extracomment>Part of an alert message in the Batch window</extracomment>
         <translation>
@@ -231,7 +231,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../source/guibatch.cpp" line="624"/>
+        <location filename="../source/guibatch.cpp" line="652"/>
         <source>%n filename(s)</source>
         <extracomment>Part of an alert message in the Batch window</extracomment>
         <translation>
@@ -240,25 +240,25 @@
         </translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="669"/>
+        <location filename="../source/guibatch.cpp" line="699"/>
         <source>Clearing data...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation>Clearing data...</translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="697"/>
+        <location filename="../source/guibatch.cpp" line="727"/>
         <source>Deleting rows...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation>Deleting rows...</translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="753"/>
+        <location filename="../source/guibatch.cpp" line="783"/>
         <source>Please select a single row for detailed analysis</source>
         <extracomment>An alert message in the Batch window</extracomment>
         <translation>Please select a single row for detailed analysis</translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="809"/>
+        <location filename="../source/guibatch.cpp" line="839"/>
         <source>A new version, %1, is available on &lt;a href=&apos;%2&apos;&gt;the %3 website&lt;/a&gt;!</source>
         <extracomment>An alert message in the Batch window; includes a version number at %1, a URL at %2, and the app name at %3</extracomment>
         <translation>A new version, %1, is available on &lt;a href=&apos;%2&apos;&gt;the %3 website&lt;/a&gt;!</translation>
@@ -284,7 +284,7 @@
     </message>
     <message>
         <location filename="../source/guidetail.cpp" line="32"/>
-        <location filename="../source/guidetail.cpp" line="117"/>
+        <location filename="../source/guidetail.cpp" line="119"/>
         <source>Detailed Analysis</source>
         <extracomment>The title of the Detail window</extracomment>
         <translation>Detailed Analysis</translation>
@@ -324,38 +324,38 @@
         <translation>Analysing... </translation>
     </message>
     <message>
-        <location filename="../source/guidetail.cpp" line="127"/>
+        <location filename="../source/guidetail.cpp" line="129"/>
         <source>This is the same chromagram data, reduced to a single octave.</source>
         <extracomment>A tooltip on the Detail window</extracomment>
         <translation>This is the same chromagram data, reduced to a single octave.</translation>
     </message>
     <message>
-        <location filename="../source/guidetail.cpp" line="143"/>
+        <location filename="../source/guidetail.cpp" line="145"/>
         <source>This row shows the key estimate for the unsegmented chromagram.</source>
         <extracomment>A tooltip on the Detail window</extracomment>
         <translation>This row shows the key estimate for the unsegmented chromagram.</translation>
     </message>
     <message>
-        <location filename="../source/guidetail.cpp" line="146"/>
+        <location filename="../source/guidetail.cpp" line="148"/>
         <source>This row shows the key estimates for the arbitrary segments.</source>
         <extracomment>A tooltip on the Detail window</extracomment>
         <translation>This row shows the key estimates for the arbitrary segments.</translation>
     </message>
     <message>
-        <location filename="../source/guidetail.cpp" line="149"/>
+        <location filename="../source/guidetail.cpp" line="151"/>
         <source>This row shows the key estimates for the segments between peak harmonic changes.</source>
         <extracomment>A tooltip on the Detail window</extracomment>
         <translation>This row shows the key estimates for the segments between peak harmonic changes.</translation>
     </message>
     <message>
-        <location filename="../source/guidetail.cpp" line="156"/>
+        <location filename="../source/guidetail.cpp" line="158"/>
         <source>Key estimate: %1</source>
         <extracomment>Text in the Batch window status bar; includes a key code at %1</extracomment>
         <translation>Key estimate: %1</translation>
     </message>
     <message>
-        <location filename="../source/guidetail.cpp" line="241"/>
-        <location filename="../source/guidetail.cpp" line="262"/>
+        <location filename="../source/guidetail.cpp" line="243"/>
+        <location filename="../source/guidetail.cpp" line="264"/>
         <source>Drag an audio file onto the window.</source>
         <extracomment>The initial help tooltip on the Detail window</extracomment>
         <translation>Drag an audio file onto the window.</translation>
@@ -603,17 +603,17 @@ An action on the menu bar</extracomment>
         <translation>Skip files that already have key metadata</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="106"/>
+        <location filename="../forms/prefsdialog.ui" line="99"/>
         <source>Write to tags/filenames automatically during batch jobs</source>
         <translation>Write to tags/filenames automatically during batch jobs</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="97"/>
+        <location filename="../forms/prefsdialog.ui" line="90"/>
         <source>minutes</source>
         <translation>minutes</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="78"/>
+        <location filename="../forms/prefsdialog.ui" line="71"/>
         <source>Skip files longer than</source>
         <translation>Skip files longer than</translation>
     </message>
@@ -749,224 +749,239 @@ An action on the menu bar</extracomment>
     </message>
     <message>
         <location filename="../forms/prefsdialog.ui" line="508"/>
+        <source>File extension filter during batch jobs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/prefsdialog.ui" line="527"/>
+        <source>Filter files by extension</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/prefsdialog.ui" line="534"/>
+        <source>Extensions (comma separated)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/prefsdialog.ui" line="553"/>
         <source>Custom key codes</source>
         <translation>Custom key codes</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="539"/>
-        <location filename="../forms/prefsdialog.ui" line="1823"/>
+        <location filename="../forms/prefsdialog.ui" line="584"/>
+        <location filename="../forms/prefsdialog.ui" line="1868"/>
         <source>None</source>
         <translation>None</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="1265"/>
+        <location filename="../forms/prefsdialog.ui" line="1310"/>
         <source>Advanced</source>
         <translation>Advanced</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="1323"/>
+        <location filename="../forms/prefsdialog.ui" line="1368"/>
         <source>Reset to defaults</source>
         <translation>Reset to defaults</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="1848"/>
+        <location filename="../forms/prefsdialog.ui" line="1893"/>
         <source>Musical range</source>
         <translation>Musical range</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="2339"/>
+        <location filename="../forms/prefsdialog.ui" line="2384"/>
         <source>Starting frequency (Hz)</source>
         <translation>Starting frequency (Hz)</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="2000"/>
+        <location filename="../forms/prefsdialog.ui" line="2045"/>
         <source>Number of octaves</source>
         <translation>Number of octaves</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="1349"/>
+        <location filename="../forms/prefsdialog.ui" line="1394"/>
         <source>Offset to C</source>
         <translation>Offset to C</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="2300"/>
+        <location filename="../forms/prefsdialog.ui" line="2345"/>
         <source>Bands per semitone</source>
         <translation>Bands per semitone</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="2425"/>
+        <location filename="../forms/prefsdialog.ui" line="2470"/>
         <source>Spectral analysis</source>
         <translation>Spectral analysis</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="2505"/>
+        <location filename="../forms/prefsdialog.ui" line="2550"/>
         <source>Temporal window</source>
         <translation>Temporal window</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="2408"/>
+        <location filename="../forms/prefsdialog.ui" line="2453"/>
         <source>FFT frame size</source>
         <translation>FFT frame size</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="2495"/>
+        <location filename="../forms/prefsdialog.ui" line="2540"/>
         <source>Direct SK stretch</source>
         <translation>Direct SK stretch</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="2485"/>
+        <location filename="../forms/prefsdialog.ui" line="2530"/>
         <source>Tuning method</source>
         <translation>Tuning method</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="2448"/>
+        <location filename="../forms/prefsdialog.ui" line="2493"/>
         <source>Detuned band weighting</source>
         <translation>Detuned band weighting</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="1990"/>
-        <location filename="../forms/prefsdialog.ui" line="2388"/>
+        <location filename="../forms/prefsdialog.ui" line="2035"/>
+        <location filename="../forms/prefsdialog.ui" line="2433"/>
         <source>Segmentation</source>
         <translation>Segmentation</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="1833"/>
+        <location filename="../forms/prefsdialog.ui" line="1878"/>
         <source>Cosine similarity CDF</source>
         <translation>Cosine similarity CDF</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="1828"/>
+        <location filename="../forms/prefsdialog.ui" line="1873"/>
         <source>Arbitrary segmentation</source>
         <translation>Arbitrary segmentation</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="2475"/>
+        <location filename="../forms/prefsdialog.ui" line="2520"/>
         <source>Smoothing Gaussian size</source>
         <translation>Smoothing Gaussian size</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="1790"/>
+        <location filename="../forms/prefsdialog.ui" line="1835"/>
         <source>Smoothing Gaussian sigma</source>
         <translation>Smoothing Gaussian sigma</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="2528"/>
+        <location filename="../forms/prefsdialog.ui" line="2573"/>
         <source>Peak-picking threshold</source>
         <translation>Peak-picking threshold</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="1753"/>
+        <location filename="../forms/prefsdialog.ui" line="1798"/>
         <source>Number of arbitrary segments</source>
         <translation>Number of arbitrary segments</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="1936"/>
+        <location filename="../forms/prefsdialog.ui" line="1981"/>
         <source>Classification</source>
         <translation>Classification</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="1946"/>
+        <location filename="../forms/prefsdialog.ui" line="1991"/>
         <source>Tone profiles</source>
         <translation>Tone profiles</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="2373"/>
+        <location filename="../forms/prefsdialog.ui" line="2418"/>
         <source>Custom</source>
         <translation>Custom</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="1919"/>
+        <location filename="../forms/prefsdialog.ui" line="1964"/>
         <source>Similarity measure</source>
         <translation>Similarity measure</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="1906"/>
+        <location filename="../forms/prefsdialog.ui" line="1951"/>
         <source>Cosine</source>
         <translation>Cosine</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="1911"/>
+        <location filename="../forms/prefsdialog.ui" line="1956"/>
         <source>Correlation</source>
         <translation>Correlation</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="1858"/>
+        <location filename="../forms/prefsdialog.ui" line="1903"/>
         <source>Custom profile major</source>
         <translation>Custom profile major</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="1892"/>
+        <location filename="../forms/prefsdialog.ui" line="1937"/>
         <source>Tuning</source>
         <translation>Tuning</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="1865"/>
+        <location filename="../forms/prefsdialog.ui" line="1910"/>
         <source>Custom profile minor</source>
         <translation>Custom profile minor</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="2398"/>
+        <location filename="../forms/prefsdialog.ui" line="2443"/>
         <source>Hops per frame</source>
         <translation>Hops per frame</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="2467"/>
+        <location filename="../forms/prefsdialog.ui" line="2512"/>
         <source>Band adaptive</source>
         <translation>Band adaptive</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="2550"/>
+        <location filename="../forms/prefsdialog.ui" line="2595"/>
         <source>Changes will not affect running batch jobs</source>
         <translation>Changes will not affect running batch jobs</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="2570"/>
+        <location filename="../forms/prefsdialog.ui" line="2615"/>
         <source>Cancel</source>
         <translation>Cancel</translation>
     </message>
     <message>
-        <location filename="../forms/prefsdialog.ui" line="2577"/>
+        <location filename="../forms/prefsdialog.ui" line="2622"/>
         <source>Save Preferences</source>
         <translation>Save Preferences</translation>
     </message>
     <message>
-        <location filename="../source/guiprefs.cpp" line="181"/>
+        <location filename="../source/guiprefs.cpp" line="185"/>
         <source>Changing these preferences may severely affect %1&apos;s accuracy. This is recommended for expert users only.</source>
         <extracomment>The warning text on the Advanced Preferences tab; includes the app name at %1</extracomment>
         <translation>Changing these preferences may severely affect %1&apos;s accuracy. This is recommended for expert users only.</translation>
     </message>
     <message>
-        <location filename="../source/guiprefs.cpp" line="425"/>
+        <location filename="../source/guiprefs.cpp" line="446"/>
         <source>Choose iTunes Library XML</source>
         <extracomment>File browse dialog launched from the Preferences window Title of file browse dialog launched from the Preferences window</extracomment>
         <translation>Choose iTunes Library XML</translation>
     </message>
     <message>
-        <location filename="../source/guiprefs.cpp" line="428"/>
+        <location filename="../source/guiprefs.cpp" line="449"/>
         <source>iTunes XML (*.xml)</source>
         <extracomment>Filetype in file browse dialog launched from the Preferences window</extracomment>
         <translation>iTunes XML (*.xml)</translation>
     </message>
     <message>
-        <location filename="../source/guiprefs.cpp" line="445"/>
+        <location filename="../source/guiprefs.cpp" line="466"/>
         <source>Choose Traktor Library NML</source>
         <extracomment>Title of file browse dialog launched from the Preferences window</extracomment>
         <translation>Choose Traktor Library NML</translation>
     </message>
     <message>
-        <location filename="../source/guiprefs.cpp" line="448"/>
+        <location filename="../source/guiprefs.cpp" line="469"/>
         <source>Traktor NML (*.nml)</source>
         <extracomment>Filetype in file browse dialog launched from the Preferences window</extracomment>
         <translation>Traktor NML (*.nml)</translation>
     </message>
     <message>
-        <location filename="../source/guiprefs.cpp" line="465"/>
+        <location filename="../source/guiprefs.cpp" line="486"/>
         <source>Choose Serato database</source>
         <extracomment>Title of file browse dialog launched from the Preferences window</extracomment>
         <translation>Choose Serato database</translation>
     </message>
     <message>
-        <location filename="../source/guiprefs.cpp" line="468"/>
+        <location filename="../source/guiprefs.cpp" line="489"/>
         <source>Serato database (*)</source>
         <extracomment>Filetype in file browse dialog launched from the Preferences window</extracomment>
         <translation>Serato database (*)</translation>
