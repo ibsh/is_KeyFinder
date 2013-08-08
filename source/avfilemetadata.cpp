@@ -262,11 +262,11 @@ bool FlacFileMetadata::setKey(const QString& key) {
 // =================================== MPEG ====================================
 
 QString MpegID3FileMetadata::getGrouping() const {
-  return getGroupingId3v2(specificFile->ID3v2Tag());
+  return getGroupingId3(specificFile->ID3v2Tag(), true);
 }
 
-QString MpegID3FileMetadata::getGroupingId3v2(const TagLib::ID3v2::Tag* tag) const {
-  if (tag->isEmpty()) // ID3v1 doesn't support the Grouping tag
+QString MpegID3FileMetadata::getGroupingId3(const TagLib::ID3v2::Tag* tag, bool v1check) const {
+  if (v1check && tag->isEmpty()) // ID3v1 doesn't support the Grouping tag
     return GuiStrings::getInstance()->notApplicable();
   if (!tag->frameListMap().contains(keyId3TagGrouping))
     return emptyString;
@@ -276,11 +276,11 @@ QString MpegID3FileMetadata::getGroupingId3v2(const TagLib::ID3v2::Tag* tag) con
 }
 
 QString MpegID3FileMetadata::getKey() const {
-  return getKeyId3v2(specificFile->ID3v2Tag());
+  return getKeyId3(specificFile->ID3v2Tag(), true);
 }
 
-QString MpegID3FileMetadata::getKeyId3v2(const TagLib::ID3v2::Tag* tag) const {
-  if (tag->isEmpty()) // ID3v1 doesn't support the Key tag
+QString MpegID3FileMetadata::getKeyId3(const TagLib::ID3v2::Tag* tag, bool v1check) const {
+  if (v1check && tag->isEmpty()) // ID3v1 doesn't support the Key tag
     return GuiStrings::getInstance()->notApplicable();
   if (!tag->frameListMap().contains(keyId3TagKey))
     return emptyString;
@@ -303,7 +303,7 @@ bool MpegID3FileMetadata::setComment(const QString& cmt) {
       TagLib::String(cmt.toUtf8().constData(), TagLib::String::UTF8)
     );
     // iTunes comment hack
-    setITunesCommentId3v2(specificFile->ID3v2Tag(), cmt);
+    setITunesCommentId3(specificFile->ID3v2Tag(), cmt, true);
     specificFile->save(
       TagLib::MPEG::File::ID3v2,
       false,
@@ -313,8 +313,8 @@ bool MpegID3FileMetadata::setComment(const QString& cmt) {
   return true;
 }
 
-void MpegID3FileMetadata::setITunesCommentId3v2(TagLib::ID3v2::Tag* tag, const QString& cmt) {
-  if (tag->isEmpty()) return; // ID3v1 doesn't support iTunes comments
+void MpegID3FileMetadata::setITunesCommentId3(TagLib::ID3v2::Tag* tag, const QString& cmt, bool v1check) {
+  if (v1check && tag->isEmpty()) return; // ID3v1 doesn't support iTunes comments
   if (tag->frameListMap().contains(keyId3TagiTunesComment)) {
     const TagLib::ID3v2::FrameList &comments = tag->frameListMap()[keyId3TagiTunesComment];
     bool found = false;
@@ -339,7 +339,7 @@ void MpegID3FileMetadata::setITunesCommentId3v2(TagLib::ID3v2::Tag* tag, const Q
 }
 
 bool MpegID3FileMetadata::setGrouping(const QString& grp) {
-  setGroupingId3v2(specificFile->ID3v2Tag(), grp);
+  setGroupingId3(specificFile->ID3v2Tag(), grp, true);
   specificFile->save(
     TagLib::MPEG::File::AllTags,
     true,
@@ -349,8 +349,8 @@ bool MpegID3FileMetadata::setGrouping(const QString& grp) {
 }
 
 
-bool MpegID3FileMetadata::setGroupingId3v2(TagLib::ID3v2::Tag* tag, const QString& grp) {
-  if (tag->isEmpty()) return false; // ID3v1 doesn't support Grouping
+bool MpegID3FileMetadata::setGroupingId3(TagLib::ID3v2::Tag* tag, const QString& grp, bool v1check) {
+  if (v1check && tag->isEmpty()) return false; // ID3v1 doesn't support Grouping
   TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame(keyId3TagGrouping);
   frm->setText(TagLib::String(grp.toUtf8().constData(), TagLib::String::UTF8));
   tag->removeFrames(keyId3TagGrouping);
@@ -360,7 +360,7 @@ bool MpegID3FileMetadata::setGroupingId3v2(TagLib::ID3v2::Tag* tag, const QStrin
 }
 
 bool MpegID3FileMetadata::setKey(const QString& key) {
-  setKeyId3v2(specificFile->ID3v2Tag(), key);
+  setKeyId3(specificFile->ID3v2Tag(), key, true);
   specificFile->save(
     TagLib::MPEG::File::ID3v2,
     false,
@@ -369,8 +369,8 @@ bool MpegID3FileMetadata::setKey(const QString& key) {
   return true;
 }
 
-bool MpegID3FileMetadata::setKeyId3v2(TagLib::ID3v2::Tag* tag, const QString& key) {
-  if (tag->isEmpty()) return false; // ID3v1 doesn't support Key
+bool MpegID3FileMetadata::setKeyId3(TagLib::ID3v2::Tag* tag, const QString& key, bool v1check) {
+  if (v1check && tag->isEmpty()) return false; // ID3v1 doesn't support Key
   TagLib::ID3v2::Frame* frm = new TagLib::ID3v2::TextIdentificationFrame(keyId3TagKey);
   frm->setText(TagLib::String(key.toUtf8().constData(), TagLib::String::UTF8));
   tag->removeFrames(keyId3TagKey);
@@ -382,11 +382,11 @@ bool MpegID3FileMetadata::setKeyId3v2(TagLib::ID3v2::Tag* tag, const QString& ke
 // =================================== AIFF ====================================
 
 QString AiffID3FileMetadata::getGrouping() const {
-  return getGroupingId3v2(specificFile->tag());
+  return getGroupingId3(specificFile->tag(), false);
 }
 
 QString AiffID3FileMetadata::getKey() const {
-  return getKeyId3v2(specificFile->tag());
+  return getKeyId3(specificFile->tag(), false);
 }
 
 bool AiffID3FileMetadata::setComment(const QString& cmt) {
@@ -395,19 +395,19 @@ bool AiffID3FileMetadata::setComment(const QString& cmt) {
     TagLib::String(cmt.toUtf8().constData(), TagLib::String::UTF8)
   );
   // iTunes comment hack
-  setITunesCommentId3v2(specificFile->tag(), cmt);
+  setITunesCommentId3(specificFile->tag(), cmt, false);
   specificFile->save();
   return true;
 }
 
 bool AiffID3FileMetadata::setGrouping(const QString& grp) {
-  setGroupingId3v2(specificFile->tag(), grp);
+  setGroupingId3(specificFile->tag(), grp, false);
   specificFile->save();
   return true;
 }
 
 bool AiffID3FileMetadata::setKey(const QString& key) {
-  setKeyId3v2(specificFile->tag(), key);
+  setKeyId3(specificFile->tag(), key, false);
   specificFile->save();
   return true;
 }
@@ -416,11 +416,11 @@ bool AiffID3FileMetadata::setKey(const QString& key) {
 // =================================== WAV =====================================
 
 QString WavID3FileMetadata::getGrouping() const {
-  return getGroupingId3v2(specificFile->tag());
+  return getGroupingId3(specificFile->tag(), false);
 }
 
 QString WavID3FileMetadata::getKey() const {
-  return getKeyId3v2(specificFile->tag());
+  return getKeyId3(specificFile->tag(), false);
 }
 
 bool WavID3FileMetadata::setComment(const QString& cmt) {
