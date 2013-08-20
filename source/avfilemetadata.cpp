@@ -36,13 +36,13 @@ const char* keyAsfTagKey           = "WM/InitialKey";
 
 AVFileMetadata::AVFileMetadata(TagLib::FileRef* inFr, TagLib::File* f) : fr(inFr), genericFile(f) { }
 NullFileMetadata::NullFileMetadata      (TagLib::FileRef* fr, TagLib::File* g)                              : AVFileMetadata     (fr, g)       { }
-FlacFileMetadata::FlacFileMetadata      (TagLib::FileRef* fr, TagLib::File* g, TagLib::FLAC::File* s)       : AVFileMetadata     (fr, g)       { specificFile = s; }
-MpegID3FileMetadata::MpegID3FileMetadata(TagLib::FileRef* fr, TagLib::File* g, TagLib::MPEG::File* s)       : AVFileMetadata     (fr, g)       { specificFile = s; }
-AiffID3FileMetadata::AiffID3FileMetadata(TagLib::FileRef* fr, TagLib::File* g, TagLib::RIFF::AIFF::File* s) : MpegID3FileMetadata(fr, g, NULL) { specificFile = s; }
-WavID3FileMetadata::WavID3FileMetadata  (TagLib::FileRef* fr, TagLib::File* g, TagLib::RIFF::WAV::File* s)  : AiffID3FileMetadata(fr, g, NULL) { specificFile = s; }
-Mp4FileMetadata::Mp4FileMetadata        (TagLib::FileRef* fr, TagLib::File* g, TagLib::MP4::File* s)        : AVFileMetadata     (fr, g)       { specificFile = s; }
-AsfFileMetadata::AsfFileMetadata        (TagLib::FileRef* fr, TagLib::File* g, TagLib::ASF::File* s)        : AVFileMetadata     (fr, g)       { specificFile = s; }
-ApeFileMetadata::ApeFileMetadata        (TagLib::FileRef* fr, TagLib::File* g, TagLib::APE::File* s)        : AVFileMetadata     (fr, g)       { specificFile = s; }
+FlacFileMetadata::FlacFileMetadata      (TagLib::FileRef* fr, TagLib::File* g, TagLib::FLAC::File* s)       : AVFileMetadata     (fr, g)       { flacFile = s; }
+MpegID3FileMetadata::MpegID3FileMetadata(TagLib::FileRef* fr, TagLib::File* g, TagLib::MPEG::File* s)       : AVFileMetadata     (fr, g)       { mpegFile = s; }
+AiffID3FileMetadata::AiffID3FileMetadata(TagLib::FileRef* fr, TagLib::File* g, TagLib::RIFF::AIFF::File* s) : MpegID3FileMetadata(fr, g, NULL) { aiffFile = s; }
+WavID3FileMetadata::WavID3FileMetadata  (TagLib::FileRef* fr, TagLib::File* g, TagLib::RIFF::WAV::File* s)  : AiffID3FileMetadata(fr, g, NULL) { wavFile = s; }
+Mp4FileMetadata::Mp4FileMetadata        (TagLib::FileRef* fr, TagLib::File* g, TagLib::MP4::File* s)        : AVFileMetadata     (fr, g)       { mp4File = s; }
+AsfFileMetadata::AsfFileMetadata        (TagLib::FileRef* fr, TagLib::File* g, TagLib::ASF::File* s)        : AVFileMetadata     (fr, g)       { asfFile = s; }
+ApeFileMetadata::ApeFileMetadata        (TagLib::FileRef* fr, TagLib::File* g, TagLib::APE::File* s)        : AVFileMetadata     (fr, g)       { apeFile = s; }
 
 AVFileMetadata::~AVFileMetadata() { delete fr; }
 NullFileMetadata::~NullFileMetadata() { }
@@ -222,8 +222,8 @@ bool NullFileMetadata::setComment(const QString& /*cmt*/) {
 
 QString FlacFileMetadata::getComment() const {
   // TagLib's default behaviour treats Description as Comment
-  if (specificFile->xiphComment()->contains(keyXiphTagComment)) {
-    TagLib::String out = specificFile->xiphComment()->fieldListMap()[keyXiphTagComment].toString();
+  if (flacFile->xiphComment()->contains(keyXiphTagComment)) {
+    TagLib::String out = flacFile->xiphComment()->fieldListMap()[keyXiphTagComment].toString();
     return QString::fromUtf8((out.toCString(true)));
   } else {
     return emptyString;
@@ -231,7 +231,7 @@ QString FlacFileMetadata::getComment() const {
 }
 
 QString FlacFileMetadata::getKey() const {
-  TagLib::Ogg::XiphComment* c = specificFile->xiphComment();
+  TagLib::Ogg::XiphComment* c = flacFile->xiphComment();
   if (!c->fieldListMap().contains(keyXiphTagKey))
     return emptyString;
   TagLib::String out = c->fieldListMap()[keyXiphTagKey].toString();
@@ -240,7 +240,7 @@ QString FlacFileMetadata::getKey() const {
 
 bool FlacFileMetadata::setComment(const QString& cmt) {
   // TagLib's default behaviour treats Description as Comment
-  specificFile->xiphComment()->addField(
+  flacFile->xiphComment()->addField(
     keyXiphTagComment,
     TagLib::String(cmt.toUtf8().constData(), TagLib::String::UTF8),
     true
@@ -250,19 +250,19 @@ bool FlacFileMetadata::setComment(const QString& cmt) {
 }
 
 bool FlacFileMetadata::setKey(const QString& key) {
-  specificFile->xiphComment()->addField(
+  flacFile->xiphComment()->addField(
     keyXiphTagKey,
     TagLib::String(key.toUtf8().constData(), TagLib::String::UTF8),
     true
   );
-  specificFile->save();
+  flacFile->save();
   return true;
 }
 
 // =================================== MPEG ====================================
 
 QString MpegID3FileMetadata::getGrouping() const {
-  return getGroupingId3(specificFile->ID3v2Tag(), true);
+  return getGroupingId3(mpegFile->ID3v2Tag(), true);
 }
 
 QString MpegID3FileMetadata::getGroupingId3(const TagLib::ID3v2::Tag* tag, bool v1check) const {
@@ -276,7 +276,7 @@ QString MpegID3FileMetadata::getGroupingId3(const TagLib::ID3v2::Tag* tag, bool 
 }
 
 QString MpegID3FileMetadata::getKey() const {
-  return getKeyId3(specificFile->ID3v2Tag(), true);
+  return getKeyId3(mpegFile->ID3v2Tag(), true);
 }
 
 QString MpegID3FileMetadata::getKeyId3(const TagLib::ID3v2::Tag* tag, bool v1check) const {
@@ -290,12 +290,12 @@ QString MpegID3FileMetadata::getKeyId3(const TagLib::ID3v2::Tag* tag, bool v1che
 }
 
 bool MpegID3FileMetadata::setComment(const QString& cmt) {
-  if (specificFile->ID3v2Tag()->isEmpty()) {
+  if (mpegFile->ID3v2Tag()->isEmpty()) {
     // TagLib's default behaviour will write a v2 ID3 tag where none exists
-    specificFile->ID3v1Tag()->setComment(
+    mpegFile->ID3v1Tag()->setComment(
       TagLib::String(cmt.toUtf8().constData(), TagLib::String::UTF8)
     );
-    specificFile->save(TagLib::MPEG::File::ID3v1, false);
+    mpegFile->save(TagLib::MPEG::File::ID3v1, false);
     return true;
   } else {
     // basic tag
@@ -303,11 +303,11 @@ bool MpegID3FileMetadata::setComment(const QString& cmt) {
       TagLib::String(cmt.toUtf8().constData(), TagLib::String::UTF8)
     );
     // iTunes comment hack
-    setITunesCommentId3(specificFile->ID3v2Tag(), cmt, true);
-    specificFile->save(
+    setITunesCommentId3(mpegFile->ID3v2Tag(), cmt, true);
+    mpegFile->save(
       TagLib::MPEG::File::ID3v2,
       false,
-      specificFile->ID3v2Tag()->header()->majorVersion()
+      mpegFile->ID3v2Tag()->header()->majorVersion()
     );
   }
   return true;
@@ -339,11 +339,11 @@ void MpegID3FileMetadata::setITunesCommentId3(TagLib::ID3v2::Tag* tag, const QSt
 }
 
 bool MpegID3FileMetadata::setGrouping(const QString& grp) {
-  setGroupingId3(specificFile->ID3v2Tag(), grp, true);
-  specificFile->save(
+  setGroupingId3(mpegFile->ID3v2Tag(), grp, true);
+  mpegFile->save(
     TagLib::MPEG::File::AllTags,
     true,
-    specificFile->ID3v2Tag()->header()->majorVersion()
+    mpegFile->ID3v2Tag()->header()->majorVersion()
   );
   return true;
 }
@@ -360,11 +360,11 @@ bool MpegID3FileMetadata::setGroupingId3(TagLib::ID3v2::Tag* tag, const QString&
 }
 
 bool MpegID3FileMetadata::setKey(const QString& key) {
-  setKeyId3(specificFile->ID3v2Tag(), key, true);
-  specificFile->save(
+  setKeyId3(mpegFile->ID3v2Tag(), key, true);
+  mpegFile->save(
     TagLib::MPEG::File::ID3v2,
     false,
-    specificFile->ID3v2Tag()->header()->majorVersion()
+    mpegFile->ID3v2Tag()->header()->majorVersion()
   );
   return true;
 }
@@ -382,11 +382,11 @@ bool MpegID3FileMetadata::setKeyId3(TagLib::ID3v2::Tag* tag, const QString& key,
 // =================================== AIFF ====================================
 
 QString AiffID3FileMetadata::getGrouping() const {
-  return getGroupingId3(specificFile->tag(), false);
+  return getGroupingId3(aiffFile->tag(), false);
 }
 
 QString AiffID3FileMetadata::getKey() const {
-  return getKeyId3(specificFile->tag(), false);
+  return getKeyId3(aiffFile->tag(), false);
 }
 
 bool AiffID3FileMetadata::setComment(const QString& cmt) {
@@ -395,20 +395,20 @@ bool AiffID3FileMetadata::setComment(const QString& cmt) {
     TagLib::String(cmt.toUtf8().constData(), TagLib::String::UTF8)
   );
   // iTunes comment hack
-  setITunesCommentId3(specificFile->tag(), cmt, false);
-  specificFile->save();
+  setITunesCommentId3(aiffFile->tag(), cmt, false);
+  aiffFile->save();
   return true;
 }
 
 bool AiffID3FileMetadata::setGrouping(const QString& grp) {
-  setGroupingId3(specificFile->tag(), grp, false);
-  specificFile->save();
+  setGroupingId3(aiffFile->tag(), grp, false);
+  aiffFile->save();
   return true;
 }
 
 bool AiffID3FileMetadata::setKey(const QString& key) {
-  setKeyId3(specificFile->tag(), key, false);
-  specificFile->save();
+  setKeyId3(aiffFile->tag(), key, false);
+  aiffFile->save();
   return true;
 }
 
@@ -416,11 +416,11 @@ bool AiffID3FileMetadata::setKey(const QString& key) {
 // =================================== WAV =====================================
 
 QString WavID3FileMetadata::getGrouping() const {
-  return getGroupingId3(specificFile->tag(), false);
+  return getGroupingId3(wavFile->tag(), false);
 }
 
 QString WavID3FileMetadata::getKey() const {
-  return getKeyId3(specificFile->tag(), false);
+  return getKeyId3(wavFile->tag(), false);
 }
 
 bool WavID3FileMetadata::setComment(const QString& cmt) {
@@ -432,82 +432,82 @@ bool WavID3FileMetadata::setComment(const QString& cmt) {
 }
 
 bool WavID3FileMetadata::setGrouping(const QString& grp) {
-  setGroupingId3(specificFile->tag(), grp, false);
-  specificFile->save();
+  setGroupingId3(wavFile->tag(), grp, false);
+  wavFile->save();
   return true;
 }
 
 bool WavID3FileMetadata::setKey(const QString& key) {
-  setKeyId3(specificFile->tag(), key, false);
-  specificFile->save();
+  setKeyId3(wavFile->tag(), key, false);
+  wavFile->save();
   return true;
 }
 
 // =================================== MP4 =====================================
 
 QString Mp4FileMetadata::getGrouping() const {
-  if (!specificFile->tag()->itemListMap().contains(keyMp4TagGrouping))
+  if (!mp4File->tag()->itemListMap().contains(keyMp4TagGrouping))
     return emptyString;
-  TagLib::MP4::Item m = specificFile->tag()->itemListMap()[keyMp4TagGrouping];
+  TagLib::MP4::Item m = mp4File->tag()->itemListMap()[keyMp4TagGrouping];
   TagLib::String out = m.toStringList().front();
   return QString::fromUtf8((out.toCString(true)));
 }
 
 QString Mp4FileMetadata::getKey() const {
-  if (!specificFile->tag()->itemListMap().contains(keyMp4TagKey))
+  if (!mp4File->tag()->itemListMap().contains(keyMp4TagKey))
     return emptyString;
-  TagLib::MP4::Item m = specificFile->tag()->itemListMap()[keyMp4TagKey];
+  TagLib::MP4::Item m = mp4File->tag()->itemListMap()[keyMp4TagKey];
   TagLib::String out = m.toStringList().front();
   return QString::fromUtf8((out.toCString(true)));
 }
 
 bool Mp4FileMetadata::setGrouping(const QString& grp) {
   TagLib::StringList sl(TagLib::String(grp.toUtf8().constData(), TagLib::String::UTF8));
-  specificFile->tag()->itemListMap().insert(keyMp4TagGrouping, sl);
-  specificFile->save();
+  mp4File->tag()->itemListMap().insert(keyMp4TagGrouping, sl);
+  mp4File->save();
   return true;
 }
 
 bool Mp4FileMetadata::setKey(const QString& key) {
   TagLib::StringList sl(TagLib::String(key.toUtf8().constData(), TagLib::String::UTF8));
-  specificFile->tag()->itemListMap().insert(keyMp4TagKey, sl);
-  specificFile->save();
+  mp4File->tag()->itemListMap().insert(keyMp4TagKey, sl);
+  mp4File->save();
   return true;
 }
 
 // =================================== ASF =====================================
 
 QString AsfFileMetadata::getGrouping() const {
-  if (!specificFile->tag()->attributeListMap().contains(keyAsfTagGrouping))
+  if (!asfFile->tag()->attributeListMap().contains(keyAsfTagGrouping))
     return emptyString;
-  TagLib::ASF::AttributeList l = specificFile->tag()->attributeListMap()[keyAsfTagGrouping];
+  TagLib::ASF::AttributeList l = asfFile->tag()->attributeListMap()[keyAsfTagGrouping];
   TagLib::String out = l.front().toString();
   return QString::fromUtf8((out.toCString(true)));
 }
 
 QString AsfFileMetadata::getKey() const {
-  if (!specificFile->tag()->attributeListMap().contains(keyAsfTagKey))
+  if (!asfFile->tag()->attributeListMap().contains(keyAsfTagKey))
     return emptyString;
-  TagLib::ASF::AttributeList l = specificFile->tag()->attributeListMap()[keyAsfTagKey];
+  TagLib::ASF::AttributeList l = asfFile->tag()->attributeListMap()[keyAsfTagKey];
   TagLib::String out = l.front().toString();
   return QString::fromUtf8((out.toCString(true)));
 }
 
 bool AsfFileMetadata::setGrouping(const QString& grp) {
-  specificFile->tag()->setAttribute(
+  asfFile->tag()->setAttribute(
     keyAsfTagGrouping,
     TagLib::String(grp.toUtf8().constData(), TagLib::String::UTF8)
   );
-  specificFile->save();
+  asfFile->save();
   return true;
 }
 
 bool AsfFileMetadata::setKey(const QString& key) {
-  specificFile->tag()->setAttribute(
+  asfFile->tag()->setAttribute(
     keyAsfTagKey,
     TagLib::String(key.toUtf8().constData(), TagLib::String::UTF8)
   );
-  specificFile->save();
+  asfFile->save();
   return true;
 }
 
@@ -524,11 +524,11 @@ QString ApeFileMetadata::getGrouping() const {
 }
 
 bool ApeFileMetadata::setGrouping(const QString& grp) {
-  TagLib::APE::Tag* tagTestApe = dynamic_cast<TagLib::APE::Tag*>(specificFile->tag());
+  TagLib::APE::Tag* tagTestApe = dynamic_cast<TagLib::APE::Tag*>(apeFile->tag());
   tagTestApe->addValue(
     keyApeTagGrouping,
     TagLib::String(grp.toUtf8().constData(), TagLib::String::UTF8)
   );
-  specificFile->save();
+  apeFile->save();
   return true;
 }

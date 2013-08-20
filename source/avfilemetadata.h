@@ -108,7 +108,7 @@ public:
   virtual QString getComment() const;
   virtual QString getKey() const;
 protected:
-  TagLib::FLAC::File* specificFile;
+  TagLib::FLAC::File* flacFile;
   virtual bool setComment(const QString&);
   virtual bool setKey(const QString&);
 };
@@ -119,7 +119,7 @@ public:
   virtual QString getGrouping() const;
   virtual QString getKey() const;
 protected:
-  TagLib::MPEG::File* specificFile;
+  TagLib::MPEG::File* mpegFile;
   virtual bool setComment(const QString&);
   virtual bool setGrouping(const QString&);
   virtual bool setKey(const QString&);
@@ -136,7 +136,7 @@ public:
   virtual QString getGrouping() const;
   virtual QString getKey() const;
 protected:
-  TagLib::RIFF::AIFF::File* specificFile;
+  TagLib::RIFF::AIFF::File* aiffFile;
   virtual bool setComment(const QString&);
   virtual bool setGrouping(const QString&);
   virtual bool setKey(const QString&);
@@ -148,7 +148,7 @@ public:
   virtual QString getGrouping() const;
   virtual QString getKey() const;
 protected:
-  TagLib::RIFF::WAV::File* specificFile;
+  TagLib::RIFF::WAV::File* wavFile;
   virtual bool setComment(const QString&);
   virtual bool setGrouping(const QString&);
   virtual bool setKey(const QString&);
@@ -160,7 +160,7 @@ public:
   virtual QString getGrouping() const;
   virtual QString getKey() const;
 protected:
-  TagLib::MP4::File* specificFile;
+  TagLib::MP4::File* mp4File;
   virtual bool setGrouping(const QString&);
   virtual bool setKey(const QString&);
 };
@@ -171,7 +171,7 @@ public:
   virtual QString getGrouping() const;
   virtual QString getKey() const;
 protected:
-  TagLib::ASF::File* specificFile;
+  TagLib::ASF::File* asfFile;
   virtual bool setGrouping(const QString&);
   virtual bool setKey(const QString&);
 };
@@ -181,7 +181,7 @@ public:
   ApeFileMetadata(TagLib::FileRef* fr, TagLib::File* g, TagLib::APE::File* s);
   virtual QString getGrouping() const;
 protected:
-  TagLib::APE::File* specificFile;
+  TagLib::APE::File* apeFile;
   virtual bool setGrouping(const QString&);
 };
 
