@@ -70,8 +70,5 @@ AVFileMetadata* AVFileMetadataFactory::createAVFileMetadata(const QString& fileP
   TagLib::ASF::File* fileTestAsf = dynamic_cast<TagLib::ASF::File*>(f);
   if (fileTestAsf != NULL) return new AsfFileMetadata(fr, f, fileTestAsf);
 
-  TagLib::APE::File* fileTestApe = dynamic_cast<TagLib::APE::File*>(f);
-  if (fileTestApe != NULL) return new ApeFileMetadata(fr, f, fileTestApe);
-
   return new AVFileMetadata(fr, f);
 }

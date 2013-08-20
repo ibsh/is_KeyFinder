@@ -42,7 +42,6 @@ AiffID3FileMetadata::AiffID3FileMetadata(TagLib::FileRef* fr, TagLib::File* g, T
 WavID3FileMetadata::WavID3FileMetadata  (TagLib::FileRef* fr, TagLib::File* g, TagLib::RIFF::WAV::File* s)  : AiffID3FileMetadata(fr, g, NULL) { wavFile = s; }
 Mp4FileMetadata::Mp4FileMetadata        (TagLib::FileRef* fr, TagLib::File* g, TagLib::MP4::File* s)        : AVFileMetadata     (fr, g)       { mp4File = s; }
 AsfFileMetadata::AsfFileMetadata        (TagLib::FileRef* fr, TagLib::File* g, TagLib::ASF::File* s)        : AVFileMetadata     (fr, g)       { asfFile = s; }
-ApeFileMetadata::ApeFileMetadata        (TagLib::FileRef* fr, TagLib::File* g, TagLib::APE::File* s)        : AVFileMetadata     (fr, g)       { apeFile = s; }
 
 AVFileMetadata::~AVFileMetadata() { delete fr; }
 NullFileMetadata::~NullFileMetadata() { }
@@ -508,27 +507,5 @@ bool AsfFileMetadata::setKey(const QString& key) {
     TagLib::String(key.toUtf8().constData(), TagLib::String::UTF8)
   );
   asfFile->save();
-  return true;
-}
-
-
-// =================================== APE =====================================
-
-QString ApeFileMetadata::getGrouping() const {
-  TagLib::APE::Tag* tag = dynamic_cast<TagLib::APE::Tag*>(genericFile->tag());
-  if (!tag->itemListMap().contains(keyApeTagGrouping))
-    return emptyString;
-  TagLib::APE::Item m = tag->itemListMap()[keyApeTagGrouping];
-  TagLib::String out = m.toStringList().front();
-  return QString::fromUtf8((out.toCString(true)));
-}
-
-bool ApeFileMetadata::setGrouping(const QString& grp) {
-  TagLib::APE::Tag* tagTestApe = dynamic_cast<TagLib::APE::Tag*>(apeFile->tag());
-  tagTestApe->addValue(
-    keyApeTagGrouping,
-    TagLib::String(grp.toUtf8().constData(), TagLib::String::UTF8)
-  );
-  apeFile->save();
   return true;
 }

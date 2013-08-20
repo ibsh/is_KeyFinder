@@ -176,13 +176,4 @@ protected:
   virtual bool setKey(const QString&);
 };
 
-class ApeFileMetadata : public AVFileMetadata {
-public:
-  ApeFileMetadata(TagLib::FileRef* fr, TagLib::File* g, TagLib::APE::File* s);
-  virtual QString getGrouping() const;
-protected:
-  TagLib::APE::File* apeFile;
-  virtual bool setGrouping(const QString&);
-};
-
 #endif // AVFILEMETADATA_H
