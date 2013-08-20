@@ -431,6 +431,18 @@ bool WavID3FileMetadata::setComment(const QString& cmt) {
   return true;
 }
 
+bool WavID3FileMetadata::setGrouping(const QString& grp) {
+  setGroupingId3(specificFile->tag(), grp, false);
+  specificFile->save();
+  return true;
+}
+
+bool WavID3FileMetadata::setKey(const QString& key) {
+  setKeyId3(specificFile->tag(), key, false);
+  specificFile->save();
+  return true;
+}
+
 // =================================== MP4 =====================================
 
 QString Mp4FileMetadata::getGrouping() const {

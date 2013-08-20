@@ -150,6 +150,8 @@ public:
 protected:
   TagLib::RIFF::WAV::File* specificFile;
   virtual bool setComment(const QString&);
+  virtual bool setGrouping(const QString&);
+  virtual bool setKey(const QString&);
 };
 
 class Mp4FileMetadata : public AVFileMetadata {
