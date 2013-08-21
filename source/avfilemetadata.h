@@ -73,11 +73,12 @@ public:
   virtual QString getGrouping() const;
   virtual QString getKey() const;
   virtual MetadataWriteResult writeKeyToMetadata(KeyFinder::key_t, const Preferences&);
+  // TODO: make this private? It's here for UTs.
+  virtual void writeKeyByTagEnum(const QString&, metadata_tag_t, MetadataWriteResult&, const Preferences&);
 protected:
   TagLib::FileRef* fr;
   TagLib::File* genericFile;
   virtual bool setByTagEnum(const QString&, metadata_tag_t);
-  virtual void writeKeyByTagEnum(const QString&, metadata_tag_t, MetadataWriteResult&, const Preferences&);
   virtual bool setTitle(const QString&);
   virtual bool setArtist(const QString&);
   virtual bool setAlbum(const QString&);
@@ -118,16 +119,23 @@ public:
   MpegID3FileMetadata(TagLib::FileRef* fr, TagLib::File* g, TagLib::MPEG::File* s);
   virtual QString getGrouping() const;
   virtual QString getKey() const;
+  bool hasId3v1Tag() const;
+  bool hasId3v2Tag() const;
+  bool hasId3v2_3Tag() const;
+  bool hasId3v2_4Tag() const;
 protected:
   TagLib::MPEG::File* mpegFile;
+  virtual bool setTitle(const QString&);
+  virtual bool setArtist(const QString&);
+  virtual bool setAlbum(const QString&);
   virtual bool setComment(const QString&);
   virtual bool setGrouping(const QString&);
   virtual bool setKey(const QString&);
-  QString getGroupingId3(const TagLib::ID3v2::Tag* tag, bool v1check) const;
-  QString getKeyId3(const TagLib::ID3v2::Tag* tag, bool v1check) const;
-  void setITunesCommentId3(TagLib::ID3v2::Tag* tag, const QString& cmt, bool v1check);
-  bool setGroupingId3(TagLib::ID3v2::Tag* tag, const QString& grp, bool v1check);
-  bool setKeyId3(TagLib::ID3v2::Tag* tag, const QString& key, bool v1check);
+  QString getGroupingId3(const TagLib::ID3v2::Tag* tag) const;
+  QString getKeyId3(const TagLib::ID3v2::Tag* tag) const;
+  void setITunesCommentId3(TagLib::ID3v2::Tag* tag, const QString& cmt);
+  bool setGroupingId3(TagLib::ID3v2::Tag* tag, const QString& grp);
+  bool setKeyId3(TagLib::ID3v2::Tag* tag, const QString& key);
 };
 
 class AiffID3FileMetadata : public MpegID3FileMetadata {
@@ -137,6 +145,9 @@ public:
   virtual QString getKey() const;
 protected:
   TagLib::RIFF::AIFF::File* aiffFile;
+  virtual bool setTitle(const QString&);
+  virtual bool setArtist(const QString&);
+  virtual bool setAlbum(const QString&);
   virtual bool setComment(const QString&);
   virtual bool setGrouping(const QString&);
   virtual bool setKey(const QString&);
@@ -149,6 +160,9 @@ public:
   virtual QString getKey() const;
 protected:
   TagLib::RIFF::WAV::File* wavFile;
+  virtual bool setTitle(const QString&);
+  virtual bool setArtist(const QString&);
+  virtual bool setAlbum(const QString&);
   virtual bool setComment(const QString&);
   virtual bool setGrouping(const QString&);
   virtual bool setKey(const QString&);

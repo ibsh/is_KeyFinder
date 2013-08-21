@@ -382,6 +382,21 @@ void Preferences::setBatchWindowState(const QByteArray& a)         { batchWindow
 void Preferences::setBatchWindowGeometry(const QByteArray& a)      { batchWindowGeometry = a; }
 void Preferences::setBatchWindowSplitterState(const QByteArray& a) { batchWindowSplitterState = a; }
 
+void Preferences::setMetadataWriteByTagEnum(metadata_tag_t tag, metadata_write_t val) {
+  if (tag == METADATA_TAG_TITLE)
+    setMetadataWriteTitle(val);
+  else if (tag == METADATA_TAG_ARTIST)
+    setMetadataWriteArtist(val);
+  else if (tag == METADATA_TAG_ALBUM)
+    setMetadataWriteAlbum(val);
+  else if (tag == METADATA_TAG_COMMENT)
+    setMetadataWriteComment(val);
+  else if (tag == METADATA_TAG_GROUPING)
+    setMetadataWriteGrouping(val);
+  else // tag == METADATA_TAG_KEY
+    setMetadataWriteKey(val);
+}
+
 void Preferences::setParallelBatchJobs(bool parallel) {
   parallelBatchJobs = parallel;
   int numThreads = QThread::idealThreadCount();

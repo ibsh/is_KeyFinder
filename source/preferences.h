@@ -113,6 +113,7 @@ public:
   void setParallelBatchJobs(bool);
   void setSkipFilesWithExistingTags(bool);
   void setApplyFileExtensionFilter(bool);
+  void setMetadataWriteByTagEnum(metadata_tag_t, metadata_write_t);
   void setMetadataWriteTitle(metadata_write_t);
   void setMetadataWriteArtist(metadata_write_t);
   void setMetadataWriteAlbum(metadata_write_t);
