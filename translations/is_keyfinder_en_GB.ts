@@ -30,44 +30,76 @@
         <translation>Library</translation>
     </message>
     <message>
-        <location filename="../forms/batchwindow.ui" line="90"/>
         <source>Audio File Name</source>
-        <translation>Audio File Name</translation>
+        <translation type="obsolete">Audio File Name</translation>
     </message>
     <message>
-        <location filename="../forms/batchwindow.ui" line="100"/>
         <source>Artist Tag</source>
-        <translation>Artist Tag</translation>
+        <translation type="obsolete">Artist Tag</translation>
+    </message>
+    <message>
+        <source>Title Tag</source>
+        <translation type="obsolete">Title Tag</translation>
+    </message>
+    <message>
+        <source>Album Tag</source>
+        <translation type="obsolete">Album Tag</translation>
+    </message>
+    <message>
+        <source>Comment Tag</source>
+        <translation type="obsolete">Comment Tag</translation>
+    </message>
+    <message>
+        <source>Grouping Tag</source>
+        <translation type="obsolete">Grouping Tag</translation>
+    </message>
+    <message>
+        <source>Key Tag</source>
+        <translation type="obsolete">Key Tag</translation>
+    </message>
+    <message>
+        <source>Detected Key</source>
+        <translation type="obsolete">Detected Key</translation>
+    </message>
+    <message>
+        <location filename="../forms/batchwindow.ui" line="90"/>
+        <source>Filename</source>
+        <translation type="unfinished">Filename</translation>
     </message>
     <message>
         <location filename="../forms/batchwindow.ui" line="95"/>
-        <source>Title Tag</source>
-        <translation>Title Tag</translation>
+        <source>Title tag</source>
+        <translation type="unfinished">Title tag</translation>
+    </message>
+    <message>
+        <location filename="../forms/batchwindow.ui" line="100"/>
+        <source>Artist tag</source>
+        <translation type="unfinished">Artist tag</translation>
     </message>
     <message>
         <location filename="../forms/batchwindow.ui" line="105"/>
-        <source>Album Tag</source>
-        <translation>Album Tag</translation>
+        <source>Album tag</source>
+        <translation type="unfinished">Album tag</translation>
     </message>
     <message>
         <location filename="../forms/batchwindow.ui" line="110"/>
-        <source>Comment Tag</source>
-        <translation>Comment Tag</translation>
+        <source>Comment tag</source>
+        <translation type="unfinished">Comment tag</translation>
     </message>
     <message>
         <location filename="../forms/batchwindow.ui" line="115"/>
-        <source>Grouping Tag</source>
-        <translation>Grouping Tag</translation>
+        <source>Grouping tag</source>
+        <translation type="unfinished">Grouping tag</translation>
     </message>
     <message>
         <location filename="../forms/batchwindow.ui" line="120"/>
-        <source>Key Tag</source>
-        <translation>Key Tag</translation>
+        <source>Key tag</source>
+        <translation type="unfinished">Key tag</translation>
     </message>
     <message>
         <location filename="../forms/batchwindow.ui" line="125"/>
-        <source>Detected Key</source>
-        <translation>Detected Key</translation>
+        <source>Detected key</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../forms/batchwindow.ui" line="151"/>

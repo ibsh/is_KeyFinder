@@ -77,52 +77,52 @@
        </property>
        <column>
         <property name="text">
-         <string notr="true">Status (Hidden)</string>
+         <string notr="true">Status (hidden)</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string notr="true">Audio File Path (Hidden)</string>
+         <string notr="true">Full path (hidden)</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>Audio File Name</string>
+         <string>Filename</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>Title Tag</string>
+         <string>Title tag</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>Artist Tag</string>
+         <string>Artist tag</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>Album Tag</string>
+         <string>Album tag</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>Comment Tag</string>
+         <string>Comment tag</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>Grouping Tag</string>
+         <string>Grouping tag</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>Key Tag</string>
+         <string>Key tag</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>Detected Key</string>
+         <string>Detected key</string>
         </property>
         <property name="textAlignment">
          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
