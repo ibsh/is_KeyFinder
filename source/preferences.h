@@ -139,6 +139,12 @@ public:
   QColor getKeyColour(KeyFinder::key_t) const;
   void setImageColours(QImage&, chromagram_colour_t) const;
 
+  QString newString(
+    const QString& newData,
+    const QString& currentData,
+    metadata_write_t write
+  ) const;
+
 private:
   SettingsWrapper* settings;
   void load();

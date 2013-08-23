@@ -327,16 +327,6 @@ void Preferences::save() {
 
 }
 
-metadata_write_t Preferences::getMetadataWriteByTagEnum(metadata_tag_t tag) const {
-  if      (tag == METADATA_TAG_TITLE)    return getMetadataWriteTitle();
-  else if (tag == METADATA_TAG_ARTIST)   return getMetadataWriteArtist();
-  else if (tag == METADATA_TAG_ALBUM)    return getMetadataWriteAlbum();
-  else if (tag == METADATA_TAG_COMMENT)  return getMetadataWriteComment();
-  else if (tag == METADATA_TAG_GROUPING) return getMetadataWriteGrouping();
-  else if (tag == METADATA_TAG_KEY)      return getMetadataWriteKey();
-  return METADATA_WRITE_NONE;
-}
-
 bool              Preferences::getWriteToFilesAutomatically() const { return writeToFilesAutomatically; }
 bool              Preferences::getParallelBatchJobs()         const { return parallelBatchJobs; }
 bool              Preferences::getApplyFileExtensionFilter()  const { return applyFileExtensionFilter; }
@@ -382,19 +372,23 @@ void Preferences::setBatchWindowState(const QByteArray& a)         { batchWindow
 void Preferences::setBatchWindowGeometry(const QByteArray& a)      { batchWindowGeometry = a; }
 void Preferences::setBatchWindowSplitterState(const QByteArray& a) { batchWindowSplitterState = a; }
 
+metadata_write_t Preferences::getMetadataWriteByTagEnum(metadata_tag_t tag) const {
+  if      (tag == METADATA_TAG_TITLE)    return getMetadataWriteTitle();
+  else if (tag == METADATA_TAG_ARTIST)   return getMetadataWriteArtist();
+  else if (tag == METADATA_TAG_ALBUM)    return getMetadataWriteAlbum();
+  else if (tag == METADATA_TAG_COMMENT)  return getMetadataWriteComment();
+  else if (tag == METADATA_TAG_GROUPING) return getMetadataWriteGrouping();
+  else if (tag == METADATA_TAG_KEY)      return getMetadataWriteKey();
+  return METADATA_WRITE_NONE;
+}
+
 void Preferences::setMetadataWriteByTagEnum(metadata_tag_t tag, metadata_write_t val) {
-  if (tag == METADATA_TAG_TITLE)
-    setMetadataWriteTitle(val);
-  else if (tag == METADATA_TAG_ARTIST)
-    setMetadataWriteArtist(val);
-  else if (tag == METADATA_TAG_ALBUM)
-    setMetadataWriteAlbum(val);
-  else if (tag == METADATA_TAG_COMMENT)
-    setMetadataWriteComment(val);
-  else if (tag == METADATA_TAG_GROUPING)
-    setMetadataWriteGrouping(val);
-  else // tag == METADATA_TAG_KEY
-    setMetadataWriteKey(val);
+  if      (tag == METADATA_TAG_TITLE)    setMetadataWriteTitle(val);
+  else if (tag == METADATA_TAG_ARTIST)   setMetadataWriteArtist(val);
+  else if (tag == METADATA_TAG_ALBUM)    setMetadataWriteAlbum(val);
+  else if (tag == METADATA_TAG_COMMENT)  setMetadataWriteComment(val);
+  else if (tag == METADATA_TAG_GROUPING) setMetadataWriteGrouping(val);
+  else if (tag == METADATA_TAG_KEY)      setMetadataWriteKey(val);
 }
 
 void Preferences::setParallelBatchJobs(bool parallel) {
@@ -482,4 +476,44 @@ int Preferences::scaledSine(int index, float xScale, float xOffset, int yScale, 
   if (result <   0) return 0;
   if (result > 255) return 255;
   return result;
+}
+
+// Used to determine whether metadata writing is necessary, and what to write
+// when concatenating / overwriting cases. Returns an empty string if no write
+// necessary
+QString Preferences::newString(
+  const QString &newData,
+  const QString &currentData,
+  metadata_write_t write
+) const {
+  QString empty;
+  // validate
+  if (write == METADATA_WRITE_NONE) return empty;
+  // if newData is an empty string, check against all possible key codes
+  QStringList dataToCheck;
+  if (newData.isEmpty()) dataToCheck = getKeyCodeList();
+  else dataToCheck.push_back(newData);
+  // check
+  QStringList::iterator iter;
+  for (iter = dataToCheck.begin(); iter != dataToCheck.end(); iter++) {
+    if (write == METADATA_WRITE_OVERWRITE && currentData == *iter) {
+      return empty;
+    } else if (write == METADATA_WRITE_PREPEND && currentData.left((*iter).length()) == *iter) {
+      return empty;
+    } else if (write == METADATA_WRITE_APPEND && currentData.right((*iter).length()) == *iter) {
+      return empty;
+    }
+  }
+  // check failed; determine what to write
+  if (write == METADATA_WRITE_OVERWRITE) return dataToCheck.first();
+  if (write == METADATA_WRITE_PREPEND) {
+    if (currentData == empty) return dataToCheck.first();
+    return dataToCheck.first() + getMetadataDelimiter() + currentData;
+  }
+  if (write == METADATA_WRITE_APPEND) {
+    if (currentData == empty) return dataToCheck.first();
+    return currentData + getMetadataDelimiter() + dataToCheck.first();
+  }
+  // shouldn't get here
+  return empty;
 }

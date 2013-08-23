@@ -163,3 +163,135 @@ TEST (PreferencesTest, Equality) {
     a.setMaxDuration(61);
     ASSERT_FALSE(a.equivalentTo(b));
 }
+
+TEST (PreferencesTest, NewStringDeterminesNoWriteCorrectly) {
+  Preferences prefs;
+  QString currentData = "data";
+  QString newData = "key";
+  metadata_write_t write = METADATA_WRITE_NONE;
+  QString expectedOutput= "";
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+}
+
+TEST (PreferencesTest, NewStringDeterminesOverwriteCorrectly) {
+  Preferences prefs;
+  QString currentData = "data";
+  QString newData = "key";
+  metadata_write_t write = METADATA_WRITE_OVERWRITE;
+  QString expectedOutput= "key";
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+}
+
+TEST (PreferencesTest, NewStringDeterminesOverwriteToSameCorrectly) {
+  Preferences prefs;
+  QString currentData = "key";
+  QString newData = "key";
+  metadata_write_t write = METADATA_WRITE_OVERWRITE;
+  QString expectedOutput= "";
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+}
+
+TEST (PreferencesTest, NewStringDeterminesPrependCorrectly) {
+  Preferences prefs;
+  prefs.setMetadataDelimiter("_");
+  QString currentData = "data";
+  QString newData = "key";
+  metadata_write_t write = METADATA_WRITE_PREPEND;
+  QString expectedOutput= "key_data";
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+}
+
+TEST (PreferencesTest, NewStringDeterminesPrependToSameCorrectly) {
+  Preferences prefs;
+  QString currentData = "key";
+  QString newData = "key";
+  metadata_write_t write = METADATA_WRITE_PREPEND;
+  QString expectedOutput= "";
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+}
+
+TEST (PreferencesTest, NewStringDeterminesPrependToEmptyCorrectly) {
+  Preferences prefs;
+  prefs.setMetadataDelimiter("_");
+  QString currentData = "";
+  QString newData = "key";
+  metadata_write_t write = METADATA_WRITE_PREPEND;
+  QString expectedOutput= "key";
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+}
+
+TEST (PreferencesTest, NewStringDeterminesPrependToDifferentDelimiterCorrectly) {
+  Preferences prefs;
+  prefs.setMetadataDelimiter("_");
+  QString currentData = "key - data";
+  QString newData = "key";
+  metadata_write_t write = METADATA_WRITE_PREPEND;
+  QString expectedOutput= "";
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+}
+
+TEST (PreferencesTest, NewStringDeterminesAppendCorrectly) {
+  Preferences prefs;
+  prefs.setMetadataDelimiter("_");
+  QString currentData = "data";
+  QString newData = "key";
+  metadata_write_t write = METADATA_WRITE_APPEND;
+  QString expectedOutput= "data_key";
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+}
+
+TEST (PreferencesTest, NewStringDeterminesAppendToSameCorrectly) {
+  Preferences prefs;
+  QString currentData = "key";
+  QString newData = "key";
+  metadata_write_t write = METADATA_WRITE_APPEND;
+  QString expectedOutput= "";
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+}
+
+TEST (PreferencesTest, NewStringDeterminesAppendToEmptyCorrectly) {
+  Preferences prefs;
+  prefs.setMetadataDelimiter("_");
+  QString currentData = "";
+  QString newData = "key";
+  metadata_write_t write = METADATA_WRITE_APPEND;
+  QString expectedOutput= "key";
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+}
+
+TEST (PreferencesTest, NewStringDeterminesAppendToDifferentDelimiterCorrectly) {
+  Preferences prefs;
+  prefs.setMetadataDelimiter("_");
+  QString currentData = "data - key";
+  QString newData = "key";
+  metadata_write_t write = METADATA_WRITE_APPEND;
+  QString expectedOutput= "";
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+}
+
+TEST (PreferencesTest, NewStringDeterminesOverwriteCorrectlyForAllOptions) {
+  Preferences prefs;
+  QString currentData = "Bbm";
+  QString newData = "";
+  metadata_write_t write = METADATA_WRITE_OVERWRITE;
+  QString expectedOutput= "";
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+}
+
+TEST (PreferencesTest, NewStringDeterminesPrependCorrectlyForAllOptions) {
+  Preferences prefs;
+  QString currentData = "Em - data";
+  QString newData = "";
+  metadata_write_t write = METADATA_WRITE_PREPEND;
+  QString expectedOutput= "";
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+}
+
+TEST (PreferencesTest, NewStringDeterminesAppendCorrectlyForAllOptions) {
+  Preferences prefs;
+  QString currentData = "data - D";
+  QString newData = "";
+  metadata_write_t write = METADATA_WRITE_APPEND;
+  QString expectedOutput= "";
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+}

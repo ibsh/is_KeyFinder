@@ -29,13 +29,8 @@ QStringList writeKeyToFilename(const QString& filename, KeyFinder::key_t key, co
   QString name = file.fileName().mid(file.fileName().lastIndexOf("/") + 1);
   name = name.left(name.length() - extn.length());
   QStringList written;
-  if (prefs.getMetadataWriteFilename() == METADATA_WRITE_PREPEND) {
-    if (name.left(dataToWrite.length()) == dataToWrite) return written;
-    name = dataToWrite + prefs.getMetadataDelimiter() + name;
-  } else if (prefs.getMetadataWriteFilename() == METADATA_WRITE_APPEND) {
-    if (name.right(dataToWrite.length()) == dataToWrite) return written;
-    name = name + prefs.getMetadataDelimiter() + dataToWrite;
-  }
+  QString newName = prefs.newString(dataToWrite, name, prefs.getMetadataWriteFilename());
+  if (newName != "") name = newName;
   if (file.rename(path + name + extn)) {
     written << path << name << extn;
   }

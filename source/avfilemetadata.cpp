@@ -111,21 +111,11 @@ void AVFileMetadata::writeKeyByTagEnum(
   MetadataWriteResult& result,
   const Preferences& prefs
 ) {
-  QString delim = prefs.getMetadataDelimiter();
-  metadata_write_t write = prefs.getMetadataWriteByTagEnum(tag);
-  if (write == METADATA_WRITE_OVERWRITE) {
-    if (getByTagEnum(tag) != data && setByTagEnum(data, tag))
-      result.newTags[tag] = data;
-  } else if (write == METADATA_WRITE_PREPEND) {
-    QString current = getByTagEnum(tag);
-    QString newData = (current.isEmpty() ? data : data + delim + current);
-    if (current.left(data.length()) != data && setByTagEnum(newData, tag))
-      result.newTags[tag] = newData ;
-  } else if (write == METADATA_WRITE_APPEND) {
-    QString current = getByTagEnum(tag);
-    QString newData = (current.isEmpty() ? data : current + delim + data);
-    if (current.right(data.length()) != data && setByTagEnum(newData, tag))
-      result.newTags[tag] = newData;
+  QString newString = prefs.newString(
+    data, getByTagEnum(tag), prefs.getMetadataWriteByTagEnum(tag)
+  );
+  if (newString != "" && setByTagEnum(newString, tag)) {
+    result.newTags[tag] = newString;
   }
 }
 

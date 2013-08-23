@@ -529,20 +529,13 @@ void BatchWindow::checkRowsForSkipping() {
   }
 }
 
-bool BatchWindow::fieldAlreadyHasKeyData(int row, int col, metadata_write_t t) {
+bool BatchWindow::fieldAlreadyHasKeyData(int row, int col, metadata_write_t write) {
   if (ui->tableWidget->item(row, col) == 0)
     return false;
   QString str = ui->tableWidget->item(row, col)->text();
   if (col == COL_FILENAME)
     str = str.mid(0,str.lastIndexOf("."));
-  QStringList keyCodes = prefs.getKeyCodeList();
-  for (int i = 0; i < keyCodes.size(); i++) {
-    QString chk = keyCodes[i];
-    if (col == COL_TAG_KEY) chk = chk.left(3);
-    if (t == METADATA_WRITE_OVERWRITE && str                     == chk) return true;
-    if (t == METADATA_WRITE_PREPEND   && str.left(chk.length())  == chk) return true;
-    if (t == METADATA_WRITE_APPEND    && str.right(chk.length()) == chk) return true;
-  }
+  if (prefs.newString("", str, write).isEmpty()) return true;
   return false;
 }
 

@@ -253,7 +253,7 @@ TEST (AVFileMetadataTest, WriteMissing) {
       result.newTags.push_back("");
     fileMetadata->writeKeyByTagEnum("ABC", (metadata_tag_t)i, result, prefs);
     for (unsigned int j = 0; j < METADATA_TAG_T_COUNT; j++)
-      ASSERT_TRUE(result.newTags[i] == "");
+      ASSERT_EQ(result.newTags[i], "");
   }
 }
 
@@ -268,7 +268,7 @@ TEST (AVFileMetadataTest, WriteNull) {
       result.newTags.push_back("");
     fileMetadata->writeKeyByTagEnum("ABC", (metadata_tag_t)i, result, prefs);
     for (unsigned int j = 0; j < METADATA_TAG_T_COUNT; j++)
-      ASSERT_TRUE(result.newTags[i] == "");
+      ASSERT_EQ(result.newTags[i], "");
   }
 }
 
