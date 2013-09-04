@@ -53,7 +53,7 @@ TEST (PreferencesTest, ConstantsMetadataTag) {
   ASSERT_EQ(3, (int) METADATA_TAG_COMMENT);
   ASSERT_EQ(4, (int) METADATA_TAG_GROUPING);
   ASSERT_EQ(5, (int) METADATA_TAG_KEY);
-  ASSERT_EQ(6, METADATA_TAG_T_COUNT);
+  ASSERT_EQ(6, (int) METADATA_TAG_T_COUNT);
 }
 
 TEST (PreferencesTest, ConstructorDefaultsCore) {
@@ -88,9 +88,9 @@ TEST (PreferencesTest, ConstructorDefaultsGui) {
   SettingsWrapper* fakeSettings = new SettingsWrapperFake();
   Preferences p(fakeSettings);
 
-  ASSERT_EQ(false, p.getWriteToFilesAutomatically());
-  ASSERT_EQ(true, p.getParallelBatchJobs());
-  ASSERT_EQ(false, p.getApplyFileExtensionFilter());
+  ASSERT_FALSE(p.getWriteToFilesAutomatically());
+  ASSERT_TRUE(p.getParallelBatchJobs());
+  ASSERT_FALSE(p.getApplyFileExtensionFilter());
   ASSERT_EQ(METADATA_WRITE_NONE, p.getMetadataWriteTitle());
   ASSERT_EQ(METADATA_WRITE_NONE, p.getMetadataWriteArtist());
   ASSERT_EQ(METADATA_WRITE_NONE, p.getMetadataWriteAlbum());
@@ -99,7 +99,7 @@ TEST (PreferencesTest, ConstructorDefaultsGui) {
   ASSERT_EQ(METADATA_WRITE_NONE, p.getMetadataWriteKey());
   ASSERT_EQ(METADATA_WRITE_NONE, p.getMetadataWriteFilename());
   ASSERT_EQ(METADATA_FORMAT_KEYS, p.getMetadataFormat());
-  ASSERT_EQ(false, p.getSkipFilesWithExistingTags());
+  ASSERT_FALSE(p.getSkipFilesWithExistingTags());
   ASSERT_EQ(60, p.getMaxDuration());
 #ifdef Q_OS_WIN
   QString iTunesLibraryPathDefault = QDir::homePath() + "/My Music/iTunes/iTunes Music Library.xml";
