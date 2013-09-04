@@ -188,7 +188,7 @@
     </message>
     <message>
         <location filename="../source/guibatch.cpp" line="300"/>
-        <location filename="../source/guibatch.cpp" line="722"/>
+        <location filename="../source/guibatch.cpp" line="715"/>
         <source>Cannot change an external playlist from %1</source>
         <extracomment>An alert message in the Batch window</extracomment>
         <translation>Cannot change an external playlist from %1</translation>
@@ -224,37 +224,37 @@
         </translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="553"/>
+        <location filename="../source/guibatch.cpp" line="546"/>
         <source>Skipped</source>
         <extracomment>Status of an individual file in the Batch window</extracomment>
         <translation>Skipped</translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="583"/>
+        <location filename="../source/guibatch.cpp" line="576"/>
         <source>Cancelling...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation>Cancelling...</translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="602"/>
+        <location filename="../source/guibatch.cpp" line="595"/>
         <source>Exception: %1</source>
         <extracomment>Status of an individual file in the Batch window; includes an exception message at %1</extracomment>
         <translation>Exception: %1</translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="625"/>
+        <location filename="../source/guibatch.cpp" line="618"/>
         <source>Writing to files...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation>Writing to files...</translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="648"/>
+        <location filename="../source/guibatch.cpp" line="641"/>
         <source>Data written to %1 and %2</source>
         <extracomment>An alert message in the Batch window; contains &quot;N tags&quot; at %1 and &quot;N filenames&quot; at %2</extracomment>
         <translation>Data written to %1 and %2</translation>
     </message>
     <message numerus="yes">
-        <location filename="../source/guibatch.cpp" line="650"/>
+        <location filename="../source/guibatch.cpp" line="643"/>
         <source>%n tag(s)</source>
         <extracomment>Part of an alert message in the Batch window</extracomment>
         <translation>
@@ -263,7 +263,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../source/guibatch.cpp" line="652"/>
+        <location filename="../source/guibatch.cpp" line="645"/>
         <source>%n filename(s)</source>
         <extracomment>Part of an alert message in the Batch window</extracomment>
         <translation>
@@ -272,25 +272,25 @@
         </translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="699"/>
+        <location filename="../source/guibatch.cpp" line="692"/>
         <source>Clearing data...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation>Clearing data...</translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="727"/>
+        <location filename="../source/guibatch.cpp" line="720"/>
         <source>Deleting rows...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation>Deleting rows...</translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="783"/>
+        <location filename="../source/guibatch.cpp" line="776"/>
         <source>Please select a single row for detailed analysis</source>
         <extracomment>An alert message in the Batch window</extracomment>
         <translation>Please select a single row for detailed analysis</translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="839"/>
+        <location filename="../source/guibatch.cpp" line="832"/>
         <source>A new version, %1, is available on &lt;a href=&apos;%2&apos;&gt;the %3 website&lt;/a&gt;!</source>
         <extracomment>An alert message in the Batch window; includes a version number at %1, a URL at %2, and the app name at %3</extracomment>
         <translation>A new version, %1, is available on &lt;a href=&apos;%2&apos;&gt;the %3 website&lt;/a&gt;!</translation>
