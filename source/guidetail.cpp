@@ -132,14 +132,16 @@ void DetailWindow::analysisFinished() {
   int lastChange = -1; // enable correct stretch policy for first segment
   for (int h = 0; h < (signed)analysisWatcher.result().core.segments.size(); h++) {
     QLabel* newLabel = new QLabel(prefs.getKeyCode(analysisWatcher.result().core.segments[h].key));
+    QString styleSheet = "border-width:1px; border-style:solid %1 solid solid; background-color:rgb(%2,%3,%4);";
     newLabel->setAlignment(Qt::AlignCenter);
-    QPalette pal = newLabel->palette();
-    pal.setColor(backgroundRole(), prefs.getKeyColour(analysisWatcher.result().core.segments[h].key));
-    newLabel->setPalette(pal);
-    newLabel->setFrameStyle(1);
-    newLabel->setAutoFillBackground(true);
     newLabel->setMinimumHeight(20);
     newLabel->setMaximumHeight(30);
+    QColor bg = prefs.getKeyColour(analysisWatcher.result().core.segments[h].key);
+    if (h == (signed) analysisWatcher.result().core.segments.size() - 1) {
+      newLabel->setStyleSheet(styleSheet.arg("solid").arg(bg.red()).arg(bg.green()).arg(bg.blue()));
+    } else {
+      newLabel->setStyleSheet(styleSheet.arg("none").arg(bg.red()).arg(bg.green()).arg(bg.blue()));
+    }
     if (prefs.core.getSegmentation() == KeyFinder::SEGMENTATION_NONE) {
       //: A tooltip on the Detail window
       newLabel->setToolTip(wrapToolTip(tr("This row shows the key estimate for the unsegmented chromagram.")));
@@ -150,9 +152,10 @@ void DetailWindow::analysisFinished() {
       //: A tooltip on the Detail window
       newLabel->setToolTip(wrapToolTip(tr("This row shows the key estimates for the segments between peak harmonic changes.")));
     }
-    ui->horizontalLayout_keyLabels->addWidget(newLabel, h - lastChange);
+    int lastHop = analysisWatcher.result().core.segments[h].lastHop;
+    ui->horizontalLayout_keyLabels->addWidget(newLabel, lastHop - lastChange);
     keyLabels.push_back(newLabel);
-    lastChange = h;
+    lastChange = lastHop;
   }
   //: Text in the Batch window status bar; includes a key code at %1
   say(tr("Key estimate: %1").arg(prefs.getKeyCode(analysisWatcher.result().core.globalKeyEstimate)));
