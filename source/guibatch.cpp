@@ -535,7 +535,8 @@ bool BatchWindow::fieldAlreadyHasKeyData(int row, int col, metadata_write_t writ
   QString str = ui->tableWidget->item(row, col)->text();
   if (col == COL_FILENAME)
     str = str.mid(0,str.lastIndexOf("."));
-  if (prefs.newString("", str, write).isEmpty()) return true;
+  unsigned int charLimit = (col == COL_TAG_KEY ? METADATA_CHARLIMIT_KEY : METADATA_CHARLIMIT_OTHERS);
+  if (prefs.newString("", str, charLimit, write).isEmpty()) return true;
   return false;
 }
 

@@ -170,7 +170,7 @@ TEST (PreferencesTest, NewStringDeterminesNoWriteCorrectly) {
   QString newData = "key";
   metadata_write_t write = METADATA_WRITE_NONE;
   QString expectedOutput= "";
-  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, METADATA_CHARLIMIT_OTHERS, write));
 }
 
 TEST (PreferencesTest, NewStringDeterminesOverwriteCorrectly) {
@@ -179,7 +179,7 @@ TEST (PreferencesTest, NewStringDeterminesOverwriteCorrectly) {
   QString newData = "key";
   metadata_write_t write = METADATA_WRITE_OVERWRITE;
   QString expectedOutput= "key";
-  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, METADATA_CHARLIMIT_OTHERS, write));
 }
 
 TEST (PreferencesTest, NewStringDeterminesOverwriteToSameCorrectly) {
@@ -188,7 +188,7 @@ TEST (PreferencesTest, NewStringDeterminesOverwriteToSameCorrectly) {
   QString newData = "key";
   metadata_write_t write = METADATA_WRITE_OVERWRITE;
   QString expectedOutput= "";
-  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, METADATA_CHARLIMIT_OTHERS, write));
 }
 
 TEST (PreferencesTest, NewStringDeterminesPrependCorrectly) {
@@ -198,7 +198,7 @@ TEST (PreferencesTest, NewStringDeterminesPrependCorrectly) {
   QString newData = "key";
   metadata_write_t write = METADATA_WRITE_PREPEND;
   QString expectedOutput= "key_data";
-  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, METADATA_CHARLIMIT_OTHERS, write));
 }
 
 TEST (PreferencesTest, NewStringDeterminesPrependToSameCorrectly) {
@@ -207,7 +207,7 @@ TEST (PreferencesTest, NewStringDeterminesPrependToSameCorrectly) {
   QString newData = "key";
   metadata_write_t write = METADATA_WRITE_PREPEND;
   QString expectedOutput= "";
-  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, METADATA_CHARLIMIT_OTHERS, write));
 }
 
 TEST (PreferencesTest, NewStringDeterminesPrependToEmptyCorrectly) {
@@ -217,7 +217,7 @@ TEST (PreferencesTest, NewStringDeterminesPrependToEmptyCorrectly) {
   QString newData = "key";
   metadata_write_t write = METADATA_WRITE_PREPEND;
   QString expectedOutput= "key";
-  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, METADATA_CHARLIMIT_OTHERS, write));
 }
 
 TEST (PreferencesTest, NewStringDeterminesPrependToDifferentDelimiterCorrectly) {
@@ -227,7 +227,7 @@ TEST (PreferencesTest, NewStringDeterminesPrependToDifferentDelimiterCorrectly) 
   QString newData = "key";
   metadata_write_t write = METADATA_WRITE_PREPEND;
   QString expectedOutput= "";
-  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, METADATA_CHARLIMIT_OTHERS, write));
 }
 
 TEST (PreferencesTest, NewStringDeterminesPrependToNoDelimiterCorrectly) {
@@ -236,7 +236,7 @@ TEST (PreferencesTest, NewStringDeterminesPrependToNoDelimiterCorrectly) {
   QString newData = "key";
   metadata_write_t write = METADATA_WRITE_PREPEND;
   QString expectedOutput= "";
-  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, METADATA_CHARLIMIT_OTHERS, write));
 }
 
 TEST (PreferencesTest, NewStringDeterminesAppendCorrectly) {
@@ -246,7 +246,7 @@ TEST (PreferencesTest, NewStringDeterminesAppendCorrectly) {
   QString newData = "key";
   metadata_write_t write = METADATA_WRITE_APPEND;
   QString expectedOutput= "data_key";
-  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, METADATA_CHARLIMIT_OTHERS, write));
 }
 
 TEST (PreferencesTest, NewStringDeterminesAppendToSameCorrectly) {
@@ -255,7 +255,7 @@ TEST (PreferencesTest, NewStringDeterminesAppendToSameCorrectly) {
   QString newData = "key";
   metadata_write_t write = METADATA_WRITE_APPEND;
   QString expectedOutput= "";
-  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, METADATA_CHARLIMIT_OTHERS, write));
 }
 
 TEST (PreferencesTest, NewStringDeterminesAppendToEmptyCorrectly) {
@@ -265,7 +265,7 @@ TEST (PreferencesTest, NewStringDeterminesAppendToEmptyCorrectly) {
   QString newData = "key";
   metadata_write_t write = METADATA_WRITE_APPEND;
   QString expectedOutput= "key";
-  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, METADATA_CHARLIMIT_OTHERS, write));
 }
 
 TEST (PreferencesTest, NewStringDeterminesAppendToDifferentDelimiterCorrectly) {
@@ -275,7 +275,7 @@ TEST (PreferencesTest, NewStringDeterminesAppendToDifferentDelimiterCorrectly) {
   QString newData = "key";
   metadata_write_t write = METADATA_WRITE_APPEND;
   QString expectedOutput= "";
-  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, METADATA_CHARLIMIT_OTHERS, write));
 }
 
 TEST (PreferencesTest, NewStringDeterminesAppendToNoDelimiterCorrectly) {
@@ -285,7 +285,7 @@ TEST (PreferencesTest, NewStringDeterminesAppendToNoDelimiterCorrectly) {
   QString newData = "key";
   metadata_write_t write = METADATA_WRITE_APPEND;
   QString expectedOutput= "";
-  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, METADATA_CHARLIMIT_OTHERS, write));
 }
 
 TEST (PreferencesTest, NewStringDeterminesOverwriteCorrectlyForAllOptions) {
@@ -294,7 +294,7 @@ TEST (PreferencesTest, NewStringDeterminesOverwriteCorrectlyForAllOptions) {
   QString newData = "";
   metadata_write_t write = METADATA_WRITE_OVERWRITE;
   QString expectedOutput= "";
-  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, METADATA_CHARLIMIT_OTHERS, write));
 }
 
 TEST (PreferencesTest, NewStringDeterminesPrependCorrectlyForAllOptions) {
@@ -303,7 +303,7 @@ TEST (PreferencesTest, NewStringDeterminesPrependCorrectlyForAllOptions) {
   QString newData = "";
   metadata_write_t write = METADATA_WRITE_PREPEND;
   QString expectedOutput= "";
-  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, METADATA_CHARLIMIT_OTHERS, write));
 }
 
 TEST (PreferencesTest, NewStringDeterminesAppendCorrectlyForAllOptions) {
@@ -312,5 +312,20 @@ TEST (PreferencesTest, NewStringDeterminesAppendCorrectlyForAllOptions) {
   QString newData = "";
   metadata_write_t write = METADATA_WRITE_APPEND;
   QString expectedOutput= "";
-  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, METADATA_CHARLIMIT_OTHERS, write));
+}
+
+TEST (PreferencesTest, NewStringDealsWithCharLimitsCorrectly) {
+  Preferences prefs;
+  QStringList camelot;
+  camelot << "XXX and a bunch of other data";
+  for (unsigned int i = 1; i <26; i++)
+    camelot << "";
+  prefs.setCustomKeyCodes(camelot);
+  prefs.setMetadataFormat(METADATA_FORMAT_CUSTOM);
+  QString currentData = "XXX";
+  QString newData = "";
+  metadata_write_t write = METADATA_WRITE_OVERWRITE;
+  QString expectedOutput= "";
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, 3, write));
 }

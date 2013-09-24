@@ -72,6 +72,10 @@ enum chromagram_colour_t{
   CHROMA_COLOUR_HACK
 };
 
+const unsigned int METADATA_CHARLIMIT_KEY = 3;
+const unsigned int METADATA_CHARLIMIT_FILENAME = 256;
+const unsigned int METADATA_CHARLIMIT_OTHERS = 50;
+
 class Preferences{
 public:
   Preferences(SettingsWrapper* = NULL);
@@ -142,6 +146,7 @@ public:
   QString newString(
     const QString& newData,
     const QString& currentData,
+    unsigned int charLimit,
     metadata_write_t write
   ) const;
 

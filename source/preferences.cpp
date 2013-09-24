@@ -484,6 +484,7 @@ int Preferences::scaledSine(int index, float xScale, float xOffset, int yScale, 
 QString Preferences::newString(
   const QString &newData,
   const QString &currentData,
+  unsigned int charLimit,
   metadata_write_t write
 ) const {
   QString empty;
@@ -496,6 +497,7 @@ QString Preferences::newString(
   // check
   QStringList::iterator iter;
   for (iter = dataToCheck.begin(); iter != dataToCheck.end(); iter++) {
+    if (charLimit) *iter = (*iter).left(charLimit);
     if (write == METADATA_WRITE_OVERWRITE && currentData == *iter) {
       return empty;
     } else if (write == METADATA_WRITE_PREPEND && currentData.left((*iter).length()) == *iter) {

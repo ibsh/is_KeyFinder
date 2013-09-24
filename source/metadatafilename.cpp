@@ -29,7 +29,7 @@ QStringList writeKeyToFilename(const QString& filename, KeyFinder::key_t key, co
   QString name = file.fileName().mid(file.fileName().lastIndexOf("/") + 1);
   name = name.left(name.length() - extn.length());
   QStringList written;
-  QString newName = prefs.newString(dataToWrite, name, prefs.getMetadataWriteFilename());
+  QString newName = prefs.newString(dataToWrite, name, METADATA_CHARLIMIT_FILENAME, prefs.getMetadataWriteFilename());
   if (newName != "") name = newName;
   if (file.rename(path + name + extn)) {
     written << path << name << extn;

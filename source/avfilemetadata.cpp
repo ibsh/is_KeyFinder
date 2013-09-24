@@ -97,7 +97,7 @@ MetadataWriteResult AVFileMetadata::writeKeyToMetadata(
     result.newTags.push_back(empty);
     if ((metadata_tag_t)i == METADATA_TAG_KEY) {
       // Key field in ID3 holds only 3 chars; treat all Key fields as the same
-      writeKeyByTagEnum(data.left(3), (metadata_tag_t)i, result, prefs);
+      writeKeyByTagEnum(data.left(METADATA_CHARLIMIT_KEY), (metadata_tag_t)i, result, prefs);
     } else {
       writeKeyByTagEnum(data, (metadata_tag_t)i, result, prefs);
     }
@@ -111,8 +111,10 @@ void AVFileMetadata::writeKeyByTagEnum(
   MetadataWriteResult& result,
   const Preferences& prefs
 ) {
+  // Key field in ID3 holds only 3 chars; treat all Key fields as the same
+  unsigned int charLimit = (tag == METADATA_TAG_KEY ? METADATA_CHARLIMIT_KEY : METADATA_CHARLIMIT_OTHERS);
   QString newString = prefs.newString(
-    data, getByTagEnum(tag), prefs.getMetadataWriteByTagEnum(tag)
+    data, getByTagEnum(tag), charLimit, prefs.getMetadataWriteByTagEnum(tag)
   );
   if (newString != "" && setByTagEnum(newString, tag)) {
     result.newTags[tag] = newString;
