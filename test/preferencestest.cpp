@@ -230,6 +230,15 @@ TEST (PreferencesTest, NewStringDeterminesPrependToDifferentDelimiterCorrectly) 
   ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
 }
 
+TEST (PreferencesTest, NewStringDeterminesPrependToNoDelimiterCorrectly) {
+  Preferences prefs;
+  QString currentData = "keydata";
+  QString newData = "key";
+  metadata_write_t write = METADATA_WRITE_PREPEND;
+  QString expectedOutput= "";
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+}
+
 TEST (PreferencesTest, NewStringDeterminesAppendCorrectly) {
   Preferences prefs;
   prefs.setMetadataDelimiter("_");
@@ -263,6 +272,16 @@ TEST (PreferencesTest, NewStringDeterminesAppendToDifferentDelimiterCorrectly) {
   Preferences prefs;
   prefs.setMetadataDelimiter("_");
   QString currentData = "data - key";
+  QString newData = "key";
+  metadata_write_t write = METADATA_WRITE_APPEND;
+  QString expectedOutput= "";
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, write));
+}
+
+TEST (PreferencesTest, NewStringDeterminesAppendToNoDelimiterCorrectly) {
+  Preferences prefs;
+  prefs.setMetadataDelimiter("_");
+  QString currentData = "datakey";
   QString newData = "key";
   metadata_write_t write = METADATA_WRITE_APPEND;
   QString expectedOutput= "";
