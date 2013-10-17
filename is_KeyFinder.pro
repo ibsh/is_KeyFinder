@@ -85,17 +85,17 @@ macx{
 
 win32{
   QT += xml xmlpatterns
-  INCLUDEPATH += C:/mingw/local/include
-  DEPENDPATH += C:/mingw/local/bin
-  LIBS += -LC:/mingw/local/bin
+  INCLUDEPATH += C:/mingw32/local/include
+  DEPENDPATH += C:/mingw32/local/bin
+  LIBS += -LC:/mingw32/local/bin
   LIBS += -lkeyfinder0
   LIBS += -lavcodec
   LIBS += -lavformat
   LIBS += -lavutil
   LIBS += -llibtag
-  LIBS += -LC:/mingw/local/lib
-  LIBS += -lboost_system-47-mt-1_52
-  LIBS += -lboost_thread-47-mt-1_52
+  LIBS += -LC:/mingw32/local/lib
+  LIBS += -lboost_system-48-mt-1_52
+  LIBS += -lboost_thread-48-mt-1_52
 }
 
 unix {
