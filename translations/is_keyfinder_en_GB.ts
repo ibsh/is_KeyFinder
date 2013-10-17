@@ -188,7 +188,7 @@
     </message>
     <message>
         <location filename="../source/guibatch.cpp" line="300"/>
-        <location filename="../source/guibatch.cpp" line="715"/>
+        <location filename="../source/guibatch.cpp" line="716"/>
         <source>Cannot change an external playlist from %1</source>
         <extracomment>An alert message in the Batch window</extracomment>
         <translation>Cannot change an external playlist from %1</translation>
@@ -224,37 +224,37 @@
         </translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="546"/>
+        <location filename="../source/guibatch.cpp" line="547"/>
         <source>Skipped</source>
         <extracomment>Status of an individual file in the Batch window</extracomment>
         <translation>Skipped</translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="576"/>
+        <location filename="../source/guibatch.cpp" line="577"/>
         <source>Cancelling...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation>Cancelling...</translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="595"/>
+        <location filename="../source/guibatch.cpp" line="596"/>
         <source>Exception: %1</source>
         <extracomment>Status of an individual file in the Batch window; includes an exception message at %1</extracomment>
         <translation>Exception: %1</translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="618"/>
+        <location filename="../source/guibatch.cpp" line="619"/>
         <source>Writing to files...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation>Writing to files...</translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="641"/>
+        <location filename="../source/guibatch.cpp" line="642"/>
         <source>Data written to %1 and %2</source>
         <extracomment>An alert message in the Batch window; contains &quot;N tags&quot; at %1 and &quot;N filenames&quot; at %2</extracomment>
         <translation>Data written to %1 and %2</translation>
     </message>
     <message numerus="yes">
-        <location filename="../source/guibatch.cpp" line="643"/>
+        <location filename="../source/guibatch.cpp" line="644"/>
         <source>%n tag(s)</source>
         <extracomment>Part of an alert message in the Batch window</extracomment>
         <translation>
@@ -263,7 +263,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../source/guibatch.cpp" line="645"/>
+        <location filename="../source/guibatch.cpp" line="646"/>
         <source>%n filename(s)</source>
         <extracomment>Part of an alert message in the Batch window</extracomment>
         <translation>
@@ -272,25 +272,25 @@
         </translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="692"/>
+        <location filename="../source/guibatch.cpp" line="693"/>
         <source>Clearing data...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation>Clearing data...</translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="720"/>
+        <location filename="../source/guibatch.cpp" line="721"/>
         <source>Deleting rows...</source>
         <extracomment>Text in the Batch window status bar</extracomment>
         <translation>Deleting rows...</translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="776"/>
+        <location filename="../source/guibatch.cpp" line="777"/>
         <source>Please select a single row for detailed analysis</source>
         <extracomment>An alert message in the Batch window</extracomment>
         <translation>Please select a single row for detailed analysis</translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="832"/>
+        <location filename="../source/guibatch.cpp" line="833"/>
         <source>A new version, %1, is available on &lt;a href=&apos;%2&apos;&gt;the %3 website&lt;/a&gt;!</source>
         <extracomment>An alert message in the Batch window; includes a version number at %1, a URL at %2, and the app name at %3</extracomment>
         <translation>A new version, %1, is available on &lt;a href=&apos;%2&apos;&gt;the %3 website&lt;/a&gt;!</translation>
@@ -362,32 +362,32 @@
         <translation>This is the same chromagram data, reduced to a single octave.</translation>
     </message>
     <message>
-        <location filename="../source/guidetail.cpp" line="145"/>
+        <location filename="../source/guidetail.cpp" line="147"/>
         <source>This row shows the key estimate for the unsegmented chromagram.</source>
         <extracomment>A tooltip on the Detail window</extracomment>
         <translation>This row shows the key estimate for the unsegmented chromagram.</translation>
     </message>
     <message>
-        <location filename="../source/guidetail.cpp" line="148"/>
+        <location filename="../source/guidetail.cpp" line="150"/>
         <source>This row shows the key estimates for the arbitrary segments.</source>
         <extracomment>A tooltip on the Detail window</extracomment>
         <translation>This row shows the key estimates for the arbitrary segments.</translation>
     </message>
     <message>
-        <location filename="../source/guidetail.cpp" line="151"/>
+        <location filename="../source/guidetail.cpp" line="153"/>
         <source>This row shows the key estimates for the segments between peak harmonic changes.</source>
         <extracomment>A tooltip on the Detail window</extracomment>
         <translation>This row shows the key estimates for the segments between peak harmonic changes.</translation>
     </message>
     <message>
-        <location filename="../source/guidetail.cpp" line="158"/>
+        <location filename="../source/guidetail.cpp" line="161"/>
         <source>Key estimate: %1</source>
         <extracomment>Text in the Batch window status bar; includes a key code at %1</extracomment>
         <translation>Key estimate: %1</translation>
     </message>
     <message>
-        <location filename="../source/guidetail.cpp" line="243"/>
-        <location filename="../source/guidetail.cpp" line="264"/>
+        <location filename="../source/guidetail.cpp" line="246"/>
+        <location filename="../source/guidetail.cpp" line="267"/>
         <source>Drag an audio file onto the window.</source>
         <extracomment>The initial help tooltip on the Detail window</extracomment>
         <translation>Drag an audio file onto the window.</translation>

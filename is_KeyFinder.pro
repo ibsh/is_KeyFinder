@@ -20,7 +20,7 @@
 #*************************************************************************
 
 # CURRENT DEPENDENCIES:
-# qt               5.0.0
+# qt               5.1.1
 # libkeyfinder    0.11.0
 #  |-> boost      1.52.0
 #  \-> fftw        3.3.2
@@ -120,4 +120,5 @@ TRANSLATIONS = \
   $$PWD/translations/is_keyfinder_pt_BR.ts \
   $$PWD/translations/is_keyfinder_ru.ts \
   $$PWD/translations/is_keyfinder_sv.ts \
-  $$PWD/translations/is_keyfinder_vi.ts
+  $$PWD/translations/is_keyfinder_vi.ts \
+  $$PWD/translations/is_keyfinder_zh_CN.ts
