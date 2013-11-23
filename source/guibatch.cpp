@@ -810,12 +810,14 @@ void BatchWindow::sortTableWidget() {
 }
 
 void BatchWindow::checkForNewVersion() {
+  qDebug("Version check: request");
   QNetworkAccessManager *manager = new QNetworkAccessManager(this);
   connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(receiveNetworkReply(QNetworkReply*)));
   manager->get(QNetworkRequest(QUrl("http://www.ibrahimshaath.co.uk/keyfinder/kf.txt")));
 }
 
 void BatchWindow::receiveNetworkReply(QNetworkReply* reply) {
+  qDebug("Version check: response");
   QString newVersion = "";
   if (reply->error() == QNetworkReply::NoError) {
     QString released(reply->readAll());
@@ -829,6 +831,7 @@ void BatchWindow::receiveNetworkReply(QNetworkReply* reply) {
   }
   reply->deleteLater();
   if (!newVersion.isEmpty()) {
+    qDebug("Version check: new version available");
     //: An alert message in the Batch window; includes a version number at %1, a URL at %2, and the app name at %3
     newVersion = tr("A new version, %1, is available on <a href='%2'>the %3 website</a>!")
       .arg(newVersion)
@@ -837,5 +840,7 @@ void BatchWindow::receiveNetworkReply(QNetworkReply* reply) {
     QMessageBox msg;
     msg.setText(newVersion);
     msg.exec();
+  } else {
+    qDebug("Version check: no new version available");
   }
 }
