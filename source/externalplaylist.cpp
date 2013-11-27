@@ -21,6 +21,20 @@
 
 #include "externalplaylist.h"
 
+#define ITUNES "iTunes"
+#define TRAKTOR "iTunes"
+#define SERATO "Serato"
+#define M3U "M3U"
+
+#define READ_LIBRARY_BEGIN "%s library: reading playlists from %s"
+#define READ_LIBRARY_END "%s library: successfully read %d playlists"
+
+#define READ_PLAYLIST_BEGIN "%s playlist: reading contents of '%s'"
+#define READ_PLAYLIST_END "%s playlist: successfully read %d entries"
+
+#define READ_STANDALONE_BEGIN "Standalone %s playlist: reading contents of '%s'"
+#define READ_STANDALONE_END "Standalone %s playlist: successfully read %d entries"
+
 QMutex externalPlaylistMutex;
 
 ExternalPlaylistObject::ExternalPlaylistObject(const QString& n, const QString& s) {
@@ -54,7 +68,7 @@ QList<ExternalPlaylistObject> ExternalPlaylist::readPlaylistsFromITunesLibrary(c
   xPath += "/dict/string[preceding-sibling::key[1]='Name']/text()"; // likewise in Windows?
 #endif
 
-  qDebug("Reading playlists from iTunes library at %s", prefs.getITunesLibraryPath().toUtf8().constData());
+  qDebug(READ_LIBRARY_BEGIN, ITUNES, prefs.getITunesLibraryPath().toUtf8().constData());
   resultStrings = executeXmlQuery(prefs.getITunesLibraryPath(), xPath);
 
   for (int i=0; i<(signed)resultStrings.size(); i++) {
@@ -64,7 +78,7 @@ QList<ExternalPlaylistObject> ExternalPlaylist::readPlaylistsFromITunesLibrary(c
     results.push_back(o);
   }
 
-  qDebug("iTunes library: successfully read %d playlists", results.size());
+  qDebug(READ_LIBRARY_END, ITUNES, results.size());
   return results;
 }
 
@@ -83,7 +97,7 @@ QList<ExternalPlaylistObject> ExternalPlaylist::readPlaylistsFromTraktorLibrary(
   xPath = "//NODE[@TYPE='PLAYLIST']/@NAME";
 #endif
 
-  qDebug("Reading playlists from Traktor library at %s", prefs.getTraktorLibraryPath().toUtf8().constData());
+  qDebug(READ_LIBRARY_BEGIN, TRAKTOR, prefs.getTraktorLibraryPath().toUtf8().constData());
   resultStrings = executeXmlQuery(prefs.getTraktorLibraryPath(), xPath);
 
   for (int i=0; i<(signed)resultStrings.size(); i++) {
@@ -93,7 +107,7 @@ QList<ExternalPlaylistObject> ExternalPlaylist::readPlaylistsFromTraktorLibrary(
     results.push_back(o);
   }
 
-  qDebug("Traktor library: successfully read %d playlists", results.size());
+  qDebug(READ_LIBRARY_END, TRAKTOR, results.size());
   return results;
 }
 
@@ -101,7 +115,7 @@ QList<ExternalPlaylistObject> ExternalPlaylist::readPlaylistsFromSeratoLibrary(c
   QMutexLocker locker(&externalPlaylistMutex);
   QList<ExternalPlaylistObject> results;
 
-  qDebug("Reading playlists from Serato library at %s", prefs.getSeratoLibraryPath().toUtf8().constData());
+  qDebug(READ_LIBRARY_BEGIN, SERATO, prefs.getSeratoLibraryPath().toUtf8().constData());
   QString path = prefs.getSeratoLibraryPath();
   path = path.left(path.lastIndexOf("/")+1);
 
@@ -125,7 +139,7 @@ QList<ExternalPlaylistObject> ExternalPlaylist::readPlaylistsFromSeratoLibrary(c
     results.push_back(o);
   }
 
-  qDebug("Serato library: successfully read %d playlists", results.size());
+  qDebug(READ_LIBRARY_END, SERATO, results.size());
   return results;
 }
 
@@ -168,13 +182,13 @@ QList<QUrl> ExternalPlaylist::readITunesLibraryPlaylist(const QString& playlistN
   xPath += "/string[preceding-sibling::key[1]='Location']/string(text())";
 #endif
 
-  qDebug("Reading contents of iTunes playlist '%s'", playlistName.toUtf8().constData());
+  qDebug(READ_PLAYLIST_BEGIN, ITUNES, playlistName.toUtf8().constData());
   resultStrings = executeXmlQuery(prefs.getITunesLibraryPath(), xPath, params);
 
   for (int i=0; i<(signed)resultStrings.size(); i++)
     results.push_back(fixITunesAddressing(resultStrings[i]));
 
-  qDebug("iTunes playlist: successfully read %d entries", results.size());
+  qDebug(READ_PLAYLIST_END, ITUNES, results.size());
   return results;
 }
 
@@ -196,13 +210,13 @@ QList<QUrl> ExternalPlaylist::readTraktorLibraryPlaylist(const QString& playlist
   xPath += "/PLAYLIST[@TYPE='LIST']/ENTRY/PRIMARYKEY/@KEY/string(.)";
 #endif
 
-  qDebug("Reading contents of Traktor playlist '%s'", playlistName.toUtf8().constData());
+  qDebug(READ_PLAYLIST_BEGIN, TRAKTOR, playlistName.toUtf8().constData());
   resultStrings = executeXmlQuery(prefs.getTraktorLibraryPath(), xPath, params);
 
   for (int i=0; i<(signed)resultStrings.size(); i++)
     results.push_back(fixTraktorAddressing(resultStrings[i]));
 
-  qDebug("Traktor playlist: successfully read %d entries", results.size());
+  qDebug(READ_PLAYLIST_END, TRAKTOR, results.size());
   return results;
 }
 
@@ -210,7 +224,7 @@ QList<QUrl> ExternalPlaylist::readSeratoLibraryPlaylist(const QString& playlistN
   QMutexLocker locker(&externalPlaylistMutex);
   QList<QUrl> results;
 
-  qDebug("Reading contents of Serato playlist '%s'", playlistName.toUtf8().constData());
+  qDebug(READ_PLAYLIST_BEGIN, SERATO, playlistName.toUtf8().constData());
   QString path = prefs.getSeratoLibraryPath();
   path = path.left(path.lastIndexOf("/")+1);
   // is it a [sub]crate or a smartcrate?
@@ -222,9 +236,9 @@ QList<QUrl> ExternalPlaylist::readSeratoLibraryPlaylist(const QString& playlistN
     delete crate;
     crate = new QFile(path + GuiStrings::getInstance()->seratoSmartCratesDirName() + QString("/") + playlistNameCopy + QString(".scrate"));
     sub = false;
-    qDebug("Serato playlist '%s' is a smartcrate", playlistName.toUtf8().constData());
+    qDebug("Serato playlist: '%s' is a smartcrate", playlistName.toUtf8().constData());
   } else {
-    qDebug("Serato playlist '%s' is a subcrate", playlistName.toUtf8().constData());
+    qDebug("Serato playlist: '%s' is a subcrate", playlistName.toUtf8().constData());
   }
   // Serato path stuff
   QString pathPrefix = "/";
@@ -245,7 +259,7 @@ QList<QUrl> ExternalPlaylist::readSeratoLibraryPlaylist(const QString& playlistN
     crate->close();
   }
   delete crate;
-  qDebug("Serato playlist: successfully read %d entries", results.size());
+  qDebug(READ_PLAYLIST_END, SERATO, results.size());
   return results;
 }
 
@@ -264,20 +278,20 @@ QList<QUrl> ExternalPlaylist::readITunesStandalonePlaylist(const QString& playli
   xPath += "/dict/string[preceding-sibling::key[1]='Location']/text()";
 #endif
 
-  qDebug("Reading contents of standalone iTunes playlist at '%s'", playlistPath.toUtf8().constData());
+  qDebug(READ_STANDALONE_BEGIN, ITUNES, playlistPath.toUtf8().constData());
   resultStrings = executeXmlQuery(playlistPath, xPath);
 
   for (int i=0; i<(signed)resultStrings.size(); i++)
     results.push_back(fixITunesAddressing(resultStrings[i]));
 
-  qDebug("Standalone iTunes playlist: successfully read %d entries", results.size());
+  qDebug(READ_STANDALONE_END, ITUNES, results.size());
   return results;
 }
 
 QList<QUrl> ExternalPlaylist::readM3uStandalonePlaylist(const QString& m3uPath) {
   QList<QUrl> results;
 
-  qDebug("Reading contents of standalone M3U playlist at '%s'", m3uPath.toUtf8().constData());
+  qDebug(READ_STANDALONE_BEGIN, M3U, m3uPath.toUtf8().constData());
   QFile m3uFile(m3uPath);
   if (!m3uFile.open(QIODevice::ReadOnly))
     return results;
@@ -298,7 +312,7 @@ QList<QUrl> ExternalPlaylist::readM3uStandalonePlaylist(const QString& m3uPath) 
     }
   }
 
-  qDebug("Standalone M3U playlist: successfully read %d entries", results.size());
+  qDebug(READ_STANDALONE_END, M3U, results.size());
   return results;
 }
 
