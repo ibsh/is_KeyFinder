@@ -147,7 +147,7 @@ int main(int argc, char* argv[]) {
   a.installTranslator(&myappTranslator);
 
   MainMenuHandler* menuHandler = new MainMenuHandler(0);
-  menuHandler->new_Batch_Window(true);
+  menuHandler->newBatchWindow(true);
 
   return a.exec();
 }

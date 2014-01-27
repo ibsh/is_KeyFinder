@@ -33,7 +33,7 @@ void MainMenuHandler::preferences() {
   prefs->show();
 }
 
-void MainMenuHandler::new_Batch_Window(bool firstWindow) {
+void MainMenuHandler::newBatchWindow(bool firstWindow) {
   BatchWindow* newWin = new BatchWindow(NULL, this);
   newWin->setMenuBar(newMenuBar());
   newWin->show();
@@ -41,7 +41,7 @@ void MainMenuHandler::new_Batch_Window(bool firstWindow) {
     newWin->checkForNewVersion();
 }
 
-void MainMenuHandler::new_Detail_Window(QString path) {
+void MainMenuHandler::newDetailWindow(QString path) {
   DetailWindow* newWin = new DetailWindow(NULL, path);
   newWin->setMenuBar(newMenuBar());
   newWin->show();
@@ -55,9 +55,9 @@ QMenuBar* MainMenuHandler::newMenuBar() {
   QMenuBar* menuBar = new QMenuBar(NULL);
   QMenu* menuFile = menuBar->addMenu("File");
   //: An action on the menu bar
-  menuFile->addAction(tr("New Detail Window"), this, SLOT(new_Detail_Window()), QKeySequence::New);
+  menuFile->addAction(tr("New Detail Window"), this, SLOT(newDetailWindow()), QKeySequence::New);
   //: An action on the menu bar
-  menuFile->addAction(tr("New Batch Window"), this, SLOT(new_Batch_Window()), QKeySequence("Ctrl+Shift+N"));
+  menuFile->addAction(tr("New Batch Window"), this, SLOT(newBatchWindow()), QKeySequence("Ctrl+Shift+N"));
   menuFile->addSeparator();
   //: An action on the menu bar
   menuFile->addAction(tr("Close Window"), this, SLOT(close_Window()), QKeySequence::Close);

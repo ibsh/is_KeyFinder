@@ -41,8 +41,8 @@ public:
 public slots:
   void about();
   void preferences();
-  void new_Batch_Window(bool firstWindow = false);
-  void new_Detail_Window(QString path = "");
+  void newBatchWindow(bool firstWindow = false);
+  void newDetailWindow(QString path = "");
   void close_Window();
   QMenuBar* newMenuBar();
 };

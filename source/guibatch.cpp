@@ -778,7 +778,7 @@ void BatchWindow::runDetailedAnalysis() {
     msg.exec();
     return;
   }
-  menuHandler->new_Detail_Window(ui->tableWidget->item(firstRow,COL_FILEPATH)->text());
+  menuHandler->newDetailWindow(ui->tableWidget->item(firstRow,COL_FILEPATH)->text());
 }
 
 void BatchWindow::progressRangeChanged(int minimum, int maximum) {
