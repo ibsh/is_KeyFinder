@@ -327,7 +327,7 @@ QUrl ExternalPlaylist::fixITunesAddressing(const QString& address) {
 QUrl ExternalPlaylist::fixTraktorAddressing(const QString& address) {
   QString addressCopy = address;
   addressCopy = addressCopy.replace(QString("/:"), QString("/"));
-  addressCopy = addressCopy.replace(QString("Macintosh HD"), QString(""));
+  addressCopy = addressCopy.prepend("/Volumes/");
   qDebug("Fixed Traktor address from %s to %s", address.toUtf8().constData(), addressCopy.toUtf8().constData());
   return QUrl::fromLocalFile(addressCopy);
 }
