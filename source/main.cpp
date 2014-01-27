@@ -52,7 +52,7 @@ void LoggingHandler(QtMsgType type, const QMessageLogContext &context, const QSt
   case QtFatalMsg:
     logfile << "Fatal";    break;
   }
-  logfile << ": " << msg.toUtf8().constData() << " (" << context.file << ":" << context.line << ")\n";
+  logfile << ": " << msg.toUtf8().constData() << "\n";
   logfile.close();
   if (type == QtFatalMsg) {
     abort();
