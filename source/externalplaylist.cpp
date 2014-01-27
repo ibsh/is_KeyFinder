@@ -22,7 +22,7 @@
 #include "externalplaylist.h"
 
 #define ITUNES "iTunes"
-#define TRAKTOR "iTunes"
+#define TRAKTOR "Traktor"
 #define SERATO "Serato"
 #define M3U "M3U"
 
