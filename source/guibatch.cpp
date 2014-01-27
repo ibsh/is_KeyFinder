@@ -810,24 +810,27 @@ void BatchWindow::sortTableWidget() {
 }
 
 void BatchWindow::checkForNewVersion() {
-  qDebug("Version check: request");
+  qDebug("Version check: send request (current %d.%d)", VERSION_MAJOR, VERSION_MINOR);
   QNetworkAccessManager *manager = new QNetworkAccessManager(this);
   connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(receiveNetworkReply(QNetworkReply*)));
   manager->get(QNetworkRequest(QUrl("http://www.ibrahimshaath.co.uk/keyfinder/kf.txt")));
 }
 
 void BatchWindow::receiveNetworkReply(QNetworkReply* reply) {
-  qDebug("Version check: response");
+  qDebug("Version check: response received");
   QString newVersion = "";
   if (reply->error() == QNetworkReply::NoError) {
-    QString released(reply->readAll());
-    QStringList version = released.split(".",QString::SkipEmptyParts);
+    QString responseData(reply->readAll().trimmed());
+    qDebug("Version check: response data: %s", responseData.toLocal8Bit().constData());
+    QStringList version = responseData.split(".",QString::SkipEmptyParts);
     if (!version.isEmpty()) {
       int latest_major = version.first().toInt();
       int latest_minor = version.last().toInt();
-      if (latest_major > VERSION_MAJOR || latest_minor > VERSION_MINOR)
-        newVersion = released.trimmed();
+      if (latest_major > VERSION_MAJOR || (latest_major == VERSION_MAJOR && latest_minor > VERSION_MINOR))
+        newVersion = responseData;
     }
+  } else {
+    qDebug("Version check: response error: %s", reply->errorString().toLocal8Bit().constData());
   }
   reply->deleteLater();
   if (!newVersion.isEmpty()) {
