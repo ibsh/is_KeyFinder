@@ -181,6 +181,7 @@ private:
   QByteArray batchWindowSplitterState;
 
   int scaledSine(int, float, float, int, int) const;
+  bool stringIsNotAlphaNumeric(const QString&) const;
 };
 
 #endif

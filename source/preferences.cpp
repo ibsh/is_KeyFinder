@@ -500,9 +500,9 @@ QString Preferences::newString(
     if (charLimit) *iter = (*iter).left(charLimit);
     if (write == METADATA_WRITE_OVERWRITE && currentData == *iter) {
       return empty;
-    } else if (write == METADATA_WRITE_PREPEND && currentData.left((*iter).length()) == *iter) {
+    } else if (write == METADATA_WRITE_PREPEND && currentData.left((*iter).length()) == *iter && stringIsNotAlphaNumeric(currentData.mid((*iter).length(), 1))) {
       return empty;
-    } else if (write == METADATA_WRITE_APPEND && currentData.right((*iter).length()) == *iter) {
+    } else if (write == METADATA_WRITE_APPEND && currentData.right((*iter).length()) == *iter && stringIsNotAlphaNumeric(currentData.mid(currentData.length() - (*iter).length() - 1, 1))) {
       return empty;
     }
   }
@@ -518,4 +518,9 @@ QString Preferences::newString(
   }
   // shouldn't get here
   return empty;
+}
+
+bool Preferences::stringIsNotAlphaNumeric(const QString &string) const {
+    QRegExp regex("^[^a-zA-Z\d]*$");
+    return regex.exactMatch(string);
 }

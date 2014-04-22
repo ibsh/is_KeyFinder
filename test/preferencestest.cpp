@@ -230,12 +230,22 @@ TEST (PreferencesTest, NewStringDeterminesPrependToDifferentDelimiterCorrectly) 
   ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, METADATA_CHARLIMIT_OTHERS, write));
 }
 
-TEST (PreferencesTest, NewStringDeterminesPrependToNoDelimiterCorrectly) {
+TEST (PreferencesTest, NewStringDeterminesPrependToUnexpectedDelimiterCorrectly) {
   Preferences prefs;
-  QString currentData = "keydata";
+  QString currentData = "key.data";
   QString newData = "key";
   metadata_write_t write = METADATA_WRITE_PREPEND;
   QString expectedOutput= "";
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, METADATA_CHARLIMIT_OTHERS, write));
+}
+
+TEST (PreferencesTest, NewStringDeterminesPrependToSimilarDataCorrectly) {
+  Preferences prefs;
+  prefs.setMetadataDelimiter("_");
+  QString currentData = "Amazon";
+  QString newData = "Am";
+  metadata_write_t write = METADATA_WRITE_PREPEND;
+  QString expectedOutput= "Am_Amazon";
   ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, METADATA_CHARLIMIT_OTHERS, write));
 }
 
@@ -278,13 +288,22 @@ TEST (PreferencesTest, NewStringDeterminesAppendToDifferentDelimiterCorrectly) {
   ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, METADATA_CHARLIMIT_OTHERS, write));
 }
 
-TEST (PreferencesTest, NewStringDeterminesAppendToNoDelimiterCorrectly) {
+TEST (PreferencesTest, NewStringDeterminesAppendToUnexpectedDelimiterCorrectly) {
   Preferences prefs;
-  prefs.setMetadataDelimiter("_");
-  QString currentData = "datakey";
+  QString currentData = "data.key";
   QString newData = "key";
   metadata_write_t write = METADATA_WRITE_APPEND;
   QString expectedOutput= "";
+  ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, METADATA_CHARLIMIT_OTHERS, write));
+}
+
+TEST (PreferencesTest, NewStringDeterminesAppendToSimilarDataCorrectly) {
+  Preferences prefs;
+  prefs.setMetadataDelimiter("_");
+  QString currentData = "WOOHAA";
+  QString newData = "A";
+  metadata_write_t write = METADATA_WRITE_APPEND;
+  QString expectedOutput= "WOOHAA_A";
   ASSERT_EQ(expectedOutput, prefs.newString(newData, currentData, METADATA_CHARLIMIT_OTHERS, write));
 }
 
