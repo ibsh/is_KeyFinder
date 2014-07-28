@@ -210,8 +210,8 @@ void PrefsDialog::on_savePrefsButton_clicked() {
   p.setMetadataDelimiter(ui->metadataDelimiter->text());
   p.setSkipFilesWithExistingTags(ui->skipFilesWithExistingTags->isChecked());
   p.setMaxDuration(ui->maxDuration->value());
-  p.core.setTemporalWindow(listTemporalWindow[ui->temporalWindow->currentIndex()]);
-  p.core.setSegmentation(listSegmentation[ui->segmentation->currentIndex()]);
+  p.core.setTemporalWindowType(listTemporalWindow[ui->temporalWindow->currentIndex()]);
+  p.core.setSegmentationMethod(listSegmentation[ui->segmentation->currentIndex()]);
   p.core.setSimilarityMeasure(listSimilarityMeasure[ui->similarityMeasure->currentIndex()]);
   p.core.setHopsPerFrame(listHopsPerFrame[ui->hopsPerFrame->currentIndex()]);
   p.core.setFftFrameSize(listFftFrameSize[ui->fftFrameSize->currentIndex()]);

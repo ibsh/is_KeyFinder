@@ -136,13 +136,13 @@ void Preferences::load() {
   core.setOctaves((unsigned)settings->value("octaves", core.getOctavesDefault()).toInt());
   core.setOffsetToC(settings->value("offsetToC", core.getOffsetToCDefault()).toBool());
   core.setBandsPerSemitone((unsigned)settings->value("bandsPerSemitone", core.getBandsPerSemitoneDefault()).toInt());
-  core.setTemporalWindow((KeyFinder::temporal_window_t)settings->value("temporalWindow", core.getTemporalWindowDefault()).toInt());
+  core.setTemporalWindowType((KeyFinder::temporal_window_t)settings->value("temporalWindow", core.getTemporalWindowDefault()).toInt());
   core.setFftFrameSize((unsigned)settings->value("fftFrameSize", core.getFftFrameSizeDefault()).toInt());
   core.setHopsPerFrame((unsigned)settings->value("hopsPerFrame", core.getHopsPerFrameDefault()).toInt());
   core.setDirectSkStretch(settings->value("directSkStretch", core.getDirectSkStretchDefault()).toFloat());
   core.setTuningMethod((KeyFinder::tuning_method_t)settings->value("tuningMethod", core.getTuningMethodDefault()).toInt());
   core.setDetunedBandWeight(settings->value("detunedBandWeight", core.getDetunedBandWeightDefault()).toFloat());
-  core.setSegmentation((KeyFinder::segmentation_t)settings->value("segmentation", core.getSegmentationDefault()).toInt());
+  core.setSegmentationMethod((KeyFinder::segmentation_t)settings->value("segmentation", core.getSegmentationDefault()).toInt());
   core.setSegGaussianSize((unsigned)settings->value("segGaussianSize", core.getSegGaussianSizeDefault()).toInt());
   core.setSegGaussianSigma(settings->value("segGaussianSigma", core.getSegGaussianSigmaDefault()).toFloat());
   core.setSegPeakPickingNeighbours((unsigned)settings->value("segPeakPickingNeighbours", core.getSegPeakPickingNeighboursDefault()).toInt());
