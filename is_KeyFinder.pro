@@ -25,7 +25,7 @@
 #  |-> boost      1.52.0
 #  \-> fftw        3.3.2
 # libav            0.7.7
-# taglib           1.8.0
+# taglib           1.9.1
 #
 # MAC ONLY:
 # xerces-c         3.1.1
@@ -64,7 +64,7 @@ QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS # for libav
 
 unix|macx{
   LIBS += -L/usr/local/lib -L/usr/lib
-  LIBS += -lkeyfinder
+  LIBS += -lkeyfinder.0
   LIBS += -lavcodec
   LIBS += -lavformat
   LIBS += -lavutil
