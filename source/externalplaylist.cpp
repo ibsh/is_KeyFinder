@@ -319,6 +319,7 @@ QList<QUrl> ExternalPlaylist::readM3uStandalonePlaylist(const QString& m3uPath) 
 QUrl ExternalPlaylist::fixITunesAddressing(const QString& address) {
   QString addressCopy = address;
   addressCopy = addressCopy.replace(QString("file://localhost"), QString(""));
+  addressCopy = addressCopy.replace(QString("file://"), QString(""));
   addressCopy = QUrl::fromPercentEncoding(addressCopy.toUtf8().constData());
   qDebug("Fixed iTunes address from %s to %s", address.toUtf8().constData(), addressCopy.toUtf8().constData());
   return QUrl::fromLocalFile(addressCopy);
