@@ -151,6 +151,11 @@ QString GuiStrings::libavTooManyBadPackets(int n) const {
   return tr("%n bad packet(s)", "", n);
 }
 
+QString GuiStrings::libavCouldNotAllocateFrame() const {
+  //: Status of an individual file in the Batch window
+  return tr("Could not allocate frame");
+}
+
 QString GuiStrings::durationExceedsPreference(int mins, int secs, int max) const {
   //: Status of an individual file in the Batch window; includes minutes and seconds at %1:%2, and the max number of minutes at %3
   return tr("Duration (%1:%2) exceeds specified maximum (%3:00)")

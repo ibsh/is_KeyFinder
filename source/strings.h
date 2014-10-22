@@ -59,6 +59,7 @@ public:
   QString libavCouldNotCreateResampleContext() const;
   QString libavCouldNotResample() const;
   QString libavTooManyBadPackets(int) const;
+  QString libavCouldNotAllocateFrame() const;
   QString durationExceedsPreference(int, int, int) const;
 
 private:

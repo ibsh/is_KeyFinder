@@ -43,6 +43,8 @@ extern "C"{
 #include <libavutil/avutil.h>
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
+#include <libavresample/avresample.h>
+#include <libavutil/opt.h>
 }
 
 #ifdef Q_OS_WIN
@@ -67,7 +69,8 @@ private:
   AVFormatContext* fCtx;
   AVCodecContext* cCtx;
   AVDictionary* dict; // stays NULL, just here for legibility
-  ReSampleContext* rsCtx;
+  AVAudioResampleContext* rsCtx;
+  AVFrame *decodedFrame;
   bool decodePacket(AVPacket*, KeyFinder::AudioData*);
 };
 

@@ -23,7 +23,7 @@
 # qt               5.1.1
 # libkeyfinder     2.0.0
 #  \-> fftw        3.3.4
-# libav            0.7.7
+# libav               11
 # taglib           1.9.1
 
 QT += \
@@ -63,10 +63,11 @@ QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS # for libav
 
 unix|macx{
   LIBS += -L/usr/local/lib -L/usr/lib
-  LIBS += -lkeyfinder
-  LIBS += -lavcodec
-  LIBS += -lavformat
-  LIBS += -lavutil
+  LIBS += -lkeyfinder.0
+  LIBS += -lavcodec.56
+  LIBS += -lavformat.56
+  LIBS += -lavutil.54
+  LIBS += -lavresample.2
   LIBS += -ltag
 }
 

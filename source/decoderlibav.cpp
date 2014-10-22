@@ -21,9 +21,12 @@
 
 #include "decoderlibav.h"
 
+#define AVCODEC_MAX_AUDIO_FRAME_SIZE_IS_DEAD 192000
+
 QMutex codecMutex;
 
-AudioFileDecoder::AudioFileDecoder(const QString& filePath, const int maxDuration) : filePathCh(NULL), frameBufferSize(((AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2) * sizeof(uint8_t)), audioStream(-1), badPacketCount(0), badPacketThreshold(100), codec(NULL), fCtx(NULL), cCtx(NULL), dict(NULL), rsCtx(NULL) {
+AudioFileDecoder::AudioFileDecoder(const QString& filePath, const int maxDuration) : filePathCh(NULL), frameBufferSize(((AVCODEC_MAX_AUDIO_FRAME_SIZE_IS_DEAD * 3) / 2) * sizeof(uint8_t)), audioStream(-1), badPacketCount(0), badPacketThreshold(100), codec(NULL), fCtx(NULL), cCtx(NULL), dict(NULL), rsCtx(NULL), decodedFrame(NULL) {
+
   // convert filepath
 #ifdef Q_OS_WIN
   const wchar_t* filePathWc = reinterpret_cast<const wchar_t*>(filePath.constData());
@@ -92,12 +95,20 @@ AudioFileDecoder::AudioFileDecoder(const QString& filePath, const int maxDuratio
     throw KeyFinder::Exception(GuiStrings::getInstance()->libavCouldNotOpenCodec(codec->long_name, codecOpenResult).toUtf8().constData());
   }
 
-  rsCtx = av_audio_resample_init(cCtx->channels, cCtx->channels, cCtx->sample_rate, cCtx->sample_rate, AV_SAMPLE_FMT_S16, cCtx->sample_fmt, 0, 0, 0, 0);
+  rsCtx = avresample_alloc_context();
+
   if (rsCtx == NULL) {
     qWarning("Could not create ReSampleContext for file %s", filePathCh);
     free();
     throw KeyFinder::Exception(GuiStrings::getInstance()->libavCouldNotCreateResampleContext().toUtf8().constData());
   }
+
+  av_opt_set_int(rsCtx, "in_channel_layout",  cCtx->channels,    0);
+  av_opt_set_int(rsCtx, "out_channel_layout", cCtx->channels,    0);
+  av_opt_set_int(rsCtx, "in_sample_rate",     cCtx->sample_rate, 0);
+  av_opt_set_int(rsCtx, "out_sample_rate",    cCtx->sample_rate, 0);
+  av_opt_set_int(rsCtx, "in_sample_fmt",      cCtx->sample_fmt,  0);
+  av_opt_set_int(rsCtx, "out_sample_fmt",     AV_SAMPLE_FMT_S16, 0);
 
   qDebug("Decoder prepared for %s (%s, %d)", filePathCh, av_get_sample_fmt_name(cCtx->sample_fmt), cCtx->sample_rate);
 }
@@ -105,14 +116,14 @@ AudioFileDecoder::AudioFileDecoder(const QString& filePath, const int maxDuratio
 void AudioFileDecoder::free() {
   av_free(frameBuffer);
   av_free(frameBufferConverted);
-  if (rsCtx != NULL) audio_resample_close(rsCtx);
+  if (rsCtx != NULL) avresample_close(rsCtx);
   if (cCtx != NULL) {
     int codecCloseResult = avcodec_close(cCtx);
     if (codecCloseResult < 0) {
       qCritical("Error closing audio codec: %s (%d)", codec->long_name, codecCloseResult);
     }
   }
-  if (fCtx != NULL) av_close_input_file(fCtx);
+  if (fCtx != NULL) avformat_close_input(&fCtx);
   if (filePathCh != NULL) delete[] filePathCh;
 }
 
@@ -159,20 +170,36 @@ bool AudioFileDecoder::decodePacket(AVPacket* originalPacket, KeyFinder::AudioDa
   tempPacket.data = originalPacket->data;
   // loop in case audio packet contains multiple frames
   while (tempPacket.size > 0) {
-    int dataSize = frameBufferSize;
     int16_t* dataBuffer = (int16_t*)frameBuffer;
-    int bytesConsumed = avcodec_decode_audio3(cCtx, dataBuffer, &dataSize, &tempPacket);
+
+    if (!decodedFrame) {
+      if (!(decodedFrame = av_frame_alloc())) {
+        throw KeyFinder::Exception(GuiStrings::getInstance()->libavCouldNotAllocateFrame().toUtf8().constData());
+      }
+    } else {
+      av_frame_unref(decodedFrame);
+    }
+
+    int gotFrame = 0;
+    std::cerr << "A" << std::endl;
+    int bytesConsumed = avcodec_decode_audio4(cCtx, decodedFrame, &gotFrame, &tempPacket);
+    std::cerr << "B" << std::endl;
     if (bytesConsumed < 0) { // error
       tempPacket.size = 0;
       return false;
     }
     tempPacket.data += bytesConsumed;
     tempPacket.size -= bytesConsumed;
-    if (dataSize <= 0) continue; // nothing decoded
-    int newSamplesDecoded = dataSize / av_get_bytes_per_sample(cCtx->sample_fmt);
+
+    if (gotFrame == 0) {
+      continue; // nothing decoded
+    }
+
+    int newSamplesDecoded = av_samples_get_buffer_size(NULL, cCtx->channels, decodedFrame->nb_samples, cCtx->sample_fmt, 1);
+
     // Resample if necessary
     if (cCtx->sample_fmt != AV_SAMPLE_FMT_S16) {
-      int resampleResult = audio_resample(rsCtx, (short*)frameBufferConverted, (short*)frameBuffer, newSamplesDecoded);
+      int resampleResult = avresample_convert(rsCtx, (uint8_t**)&frameBufferConverted, 0, frameBufferSize, (uint8_t**)&frameBuffer, 0, newSamplesDecoded);
       if (resampleResult < 0) {
         throw KeyFinder::Exception(GuiStrings::getInstance()->libavCouldNotResample().toUtf8().constData());
       }
