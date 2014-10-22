@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="en_GB">
+<TS version="2.1" language="en_GB">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -202,7 +202,6 @@
     <message numerus="yes">
         <location filename="../source/guibatch.cpp" line="403"/>
         <source>%n file(s)</source>
-        <extracomment>File count in the Batch window title bar</extracomment>
         <translation>
             <numerusform>%n file</numerusform>
             <numerusform>%n files</numerusform>
@@ -256,7 +255,6 @@
     <message numerus="yes">
         <location filename="../source/guibatch.cpp" line="644"/>
         <source>%n tag(s)</source>
-        <extracomment>Part of an alert message in the Batch window</extracomment>
         <translation>
             <numerusform>%n tag</numerusform>
             <numerusform>%n tags</numerusform>
@@ -265,7 +263,6 @@
     <message numerus="yes">
         <location filename="../source/guibatch.cpp" line="646"/>
         <source>%n filename(s)</source>
-        <extracomment>Part of an alert message in the Batch window</extracomment>
         <translation>
             <numerusform>%n filename</numerusform>
             <numerusform>%n filenames</numerusform>
@@ -290,7 +287,7 @@
         <translation>Please select a single row for detailed analysis</translation>
     </message>
     <message>
-        <location filename="../source/guibatch.cpp" line="833"/>
+        <location filename="../source/guibatch.cpp" line="839"/>
         <source>A new version, %1, is available on &lt;a href=&apos;%2&apos;&gt;the %3 website&lt;/a&gt;!</source>
         <extracomment>An alert message in the Batch window; includes a version number at %1, a URL at %2, and the app name at %3</extracomment>
         <translation>A new version, %1, is available on &lt;a href=&apos;%2&apos;&gt;the %3 website&lt;/a&gt;!</translation>
@@ -343,7 +340,6 @@
     <message numerus="yes">
         <location filename="../source/guidetail.cpp" line="91"/>
         <source>%n octave(s)</source>
-        <extracomment>Part of a tooltip on the Detail window</extracomment>
         <translation>
             <numerusform>%n octave</numerusform>
             <numerusform>%n octaves</numerusform>
@@ -468,85 +464,91 @@
         <translation>iTunes DJ</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="90"/>
+        <location filename="../source/strings.cpp" line="85"/>
+        <source>Audiobooks</source>
+        <extracomment>Name of a default iTunes playlist (to exclude from the Batch window)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../source/strings.cpp" line="92"/>
         <source>_LOOPS</source>
         <extracomment>Name of a default Traktor playlist (to exclude from the Batch window)</extracomment>
         <translation>_LOOPS</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="92"/>
+        <location filename="../source/strings.cpp" line="94"/>
         <source>_RECORDINGS</source>
         <extracomment>Name of a default Traktor playlist (to exclude from the Batch window)</extracomment>
         <translation>_RECORDINGS</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="94"/>
+        <location filename="../source/strings.cpp" line="96"/>
         <source>Preparation</source>
         <extracomment>Name of a default Traktor playlist (to exclude from the Batch window)</extracomment>
         <translation>Preparation</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="100"/>
+        <location filename="../source/strings.cpp" line="102"/>
         <source>SmartCrates</source>
         <extracomment>Name of the Smart Crates subdirectory in Serato</extracomment>
         <translation>SmartCrates</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="105"/>
+        <location filename="../source/strings.cpp" line="107"/>
         <source>Subcrates</source>
         <extracomment>Name of the Subcrates subdirectory in Serato</extracomment>
         <translation>Subcrates</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="110"/>
+        <location filename="../source/strings.cpp" line="112"/>
         <source>Error in LibSRC sample rate conversion</source>
         <extracomment>Status of an individual file in the Batch window</extracomment>
         <translation>Error in LibSRC sample rate conversion</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="115"/>
+        <location filename="../source/strings.cpp" line="117"/>
         <source>Could not open audio file (%1)</source>
         <extracomment>Status of an individual file in the Batch window</extracomment>
         <translation>Could not open audio file (%1)</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="120"/>
+        <location filename="../source/strings.cpp" line="122"/>
         <source>Could not find stream information</source>
         <extracomment>Status of an individual file in the Batch window</extracomment>
         <translation>Could not find stream information</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="125"/>
+        <location filename="../source/strings.cpp" line="127"/>
         <source>Could not find an audio stream</source>
         <extracomment>Status of an individual file in the Batch window</extracomment>
         <translation>Could not find an audio stream</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="130"/>
+        <location filename="../source/strings.cpp" line="132"/>
         <source>Audio stream has unsupported codec</source>
         <extracomment>Status of an individual file in the Batch window</extracomment>
         <translation>Audio stream has unsupported codec</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="135"/>
+        <location filename="../source/strings.cpp" line="137"/>
         <source>Could not open audio codec %1 (%2)</source>
         <extracomment>Status of an individual file in the Batch window</extracomment>
         <translation>Could not open audio codec %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="140"/>
+        <location filename="../source/strings.cpp" line="142"/>
         <source>Could not create ReSampleContext</source>
         <extracomment>Status of an individual file in the Batch window</extracomment>
         <translation>Could not create ReSampleContext</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="145"/>
+        <location filename="../source/strings.cpp" line="147"/>
         <source>Could not resample</source>
         <extracomment>Status of an individual file in the Batch window</extracomment>
         <translation>Could not resample</translation>
     </message>
     <message numerus="yes">
-        <location filename="../source/strings.cpp" line="150"/>
+        <location filename="../source/strings.cpp" line="152"/>
         <source>%n bad packet(s)</source>
         <oldsource>%1 bad packets</oldsource>
         <extracomment>Status of an individual file in the Batch window</extracomment>
@@ -556,7 +558,7 @@
         </translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="155"/>
+        <location filename="../source/strings.cpp" line="157"/>
         <source>Duration (%1:%2) exceeds specified maximum (%3:00)</source>
         <extracomment>Status of an individual file in the Batch window; includes minutes and seconds at %1:%2, and the max number of minutes at %3</extracomment>
         <translation>Duration (%1:%2) exceeds specified maximum (%3:00)</translation>
