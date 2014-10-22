@@ -81,6 +81,8 @@ QStringList GuiStrings::iTunesDefaultPlaylists() const {
   defaultPlaylists << tr("Genius");
   //: Name of a default iTunes playlist (to exclude from the Batch window)
   defaultPlaylists << tr("iTunes DJ");
+  //: Name of a default iTunes playlist (to exclude from the Batch window)
+  defaultPlaylists << tr("Audiobooks");
   return defaultPlaylists;
 }
 
