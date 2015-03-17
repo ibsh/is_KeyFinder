@@ -22,7 +22,7 @@
 #ifndef _VERSION_H
 #define _VERSION_H
 
-const int VERSION_MAJOR = 1;
-const int VERSION_MINOR = 26;
+const int VERSION_MAJOR = 2;
+const int VERSION_MINOR = 0;
 
 #endif // _VERSION_H
