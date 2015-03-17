@@ -22,5 +22,4 @@
 FORMS += \
   $$PWD/aboutdialog.ui \
   $$PWD/batchwindow.ui \
-  $$PWD/detailwindow.ui \
   $$PWD/prefsdialog.ui

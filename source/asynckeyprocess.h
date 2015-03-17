@@ -30,7 +30,6 @@
 #include "keyfinder/keyfinder.h"
 #include "keyfinder/exception.h"
 #include "keyfinder/audiodata.h"
-#include "keyfinder/keyfinderresult.h"
 
 #include "preferences.h"
 #include "decoderlibav.h"

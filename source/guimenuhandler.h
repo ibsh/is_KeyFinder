@@ -30,21 +30,19 @@ class BatchWindow;
 #include <QObject>
 
 #include "guibatch.h"
-#include "guidetail.h"
 #include "guiabout.h"
 #include "guiprefs.h"
 
-class MainMenuHandler : public QObject{
-  Q_OBJECT
+class MainMenuHandler : public QObject {
+    Q_OBJECT
 public:
-  explicit MainMenuHandler(QObject *parent = 0);
+    explicit MainMenuHandler(QObject *parent = 0);
 public slots:
-  void about();
-  void preferences();
-  void newBatchWindow(bool firstWindow = false);
-  void newDetailWindow(QString path = "");
-  void close_Window();
-  QMenuBar* newMenuBar();
+    void about();
+    void preferences();
+    void newBatchWindow(bool firstWindow = false);
+    void close_Window();
+    QMenuBar* newMenuBar();
 };
 
 #endif // MAINMENUHANDLER_H

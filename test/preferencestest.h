@@ -28,14 +28,14 @@
 
 class SettingsWrapperFake : public SettingsWrapper {
 public:
-  virtual void beginGroup(const QString& g);
-  virtual void endGroup();
-  virtual QVariant value(const QString &key, const QVariant &defaultValue) const;
-  virtual void setValue(const QString& key, const QVariant& value);
-  virtual QStringList allKeys() const;
+    virtual void beginGroup(const QString& g);
+    virtual void endGroup();
+    virtual QVariant value(const QString &key, const QVariant &defaultValue) const;
+    virtual void setValue(const QString& key, const QVariant& value);
+    virtual QStringList allKeys() const;
 private:
-  QHash<QString, QVariant> hash;
-  QString prefix;
+    QHash<QString, QVariant> hash;
+    QString prefix;
 };
 
 class PreferencesTest : public ::testing::Test { };

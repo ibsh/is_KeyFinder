@@ -36,35 +36,35 @@ Don't translate anything that goes into the log file (qDebug / qCritical).
 
 */
 
-class GuiStrings : public QObject{
-  Q_OBJECT
+class GuiStrings : public QObject {
+    Q_OBJECT
 public:
-  static GuiStrings* getInstance();
-  QString appName() const;
-  QString appUrl() const;
-  QString delim() const;
-  QString notApplicable() const;
-  QString preferences() const;
-  QString about() const;
-  QStringList iTunesDefaultPlaylists() const;
-  QStringList traktorDefaultPlaylists() const;
-  QString seratoSmartCratesDirName() const;
-  QString seratoSubcratesDirName() const;
-  QString libsrcError() const;
-  QString libavCouldNotOpenFile(int) const;
-  QString libavCouldNotFindStreamInformation() const;
-  QString libavCouldNotFindAudioStream() const;
-  QString libavUnsupportedCodec() const;
-  QString libavCouldNotOpenCodec(const char*, int) const;
-  QString libavCouldNotCreateResampleContext() const;
-  QString libavCouldNotResample() const;
-  QString libavTooManyBadPackets(int) const;
-  QString durationExceedsPreference(int, int, int) const;
+    static GuiStrings* getInstance();
+    QString appName() const;
+    QString appUrl() const;
+    QString delim() const;
+    QString notApplicable() const;
+    QString preferences() const;
+    QString about() const;
+    QStringList iTunesDefaultPlaylists() const;
+    QStringList traktorDefaultPlaylists() const;
+    QString seratoSmartCratesDirName() const;
+    QString seratoSubcratesDirName() const;
+    QString libsrcError() const;
+    QString libavCouldNotOpenFile(int) const;
+    QString libavCouldNotFindStreamInformation() const;
+    QString libavCouldNotFindAudioStream() const;
+    QString libavUnsupportedCodec() const;
+    QString libavCouldNotOpenCodec(const char*, int) const;
+    QString libavCouldNotCreateResampleContext() const;
+    QString libavCouldNotResample() const;
+    QString libavTooManyBadPackets(int) const;
+    QString durationExceedsPreference(int, int, int) const;
 
 private:
-  explicit GuiStrings(QObject *parent = 0);
-  GuiStrings(GuiStrings const &);
-  void operator=(GuiStrings const &);
+    explicit GuiStrings(QObject *parent = 0);
+    GuiStrings(GuiStrings const &);
+    void operator=(GuiStrings const &);
 };
 
 #endif // STRINGS_H

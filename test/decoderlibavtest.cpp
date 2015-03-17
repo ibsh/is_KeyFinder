@@ -22,49 +22,49 @@
 #include "decoderlibavtest.h"
 
 TEST (AudioFileDecoderTest, MissingFile) {
-  QString path("noFileHere");
-  QString expectedMessage = GuiStrings::getInstance()->libavCouldNotOpenFile(-2);
-  bool exceptionThrown = false;
-  try {
-    AudioFileDecoder d(path, 60);
-  } catch (const KeyFinder::Exception& e) {
-    if(QString(e.what()) == expectedMessage) exceptionThrown = true;
-  }
-  ASSERT_TRUE(exceptionThrown);
+    QString path("noFileHere");
+    QString expectedMessage = GuiStrings::getInstance()->libavCouldNotOpenFile(-2);
+    bool exceptionThrown = false;
+    try {
+        AudioFileDecoder d(path, 60);
+    } catch (const KeyFinder::Exception& e) {
+        if(QString(e.what()) == expectedMessage) exceptionThrown = true;
+    }
+    ASSERT_TRUE(exceptionThrown);
 }
 
 TEST (AudioFileDecoderTest, NoStreamInfo) {
-  QString path("../is_KeyFinder/test-resources/notAV.pdf");
-  QString expectedMessage = GuiStrings::getInstance()->libavCouldNotFindStreamInformation();
-  bool exceptionThrown = false;
-  try {
-    AudioFileDecoder d(path, 60);
-  } catch (const KeyFinder::Exception& e) {
-    if(QString(e.what()) == expectedMessage) exceptionThrown = true;
-  }
-  ASSERT_TRUE(exceptionThrown);
+    QString path("../is_KeyFinder/test-resources/notAV.pdf");
+    QString expectedMessage = GuiStrings::getInstance()->libavCouldNotFindStreamInformation();
+    bool exceptionThrown = false;
+    try {
+        AudioFileDecoder d(path, 60);
+    } catch (const KeyFinder::Exception& e) {
+        if(QString(e.what()) == expectedMessage) exceptionThrown = true;
+    }
+    ASSERT_TRUE(exceptionThrown);
 }
 
 TEST (AudioFileDecoderTest, NoAudioStream) {
-  QString path("../is_KeyFinder/test-resources/noAudioStream.jpg");
-  QString expectedMessage = GuiStrings::getInstance()->libavCouldNotFindAudioStream();
-  bool exceptionThrown = false;
-  try {
-    AudioFileDecoder d(path, 60);
-  } catch (const KeyFinder::Exception& e) {
-    if(QString(e.what()) == expectedMessage) exceptionThrown = true;
-  }
-  ASSERT_TRUE(exceptionThrown);
+    QString path("../is_KeyFinder/test-resources/noAudioStream.jpg");
+    QString expectedMessage = GuiStrings::getInstance()->libavCouldNotFindAudioStream();
+    bool exceptionThrown = false;
+    try {
+        AudioFileDecoder d(path, 60);
+    } catch (const KeyFinder::Exception& e) {
+        if(QString(e.what()) == expectedMessage) exceptionThrown = true;
+    }
+    ASSERT_TRUE(exceptionThrown);
 }
 
 TEST (AudioFileDecoderTest, OverMaxDuration) {
-  QString path("../is_KeyFinder/test-resources/90secondsine.mp3");
-  QString expectedMessage = GuiStrings::getInstance()->durationExceedsPreference(1, 30, 1);
-  bool exceptionThrown = false;
-  try {
-    AudioFileDecoder d(path, 1);
-  } catch (const KeyFinder::Exception& e) {
-    if(QString(e.what()) == expectedMessage) exceptionThrown = true;
-  }
-  ASSERT_TRUE(exceptionThrown);
+    QString path("../is_KeyFinder/test-resources/90secondsine.mp3");
+    QString expectedMessage = GuiStrings::getInstance()->durationExceedsPreference(1, 30, 1);
+    bool exceptionThrown = false;
+    try {
+        AudioFileDecoder d(path, 1);
+    } catch (const KeyFinder::Exception& e) {
+        if(QString(e.what()) == expectedMessage) exceptionThrown = true;
+    }
+    ASSERT_TRUE(exceptionThrown);
 }

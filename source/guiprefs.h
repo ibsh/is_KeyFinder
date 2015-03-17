@@ -29,55 +29,38 @@
 #include "preferences.h"
 
 namespace Ui {
-  class PrefsDialog;
+    class PrefsDialog;
 }
 
-class PrefsDialog : public QDialog{
-  Q_OBJECT
+class PrefsDialog : public QDialog {
+    Q_OBJECT
 public:
-  explicit PrefsDialog(QWidget* parent = 0);
-  ~PrefsDialog();
+    explicit PrefsDialog(QWidget* parent = 0);
+    ~PrefsDialog();
 private:
-  // map combobox indices to useful values
-  QList<metadata_format_t>               listMetadataFormat;
-  QList<metadata_write_t>                listMetadataWrite;
-  QList<metadata_write_t>                listMetadataWriteKey;
-  QList<float>                           listStartingFreq;
-  QList<unsigned int>                    listHopsPerFrame;
-  QList<KeyFinder::temporal_window_t>    listTemporalWindow;
-  QList<unsigned int>                    listFftFrameSize;
-  QList<KeyFinder::tuning_method_t>      listTuningMethod;
-  QList<KeyFinder::segmentation_t>       listSegmentation;
-  QList<KeyFinder::tone_profile_t>       listToneProfile;
-  QList<KeyFinder::similarity_measure_t> listSimilarityMeasure;
-  // altering state on field changes
-  void tuningEnabled();
-  void binAdaptiveTuningEnabled();
-  void segmentationEnabled();
-  void customProfileEnabled();
-  void metadataDelimiterEnabled();
-  void applyFileExtensionFilterEnabled();
+    // map combobox indices to useful values
+    QList<metadata_format_t>               listMetadataFormat;
+    QList<metadata_write_t>                listMetadataWrite;
+    QList<metadata_write_t>                listMetadataWriteKey;
+    // altering state on field changes
+    void metadataDelimiterEnabled();
+    void applyFileExtensionFilterEnabled();
 private slots:
-  void on_savePrefsButton_clicked();
-  void on_cancelButton_clicked();
-  void on_advancedDefaultsButton_clicked();
-  void on_bps_valueChanged(int bps);
-  void on_segmentation_currentIndexChanged(int);
-  void on_toneProfile_currentIndexChanged(int);
-  void on_tuningMethod_currentIndexChanged(int);
-  void on_findITunesLibraryButton_clicked();
-  void on_findTraktorLibraryButton_clicked();
-  void on_findSeratoLibraryButton_clicked();
-  void on_metadataWriteTitle_currentIndexChanged(int index);
-  void on_metadataWriteArtist_currentIndexChanged(int index);
-  void on_metadataWriteAlbum_currentIndexChanged(int index);
-  void on_metadataWriteComment_currentIndexChanged(int index);
-  void on_metadataWriteGrouping_currentIndexChanged(int index);
-  void on_metadataWriteKey_currentIndexChanged(int index);
-  void on_metadataWriteFilename_currentIndexChanged(int index);
-  void on_applyFileExtensionFilter_stateChanged(int state);
+    void on_savePrefsButton_clicked();
+    void on_cancelButton_clicked();
+    void on_findITunesLibraryButton_clicked();
+    void on_findTraktorLibraryButton_clicked();
+    void on_findSeratoLibraryButton_clicked();
+    void on_metadataWriteTitle_currentIndexChanged(int index);
+    void on_metadataWriteArtist_currentIndexChanged(int index);
+    void on_metadataWriteAlbum_currentIndexChanged(int index);
+    void on_metadataWriteComment_currentIndexChanged(int index);
+    void on_metadataWriteGrouping_currentIndexChanged(int index);
+    void on_metadataWriteKey_currentIndexChanged(int index);
+    void on_metadataWriteFilename_currentIndexChanged(int index);
+    void on_applyFileExtensionFilter_stateChanged(int state);
 private:
-  Ui::PrefsDialog *ui;
+    Ui::PrefsDialog *ui;
 };
 
 #endif // PREFSDIALOG_H
