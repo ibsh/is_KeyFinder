@@ -33,7 +33,6 @@ HEADERS  += \
   $$PWD/externalplaylistserato.h \
   $$PWD/guiabout.h \
   $$PWD/guibatch.h \
-  $$PWD/guidetail.h \
   $$PWD/guimenuhandler.h \
   $$PWD/guiprefs.h \
   $$PWD/metadatafilename.h \
@@ -53,7 +52,6 @@ SOURCES += \
   $$PWD/externalplaylistserato.cpp \
   $$PWD/guiabout.cpp \
   $$PWD/guibatch.cpp \
-  $$PWD/guidetail.cpp \
   $$PWD/guimenuhandler.cpp \
   $$PWD/guiprefs.cpp \
   $$PWD/metadatafilename.cpp \

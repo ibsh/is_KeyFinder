@@ -39,7 +39,6 @@ class MainMenuHandler;
 #include <QtWidgets/QLabel>
 #include <QtNetwork/QNetworkReply>
 
-#include "guidetail.h"
 #include "guimenuhandler.h"
 #include "preferences.h"
 #include "asynckeyprocess.h"
@@ -49,113 +48,112 @@ class MainMenuHandler;
 #include "_VERSION.h"
 
 enum playlist_columns_t{
-  COL_PLAYLIST_SOURCE,
-  COL_PLAYLIST_NAME
+    COL_PLAYLIST_SOURCE,
+    COL_PLAYLIST_NAME
 };
 
 enum track_columns_t{
-  COL_STATUS,
-  COL_FILEPATH,
-  COL_FILENAME,
-  COL_TAG_TITLE,
-  COL_TAG_ARTIST,
-  COL_TAG_ALBUM,
-  COL_TAG_COMMENT,
-  COL_TAG_GROUPING,
-  COL_TAG_KEY,
-  COL_DETECTED_KEY
+    COL_STATUS,
+    COL_FILEPATH,
+    COL_FILENAME,
+    COL_TAG_TITLE,
+    COL_TAG_ARTIST,
+    COL_TAG_ALBUM,
+    COL_TAG_COMMENT,
+    COL_TAG_GROUPING,
+    COL_TAG_KEY,
+    COL_DETECTED_KEY
 };
 
 namespace Ui {
-  class BatchWindow;
+    class BatchWindow;
 }
 
-class BatchWindow : public QMainWindow{
-  Q_OBJECT
+class BatchWindow : public QMainWindow {
+    Q_OBJECT
 
 public:
 
-  explicit BatchWindow(QWidget* parent, MainMenuHandler* handler);
-  bool receiveUrls(const QList<QUrl>&);
-  ~BatchWindow();
+    explicit BatchWindow(QWidget* parent, MainMenuHandler* handler);
+    bool receiveUrls(const QList<QUrl>&);
+    ~BatchWindow();
 
 public slots:
 
-  void checkForNewVersion();
+    void checkForNewVersion();
 
 private:
 
-  void closeEvent(QCloseEvent*);
-  Preferences prefs;
-  void setGuiDefaults();
-  void setGuiRunning(const QString&, bool);
+    void closeEvent(QCloseEvent*);
+    Preferences prefs;
+    void setGuiDefaults();
+    void setGuiRunning(const QString&, bool);
 
-  void sortTableWidget();
+    void sortTableWidget();
 
-  int libraryOldIndex;
-  QFutureWatcher<QList<ExternalPlaylistObject> >* readLibraryWatcher;
-  QFutureWatcher<QList<QUrl> >* loadPlaylistWatcher;
+    int libraryOldIndex;
+    QFutureWatcher<QList<ExternalPlaylistObject> >* readLibraryWatcher;
+    QFutureWatcher<QList<QUrl> >* loadPlaylistWatcher;
 
-  void dragEnterEvent(QDragEnterEvent*);
-  void dropEvent(QDropEvent*);
-  QList<QUrl> droppedFiles;
-  void addDroppedFiles();
-  QFutureWatcher<void>* addFilesWatcher;
-  QList<QUrl> getDirectoryContents(QDir) const;
+    void dragEnterEvent(QDragEnterEvent*);
+    void dropEvent(QDropEvent*);
+    QList<QUrl> droppedFiles;
+    void addDroppedFiles();
+    QFutureWatcher<void>* addFilesWatcher;
+    QList<QUrl> getDirectoryContents(QDir) const;
 
-  void addNewRow(QString);
-  QFutureWatcher<MetadataReadResult>* metadataReadWatcher;
-  void readMetadata();
+    void addNewRow(QString);
+    QFutureWatcher<MetadataReadResult>* metadataReadWatcher;
+    void readMetadata();
 
-  QFutureWatcher<KeyFinderResultWrapper>* analysisWatcher;
-  void checkRowsForSkipping();
-  bool fieldAlreadyHasKeyData(int, int, metadata_write_t);
-  void markRowSkipped(int,bool);
-  void runAnalysis();
+    QFutureWatcher<KeyFinderResultWrapper>* analysisWatcher;
+    void checkRowsForSkipping();
+    bool fieldAlreadyHasKeyData(int, int, metadata_write_t);
+    void markRowSkipped(int,bool);
+    void runAnalysis();
 
-  bool writeToTagsAtRow(int, KeyFinder::key_t);
-  bool writeToFilenameAtRow(int, KeyFinder::key_t);
+    bool writeToTagsAtRow(int, KeyFinder::key_t);
+    bool writeToFilenameAtRow(int, KeyFinder::key_t);
 
-  // UI
-  Ui::BatchWindow* ui;
-  QPointer<QLabel> initialHelpLabel;
-  MainMenuHandler* menuHandler;
-  QBrush keyFinderRow;
-  QBrush keyFinderAltRow;
-  QBrush textDefault;
-  QBrush textSuccess;
-  QBrush textError;
-  bool allowSort;
-  int sortColumn;
-  std::vector<unsigned int> metadataColumnMapping;
+    // UI
+    Ui::BatchWindow* ui;
+    QPointer<QLabel> initialHelpLabel;
+    MainMenuHandler* menuHandler;
+    QBrush keyFinderRow;
+    QBrush keyFinderAltRow;
+    QBrush textDefault;
+    QBrush textSuccess;
+    QBrush textError;
+    bool allowSort;
+    int sortColumn;
+    std::vector<unsigned int> metadataColumnMapping;
 
 private slots:
 
-  void on_libraryWidget_cellClicked(int,int);
-  void headerClicked(int);
+    void on_libraryWidget_cellClicked(int,int);
+    void headerClicked(int);
 
-  void readLibraryFinished();
-  void loadPlaylistFinished();
+    void readLibraryFinished();
+    void loadPlaylistFinished();
 
-  void addFilesFinished();
-  void on_runBatchButton_clicked();
-  void on_cancelBatchButton_clicked();
-  void copySelectedFromTableWidget();
-  void writeDetectedToFiles();
-  void clearDetected();
-  void deleteSelectedRows();
-  void runDetailedAnalysis();
+    void addFilesFinished();
+    void on_runBatchButton_clicked();
+    void on_cancelBatchButton_clicked();
+    void copySelectedFromTableWidget();
+    void writeDetectedToFiles();
+    void clearDetected();
+    void deleteSelectedRows();
 
-  void analysisFinished();
-  void analysisResultReadyAt(int);
+    void analysisFinished();
+    void analysisResultReadyAt(int);
 
-  void metadataReadFinished();
-  void metadataReadResultReadyAt(int);
+    void metadataReadFinished();
+    void metadataReadResultReadyAt(int);
 
-  void progressRangeChanged(int, int);
-  void progressValueChanged(int);
+    void progressRangeChanged(int, int);
+    void progressValueChanged(int);
 
-  void receiveNetworkReply(QNetworkReply*);
+    void receiveNetworkReply(QNetworkReply*);
 };
 
 #endif

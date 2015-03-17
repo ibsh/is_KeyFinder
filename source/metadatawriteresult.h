@@ -24,9 +24,9 @@
 
 #include <QString>
 
-class MetadataWriteResult{
+class MetadataWriteResult {
 public:
-  QStringList newTags;
+    QStringList newTags;
 };
 
 #endif // METADATAWRITERESULT_H

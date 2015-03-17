@@ -25,13 +25,12 @@
 #include <QString>
 #include "preferences.h"
 
-class AsyncFileObject{
+class AsyncFileObject {
 public:
-  AsyncFileObject(const QString& path, const Preferences& p, int row) :
-    filePath(path), prefs(p), batchRow(row) { }
-  QString filePath;
-  Preferences prefs;
-  int batchRow;
+    AsyncFileObject(const QString& path, const Preferences& p, int row) : filePath(path), prefs(p), batchRow(row) { }
+    QString filePath;
+    Preferences prefs;
+    int batchRow;
 };
 
 #endif // ASYNCFILEOBJECT_H

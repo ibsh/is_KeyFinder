@@ -22,17 +22,19 @@
 #include "metadatafilename.h"
 
 QStringList writeKeyToFilename(const QString& filename, KeyFinder::key_t key, const Preferences & prefs) {
-  QString dataToWrite = prefs.getKeyCode(key);
-  QFile file(filename);
-  QString path = file.fileName().left(file.fileName().lastIndexOf("/") + 1);
-  QString extn = file.fileName().mid(file.fileName().lastIndexOf("."));
-  QString name = file.fileName().mid(file.fileName().lastIndexOf("/") + 1);
-  name = name.left(name.length() - extn.length());
-  QStringList written;
-  QString newName = prefs.newString(dataToWrite, name, METADATA_CHARLIMIT_FILENAME, prefs.getMetadataWriteFilename());
-  if (newName != "") name = newName;
-  if (file.rename(path + name + extn)) {
-    written << path << name << extn;
-  }
-  return written;
+    QString dataToWrite = prefs.getKeyCode(key);
+    QFile file(filename);
+    QString path = file.fileName().left(file.fileName().lastIndexOf("/") + 1);
+    QString extn = file.fileName().mid(file.fileName().lastIndexOf("."));
+    QString name = file.fileName().mid(file.fileName().lastIndexOf("/") + 1);
+    name = name.left(name.length() - extn.length());
+    QStringList written;
+    QString newName = prefs.newString(dataToWrite, name, METADATA_CHARLIMIT_FILENAME, prefs.getMetadataWriteFilename());
+    if (newName != "") {
+        name = newName;
+    }
+    if (file.rename(path + name + extn)) {
+        written << path << name << extn;
+    }
+    return written;
 }

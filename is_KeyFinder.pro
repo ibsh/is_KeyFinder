@@ -21,8 +21,7 @@
 
 # CURRENT DEPENDENCIES:
 # qt               5.1.1
-# libkeyfinder    0.11.0
-#  |-> boost      1.52.0
+# libkeyfinder     2.0.0
 #  \-> fftw        3.3.2
 # libav            0.7.7
 # taglib           1.9.1
@@ -40,6 +39,10 @@ QT += \
 
 TEMPLATE = app
 DEPENDPATH += .
+
+CONFIG += c++11
+LIBS += -stdlib=libc++
+QMAKE_CXXFLAGS += -std=c++11 -stdlib=libc++
 
 include(./source/source.pri)
 include(./forms/forms.pri)
@@ -64,13 +67,11 @@ QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS # for libav
 
 unix|macx{
   LIBS += -L/usr/local/lib -L/usr/lib
-  LIBS += -lkeyfinder.0
+  LIBS += -lkeyfinder
   LIBS += -lavcodec
   LIBS += -lavformat
   LIBS += -lavutil
   LIBS += -ltag
-  LIBS += -lboost_system
-  LIBS += -lboost_thread
 }
 
 macx{

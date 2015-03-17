@@ -26,19 +26,19 @@
 #include <QStringList>
 #include <QIODevice>
 
-class SeratoDataStream{
+class SeratoDataStream {
 public:
-  enum CrateType {
-    SUBCRATE = 0,
-    SMARTCRATE
-  };
-  QStringList readCrate(QIODevice*, CrateType);
+    enum CrateType {
+        SUBCRATE = 0,
+        SMARTCRATE
+    };
+    QStringList readCrate(QIODevice*, CrateType);
 private:
-  QDataStream* strm; // composition rather than inheritance
-  QString readSingleByteString(int);
-  QString readDoubleByteString(int);
-  int readInt(int);
-  void skipBytes(int);
+    QDataStream* strm; // composition rather than inheritance
+    QString readSingleByteString(int);
+    QString readDoubleByteString(int);
+    int readInt(int);
+    void skipBytes(int);
 };
 
 #endif // EXTERNALPLAYLISTSERATO_H

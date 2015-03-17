@@ -23,15 +23,14 @@
 #define KEYFINDERRESULTWRAPPER_H
 
 #include <QString>
-#include "keyfinder/keyfinderresult.h"
+#include <keyfinder/keyfinder.h>
 
-class KeyFinderResultWrapper{
+class KeyFinderResultWrapper {
 public:
-  KeyFinder::KeyDetectionResult core;
-  KeyFinder::Chromagram fullChromagram;
-  KeyFinder::Chromagram oneOctaveChromagram;
-  int batchRow;
-  QString errorMessage;
+    KeyFinder::key_t core;
+    KeyFinder::Chromagram fullChromagram;
+    int batchRow;
+    QString errorMessage;
 };
 
 #endif // KEYFINDERRESULTWRAPPER_H

@@ -23,7 +23,6 @@
 #include <QMenuBar>
 #include <QKeySequence>
 
-#include "guidetail.h"
 #include "guibatch.h"
 #include "guimenuhandler.h"
 #include "decoderlibav.h"
@@ -81,12 +80,12 @@ int commandLineInterface(int argc, char* argv[]) {
     return 1;
   }
 
-  std::cout << prefs.getKeyCode(result.core.globalKeyEstimate).toUtf8().constData();
+  std::cout << prefs.getKeyCode(result.core).toUtf8().constData();
 
   if (writeToTags) {
     AVFileMetadataFactory factory;
     AVFileMetadata* md = factory.createAVFileMetadata(filePath);
-    MetadataWriteResult written = md->writeKeyToMetadata(result.core.globalKeyEstimate,prefs);
+    MetadataWriteResult written = md->writeKeyToMetadata(result.core, prefs);
     delete md;
     bool found = false;
     for (int i = 0; i < written.newTags.size(); i++)
