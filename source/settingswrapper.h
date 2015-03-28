@@ -27,23 +27,23 @@
 
 class SettingsWrapper {
 public:
-    virtual ~SettingsWrapper() = 0;
-    virtual void beginGroup(const QString& group) = 0;
-    virtual void endGroup() = 0;
-    virtual QVariant value(const QString &key, const QVariant &defaultValue) const = 0;
-    virtual void setValue(const QString& key, const QVariant& value) = 0;
-    virtual QStringList allKeys() const = 0;
+  virtual ~SettingsWrapper() = 0;
+  virtual void beginGroup(const QString& group) = 0;
+  virtual void endGroup() = 0;
+  virtual QVariant value(const QString &key, const QVariant &defaultValue) const = 0;
+  virtual void setValue(const QString& key, const QVariant& value) = 0;
+  virtual QStringList allKeys() const = 0;
 };
 
 class SettingsWrapperQt : public SettingsWrapper {
 public:
-    virtual void beginGroup(const QString& group);
-    virtual void endGroup();
-    virtual QVariant value(const QString &key, const QVariant &defaultValue) const;
-    virtual void setValue(const QString& key, const QVariant& value);
-    virtual QStringList allKeys() const;
+  virtual void beginGroup(const QString& group);
+  virtual void endGroup();
+  virtual QVariant value(const QString &key, const QVariant &defaultValue) const;
+  virtual void setValue(const QString& key, const QVariant& value);
+  virtual QStringList allKeys() const;
 private:
-    QSettings priv;
+  QSettings priv;
 };
 
 #endif // SETTINGSWRAPPER_H

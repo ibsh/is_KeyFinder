@@ -46,32 +46,32 @@ const QString SOURCE_SERATO    = "Serato";
 
 class ExternalPlaylistObject {
 public:
-    ExternalPlaylistObject(const QString&, const QString&);
-    QString name;
-    QString source;
+  ExternalPlaylistObject(const QString&, const QString&);
+  QString name;
+  QString source;
 };
 
 class ExternalPlaylist{
 public:
-    static QList<ExternalPlaylistObject> readLibrary(const Preferences&);
-    static QList<QUrl> readLibraryPlaylist(const QString&, const QString&, const Preferences&);
-    static QList<QUrl> readITunesStandalonePlaylist(const QString&);
-    static QList<QUrl> readM3uStandalonePlaylist(const QString&);
+  static QList<ExternalPlaylistObject> readLibrary(const Preferences&);
+  static QList<QUrl> readLibraryPlaylist(const QString&, const QString&, const Preferences&);
+  static QList<QUrl> readITunesStandalonePlaylist(const QString&);
+  static QList<QUrl> readM3uStandalonePlaylist(const QString&);
 private:
-    // iTunes
-    static QList<ExternalPlaylistObject> readPlaylistsFromITunesLibrary(const Preferences&);
-    static QList<QUrl> readITunesLibraryPlaylist(const QString&, const Preferences&);
-    static QUrl fixITunesAddressing(const QString&);
-    // Serato
-    static QList<ExternalPlaylistObject> readPlaylistsFromSeratoLibrary(const Preferences&);
-    static QList<QUrl> readSeratoLibraryPlaylist(const QString&, const Preferences&);
-    static QUrl fixSeratoAddressing(const QString&, const QString&);
-    // Traktor
-    static QList<ExternalPlaylistObject> readPlaylistsFromTraktorLibrary(const Preferences&);
-    static QList<QUrl> readTraktorLibraryPlaylist(const QString&, const Preferences&);
-    static QUrl fixTraktorAddressing(const QString&);
-    // XML handling
-    static QStringList executeXmlQuery(const QString&, const QString&, const QStringList& = QStringList());
+  // iTunes
+  static QList<ExternalPlaylistObject> readPlaylistsFromITunesLibrary(const Preferences&);
+  static QList<QUrl> readITunesLibraryPlaylist(const QString&, const Preferences&);
+  static QUrl fixITunesAddressing(const QString&);
+  // Serato
+  static QList<ExternalPlaylistObject> readPlaylistsFromSeratoLibrary(const Preferences&);
+  static QList<QUrl> readSeratoLibraryPlaylist(const QString&, const Preferences&);
+  static QUrl fixSeratoAddressing(const QString&, const QString&);
+  // Traktor
+  static QList<ExternalPlaylistObject> readPlaylistsFromTraktorLibrary(const Preferences&);
+  static QList<QUrl> readTraktorLibraryPlaylist(const QString&, const Preferences&);
+  static QUrl fixTraktorAddressing(const QString&);
+  // XML handling
+  static QStringList executeXmlQuery(const QString&, const QString&, const QStringList& = QStringList());
 };
 
 #endif // EXTERNALPLAYLIST_H

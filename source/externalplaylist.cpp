@@ -38,301 +38,301 @@
 QMutex externalPlaylistMutex;
 
 ExternalPlaylistObject::ExternalPlaylistObject(const QString& n, const QString& s) {
-    name = n;
-    source = s;
+  name = n;
+  source = s;
 }
 
 QList<ExternalPlaylistObject> ExternalPlaylist::readLibrary(const Preferences& prefs) {
-    QList<ExternalPlaylistObject> playlists;
-    playlists << readPlaylistsFromITunesLibrary(prefs);
-    playlists << readPlaylistsFromTraktorLibrary(prefs);
-    playlists << readPlaylistsFromSeratoLibrary(prefs);
-    return playlists;
+  QList<ExternalPlaylistObject> playlists;
+  playlists << readPlaylistsFromITunesLibrary(prefs);
+  playlists << readPlaylistsFromTraktorLibrary(prefs);
+  playlists << readPlaylistsFromSeratoLibrary(prefs);
+  return playlists;
 }
 
 QList<ExternalPlaylistObject> ExternalPlaylist::readPlaylistsFromITunesLibrary(const Preferences& prefs) {
-    QMutexLocker locker(&externalPlaylistMutex);
-    QList<ExternalPlaylistObject> results;
-    QStringList resultStrings;
-    QString xPath;
-    QStringList defaultPlaylists = GuiStrings::getInstance()->iTunesDefaultPlaylists();
+  QMutexLocker locker(&externalPlaylistMutex);
+  QList<ExternalPlaylistObject> results;
+  QStringList resultStrings;
+  QString xPath;
+  QStringList defaultPlaylists = GuiStrings::getInstance()->iTunesDefaultPlaylists();
 
 #ifndef Q_OS_MAC
-    // QXmlQuery on Windows
-    xPath += "doc($inputDocument)/plist/dict";
-    xPath += "/array[preceding-sibling::key[1]='Playlists']";
-    xPath += "/dict/string[preceding-sibling::key[1]='Name']/string(text())";
+  // QXmlQuery on Windows
+  xPath += "doc($inputDocument)/plist/dict";
+  xPath += "/array[preceding-sibling::key[1]='Playlists']";
+  xPath += "/dict/string[preceding-sibling::key[1]='Name']/string(text())";
 #else
-    // XQilla on Mac
-    xPath += "plist/dict/array[preceding-sibling::key[1]='Playlists']";
-    xPath += "/dict/string[preceding-sibling::key[1]='Name']/text()"; // likewise in Windows?
+  // XQilla on Mac
+  xPath += "plist/dict/array[preceding-sibling::key[1]='Playlists']";
+  xPath += "/dict/string[preceding-sibling::key[1]='Name']/text()"; // likewise in Windows?
 #endif
 
-    qDebug(READ_LIBRARY_BEGIN, ITUNES, prefs.getITunesLibraryPath().toUtf8().constData());
-    resultStrings = executeXmlQuery(prefs.getITunesLibraryPath(), xPath);
+  qDebug(READ_LIBRARY_BEGIN, ITUNES, prefs.getITunesLibraryPath().toUtf8().constData());
+  resultStrings = executeXmlQuery(prefs.getITunesLibraryPath(), xPath);
 
-    for (int i=0; i<(signed)resultStrings.size(); i++) {
-        if (defaultPlaylists.contains(resultStrings[i])) continue;
-        ExternalPlaylistObject o(resultStrings[i], SOURCE_ITUNES);
-        results.push_back(o);
-    }
+  for (int i=0; i<(signed)resultStrings.size(); i++) {
+    if (defaultPlaylists.contains(resultStrings[i])) continue;
+    ExternalPlaylistObject o(resultStrings[i], SOURCE_ITUNES);
+    results.push_back(o);
+  }
 
-    qDebug(READ_LIBRARY_END, ITUNES, results.size());
-    return results;
+  qDebug(READ_LIBRARY_END, ITUNES, results.size());
+  return results;
 }
 
 QList<ExternalPlaylistObject> ExternalPlaylist::readPlaylistsFromTraktorLibrary(const Preferences& prefs) {
-    QMutexLocker locker(&externalPlaylistMutex);
-    QList<ExternalPlaylistObject> results;
-    QStringList resultStrings;
-    QString xPath;
-    QStringList defaultPlaylists = GuiStrings::getInstance()->traktorDefaultPlaylists();
+  QMutexLocker locker(&externalPlaylistMutex);
+  QList<ExternalPlaylistObject> results;
+  QStringList resultStrings;
+  QString xPath;
+  QStringList defaultPlaylists = GuiStrings::getInstance()->traktorDefaultPlaylists();
 
 #ifndef Q_OS_MAC
-    // QXmlQuery on Windows
-    xPath = "doc($inputDocument)//NODE[@TYPE='PLAYLIST']/@NAME/string(.)";
+  // QXmlQuery on Windows
+  xPath = "doc($inputDocument)//NODE[@TYPE='PLAYLIST']/@NAME/string(.)";
 #else
-    // XQilla on Mac
-    xPath = "//NODE[@TYPE='PLAYLIST']/@NAME";
+  // XQilla on Mac
+  xPath = "//NODE[@TYPE='PLAYLIST']/@NAME";
 #endif
 
-    qDebug(READ_LIBRARY_BEGIN, TRAKTOR, prefs.getTraktorLibraryPath().toUtf8().constData());
-    resultStrings = executeXmlQuery(prefs.getTraktorLibraryPath(), xPath);
+  qDebug(READ_LIBRARY_BEGIN, TRAKTOR, prefs.getTraktorLibraryPath().toUtf8().constData());
+  resultStrings = executeXmlQuery(prefs.getTraktorLibraryPath(), xPath);
 
-    for (int i=0; i<(signed)resultStrings.size(); i++) {
-        if (defaultPlaylists.contains(resultStrings[i])) continue;
-        ExternalPlaylistObject o(resultStrings[i], SOURCE_TRAKTOR);
-        results.push_back(o);
-    }
+  for (int i=0; i<(signed)resultStrings.size(); i++) {
+    if (defaultPlaylists.contains(resultStrings[i])) continue;
+    ExternalPlaylistObject o(resultStrings[i], SOURCE_TRAKTOR);
+    results.push_back(o);
+  }
 
-    qDebug(READ_LIBRARY_END, TRAKTOR, results.size());
-    return results;
+  qDebug(READ_LIBRARY_END, TRAKTOR, results.size());
+  return results;
 }
 
 QList<ExternalPlaylistObject> ExternalPlaylist::readPlaylistsFromSeratoLibrary(const Preferences& prefs) {
-    QMutexLocker locker(&externalPlaylistMutex);
-    QList<ExternalPlaylistObject> results;
+  QMutexLocker locker(&externalPlaylistMutex);
+  QList<ExternalPlaylistObject> results;
 
-    qDebug(READ_LIBRARY_BEGIN, SERATO, prefs.getSeratoLibraryPath().toUtf8().constData());
-    QString path = prefs.getSeratoLibraryPath();
-    path = path.left(path.lastIndexOf("/")+1);
+  qDebug(READ_LIBRARY_BEGIN, SERATO, prefs.getSeratoLibraryPath().toUtf8().constData());
+  QString path = prefs.getSeratoLibraryPath();
+  path = path.left(path.lastIndexOf("/")+1);
 
-    QDir dir = QDir(path + GuiStrings::getInstance()->seratoSubcratesDirName());
-    QStringList filters;
-    filters << "*.crate";
-    QFileInfoList contents = dir.entryInfoList(filters);
-    for (int i = 0; i<(signed)contents.size(); i++) {
-        ExternalPlaylistObject o(contents[i].baseName(), SOURCE_SERATO);
-        o.name = o.name.replace(QString("%%"),QString("/"));
-        results.push_back(o);
-    }
+  QDir dir = QDir(path + GuiStrings::getInstance()->seratoSubcratesDirName());
+  QStringList filters;
+  filters << "*.crate";
+  QFileInfoList contents = dir.entryInfoList(filters);
+  for (int i = 0; i<(signed)contents.size(); i++) {
+    ExternalPlaylistObject o(contents[i].baseName(), SOURCE_SERATO);
+    o.name = o.name.replace(QString("%%"),QString("/"));
+    results.push_back(o);
+  }
 
-    dir = QDir(path + GuiStrings::getInstance()->seratoSmartCratesDirName());
-    filters.clear();
-    filters << "*.scrate";
-    contents = dir.entryInfoList(filters);
-    for (int i = 0; i<(signed)contents.size(); i++) {
-        ExternalPlaylistObject o(contents[i].baseName(), SOURCE_SERATO);
-        o.name = o.name.replace(QString("%%"),QString("/"));
-        results.push_back(o);
-    }
+  dir = QDir(path + GuiStrings::getInstance()->seratoSmartCratesDirName());
+  filters.clear();
+  filters << "*.scrate";
+  contents = dir.entryInfoList(filters);
+  for (int i = 0; i<(signed)contents.size(); i++) {
+    ExternalPlaylistObject o(contents[i].baseName(), SOURCE_SERATO);
+    o.name = o.name.replace(QString("%%"),QString("/"));
+    results.push_back(o);
+  }
 
-    qDebug(READ_LIBRARY_END, SERATO, results.size());
-    return results;
+  qDebug(READ_LIBRARY_END, SERATO, results.size());
+  return results;
 }
 
 QList<QUrl> ExternalPlaylist::readLibraryPlaylist(const QString& name, const QString& source, const Preferences& prefs) {
-    if (source == SOURCE_ITUNES) {
-        return readITunesLibraryPlaylist(name, prefs);
-    } else if (source == SOURCE_TRAKTOR) {
-        return readTraktorLibraryPlaylist(name, prefs);
-    } else if (source == SOURCE_SERATO) {
-        return readSeratoLibraryPlaylist(name, prefs);
-    } else {
-        return QList<QUrl>();
-    }
+  if (source == SOURCE_ITUNES) {
+    return readITunesLibraryPlaylist(name, prefs);
+  } else if (source == SOURCE_TRAKTOR) {
+    return readTraktorLibraryPlaylist(name, prefs);
+  } else if (source == SOURCE_SERATO) {
+    return readSeratoLibraryPlaylist(name, prefs);
+  } else {
+    return QList<QUrl>();
+  }
 }
 
 QList<QUrl> ExternalPlaylist::readITunesLibraryPlaylist(const QString& playlistName, const Preferences& prefs) {
-    QMutexLocker locker(&externalPlaylistMutex);
-    QList<QUrl> results;
-    QStringList resultStrings;
-    QString xPath;
-    QStringList params = (QStringList() << "playlistName" << playlistName);
+  QMutexLocker locker(&externalPlaylistMutex);
+  QList<QUrl> results;
+  QStringList resultStrings;
+  QString xPath;
+  QStringList params = (QStringList() << "playlistName" << playlistName);
 
 #ifndef Q_OS_MAC
-    // QXmlQuery on Windows
-    xPath += "let $d := doc($inputDocument)/plist/dict ";
-    xPath += "for $track in $d/array[preceding-sibling::key[1]='Playlists']";
-    xPath += "/dict[child::string[preceding-sibling::key[1]='Name'][1]=($playlistName)]";
-    xPath += "/array/dict/integer[preceding-sibling::key[1]='Track ID'] ";
-    xPath += "return $d/dict[preceding-sibling::key[1]='Tracks']";
-    xPath += "/dict[preceding-sibling::key[1]=$track]";
-    xPath += "/string[preceding-sibling::key[1]='Location']/string(text())";
+  // QXmlQuery on Windows
+  xPath += "let $d := doc($inputDocument)/plist/dict ";
+  xPath += "for $track in $d/array[preceding-sibling::key[1]='Playlists']";
+  xPath += "/dict[child::string[preceding-sibling::key[1]='Name'][1]=($playlistName)]";
+  xPath += "/array/dict/integer[preceding-sibling::key[1]='Track ID'] ";
+  xPath += "return $d/dict[preceding-sibling::key[1]='Tracks']";
+  xPath += "/dict[preceding-sibling::key[1]=$track]";
+  xPath += "/string[preceding-sibling::key[1]='Location']/string(text())";
 #else
-    // XQilla on Mac
-    xPath += "declare variable $playlistName external;";
-    xPath += "let $d := plist/dict ";
-    xPath += "for $track in $d/array[preceding-sibling::key[1]='Playlists']";
-    xPath += "/dict[child::string[preceding-sibling::key[1]='Name'][1]=($playlistName)]";
-    xPath += "/array/dict/integer[preceding-sibling::key[1]='Track ID'] ";
-    xPath += "return $d/dict[preceding-sibling::key[1]='Tracks']";
-    xPath += "/dict[preceding-sibling::key[1]=$track]";
-    xPath += "/string[preceding-sibling::key[1]='Location']/string(text())";
+  // XQilla on Mac
+  xPath += "declare variable $playlistName external;";
+  xPath += "let $d := plist/dict ";
+  xPath += "for $track in $d/array[preceding-sibling::key[1]='Playlists']";
+  xPath += "/dict[child::string[preceding-sibling::key[1]='Name'][1]=($playlistName)]";
+  xPath += "/array/dict/integer[preceding-sibling::key[1]='Track ID'] ";
+  xPath += "return $d/dict[preceding-sibling::key[1]='Tracks']";
+  xPath += "/dict[preceding-sibling::key[1]=$track]";
+  xPath += "/string[preceding-sibling::key[1]='Location']/string(text())";
 #endif
 
-    qDebug(READ_PLAYLIST_BEGIN, ITUNES, playlistName.toUtf8().constData());
-    resultStrings = executeXmlQuery(prefs.getITunesLibraryPath(), xPath, params);
+  qDebug(READ_PLAYLIST_BEGIN, ITUNES, playlistName.toUtf8().constData());
+  resultStrings = executeXmlQuery(prefs.getITunesLibraryPath(), xPath, params);
 
-    for (int i=0; i<(signed)resultStrings.size(); i++) {
-        results.push_back(fixITunesAddressing(resultStrings[i]));
-    }
+  for (int i=0; i<(signed)resultStrings.size(); i++) {
+    results.push_back(fixITunesAddressing(resultStrings[i]));
+  }
 
-    qDebug(READ_PLAYLIST_END, ITUNES, results.size());
-    return results;
+  qDebug(READ_PLAYLIST_END, ITUNES, results.size());
+  return results;
 }
 
 QList<QUrl> ExternalPlaylist::readTraktorLibraryPlaylist(const QString& playlistName, const Preferences& prefs) {
-    QMutexLocker locker(&externalPlaylistMutex);
-    QList<QUrl> results;
-    QStringList resultStrings;
-    QString xPath;
-    QStringList params = (QStringList() << "playlistName" << playlistName);
+  QMutexLocker locker(&externalPlaylistMutex);
+  QList<QUrl> results;
+  QStringList resultStrings;
+  QString xPath;
+  QStringList params = (QStringList() << "playlistName" << playlistName);
 
 #ifndef Q_OS_MAC
-    // QXmlQuery on Windows
-    xPath += "doc($inputDocument)//NODE[@TYPE='PLAYLIST' and @NAME=($playlistName)]";
-    xPath += "/PLAYLIST[@TYPE='LIST']/ENTRY/PRIMARYKEY/@KEY/string(.)";
+  // QXmlQuery on Windows
+  xPath += "doc($inputDocument)//NODE[@TYPE='PLAYLIST' and @NAME=($playlistName)]";
+  xPath += "/PLAYLIST[@TYPE='LIST']/ENTRY/PRIMARYKEY/@KEY/string(.)";
 #else
-    // XQilla on Mac
-    xPath += "declare variable $playlistName external;";
-    xPath += "//NODE[@TYPE='PLAYLIST' and @NAME=($playlistName)]";
-    xPath += "/PLAYLIST[@TYPE='LIST']/ENTRY/PRIMARYKEY/@KEY/string(.)";
+  // XQilla on Mac
+  xPath += "declare variable $playlistName external;";
+  xPath += "//NODE[@TYPE='PLAYLIST' and @NAME=($playlistName)]";
+  xPath += "/PLAYLIST[@TYPE='LIST']/ENTRY/PRIMARYKEY/@KEY/string(.)";
 #endif
 
-    qDebug(READ_PLAYLIST_BEGIN, TRAKTOR, playlistName.toUtf8().constData());
-    resultStrings = executeXmlQuery(prefs.getTraktorLibraryPath(), xPath, params);
+  qDebug(READ_PLAYLIST_BEGIN, TRAKTOR, playlistName.toUtf8().constData());
+  resultStrings = executeXmlQuery(prefs.getTraktorLibraryPath(), xPath, params);
 
-    for (int i=0; i<(signed)resultStrings.size(); i++) {
-        results.push_back(fixTraktorAddressing(resultStrings[i]));
-    }
+  for (int i=0; i<(signed)resultStrings.size(); i++) {
+    results.push_back(fixTraktorAddressing(resultStrings[i]));
+  }
 
-    qDebug(READ_PLAYLIST_END, TRAKTOR, results.size());
-    return results;
+  qDebug(READ_PLAYLIST_END, TRAKTOR, results.size());
+  return results;
 }
 
 QList<QUrl> ExternalPlaylist::readSeratoLibraryPlaylist(const QString& playlistName, const Preferences& prefs) {
-    QMutexLocker locker(&externalPlaylistMutex);
-    QList<QUrl> results;
+  QMutexLocker locker(&externalPlaylistMutex);
+  QList<QUrl> results;
 
-    qDebug(READ_PLAYLIST_BEGIN, SERATO, playlistName.toUtf8().constData());
-    QString path = prefs.getSeratoLibraryPath();
-    path = path.left(path.lastIndexOf("/")+1);
-    // is it a [sub]crate or a smartcrate?
-    QString playlistNameCopy = playlistName;
-    playlistNameCopy = playlistNameCopy.replace(QString("/"),QString("%%"));
-    QFile* crate = new QFile(path + GuiStrings::getInstance()->seratoSubcratesDirName() + QString("/") + playlistNameCopy + QString(".crate"));
-    bool sub = true;
-    if (!crate->exists()) {
-        delete crate;
-        crate = new QFile(path + GuiStrings::getInstance()->seratoSmartCratesDirName() + QString("/") + playlistNameCopy + QString(".scrate"));
-        sub = false;
-        qDebug("Serato playlist: '%s' is a smartcrate", playlistName.toUtf8().constData());
-    } else {
-        qDebug("Serato playlist: '%s' is a subcrate", playlistName.toUtf8().constData());
-    }
-    // Serato path stuff
-    QString pathPrefix = "/";
+  qDebug(READ_PLAYLIST_BEGIN, SERATO, playlistName.toUtf8().constData());
+  QString path = prefs.getSeratoLibraryPath();
+  path = path.left(path.lastIndexOf("/")+1);
+  // is it a [sub]crate or a smartcrate?
+  QString playlistNameCopy = playlistName;
+  playlistNameCopy = playlistNameCopy.replace(QString("/"),QString("%%"));
+  QFile* crate = new QFile(path + GuiStrings::getInstance()->seratoSubcratesDirName() + QString("/") + playlistNameCopy + QString(".crate"));
+  bool sub = true;
+  if (!crate->exists()) {
+    delete crate;
+    crate = new QFile(path + GuiStrings::getInstance()->seratoSmartCratesDirName() + QString("/") + playlistNameCopy + QString(".scrate"));
+    sub = false;
+    qDebug("Serato playlist: '%s' is a smartcrate", playlistName.toUtf8().constData());
+  } else {
+    qDebug("Serato playlist: '%s' is a subcrate", playlistName.toUtf8().constData());
+  }
+  // Serato path stuff
+  QString pathPrefix = "/";
 #ifdef Q_OS_MAC
-    QRegularExpression regex("^(/Volumes/[^/]+/)");
-    QRegularExpressionMatch match = regex.match(prefs.getSeratoLibraryPath());
-    if (match.hasMatch()) pathPrefix = match.captured();
+  QRegularExpression regex("^(/Volumes/[^/]+/)");
+  QRegularExpressionMatch match = regex.match(prefs.getSeratoLibraryPath());
+  if (match.hasMatch()) pathPrefix = match.captured();
 #endif
 #ifdef Q_OS_WIN
-    pathPrefix = prefs.getSeratoLibraryPath().left(3);
+  pathPrefix = prefs.getSeratoLibraryPath().left(3);
 #endif
-    if (crate->open(QIODevice::ReadOnly)) {
-        SeratoDataStream instr;
-        QStringList resultStrings = instr.readCrate(crate, (sub ? SeratoDataStream::SUBCRATE : SeratoDataStream::SMARTCRATE));
-        for (int i = 0; i < (signed)resultStrings.size(); i++) {
-            results.push_back(QUrl::fromLocalFile(pathPrefix + resultStrings[i]));
-        }
-        crate->close();
+  if (crate->open(QIODevice::ReadOnly)) {
+    SeratoDataStream instr;
+    QStringList resultStrings = instr.readCrate(crate, (sub ? SeratoDataStream::SUBCRATE : SeratoDataStream::SMARTCRATE));
+    for (int i = 0; i < (signed)resultStrings.size(); i++) {
+      results.push_back(QUrl::fromLocalFile(pathPrefix + resultStrings[i]));
     }
-    delete crate;
-    qDebug(READ_PLAYLIST_END, SERATO, results.size());
-    return results;
+    crate->close();
+  }
+  delete crate;
+  qDebug(READ_PLAYLIST_END, SERATO, results.size());
+  return results;
 }
 
 QList<QUrl> ExternalPlaylist::readITunesStandalonePlaylist(const QString& playlistPath) {
-    QMutexLocker locker(&externalPlaylistMutex);
-    QStringList resultStrings;
-    QList<QUrl> results;
-    QString xPath;
+  QMutexLocker locker(&externalPlaylistMutex);
+  QStringList resultStrings;
+  QList<QUrl> results;
+  QString xPath;
 
 #ifndef Q_OS_MAC
-    xPath += "doc($inputDocument)/plist/dict";
-    xPath += "/dict[preceding-sibling::key[1]='Tracks']";
-    xPath += "/dict/string[preceding-sibling::key[1]='Location']/string(text())";
+  xPath += "doc($inputDocument)/plist/dict";
+  xPath += "/dict[preceding-sibling::key[1]='Tracks']";
+  xPath += "/dict/string[preceding-sibling::key[1]='Location']/string(text())";
 #else
-    xPath += "plist/dict/dict[preceding-sibling::key[1]='Tracks']";
-    xPath += "/dict/string[preceding-sibling::key[1]='Location']/text()";
+  xPath += "plist/dict/dict[preceding-sibling::key[1]='Tracks']";
+  xPath += "/dict/string[preceding-sibling::key[1]='Location']/text()";
 #endif
 
-    qDebug(READ_STANDALONE_BEGIN, ITUNES, playlistPath.toUtf8().constData());
-    resultStrings = executeXmlQuery(playlistPath, xPath);
+  qDebug(READ_STANDALONE_BEGIN, ITUNES, playlistPath.toUtf8().constData());
+  resultStrings = executeXmlQuery(playlistPath, xPath);
 
-    for (int i=0; i<(signed)resultStrings.size(); i++) {
-        results.push_back(fixITunesAddressing(resultStrings[i]));
-    }
+  for (int i=0; i<(signed)resultStrings.size(); i++) {
+    results.push_back(fixITunesAddressing(resultStrings[i]));
+  }
 
-    qDebug(READ_STANDALONE_END, ITUNES, results.size());
-    return results;
+  qDebug(READ_STANDALONE_END, ITUNES, results.size());
+  return results;
 }
 
 QList<QUrl> ExternalPlaylist::readM3uStandalonePlaylist(const QString& m3uPath) {
-    QList<QUrl> results;
+  QList<QUrl> results;
 
-    qDebug(READ_STANDALONE_BEGIN, M3U, m3uPath.toUtf8().constData());
-    QFile m3uFile(m3uPath);
-    if (!m3uFile.open(QIODevice::ReadOnly))
-        return results;
-    QTextStream m3uTextStream(&m3uFile);
-    QString m3uChar;
-    QString m3uLine;
-    // M3U files break with ch10/13, and comment with ch35.
-    // QTextStream.readLine doesn't work, so we do it a char at a time
-    while (!(m3uChar = m3uTextStream.read(1)).isNull()) {
-        int chVal = int(m3uChar[0].toLatin1());
-        if (chVal == 13 || chVal == 10) {
-            if (m3uLine.length() > 0 && int(m3uLine[0].toLatin1()) != 35) {
-                results.push_back(QUrl(m3uLine));
-            }
-            m3uLine = "";
-        } else {
-            m3uLine += m3uChar;
-        }
-    }
-
-    qDebug(READ_STANDALONE_END, M3U, results.size());
+  qDebug(READ_STANDALONE_BEGIN, M3U, m3uPath.toUtf8().constData());
+  QFile m3uFile(m3uPath);
+  if (!m3uFile.open(QIODevice::ReadOnly))
     return results;
+  QTextStream m3uTextStream(&m3uFile);
+  QString m3uChar;
+  QString m3uLine;
+  // M3U files break with ch10/13, and comment with ch35.
+  // QTextStream.readLine doesn't work, so we do it a char at a time
+  while (!(m3uChar = m3uTextStream.read(1)).isNull()) {
+    int chVal = int(m3uChar[0].toLatin1());
+    if (chVal == 13 || chVal == 10) {
+      if (m3uLine.length() > 0 && int(m3uLine[0].toLatin1()) != 35) {
+        results.push_back(QUrl(m3uLine));
+      }
+      m3uLine = "";
+    } else {
+      m3uLine += m3uChar;
+    }
+  }
+
+  qDebug(READ_STANDALONE_END, M3U, results.size());
+  return results;
 }
 
 QUrl ExternalPlaylist::fixITunesAddressing(const QString& address) {
-    QString addressCopy = address;
-    addressCopy = addressCopy.replace(QString("file://localhost"), QString(""));
-    addressCopy = addressCopy.replace(QString("file://"), QString(""));
-    addressCopy = QUrl::fromPercentEncoding(addressCopy.toUtf8().constData());
-    qDebug("Fixed iTunes address from %s to %s", address.toUtf8().constData(), addressCopy.toUtf8().constData());
-    return QUrl::fromLocalFile(addressCopy);
+  QString addressCopy = address;
+  addressCopy = addressCopy.replace(QString("file://localhost"), QString(""));
+  addressCopy = addressCopy.replace(QString("file://"), QString(""));
+  addressCopy = QUrl::fromPercentEncoding(addressCopy.toUtf8().constData());
+  qDebug("Fixed iTunes address from %s to %s", address.toUtf8().constData(), addressCopy.toUtf8().constData());
+  return QUrl::fromLocalFile(addressCopy);
 }
 
 QUrl ExternalPlaylist::fixTraktorAddressing(const QString& address) {
-    QString addressCopy = address;
-    addressCopy = addressCopy.replace(QString("/:"), QString("/"));
-    addressCopy = addressCopy.prepend("/Volumes/");
-    qDebug("Fixed Traktor address from %s to %s", address.toUtf8().constData(), addressCopy.toUtf8().constData());
-    return QUrl::fromLocalFile(addressCopy);
+  QString addressCopy = address;
+  addressCopy = addressCopy.replace(QString("/:"), QString("/"));
+  addressCopy = addressCopy.prepend("/Volumes/");
+  qDebug("Fixed Traktor address from %s to %s", address.toUtf8().constData(), addressCopy.toUtf8().constData());
+  return QUrl::fromLocalFile(addressCopy);
 }
 
 // ================================= QXmlQuery / XQilla stuff =======================================
@@ -341,104 +341,104 @@ QUrl ExternalPlaylist::fixTraktorAddressing(const QString& address) {
 
 QStringList ExternalPlaylist::executeXmlQuery(const QString& libraryPath, const QString& xPath, const QStringList& parameters) {
 
-    QStringList results;
+  QStringList results;
 
-    QFile xmlFile(libraryPath);
-    if (!xmlFile.open(QIODevice::ReadOnly))
-        return results;
-
-    QXmlQuery xmlQuery;
-    xmlQuery.bindVariable("inputDocument", &xmlFile);
-
-    // bind any other parameters
-    for (int i=0; i<(signed)parameters.size(); i += 2) {
-        if (i + 1 >= (signed)parameters.size())
-            break;
-        xmlQuery.bindVariable(parameters[i], QVariant(parameters[i+1]));
-    }
-
-    xmlQuery.setQuery(xPath);
-    xmlQuery.evaluateTo(&results);
-
-    xmlFile.close();
+  QFile xmlFile(libraryPath);
+  if (!xmlFile.open(QIODevice::ReadOnly))
     return results;
+
+  QXmlQuery xmlQuery;
+  xmlQuery.bindVariable("inputDocument", &xmlFile);
+
+  // bind any other parameters
+  for (int i=0; i<(signed)parameters.size(); i += 2) {
+    if (i + 1 >= (signed)parameters.size())
+      break;
+    xmlQuery.bindVariable(parameters[i], QVariant(parameters[i+1]));
+  }
+
+  xmlQuery.setQuery(xPath);
+  xmlQuery.evaluateTo(&results);
+
+  xmlFile.close();
+  return results;
 }
 
 #else
 
 QStringList ExternalPlaylist::executeXmlQuery(const QString& filePath, const QString& xPath, const QStringList& parameters) {
 
-    QStringList results;
+  QStringList results;
 
-    // initialise Xerces-C and XQilla using XQillaPlatformUtils
-    try {
-        XQillaPlatformUtils::initialize();
-    } catch (const xercesc_3_1::XMLException& eXerces) {
-        qDebug("Xerces exception message: %s", UTF8(eXerces.getMessage()));
-        return results;
-    }
-    // get the XQilla DOMImplementation object
-    xercesc_3_1::DOMImplementation *xqillaImplementation = xercesc_3_1::DOMImplementationRegistry::getDOMImplementation(X("XPath2 3.0"));
-    try {
-        // create a DOMLSParser object
-        AutoDelete<xercesc_3_1::DOMLSParser> parser(xqillaImplementation->createLSParser(xercesc_3_1::DOMImplementationLS::MODE_SYNCHRONOUS, 0));
-        // disable remote DTD resolution
-        parser->getDomConfig()->setParameter(xercesc_3_1::XMLUni::fgXercesLoadExternalDTD, false);
-        // parse the XML document
-        xercesc_3_1::DOMDocument *document = parser->parseURI(X(filePath.toUtf8().constData()));
-        if (document == 0)
-            throw XQillaException(99,X("No XML document found"));
-        // determine whether to use lightweight query model
-        if (parameters.isEmpty()) {
-            // parse XPath
-            AutoRelease<xercesc_3_1::DOMXPathExpression> expression(document->createExpression(X(xPath.toUtf8().constData()), 0));
-            // execute query
-            AutoRelease<xercesc_3_1::DOMXPathResult> result(expression->evaluate(document, xercesc_3_1::DOMXPathResult::ITERATOR_RESULT_TYPE, 0));
-            // iterate over results
-            while (result->iterateNext())
-                results.push_back(QString::fromUtf8(UTF8(result->getNodeValue()->getTextContent())));
-        } else {
-            // set up a simple API query and context to evaluate the parsed document
-            XQilla xqilla;
-            AutoDelete<XQQuery> xQuery(xqilla.parse(X(xPath.toUtf8().constData())));
-            AutoDelete<DynamicContext> xQueryContext(xQuery->createDynamicContext());
-            // grab document from xerces API
-            XercesConfiguration xc;
-            Node::Ptr node = xc.createNode(document, xQueryContext.get());
-            // prepare context
-            if (node && node->isNode()) {
-                xQueryContext->setContextItem(node);
-                xQueryContext->setContextPosition(1);
-                xQueryContext->setContextSize(1);
-                // bind variables
-                for (int i=0; i<(signed)parameters.size(); i += 2) {
-                    if (i + 1 >= (signed)parameters.size())
-                        break;
-                    Item::Ptr value = xQueryContext->getItemFactory()->createString(X(parameters[i+1].toUtf8().constData()), xQueryContext.get());
-                    xQueryContext->setExternalVariable(X(parameters[i].toUtf8().constData()), value);
-                }
-            }
-            // execute query
-            Result xQueryResults = xQuery->execute(xQueryContext);
-            // iterate over results
-            Item::Ptr item;
-            while ((item = xQueryResults->next(xQueryContext))) {
-                results.push_back(QString::fromUtf8(UTF8(item->asString(xQueryContext))));
-            }
-        }
-    } catch (XQillaException &e) {
-        // DOM3 (xerces) API
-        qDebug("XQillaException: %s", UTF8(e.getString()));
-    } catch (XQException &e) {
-        // Simple API
-        qDebug("XQillaException: %s", UTF8(e.getError()));
-    } catch (...) {
-        qDebug("Unspecified exception with XQilla");
-    }
-
-    // Terminate Xerces-C and XQilla using XQillaPlatformUtils
-    XQillaPlatformUtils::terminate();
+  // initialise Xerces-C and XQilla using XQillaPlatformUtils
+  try {
+    XQillaPlatformUtils::initialize();
+  } catch (const xercesc_3_1::XMLException& eXerces) {
+    qDebug("Xerces exception message: %s", UTF8(eXerces.getMessage()));
     return results;
+  }
+  // get the XQilla DOMImplementation object
+  xercesc_3_1::DOMImplementation *xqillaImplementation = xercesc_3_1::DOMImplementationRegistry::getDOMImplementation(X("XPath2 3.0"));
+  try {
+    // create a DOMLSParser object
+    AutoDelete<xercesc_3_1::DOMLSParser> parser(xqillaImplementation->createLSParser(xercesc_3_1::DOMImplementationLS::MODE_SYNCHRONOUS, 0));
+    // disable remote DTD resolution
+    parser->getDomConfig()->setParameter(xercesc_3_1::XMLUni::fgXercesLoadExternalDTD, false);
+    // parse the XML document
+    xercesc_3_1::DOMDocument *document = parser->parseURI(X(filePath.toUtf8().constData()));
+    if (document == 0)
+      throw XQillaException(99,X("No XML document found"));
+    // determine whether to use lightweight query model
+    if (parameters.isEmpty()) {
+      // parse XPath
+      AutoRelease<xercesc_3_1::DOMXPathExpression> expression(document->createExpression(X(xPath.toUtf8().constData()), 0));
+      // execute query
+      AutoRelease<xercesc_3_1::DOMXPathResult> result(expression->evaluate(document, xercesc_3_1::DOMXPathResult::ITERATOR_RESULT_TYPE, 0));
+      // iterate over results
+      while (result->iterateNext())
+        results.push_back(QString::fromUtf8(UTF8(result->getNodeValue()->getTextContent())));
+    } else {
+      // set up a simple API query and context to evaluate the parsed document
+      XQilla xqilla;
+      AutoDelete<XQQuery> xQuery(xqilla.parse(X(xPath.toUtf8().constData())));
+      AutoDelete<DynamicContext> xQueryContext(xQuery->createDynamicContext());
+      // grab document from xerces API
+      XercesConfiguration xc;
+      Node::Ptr node = xc.createNode(document, xQueryContext.get());
+      // prepare context
+      if (node && node->isNode()) {
+        xQueryContext->setContextItem(node);
+        xQueryContext->setContextPosition(1);
+        xQueryContext->setContextSize(1);
+        // bind variables
+        for (int i=0; i<(signed)parameters.size(); i += 2) {
+          if (i + 1 >= (signed)parameters.size())
+            break;
+          Item::Ptr value = xQueryContext->getItemFactory()->createString(X(parameters[i+1].toUtf8().constData()), xQueryContext.get());
+          xQueryContext->setExternalVariable(X(parameters[i].toUtf8().constData()), value);
+        }
+      }
+      // execute query
+      Result xQueryResults = xQuery->execute(xQueryContext);
+      // iterate over results
+      Item::Ptr item;
+      while ((item = xQueryResults->next(xQueryContext))) {
+        results.push_back(QString::fromUtf8(UTF8(item->asString(xQueryContext))));
+      }
+    }
+  } catch (XQillaException &e) {
+    // DOM3 (xerces) API
+    qDebug("XQillaException: %s", UTF8(e.getString()));
+  } catch (XQException &e) {
+    // Simple API
+    qDebug("XQillaException: %s", UTF8(e.getError()));
+  } catch (...) {
+    qDebug("Unspecified exception with XQilla");
+  }
+
+  // Terminate Xerces-C and XQilla using XQillaPlatformUtils
+  XQillaPlatformUtils::terminate();
+  return results;
 }
 
 #endif

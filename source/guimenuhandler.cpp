@@ -24,46 +24,46 @@
 MainMenuHandler::MainMenuHandler(QObject *parent) : QObject(parent) {}
 
 void MainMenuHandler::about() {
-    AboutDialog* about = new AboutDialog(NULL);
-    about->show();
+  AboutDialog* about = new AboutDialog(NULL);
+  about->show();
 }
 
 void MainMenuHandler::preferences() {
-    PrefsDialog* prefs = new PrefsDialog(NULL);
-    prefs->show();
+  PrefsDialog* prefs = new PrefsDialog(NULL);
+  prefs->show();
 }
 
 void MainMenuHandler::newBatchWindow(bool firstWindow) {
-    BatchWindow* newWin = new BatchWindow(NULL, this);
-    newWin->setMenuBar(newMenuBar());
-    newWin->show();
-    if (firstWindow) {
-        newWin->checkForNewVersion();
-    }
+  BatchWindow* newWin = new BatchWindow(NULL, this);
+  newWin->setMenuBar(newMenuBar());
+  newWin->show();
+  if (firstWindow) {
+    newWin->checkForNewVersion();
+  }
 }
 
 void MainMenuHandler::close_Window() {
-    QApplication::activeWindow()->close();
+  QApplication::activeWindow()->close();
 }
 
 QMenuBar* MainMenuHandler::newMenuBar() {
-    QMenuBar* menuBar = new QMenuBar(NULL);
-    QMenu* menuFile = menuBar->addMenu("File");
-    //: An action on the menu bar
-    menuFile->addAction(tr("New Detail Window"), this, SLOT(newDetailWindow()), QKeySequence::New);
-    //: An action on the menu bar
-    menuFile->addAction(tr("New Batch Window"), this, SLOT(newBatchWindow()), QKeySequence("Ctrl+Shift+N"));
-    menuFile->addSeparator();
-    //: An action on the menu bar
-    menuFile->addAction(tr("Close Window"), this, SLOT(close_Window()), QKeySequence::Close);
+  QMenuBar* menuBar = new QMenuBar(NULL);
+  QMenu* menuFile = menuBar->addMenu("File");
+  //: An action on the menu bar
+  menuFile->addAction(tr("New Detail Window"), this, SLOT(newDetailWindow()), QKeySequence::New);
+  //: An action on the menu bar
+  menuFile->addAction(tr("New Batch Window"), this, SLOT(newBatchWindow()), QKeySequence("Ctrl+Shift+N"));
+  menuFile->addSeparator();
+  //: An action on the menu bar
+  menuFile->addAction(tr("Close Window"), this, SLOT(close_Window()), QKeySequence::Close);
 #ifdef Q_OS_WIN
-    QMenu* menuEdit = menuBar->addMenu("Edit");
-    menuEdit->addAction(GuiStrings::getInstance()->preferences(), this, SLOT(preferences()));
-    QMenu* menuHelp = menuBar->addMenu("Help");
-    menuHelp->addAction(GuiStrings::getInstance()->about().arg(GuiStrings::getInstance()->appName()), this, SLOT(about()));
+  QMenu* menuEdit = menuBar->addMenu("Edit");
+  menuEdit->addAction(GuiStrings::getInstance()->preferences(), this, SLOT(preferences()));
+  QMenu* menuHelp = menuBar->addMenu("Help");
+  menuHelp->addAction(GuiStrings::getInstance()->about().arg(GuiStrings::getInstance()->appName()), this, SLOT(about()));
 #else
-    menuFile->addAction(GuiStrings::getInstance()->preferences(), this, SLOT(preferences()), QKeySequence::Preferences);
-    menuFile->addAction(GuiStrings::getInstance()->about(), this, SLOT(about()));
+  menuFile->addAction(GuiStrings::getInstance()->preferences(), this, SLOT(preferences()), QKeySequence::Preferences);
+  menuFile->addAction(GuiStrings::getInstance()->about(), this, SLOT(about()));
 #endif
-    return menuBar;
+  return menuBar;
 }

@@ -26,9 +26,9 @@
 
 class MetadataReadResult {
 public:
-    MetadataReadResult() : batchRow(-1), tags() { }
-    int batchRow;
-    QStringList tags;
+  MetadataReadResult() : batchRow(-1), tags() { }
+  int batchRow;
+  QStringList tags;
 };
 
 #endif // ASYNCMETADATAREADRESULT_H

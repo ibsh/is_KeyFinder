@@ -51,24 +51,24 @@ extern "C"{
 
 class AudioFileDecoder {
 public:
-    AudioFileDecoder(const QString&, const int);
-    ~AudioFileDecoder();
-    KeyFinder::AudioData* decodeNextAudioPacket();
+  AudioFileDecoder(const QString&, const int);
+  ~AudioFileDecoder();
+  KeyFinder::AudioData* decodeNextAudioPacket();
 private:
-    void free();
-    char* filePathCh;
-    uint8_t* frameBuffer;
-    uint8_t* frameBufferConverted;
-    int frameBufferSize;
-    int audioStream;
-    int badPacketCount;
-    int badPacketThreshold;
-    AVCodec* codec;
-    AVFormatContext* fCtx;
-    AVCodecContext* cCtx;
-    AVDictionary* dict; // stays NULL, just here for legibility
-    ReSampleContext* rsCtx;
-    bool decodePacket(AVPacket*, KeyFinder::AudioData*);
+  void free();
+  char* filePathCh;
+  uint8_t* frameBuffer;
+  uint8_t* frameBufferConverted;
+  int frameBufferSize;
+  int audioStream;
+  int badPacketCount;
+  int badPacketThreshold;
+  AVCodec* codec;
+  AVFormatContext* fCtx;
+  AVCodecContext* cCtx;
+  AVDictionary* dict; // stays NULL, just here for legibility
+  ReSampleContext* rsCtx;
+  bool decodePacket(AVPacket*, KeyFinder::AudioData*);
 };
 
 #endif
