@@ -23,17 +23,17 @@
 
 MetadataReadResult metadataReadProcess(const AsyncFileObject& object) {
 
-    MetadataReadResult result;
-    result.batchRow = object.batchRow;
+  MetadataReadResult result;
+  result.batchRow = object.batchRow;
 
-    AVFileMetadataFactory factory;
-    AVFileMetadata* md = factory.createAVFileMetadata(object.filePath);
+  AVFileMetadataFactory factory;
+  AVFileMetadata* md = factory.createAVFileMetadata(object.filePath);
 
-    for (unsigned int i = 0; i < METADATA_TAG_T_COUNT; i++) {
-        result.tags.push_back(md->getByTagEnum((metadata_tag_t) i));
-    }
+  for (unsigned int i = 0; i < METADATA_TAG_T_COUNT; i++) {
+    result.tags.push_back(md->getByTagEnum((metadata_tag_t) i));
+  }
 
-    delete md;
+  delete md;
 
-    return result;
+  return result;
 }

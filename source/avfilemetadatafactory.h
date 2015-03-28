@@ -26,7 +26,7 @@
 
 class AVFileMetadataFactory {
 public:
-    AVFileMetadata* createAVFileMetadata(const QString&) const;
+  AVFileMetadata* createAVFileMetadata(const QString&) const;
 };
 
 #endif // AVFILEMETADATAFACTORY_H

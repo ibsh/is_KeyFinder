@@ -22,140 +22,139 @@
 #include "strings.h"
 
 
-GuiStrings::GuiStrings(QObject *parent) : QObject(parent) {
-}
+GuiStrings::GuiStrings(QObject *parent) : QObject(parent) { }
 
 GuiStrings* GuiStrings::getInstance() {
-    static GuiStrings instance;
-    return &instance;
+  static GuiStrings instance;
+  return &instance;
 }
 
 QString GuiStrings::appName() const {
-    return "KeyFinder";
+  return "KeyFinder";
 }
 
 QString GuiStrings::appUrl() const {
-    return "http://www.ibrahimshaath.co.uk/keyfinder/";
+  return "http://www.ibrahimshaath.co.uk/keyfinder/";
 }
 
 QString GuiStrings::delim() const {
-    return " - ";
+  return " - ";
 }
 
 QString GuiStrings::notApplicable() const {
-    //: Status of an individual file in the Batch window
-    return tr("N/A");
+  //: Status of an individual file in the Batch window
+  return tr("N/A");
 }
 
 QString GuiStrings::preferences() const {
-    //: Main menu option
-    return QString(QT_TRANSLATE_NOOP("MAC_APPLICATION_MENU","Preferences..."));
+  //: Main menu option
+  return QString(QT_TRANSLATE_NOOP("MAC_APPLICATION_MENU","Preferences..."));
 }
 
 QString GuiStrings::about() const {
-    //: Main menu option and title of About window, contains the app name at %1
-    return QString(QT_TRANSLATE_NOOP("MAC_APPLICATION_MENU","About %1"));
+  //: Main menu option and title of About window, contains the app name at %1
+  return QString(QT_TRANSLATE_NOOP("MAC_APPLICATION_MENU","About %1"));
 }
 
 QStringList GuiStrings::iTunesDefaultPlaylists() const {
-    QStringList defaultPlaylists;
-    //: Name of the main iTunes library (to exclude from the Batch window)
-    defaultPlaylists << tr("Library");
-    //: Name of a default iTunes playlist (to exclude from the Batch window)
-    defaultPlaylists << tr("Music");
-    //: Name of a default iTunes playlist (to exclude from the Batch window)
-    defaultPlaylists << tr("Movies");
-    //: Name of a default iTunes playlist (to exclude from the Batch window)
-    defaultPlaylists << tr("Films");
-    //: Name of a default iTunes playlist (to exclude from the Batch window)
-    defaultPlaylists << tr("TV Shows");
-    //: Name of a default iTunes playlist (to exclude from the Batch window)
-    defaultPlaylists << tr("TV Programmes");
-    //: Name of a default iTunes playlist (to exclude from the Batch window)
-    defaultPlaylists << tr("Podcasts");
-    //: Name of a default iTunes playlist (to exclude from the Batch window)
-    defaultPlaylists << tr("Books");
-    //: Name of a default iTunes playlist (to exclude from the Batch window)
-    defaultPlaylists << tr("Purchased");
-    //: Name of a default iTunes playlist (to exclude from the Batch window)
-    defaultPlaylists << tr("Genius");
-    //: Name of a default iTunes playlist (to exclude from the Batch window)
-    defaultPlaylists << tr("iTunes DJ");
-    //: Name of a default iTunes playlist (to exclude from the Batch window)
-    defaultPlaylists << tr("Audiobooks");
-    return defaultPlaylists;
+  QStringList defaultPlaylists;
+  //: Name of the main iTunes library (to exclude from the Batch window)
+  defaultPlaylists << tr("Library");
+  //: Name of a default iTunes playlist (to exclude from the Batch window)
+  defaultPlaylists << tr("Music");
+  //: Name of a default iTunes playlist (to exclude from the Batch window)
+  defaultPlaylists << tr("Movies");
+  //: Name of a default iTunes playlist (to exclude from the Batch window)
+  defaultPlaylists << tr("Films");
+  //: Name of a default iTunes playlist (to exclude from the Batch window)
+  defaultPlaylists << tr("TV Shows");
+  //: Name of a default iTunes playlist (to exclude from the Batch window)
+  defaultPlaylists << tr("TV Programmes");
+  //: Name of a default iTunes playlist (to exclude from the Batch window)
+  defaultPlaylists << tr("Podcasts");
+  //: Name of a default iTunes playlist (to exclude from the Batch window)
+  defaultPlaylists << tr("Books");
+  //: Name of a default iTunes playlist (to exclude from the Batch window)
+  defaultPlaylists << tr("Purchased");
+  //: Name of a default iTunes playlist (to exclude from the Batch window)
+  defaultPlaylists << tr("Genius");
+  //: Name of a default iTunes playlist (to exclude from the Batch window)
+  defaultPlaylists << tr("iTunes DJ");
+  //: Name of a default iTunes playlist (to exclude from the Batch window)
+  defaultPlaylists << tr("Audiobooks");
+  return defaultPlaylists;
 }
 
 QStringList GuiStrings::traktorDefaultPlaylists() const {
-    QStringList defaultPlaylists;
-    //: Name of a default Traktor playlist (to exclude from the Batch window)
-    defaultPlaylists << tr("_LOOPS");
-    //: Name of a default Traktor playlist (to exclude from the Batch window)
-    defaultPlaylists << tr("_RECORDINGS");
-    //: Name of a default Traktor playlist (to exclude from the Batch window)
-    defaultPlaylists << tr("Preparation");
-    return defaultPlaylists;
+  QStringList defaultPlaylists;
+  //: Name of a default Traktor playlist (to exclude from the Batch window)
+  defaultPlaylists << tr("_LOOPS");
+  //: Name of a default Traktor playlist (to exclude from the Batch window)
+  defaultPlaylists << tr("_RECORDINGS");
+  //: Name of a default Traktor playlist (to exclude from the Batch window)
+  defaultPlaylists << tr("Preparation");
+  return defaultPlaylists;
 }
 
 QString GuiStrings::seratoSmartCratesDirName() const {
-    //: Name of the Smart Crates subdirectory in Serato
-    return tr("SmartCrates");
+  //: Name of the Smart Crates subdirectory in Serato
+  return tr("SmartCrates");
 }
 
 QString GuiStrings::seratoSubcratesDirName() const {
-    //: Name of the Subcrates subdirectory in Serato
-    return tr("Subcrates");
+  //: Name of the Subcrates subdirectory in Serato
+  return tr("Subcrates");
 }
 
 QString GuiStrings::libsrcError() const {
-    //: Status of an individual file in the Batch window
-    return tr("Error in LibSRC sample rate conversion");
+  //: Status of an individual file in the Batch window
+  return tr("Error in LibSRC sample rate conversion");
 }
 
 QString GuiStrings::libavCouldNotOpenFile(int n) const {
-    //: Status of an individual file in the Batch window
-    return tr("Could not open audio file (%1)").arg(QString::number(n));
+  //: Status of an individual file in the Batch window
+  return tr("Could not open audio file (%1)").arg(QString::number(n));
 }
 
 QString GuiStrings::libavCouldNotFindStreamInformation() const {
-    //: Status of an individual file in the Batch window
-    return tr("Could not find stream information");
+  //: Status of an individual file in the Batch window
+  return tr("Could not find stream information");
 }
 
 QString GuiStrings::libavCouldNotFindAudioStream() const {
-    //: Status of an individual file in the Batch window
-    return tr("Could not find an audio stream");
+  //: Status of an individual file in the Batch window
+  return tr("Could not find an audio stream");
 }
 
 QString GuiStrings::libavUnsupportedCodec() const {
-    //: Status of an individual file in the Batch window
-    return tr("Audio stream has unsupported codec");
+  //: Status of an individual file in the Batch window
+  return tr("Audio stream has unsupported codec");
 }
 
 QString GuiStrings::libavCouldNotOpenCodec(const char* name, int result) const {
-    //: Status of an individual file in the Batch window
-    return tr("Could not open audio codec %1 (%2)").arg(name).arg(QString::number(result));
+  //: Status of an individual file in the Batch window
+  return tr("Could not open audio codec %1 (%2)").arg(name).arg(QString::number(result));
 }
 
 QString GuiStrings::libavCouldNotCreateResampleContext() const {
-    //: Status of an individual file in the Batch window
-    return tr("Could not create ReSampleContext");
+  //: Status of an individual file in the Batch window
+  return tr("Could not create ReSampleContext");
 }
 
 QString GuiStrings::libavCouldNotResample() const {
-    //: Status of an individual file in the Batch window
-    return tr("Could not resample");
+  //: Status of an individual file in the Batch window
+  return tr("Could not resample");
 }
 
 QString GuiStrings::libavTooManyBadPackets(int n) const {
-    //: Status of an individual file in the Batch window
-    return tr("%n bad packet(s)", "", n);
+  //: Status of an individual file in the Batch window
+  return tr("%n bad packet(s)", "", n);
 }
 
 QString GuiStrings::durationExceedsPreference(int mins, int secs, int max) const {
-    //: Status of an individual file in the Batch window; includes minutes and seconds at %1:%2, and the max number of minutes at %3
-    return tr("Duration (%1:%2) exceeds specified maximum (%3:00)")
-            .arg(QString::number(mins), 2, '0')
-            .arg(QString::number(secs), 2, '0')
-            .arg(QString::number(max),  2, '0');
+  //: Status of an individual file in the Batch window; includes minutes and seconds at %1:%2, and the max number of minutes at %3
+  return tr("Duration (%1:%2) exceeds specified maximum (%3:00)")
+      .arg(QString::number(mins), 2, '0')
+      .arg(QString::number(secs), 2, '0')
+      .arg(QString::number(max),  2, '0');
 }

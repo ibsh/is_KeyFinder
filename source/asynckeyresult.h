@@ -27,10 +27,10 @@
 
 class KeyFinderResultWrapper {
 public:
-    KeyFinder::key_t core;
-    KeyFinder::Chromagram fullChromagram;
-    int batchRow;
-    QString errorMessage;
+  KeyFinder::key_t core;
+  KeyFinder::Chromagram fullChromagram;
+  int batchRow;
+  QString errorMessage;
 };
 
 #endif // KEYFINDERRESULTWRAPPER_H

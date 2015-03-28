@@ -63,131 +63,131 @@
 // for "generic" files without any special treatment
 class AVFileMetadata {
 public:
-    AVFileMetadata(TagLib::FileRef* fr, TagLib::File* f);
-    virtual ~AVFileMetadata();
-    virtual QString getByTagEnum(metadata_tag_t) const;
-    virtual QString getTitle() const;
-    virtual QString getArtist() const;
-    virtual QString getAlbum() const;
-    virtual QString getComment() const;
-    virtual QString getGrouping() const;
-    virtual QString getKey() const;
-    virtual MetadataWriteResult writeKeyToMetadata(KeyFinder::key_t, const Preferences&);
-    // TODO: make this private? It's here for UTs.
-    virtual void writeKeyByTagEnum(const QString&, metadata_tag_t, MetadataWriteResult&, const Preferences&);
+  AVFileMetadata(TagLib::FileRef* fr, TagLib::File* f);
+  virtual ~AVFileMetadata();
+  virtual QString getByTagEnum(metadata_tag_t) const;
+  virtual QString getTitle() const;
+  virtual QString getArtist() const;
+  virtual QString getAlbum() const;
+  virtual QString getComment() const;
+  virtual QString getGrouping() const;
+  virtual QString getKey() const;
+  virtual MetadataWriteResult writeKeyToMetadata(KeyFinder::key_t, const Preferences&);
+  // TODO: make this private? It's here for UTs.
+  virtual void writeKeyByTagEnum(const QString&, metadata_tag_t, MetadataWriteResult&, const Preferences&);
 protected:
-    TagLib::FileRef* fr;
-    TagLib::File* genericFile;
-    virtual bool setByTagEnum(const QString&, metadata_tag_t);
-    virtual bool setTitle(const QString&);
-    virtual bool setArtist(const QString&);
-    virtual bool setAlbum(const QString&);
-    virtual bool setComment(const QString&);
-    virtual bool setGrouping(const QString&);
-    virtual bool setKey(const QString&);
+  TagLib::FileRef* fr;
+  TagLib::File* genericFile;
+  virtual bool setByTagEnum(const QString&, metadata_tag_t);
+  virtual bool setTitle(const QString&);
+  virtual bool setArtist(const QString&);
+  virtual bool setAlbum(const QString&);
+  virtual bool setComment(const QString&);
+  virtual bool setGrouping(const QString&);
+  virtual bool setKey(const QString&);
 };
 
 class NullFileMetadata : public AVFileMetadata {
 public:
-    NullFileMetadata(TagLib::FileRef* fr, TagLib::File* f);
-    virtual ~NullFileMetadata();
-    virtual QString getByTagEnum(metadata_tag_t) const;
-    virtual QString getTitle() const;
-    virtual QString getArtist() const;
-    virtual QString getAlbum() const;
-    virtual QString getComment() const;
+  NullFileMetadata(TagLib::FileRef* fr, TagLib::File* f);
+  virtual ~NullFileMetadata();
+  virtual QString getByTagEnum(metadata_tag_t) const;
+  virtual QString getTitle() const;
+  virtual QString getArtist() const;
+  virtual QString getAlbum() const;
+  virtual QString getComment() const;
 protected:
-    virtual bool setTitle(const QString&);
-    virtual bool setArtist(const QString&);
-    virtual bool setAlbum(const QString&);
-    virtual bool setComment(const QString&);
+  virtual bool setTitle(const QString&);
+  virtual bool setArtist(const QString&);
+  virtual bool setAlbum(const QString&);
+  virtual bool setComment(const QString&);
 };
 
 class FlacFileMetadata : public AVFileMetadata {
 public:
-    FlacFileMetadata(TagLib::FileRef* fr, TagLib::File* g, TagLib::FLAC::File* s);
-    virtual QString getComment() const;
-    virtual QString getKey() const;
+  FlacFileMetadata(TagLib::FileRef* fr, TagLib::File* g, TagLib::FLAC::File* s);
+  virtual QString getComment() const;
+  virtual QString getKey() const;
 protected:
-    TagLib::FLAC::File* flacFile;
-    virtual bool setComment(const QString&);
-    virtual bool setKey(const QString&);
+  TagLib::FLAC::File* flacFile;
+  virtual bool setComment(const QString&);
+  virtual bool setKey(const QString&);
 };
 
 class MpegID3FileMetadata : public AVFileMetadata {
 public:
-    MpegID3FileMetadata(TagLib::FileRef* fr, TagLib::File* g, TagLib::MPEG::File* s);
-    virtual QString getGrouping() const;
-    virtual QString getKey() const;
-    bool hasId3v1Tag() const;
-    bool hasId3v2Tag() const;
-    bool hasId3v2_3Tag() const;
-    bool hasId3v2_4Tag() const;
+  MpegID3FileMetadata(TagLib::FileRef* fr, TagLib::File* g, TagLib::MPEG::File* s);
+  virtual QString getGrouping() const;
+  virtual QString getKey() const;
+  bool hasId3v1Tag() const;
+  bool hasId3v2Tag() const;
+  bool hasId3v2_3Tag() const;
+  bool hasId3v2_4Tag() const;
 protected:
-    TagLib::MPEG::File* mpegFile;
-    virtual bool setTitle(const QString&);
-    virtual bool setArtist(const QString&);
-    virtual bool setAlbum(const QString&);
-    virtual bool setComment(const QString&);
-    virtual bool setGrouping(const QString&);
-    virtual bool setKey(const QString&);
-    QString getGroupingId3(const TagLib::ID3v2::Tag* tag) const;
-    QString getKeyId3(const TagLib::ID3v2::Tag* tag) const;
-    void setITunesCommentId3(TagLib::ID3v2::Tag* tag, const QString& cmt);
-    bool setGroupingId3(TagLib::ID3v2::Tag* tag, const QString& grp);
-    bool setKeyId3(TagLib::ID3v2::Tag* tag, const QString& key);
+  TagLib::MPEG::File* mpegFile;
+  virtual bool setTitle(const QString&);
+  virtual bool setArtist(const QString&);
+  virtual bool setAlbum(const QString&);
+  virtual bool setComment(const QString&);
+  virtual bool setGrouping(const QString&);
+  virtual bool setKey(const QString&);
+  QString getGroupingId3(const TagLib::ID3v2::Tag* tag) const;
+  QString getKeyId3(const TagLib::ID3v2::Tag* tag) const;
+  void setITunesCommentId3(TagLib::ID3v2::Tag* tag, const QString& cmt);
+  bool setGroupingId3(TagLib::ID3v2::Tag* tag, const QString& grp);
+  bool setKeyId3(TagLib::ID3v2::Tag* tag, const QString& key);
 };
 
 class AiffID3FileMetadata : public MpegID3FileMetadata {
 public:
-    AiffID3FileMetadata(TagLib::FileRef* fr, TagLib::File* g, TagLib::RIFF::AIFF::File* s);
-    virtual QString getGrouping() const;
-    virtual QString getKey() const;
+  AiffID3FileMetadata(TagLib::FileRef* fr, TagLib::File* g, TagLib::RIFF::AIFF::File* s);
+  virtual QString getGrouping() const;
+  virtual QString getKey() const;
 protected:
-    TagLib::RIFF::AIFF::File* aiffFile;
-    virtual bool setTitle(const QString&);
-    virtual bool setArtist(const QString&);
-    virtual bool setAlbum(const QString&);
-    virtual bool setComment(const QString&);
-    virtual bool setGrouping(const QString&);
-    virtual bool setKey(const QString&);
+  TagLib::RIFF::AIFF::File* aiffFile;
+  virtual bool setTitle(const QString&);
+  virtual bool setArtist(const QString&);
+  virtual bool setAlbum(const QString&);
+  virtual bool setComment(const QString&);
+  virtual bool setGrouping(const QString&);
+  virtual bool setKey(const QString&);
 };
 
 class WavID3FileMetadata : public AiffID3FileMetadata {
 public:
-    WavID3FileMetadata(TagLib::FileRef* fr, TagLib::File* g, TagLib::RIFF::WAV::File* s);
-    virtual QString getGrouping() const;
-    virtual QString getKey() const;
+  WavID3FileMetadata(TagLib::FileRef* fr, TagLib::File* g, TagLib::RIFF::WAV::File* s);
+  virtual QString getGrouping() const;
+  virtual QString getKey() const;
 protected:
-    TagLib::RIFF::WAV::File* wavFile;
-    virtual bool setTitle(const QString&);
-    virtual bool setArtist(const QString&);
-    virtual bool setAlbum(const QString&);
-    virtual bool setComment(const QString&);
-    virtual bool setGrouping(const QString&);
-    virtual bool setKey(const QString&);
+  TagLib::RIFF::WAV::File* wavFile;
+  virtual bool setTitle(const QString&);
+  virtual bool setArtist(const QString&);
+  virtual bool setAlbum(const QString&);
+  virtual bool setComment(const QString&);
+  virtual bool setGrouping(const QString&);
+  virtual bool setKey(const QString&);
 };
 
 class Mp4FileMetadata : public AVFileMetadata {
 public:
-    Mp4FileMetadata(TagLib::FileRef* fr, TagLib::File* g, TagLib::MP4::File* s);
-    virtual QString getGrouping() const;
-    virtual QString getKey() const;
+  Mp4FileMetadata(TagLib::FileRef* fr, TagLib::File* g, TagLib::MP4::File* s);
+  virtual QString getGrouping() const;
+  virtual QString getKey() const;
 protected:
-    TagLib::MP4::File* mp4File;
-    virtual bool setGrouping(const QString&);
-    virtual bool setKey(const QString&);
+  TagLib::MP4::File* mp4File;
+  virtual bool setGrouping(const QString&);
+  virtual bool setKey(const QString&);
 };
 
 class AsfFileMetadata : public AVFileMetadata {
 public:
-    AsfFileMetadata(TagLib::FileRef* fr, TagLib::File* g, TagLib::ASF::File* s);
-    virtual QString getGrouping() const;
-    virtual QString getKey() const;
+  AsfFileMetadata(TagLib::FileRef* fr, TagLib::File* g, TagLib::ASF::File* s);
+  virtual QString getGrouping() const;
+  virtual QString getKey() const;
 protected:
-    TagLib::ASF::File* asfFile;
-    virtual bool setGrouping(const QString&);
-    virtual bool setKey(const QString&);
+  TagLib::ASF::File* asfFile;
+  virtual bool setGrouping(const QString&);
+  virtual bool setKey(const QString&);
 };
 
 #endif // AVFILEMETADATA_H

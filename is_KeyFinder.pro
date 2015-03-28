@@ -77,8 +77,11 @@ unix|macx{
 macx{
   DEPENDPATH += /usr/local/lib
   INCLUDEPATH += /usr/local/include
-  CONFIG -= ppc ppc64
-  CONFIG += x86 x86_64
+
+  QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.7
+  QMAKE_MAC_SDK = macosx10.9
+  CONFIG -= ppc ppc64 x86
+  CONFIG += x86_64
 
   LIBS += -lxerces-c
   LIBS += -lxqilla
