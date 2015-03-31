@@ -25,10 +25,6 @@
 #  \-> fftw        3.3.4
 # libav            0.7.7
 # taglib           1.9.1
-#
-# MAC ONLY:
-# xerces-c         3.1.1
-# xqilla           2.3.0
 
 QT += \
   core \
@@ -82,9 +78,6 @@ macx{
   QMAKE_MAC_SDK = macosx10.9
   CONFIG -= ppc ppc64 x86
   CONFIG += x86_64
-
-  LIBS += -lxerces-c
-  LIBS += -lxqilla
 }
 
 win32{
