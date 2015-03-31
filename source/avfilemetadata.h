@@ -73,7 +73,7 @@ public:
   virtual QString getGrouping() const;
   virtual QString getKey() const;
   virtual MetadataWriteResult writeKeyToMetadata(KeyFinder::key_t, const Preferences&);
-  // TODO: make this private? It's here for UTs.
+  // TODO: This is only here for UTs.
   virtual void writeKeyByTagEnum(const QString&, metadata_tag_t, MetadataWriteResult&, const Preferences&);
 protected:
   TagLib::FileRef* fr;

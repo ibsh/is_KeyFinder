@@ -44,11 +44,10 @@ class MainMenuHandler;
 #include "asynckeyprocess.h"
 #include "asyncmetadatareadprocess.h"
 #include "metadatafilename.h"
-#include "externalplaylist.h"
+#include "externalplaylistprovider.h"
 #include "_VERSION.h"
 
 enum playlist_columns_t{
-  COL_PLAYLIST_SOURCE,
   COL_PLAYLIST_NAME
 };
 
@@ -92,8 +91,9 @@ private:
   void sortTableWidget();
 
   int libraryOldIndex;
-  QFutureWatcher<QList<ExternalPlaylistObject> >* readLibraryWatcher;
+  QFutureWatcher<QList<ExternalPlaylist> >* readLibraryWatcher;
   QFutureWatcher<QList<QUrl> >* loadPlaylistWatcher;
+  QList<ExternalPlaylist> libraryPlaylists;
 
   void dragEnterEvent(QDragEnterEvent*);
   void dropEvent(QDropEvent*);
@@ -134,7 +134,6 @@ private slots:
   void headerClicked(int);
 
   void readLibraryFinished();
-  void loadPlaylistFinished();
 
   void addFilesFinished();
   void on_runBatchButton_clicked();

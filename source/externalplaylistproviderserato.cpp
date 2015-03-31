@@ -19,7 +19,7 @@
 
 *************************************************************************/
 
-#include "externalplaylistserato.h"
+#include "externalplaylistproviderserato.h"
 
 QStringList SeratoDataStream::readCrate(QIODevice* device, CrateType ctype) {
   QStringList results;
