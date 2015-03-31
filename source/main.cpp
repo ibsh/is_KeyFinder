@@ -30,7 +30,7 @@
 
 #include <fstream>
 
-void LoggingHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
+void LoggingHandler(QtMsgType type, const QMessageLogContext& /*context*/, const QString &msg) {
   std::ofstream logfile;
 #if defined Q_OS_MAC
   logfile.open(QDir::homePath().toUtf8() + "/Library/Logs/KeyFinder.log", std::ios::app);

@@ -44,7 +44,6 @@ BatchWindow::BatchWindow(QWidget* parent, MainMenuHandler* handler) : QMainWindo
   //: The title of the Batch window
   this->setWindowTitle(GuiStrings::getInstance()->appName() + GuiStrings::getInstance()->delim() + tr("Batch Analysis"));
   menuHandler = handler;
-  ui->libraryWidget->setColumnHidden(COL_PLAYLIST_SOURCE, true);
   ui->tableWidget->setColumnHidden(COL_FILEPATH, true);
   ui->tableWidget->setColumnHidden(COL_STATUS, true);
   ui->splitter->setStretchFactor(0, 1);
@@ -74,17 +73,15 @@ BatchWindow::BatchWindow(QWidget* parent, MainMenuHandler* handler) : QMainWindo
 
   // Read music library
   ui->libraryWidget->insertRow(0);
-  ui->libraryWidget->setItem(0, COL_PLAYLIST_SOURCE, new QTableWidgetItem());
   ui->libraryWidget->setItem(0, COL_PLAYLIST_NAME, new QTableWidgetItem());
-  ui->libraryWidget->item(0, COL_PLAYLIST_SOURCE)->setText(SOURCE_KEYFINDER);
   //: The name of the drag-and-drop playlist; includes the app name at %1
   ui->libraryWidget->item(0, COL_PLAYLIST_NAME)->setText(tr("%1 drag and drop").arg(GuiStrings::getInstance()->appName()));
   ui->libraryWidget->item(0, COL_PLAYLIST_NAME)->setIcon(QIcon(":/KeyFinder/images/icon-18.png"));
   ui->libraryWidget->item(0, COL_PLAYLIST_NAME)->setBackground(keyFinderRow);
   ui->libraryWidget->setColumnWidth(0,170);
   libraryOldIndex = 0;
-  QFuture<QList<ExternalPlaylistObject> > readLibraryFuture = QtConcurrent::run(ExternalPlaylist::readLibrary, prefs);
-  readLibraryWatcher = new QFutureWatcher<QList<ExternalPlaylistObject> >();
+  QFuture<QList<ExternalPlaylist> > readLibraryFuture = QtConcurrent::run(ExternalPlaylistProvider::readLibrary, prefs);
+  readLibraryWatcher = new QFutureWatcher<QList<ExternalPlaylist> >();
   connect(readLibraryWatcher, SIGNAL(finished()), this, SLOT(readLibraryFinished()));
   readLibraryWatcher->setFuture(readLibraryFuture);
 
@@ -207,34 +204,44 @@ void BatchWindow::setGuiRunning(const QString& msg, bool cancellable) {
 }
 
 void BatchWindow::readLibraryFinished() {
-  QList<ExternalPlaylistObject> libraryPlaylists = readLibraryWatcher->result();
+
+  libraryPlaylists = readLibraryWatcher->result();
+
   delete readLibraryWatcher;
   readLibraryWatcher = NULL;
+
   for (int i=0; i<(signed)libraryPlaylists.size(); i++) {
+
     int newRow = ui->libraryWidget->rowCount();
     ui->libraryWidget->insertRow(newRow);
-    ui->libraryWidget->setItem(newRow, COL_PLAYLIST_SOURCE, new QTableWidgetItem());
     ui->libraryWidget->setItem(newRow, COL_PLAYLIST_NAME, new QTableWidgetItem());
-    ui->libraryWidget->item(newRow, COL_PLAYLIST_SOURCE)->setText(libraryPlaylists[i].source);
     ui->libraryWidget->item(newRow, COL_PLAYLIST_NAME)->setText(libraryPlaylists[i].name);
     QString iconPath = ":/KeyFinder/images/";
-    if (libraryPlaylists[i].source == SOURCE_ITUNES) {
-      iconPath += "iTunes-18.png";
-    } else if (libraryPlaylists[i].source == SOURCE_TRAKTOR) {
-      iconPath += "Traktor-18.png";
-    } else if (libraryPlaylists[i].source == SOURCE_SERATO) {
-      iconPath += "Serato-18.png";
+
+    switch (libraryPlaylists[i].source) {
+      case EXTERNAL_PLAYLIST_SOURCE_ITUNES:
+        iconPath += "iTunes";
+        break;
+      case EXTERNAL_PLAYLIST_SOURCE_TRAKTOR:
+        iconPath += "Traktor";
+        break;
+      case EXTERNAL_PLAYLIST_SOURCE_SERATO:
+        iconPath += "Serato";
+        break;
     }
+
+    iconPath += "-18.png";
     ui->libraryWidget->item(newRow,COL_PLAYLIST_NAME)->setIcon(QIcon(iconPath));
   }
   ui->libraryWidget->resizeRowsToContents();
+
 }
 
 void BatchWindow::on_libraryWidget_cellClicked(int row, int /*col*/) {
   if (row == libraryOldIndex) {
     return;
   }
-  if (ui->libraryWidget->item(libraryOldIndex, COL_PLAYLIST_SOURCE)->text() == SOURCE_KEYFINDER && ui->tableWidget->rowCount() > 0) {
+  if (row > 0 && ui->tableWidget->rowCount() > 0) {
     QMessageBox msgBox;
     //: An alert message in the Batch window; first line
     msgBox.setText(tr("The drag and drop list will not be saved."));
@@ -248,35 +255,28 @@ void BatchWindow::on_libraryWidget_cellClicked(int row, int /*col*/) {
       return;
     }
   }
+
   if (initialHelpLabel) {
     initialHelpLabel->deleteLater();
   }
   ui->tableWidget->setRowCount(0);
   this->setWindowTitle(GuiStrings::getInstance()->appName() + GuiStrings::getInstance()->delim() + tr("Batch Analysis"));
   libraryOldIndex = row;
-  if (ui->libraryWidget->item(row, COL_PLAYLIST_SOURCE)->text() == SOURCE_KEYFINDER) {
+
+  if (row == 0) {
     return;
   }
 
   //: Text in the Batch window status bar
   setGuiRunning(tr("Loading playlist..."), false);
 
-  QString playlistName = ui->libraryWidget->item(row, COL_PLAYLIST_NAME)->text();
-  QString playlistSource = ui->libraryWidget->item(row, COL_PLAYLIST_SOURCE)->text();
-  QFuture<QList<QUrl> > loadPlaylistFuture = QtConcurrent::run(ExternalPlaylist::readLibraryPlaylist, playlistName, playlistSource, prefs);
-  loadPlaylistWatcher = new QFutureWatcher<QList<QUrl> >();
-  connect(loadPlaylistWatcher, SIGNAL(finished()), this, SLOT(loadPlaylistFinished()));
-  loadPlaylistWatcher->setFuture(loadPlaylistFuture);
-}
+  int playlist = row - 1;
 
-void BatchWindow::loadPlaylistFinished() {
-  if (loadPlaylistWatcher->result().size() > 0) {
-    receiveUrls(loadPlaylistWatcher->result());
-  } else {
+  if (libraryPlaylists[playlist].tracks.size() == 0) {
     setGuiDefaults();
+  } else {
+    receiveUrls(libraryPlaylists[playlist].tracks);
   }
-  delete loadPlaylistWatcher;
-  loadPlaylistWatcher = NULL;
 }
 
 void BatchWindow::dragEnterEvent(QDragEnterEvent *e) {
@@ -356,10 +356,10 @@ void BatchWindow::addDroppedFiles() {
     // check if it's a playlist
     QString fileExt = filePath.right(3);
     if (fileExt == "m3u") {
-      droppedFiles << ExternalPlaylist::readM3uStandalonePlaylist(filePath);
+      droppedFiles << ExternalPlaylistProvider::readM3uStandalonePlaylist(filePath);
       continue;
     } else if (fileExt == "xml") {
-      droppedFiles << ExternalPlaylist::readITunesStandalonePlaylist(filePath);
+      droppedFiles << ExternalPlaylistProvider::readITunesStandalonePlaylist(filePath);
       continue;
     }
 

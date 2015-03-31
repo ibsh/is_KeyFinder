@@ -47,11 +47,6 @@
        </attribute>
        <column>
         <property name="text">
-         <string notr="true">Source (Hidden)</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
          <string>Library</string>
         </property>
        </column>

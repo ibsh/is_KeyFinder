@@ -29,8 +29,6 @@ HEADERS  += \
   $$PWD/avfilemetadata.h \
   $$PWD/avfilemetadatafactory.h \
   $$PWD/decoderlibav.h \
-  $$PWD/externalplaylist.h \
-  $$PWD/externalplaylistserato.h \
   $$PWD/guiabout.h \
   $$PWD/guibatch.h \
   $$PWD/guimenuhandler.h \
@@ -40,7 +38,9 @@ HEADERS  += \
   $$PWD/os_windows.h \
   $$PWD/preferences.h \
   $$PWD/settingswrapper.h \
-  $$PWD/strings.h
+  $$PWD/strings.h \
+    $$PWD/externalplaylistprovider.h \
+    $$PWD/externalplaylistproviderserato.h
 
 SOURCES += \
   $$PWD/asynckeyprocess.cpp \
@@ -48,8 +48,6 @@ SOURCES += \
   $$PWD/avfilemetadata.cpp \
   $$PWD/avfilemetadatafactory.cpp \
   $$PWD/decoderlibav.cpp \
-  $$PWD/externalplaylist.cpp \
-  $$PWD/externalplaylistserato.cpp \
   $$PWD/guiabout.cpp \
   $$PWD/guibatch.cpp \
   $$PWD/guimenuhandler.cpp \
@@ -58,4 +56,6 @@ SOURCES += \
   $$PWD/os_windows.cpp \
   $$PWD/preferences.cpp \
   $$PWD/settingswrapper.cpp \
-  $$PWD/strings.cpp
+  $$PWD/strings.cpp \
+    $$PWD/externalplaylistprovider.cpp \
+    $$PWD/externalplaylistproviderserato.cpp
