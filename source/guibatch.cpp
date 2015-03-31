@@ -241,7 +241,7 @@ void BatchWindow::on_libraryWidget_cellClicked(int row, int /*col*/) {
   if (row == libraryOldIndex) {
     return;
   }
-  if (row > 0 && ui->tableWidget->rowCount() > 0) {
+  if (libraryOldIndex == 0 && row > 0 && ui->tableWidget->rowCount() > 0) {
     QMessageBox msgBox;
     //: An alert message in the Batch window; first line
     msgBox.setText(tr("The drag and drop list will not be saved."));
