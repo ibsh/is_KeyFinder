@@ -69,8 +69,9 @@ int commandLineInterface(int argc, char* argv[]) {
     else if (std::strcmp(argv[i], "-w") == 0)
       writeToTags = true;
   }
-  if (filePath.isEmpty())
+  if (filePath.isEmpty()) {
     return -1; // not a valid CLI attempt, launch GUI
+  }
 
   Preferences prefs;
   AsyncFileObject object(filePath, prefs, 0);
@@ -88,8 +89,11 @@ int commandLineInterface(int argc, char* argv[]) {
     MetadataWriteResult written = md->writeKeyToMetadata(result.core, prefs);
     delete md;
     bool found = false;
-    for (int i = 0; i < written.newTags.size(); i++)
-      if (!written.newTags[i].isEmpty()) found = true;
+    for (int i = 0; i < written.newTags.size(); i++) {
+      if (!written.newTags[i].isEmpty()) {
+        found = true;
+      }
+    }
     if (!found) {
       std::cerr << "Could not write to tags" << std::endl;
       return 2;
@@ -114,8 +118,9 @@ int main(int argc, char* argv[]) {
   // primitive command line use
   if (argc > 2) {
     int cliResult = commandLineInterface(argc,argv);
-    if (cliResult >= 0)
+    if (cliResult >= 0) {
       return cliResult;
+    }
   }
 
   qInstallMessageHandler(LoggingHandler);

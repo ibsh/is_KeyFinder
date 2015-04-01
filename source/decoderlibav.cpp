@@ -114,17 +114,28 @@ AudioFileDecoder::AudioFileDecoder(const QString& filePath, const int maxDuratio
 }
 
 void AudioFileDecoder::free() {
+
   av_free(frameBuffer);
   av_free(frameBufferConverted);
-  if (rsCtx != NULL) avresample_close(rsCtx);
+
+  if (rsCtx != NULL) {
+    avresample_close(rsCtx);
+  }
+
   if (cCtx != NULL) {
     int codecCloseResult = avcodec_close(cCtx);
     if (codecCloseResult < 0) {
       qCritical("Error closing audio codec: %s (%d)", codec->long_name, codecCloseResult);
     }
   }
-  if (fCtx != NULL) avformat_close_input(&fCtx);
-  if (filePathCh != NULL) delete[] filePathCh;
+
+  if (fCtx != NULL) {
+    avformat_close_input(&fCtx);
+  }
+
+  if (filePathCh != NULL) {
+    delete[] filePathCh;
+  }
 }
 
 AudioFileDecoder::~AudioFileDecoder() {
@@ -133,8 +144,10 @@ AudioFileDecoder::~AudioFileDecoder() {
 }
 
 KeyFinder::AudioData* AudioFileDecoder::decodeNextAudioPacket() {
+
   // Prep buffer
   KeyFinder::AudioData* audio = NULL;
+
   // Decode stream
   AVPacket avpkt;
   do {
@@ -142,11 +155,15 @@ KeyFinder::AudioData* AudioFileDecoder::decodeNextAudioPacket() {
     if (av_read_frame(fCtx, &avpkt) < 0) return audio;
     if (avpkt.stream_index != audioStream) av_free_packet(&avpkt);
   } while (avpkt.data == NULL);
+
   try {
+
     audio = new KeyFinder::AudioData();
     audio->setFrameRate((unsigned int) cCtx->sample_rate);
     audio->setChannels(cCtx->channels);
+
     if (!decodePacket(&avpkt, audio)) {
+
       badPacketCount++;
       if (badPacketCount > badPacketThreshold) {
         av_free_packet(&avpkt);
@@ -154,22 +171,32 @@ KeyFinder::AudioData* AudioFileDecoder::decodeNextAudioPacket() {
         throw KeyFinder::Exception(GuiStrings::getInstance()->libavTooManyBadPackets(badPacketThreshold).toUtf8().constData());
       }
     }
+
   } catch (KeyFinder::Exception& e) {
+
     av_free_packet(&avpkt);
     qWarning("Encountered KeyFinder::Exception (%s) while decoding file %s", e.what(), filePathCh);
     throw e;
+
+  } catch (...) {
+
+    qWarning("Encountered unknown exception while decoding file %s", filePathCh);
   }
+
   av_free_packet(&avpkt);
   return audio;
 }
 
 bool AudioFileDecoder::decodePacket(AVPacket* originalPacket, KeyFinder::AudioData* audio) {
+
   // copy packet so we can shift data pointer about without endangering garbage collection
   AVPacket tempPacket;
   tempPacket.size = originalPacket->size;
   tempPacket.data = originalPacket->data;
+
   // loop in case audio packet contains multiple frames
   while (tempPacket.size > 0) {
+
     int16_t* dataBuffer = (int16_t*)frameBuffer;
 
     if (!decodedFrame) {
@@ -181,9 +208,7 @@ bool AudioFileDecoder::decodePacket(AVPacket* originalPacket, KeyFinder::AudioDa
     }
 
     int gotFrame = 0;
-    std::cerr << "A" << std::endl;
     int bytesConsumed = avcodec_decode_audio4(cCtx, decodedFrame, &gotFrame, &tempPacket);
-    std::cerr << "B" << std::endl;
     if (bytesConsumed < 0) { // error
       tempPacket.size = 0;
       return false;
@@ -205,10 +230,12 @@ bool AudioFileDecoder::decodePacket(AVPacket* originalPacket, KeyFinder::AudioDa
       }
       dataBuffer = (int16_t*)frameBufferConverted;
     }
+
     int oldSampleCount = audio->getSampleCount();
     audio->addToSampleCount(newSamplesDecoded);
     audio->resetIterators();
     audio->advanceWriteIterator(oldSampleCount);
+
     for (int i = 0; i < newSamplesDecoded; i++) {
       audio->setSampleAtWriteIterator(static_cast<double>(dataBuffer[i]));
       audio->advanceWriteIterator();

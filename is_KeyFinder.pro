@@ -63,7 +63,7 @@ QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS # for libav
 
 unix|macx{
   LIBS += -L/usr/local/lib -L/usr/lib
-  LIBS += -lkeyfinder.0
+  LIBS += -lkeyfinder
   LIBS += -lavcodec.56
   LIBS += -lavformat.56
   LIBS += -lavutil.54

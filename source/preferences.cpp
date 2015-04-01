@@ -499,6 +499,6 @@ QString Preferences::newString(
 }
 
 bool Preferences::stringIsNotAlphaNumeric(const QString &string) const {
-  QRegExp regex("^[^a-zA-Z\d]*$");
+  QRegExp regex("^[^a-zA-Z0-9]*$");
   return regex.exactMatch(string);
 }
