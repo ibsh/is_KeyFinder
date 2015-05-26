@@ -146,23 +146,23 @@ AudioFileDecoder::~AudioFileDecoder() {
 KeyFinder::AudioData* AudioFileDecoder::decodeNextAudioPacket() {
 
   // Prep buffer
-  KeyFinder::AudioData* audio = NULL;
+  KeyFinder::AudioData* audioData = NULL;
 
   // Decode stream
   AVPacket avpkt;
   do {
     av_init_packet(&avpkt);
-    if (av_read_frame(fCtx, &avpkt) < 0) return audio;
+    if (av_read_frame(fCtx, &avpkt) < 0) return audioData;
     if (avpkt.stream_index != audioStream) av_free_packet(&avpkt);
   } while (avpkt.data == NULL);
 
   try {
 
-    audio = new KeyFinder::AudioData();
-    audio->setFrameRate((unsigned int) cCtx->sample_rate);
-    audio->setChannels(cCtx->channels);
+    audioData = new KeyFinder::AudioData();
+    audioData->setFrameRate((unsigned int) cCtx->sample_rate);
+    audioData->setChannels(cCtx->channels);
 
-    if (!decodePacket(&avpkt, audio)) {
+    if (!decodePacket(&avpkt, audioData)) {
 
       badPacketCount++;
       if (badPacketCount > badPacketThreshold) {
@@ -184,10 +184,10 @@ KeyFinder::AudioData* AudioFileDecoder::decodeNextAudioPacket() {
   }
 
   av_free_packet(&avpkt);
-  return audio;
+  return audioData;
 }
 
-bool AudioFileDecoder::decodePacket(AVPacket* originalPacket, KeyFinder::AudioData* audio) {
+bool AudioFileDecoder::decodePacket(AVPacket* originalPacket, KeyFinder::AudioData* audioData) {
 
   // copy packet so we can shift data pointer about without endangering garbage collection
   AVPacket tempPacket;
@@ -200,19 +200,24 @@ bool AudioFileDecoder::decodePacket(AVPacket* originalPacket, KeyFinder::AudioDa
     int16_t* dataBuffer = (int16_t*)frameBuffer;
 
     if (!decodedFrame) {
+
       if (!(decodedFrame = av_frame_alloc())) {
+
         throw KeyFinder::Exception(GuiStrings::getInstance()->libavCouldNotAllocateFrame().toUtf8().constData());
       }
+
     } else {
+
       av_frame_unref(decodedFrame);
     }
 
     int gotFrame = 0;
     int bytesConsumed = avcodec_decode_audio4(cCtx, decodedFrame, &gotFrame, &tempPacket);
-    if (bytesConsumed < 0) { // error
+    if (bytesConsumed < 0) {
       tempPacket.size = 0;
       return false;
     }
+
     tempPacket.data += bytesConsumed;
     tempPacket.size -= bytesConsumed;
 
@@ -223,22 +228,22 @@ bool AudioFileDecoder::decodePacket(AVPacket* originalPacket, KeyFinder::AudioDa
     int newSamplesDecoded = av_samples_get_buffer_size(NULL, cCtx->channels, decodedFrame->nb_samples, cCtx->sample_fmt, 1);
 
     // Resample if necessary
-    if (cCtx->sample_fmt != AV_SAMPLE_FMT_S16) {
-      int resampleResult = avresample_convert(rsCtx, (uint8_t**)&frameBufferConverted, 0, frameBufferSize, (uint8_t**)&frameBuffer, 0, newSamplesDecoded);
-      if (resampleResult < 0) {
-        throw KeyFinder::Exception(GuiStrings::getInstance()->libavCouldNotResample().toUtf8().constData());
-      }
-      dataBuffer = (int16_t*)frameBufferConverted;
-    }
+//    if (cCtx->sample_fmt != AV_SAMPLE_FMT_S16) {
+//      int resampleResult = avresample_convert(rsCtx, (uint8_t**)&frameBufferConverted, 0, frameBufferSize, (uint8_t**)&frameBuffer, 0, newSamplesDecoded);
+//      if (resampleResult < 0) {
+//        throw KeyFinder::Exception(GuiStrings::getInstance()->libavCouldNotResample().toUtf8().constData());
+//      }
+//      dataBuffer = (int16_t*)frameBufferConverted;
+//    }
 
-    int oldSampleCount = audio->getSampleCount();
-    audio->addToSampleCount(newSamplesDecoded);
-    audio->resetIterators();
-    audio->advanceWriteIterator(oldSampleCount);
+    int oldSampleCount = audioData->getSampleCount();
+    audioData->addToSampleCount(newSamplesDecoded);
+    audioData->resetIterators();
+    audioData->advanceWriteIterator(oldSampleCount);
 
     for (int i = 0; i < newSamplesDecoded; i++) {
-      audio->setSampleAtWriteIterator(static_cast<double>(dataBuffer[i]));
-      audio->advanceWriteIterator();
+      audioData->setSampleAtWriteIterator(static_cast<double>(dataBuffer[i]));
+      audioData->advanceWriteIterator();
     }
   }
   return true;
