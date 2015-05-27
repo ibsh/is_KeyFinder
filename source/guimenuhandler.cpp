@@ -50,9 +50,7 @@ QMenuBar* MainMenuHandler::newMenuBar() {
   QMenuBar* menuBar = new QMenuBar(NULL);
   QMenu* menuFile = menuBar->addMenu("File");
   //: An action on the menu bar
-  menuFile->addAction(tr("New Detail Window"), this, SLOT(newDetailWindow()), QKeySequence::New);
-  //: An action on the menu bar
-  menuFile->addAction(tr("New Batch Window"), this, SLOT(newBatchWindow()), QKeySequence("Ctrl+Shift+N"));
+  menuFile->addAction(tr("New Batch Window"), this, SLOT(newBatchWindow()), QKeySequence::New);
   menuFile->addSeparator();
   //: An action on the menu bar
   menuFile->addAction(tr("Close Window"), this, SLOT(close_Window()), QKeySequence::Close);

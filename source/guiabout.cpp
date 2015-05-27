@@ -41,8 +41,6 @@ AboutDialog::AboutDialog(QWidget *parent): QDialog(parent), ui(new Ui::AboutDial
   libs += "FFTW (www.fftw.org)" + br;
   libs += "LibAV (www.libav.org)" + br;
   libs += "TagLib (developer.kde.org/~wheeler/taglib.html)" + br;
-  libs += "XQilla (xqilla.sourceforge.net)" + br;
-  libs += "Xerces-C++ (xerces.apache.org)";
   ui->label_6_libs->setText(libs);
 
   //relative sizing on Mac/Linux only
