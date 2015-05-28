@@ -563,19 +563,18 @@
 <context>
     <name>MainMenuHandler</name>
     <message>
-        <location filename="../source/guimenuhandler.cpp" line="53"/>
         <source>New Detail Window</source>
         <extracomment>An action on the menu bar</extracomment>
-        <translation>New Detail Window</translation>
+        <translation type="vanished">New Detail Window</translation>
     </message>
     <message>
-        <location filename="../source/guimenuhandler.cpp" line="55"/>
+        <location filename="../source/guimenuhandler.cpp" line="53"/>
         <source>New Batch Window</source>
         <extracomment>An action on the menu bar</extracomment>
         <translation>New Batch Window</translation>
     </message>
     <message>
-        <location filename="../source/guimenuhandler.cpp" line="58"/>
+        <location filename="../source/guimenuhandler.cpp" line="56"/>
         <source>Close Window</source>
         <extracomment>An action on the menu bar</extracomment>
         <translation>Close Window</translation>
