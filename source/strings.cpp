@@ -82,6 +82,18 @@ QStringList GuiStrings::iTunesDefaultPlaylists() const {
   defaultPlaylists << tr("iTunes DJ");
   //: Name of a default iTunes playlist (to exclude from the Batch window)
   defaultPlaylists << tr("Audiobooks");
+  //: Name of a default iTunes playlist (to exclude from the Batch window)
+  defaultPlaylists << tr("Music Videos");
+  //: Name of a default iTunes playlist (to exclude from the Batch window)
+  defaultPlaylists << tr("Rentals");
+  //: Name of a default iTunes playlist (to exclude from the Batch window)
+  defaultPlaylists << tr("Home Videos");
+  //: Name of a default iTunes playlist (to exclude from the Batch window)
+  defaultPlaylists << tr("iTunes U");
+  //: Name of a default iTunes playlist (to exclude from the Batch window)
+  defaultPlaylists << tr("PDFs");
+  // attempt to kill iTunes' weird global music playlist
+  defaultPlaylists << "####!####";
   return defaultPlaylists;
 }
 
