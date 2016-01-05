@@ -42,6 +42,8 @@ void LoggingHandler(QtMsgType type, const QMessageLogContext& /*context*/, const
   logfile << QDate::currentDate().toString("yyyy-MM-dd").toUtf8().constData() << " ";
   logfile << QTime::currentTime().toString("hh:mm:ss.zzz").toUtf8().constData() << " ";
   switch (type) {
+  case QtInfoMsg:
+    logfile << "Info";     break;
   case QtDebugMsg:
     logfile << "Debug";    break;
   case QtWarningMsg:

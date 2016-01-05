@@ -25,6 +25,7 @@
 #include <QString>
 #include <QStringList>
 #include <QIODevice>
+#include <QDataStream>
 
 class SeratoDataStream {
 public:

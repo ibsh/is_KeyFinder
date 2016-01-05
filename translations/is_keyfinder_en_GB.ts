@@ -451,85 +451,115 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="91"/>
+        <location filename="../source/strings.cpp" line="86"/>
+        <source>Music Videos</source>
+        <extracomment>Name of a default iTunes playlist (to exclude from the Batch window)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../source/strings.cpp" line="88"/>
+        <source>Rentals</source>
+        <extracomment>Name of a default iTunes playlist (to exclude from the Batch window)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../source/strings.cpp" line="90"/>
+        <source>Home Videos</source>
+        <extracomment>Name of a default iTunes playlist (to exclude from the Batch window)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../source/strings.cpp" line="92"/>
+        <source>iTunes U</source>
+        <extracomment>Name of a default iTunes playlist (to exclude from the Batch window)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../source/strings.cpp" line="94"/>
+        <source>PDFs</source>
+        <extracomment>Name of a default iTunes playlist (to exclude from the Batch window)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../source/strings.cpp" line="103"/>
         <source>_LOOPS</source>
         <extracomment>Name of a default Traktor playlist (to exclude from the Batch window)</extracomment>
         <translation>_LOOPS</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="93"/>
+        <location filename="../source/strings.cpp" line="105"/>
         <source>_RECORDINGS</source>
         <extracomment>Name of a default Traktor playlist (to exclude from the Batch window)</extracomment>
         <translation>_RECORDINGS</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="95"/>
+        <location filename="../source/strings.cpp" line="107"/>
         <source>Preparation</source>
         <extracomment>Name of a default Traktor playlist (to exclude from the Batch window)</extracomment>
         <translation>Preparation</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="101"/>
+        <location filename="../source/strings.cpp" line="113"/>
         <source>SmartCrates</source>
         <extracomment>Name of the Smart Crates subdirectory in Serato</extracomment>
         <translation>SmartCrates</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="106"/>
+        <location filename="../source/strings.cpp" line="118"/>
         <source>Subcrates</source>
         <extracomment>Name of the Subcrates subdirectory in Serato</extracomment>
         <translation>Subcrates</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="111"/>
+        <location filename="../source/strings.cpp" line="123"/>
         <source>Error in LibSRC sample rate conversion</source>
         <extracomment>Status of an individual file in the Batch window</extracomment>
         <translation>Error in LibSRC sample rate conversion</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="116"/>
+        <location filename="../source/strings.cpp" line="128"/>
         <source>Could not open audio file (%1)</source>
         <extracomment>Status of an individual file in the Batch window</extracomment>
         <translation>Could not open audio file (%1)</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="121"/>
+        <location filename="../source/strings.cpp" line="133"/>
         <source>Could not find stream information</source>
         <extracomment>Status of an individual file in the Batch window</extracomment>
         <translation>Could not find stream information</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="126"/>
+        <location filename="../source/strings.cpp" line="138"/>
         <source>Could not find an audio stream</source>
         <extracomment>Status of an individual file in the Batch window</extracomment>
         <translation>Could not find an audio stream</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="131"/>
+        <location filename="../source/strings.cpp" line="143"/>
         <source>Audio stream has unsupported codec</source>
         <extracomment>Status of an individual file in the Batch window</extracomment>
         <translation>Audio stream has unsupported codec</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="136"/>
+        <location filename="../source/strings.cpp" line="148"/>
         <source>Could not open audio codec %1 (%2)</source>
         <extracomment>Status of an individual file in the Batch window</extracomment>
         <translation>Could not open audio codec %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="141"/>
+        <location filename="../source/strings.cpp" line="153"/>
         <source>Could not create ReSampleContext</source>
         <extracomment>Status of an individual file in the Batch window</extracomment>
         <translation>Could not create ReSampleContext</translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="146"/>
+        <location filename="../source/strings.cpp" line="158"/>
         <source>Could not resample</source>
         <extracomment>Status of an individual file in the Batch window</extracomment>
         <translation>Could not resample</translation>
     </message>
     <message numerus="yes">
-        <location filename="../source/strings.cpp" line="151"/>
+        <location filename="../source/strings.cpp" line="163"/>
         <source>%n bad packet(s)</source>
         <oldsource>%1 bad packets</oldsource>
         <extracomment>Status of an individual file in the Batch window</extracomment>
@@ -539,7 +569,7 @@
         </translation>
     </message>
     <message>
-        <location filename="../source/strings.cpp" line="156"/>
+        <location filename="../source/strings.cpp" line="168"/>
         <source>Duration (%1:%2) exceeds specified maximum (%3:00)</source>
         <extracomment>Status of an individual file in the Batch window; includes minutes and seconds at %1:%2, and the max number of minutes at %3</extracomment>
         <translation>Duration (%1:%2) exceeds specified maximum (%3:00)</translation>

@@ -24,7 +24,7 @@
 # libkeyfinder     2.0.0
 #  \-> fftw        3.3.4
 # libav            0.7.7
-# taglib           1.9.1
+# taglib           1.10
 
 QT += \
   core \
@@ -61,8 +61,8 @@ OTHER_FILES += README
 
 QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS # for libav
 
-unix|macx{
-  LIBS += -L/usr/local/lib -L/usr/lib
+unix|macx {
+  LIBS += -L/usr/local/lib
   LIBS += -lkeyfinder
   LIBS += -lavcodec
   LIBS += -lavformat
@@ -70,17 +70,17 @@ unix|macx{
   LIBS += -ltag
 }
 
-macx{
+macx {
   DEPENDPATH += /usr/local/lib
   INCLUDEPATH += /usr/local/include
 
   QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.7
-  QMAKE_MAC_SDK = macosx10.9
+  QMAKE_MAC_SDK = macosx10.11
   CONFIG -= ppc ppc64 x86
   CONFIG += x86_64
 }
 
-win32{
+win32 {
   QT += xml xmlpatterns
   INCLUDEPATH += C:/mingw32/local/include
   DEPENDPATH += C:/mingw32/local/bin
@@ -91,8 +91,6 @@ win32{
   LIBS += -lavutil
   LIBS += -llibtag
   LIBS += -LC:/mingw32/local/lib
-  LIBS += -lboost_system-48-mt-1_52
-  LIBS += -lboost_thread-48-mt-1_52
 }
 
 unix {
@@ -103,6 +101,7 @@ unix {
 
 TRANSLATIONS = \
   $$PWD/translations/is_keyfinder_en_GB.ts \
+  $$PWD/translations/is_keyfinder_bg.ts \
   $$PWD/translations/is_keyfinder_da.ts \
   $$PWD/translations/is_keyfinder_de.ts \
   $$PWD/translations/is_keyfinder_el.ts \
@@ -115,7 +114,10 @@ TRANSLATIONS = \
   $$PWD/translations/is_keyfinder_nl.ts \
   $$PWD/translations/is_keyfinder_pl.ts \
   $$PWD/translations/is_keyfinder_pt_BR.ts \
+  $$PWD/translations/is_keyfinder_pt_PT.ts \
   $$PWD/translations/is_keyfinder_ru.ts \
+  $$PWD/translations/is_keyfinder_ru_RU.ts \
   $$PWD/translations/is_keyfinder_sv.ts \
+  $$PWD/translations/is_keyfinder_tr.ts \
   $$PWD/translations/is_keyfinder_vi.ts \
   $$PWD/translations/is_keyfinder_zh_CN.ts
