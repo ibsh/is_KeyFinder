@@ -24,51 +24,52 @@
 QMutex factory_mutex; // global mutex on file resolution
 
 AVFileMetadata* AVFileMetadataFactory::createAVFileMetadata(const QString& filePath) const {
-  QMutexLocker locker(&factory_mutex); // mutex the constructor
+    QMutexLocker locker(&factory_mutex); // mutex the constructor
 
 #ifdef Q_OS_WIN
-  // Using utf16_to_utf8 here, as per decoderlibav, leads to a null file reference.
-  const wchar_t* filePathCh = reinterpret_cast<const wchar_t*>(filePath.constData());
+    // Using utf16_to_utf8 here, as per decoderlibav, leads to a null file reference.
+    const wchar_t* filePathCh = reinterpret_cast<const wchar_t*>(filePath.constData());
 #else
-  QByteArray encodedPath = QFile::encodeName(filePath);
-  const char* filePathCh = encodedPath;
+    QByteArray encodedPath = QFile::encodeName(filePath);
+    const char* filePathCh = encodedPath;
 #endif
 
-  TagLib::FileRef* fr;
-  TagLib::File* f = NULL;
+    TagLib::File* f = NULL;
 
-  fr = new TagLib::FileRef(filePathCh);
-  if (!fr->isNull()) f = fr->file();
+    TagLib::FileRef* fr = new TagLib::FileRef(filePathCh);
+    if (!fr->isNull()) {
+        f = fr->file();
+    }
 
-  if (f == NULL || !f->isValid()) {
-    delete fr;
+    if (f == NULL || !f->isValid()) {
+        delete fr;
 #ifdef Q_OS_WIN
-    qWarning("TagLib returned NULL File for %s", utf16_to_utf8(filePathCh));
+        qWarning("TagLib returned NULL File for %s", utf16_to_utf8(filePathCh));
 #else
-    qWarning("TagLib returned NULL File for %s", filePathCh);
+        qWarning("TagLib returned NULL File for %s", filePathCh);
 #endif
-    return new NullFileMetadata(NULL, NULL);
-  }
+        return new NullFileMetadata(NULL, NULL);
+    }
 
-  locker.unlock();
+    locker.unlock();
 
-  TagLib::FLAC::File* fileTestFlac = dynamic_cast<TagLib::FLAC::File*>(f);
-  if (fileTestFlac != NULL) return new FlacFileMetadata(fr, f, fileTestFlac);
+    TagLib::FLAC::File* fileTestFlac = dynamic_cast<TagLib::FLAC::File*>(f);
+    if (fileTestFlac != NULL) return new FlacFileMetadata(fr, f, fileTestFlac);
 
-  TagLib::MPEG::File* fileTestMpeg = dynamic_cast<TagLib::MPEG::File*>(f);
-  if (fileTestMpeg != NULL) return new MpegID3FileMetadata(fr, f, fileTestMpeg);
+    TagLib::MPEG::File* fileTestMpeg = dynamic_cast<TagLib::MPEG::File*>(f);
+    if (fileTestMpeg != NULL) return new MpegID3FileMetadata(fr, f, fileTestMpeg);
 
-  TagLib::RIFF::AIFF::File* fileTestAiff = dynamic_cast<TagLib::RIFF::AIFF::File*>(f);
-  if (fileTestAiff != NULL) return new AiffID3FileMetadata(fr, f, fileTestAiff);
+    TagLib::RIFF::AIFF::File* fileTestAiff = dynamic_cast<TagLib::RIFF::AIFF::File*>(f);
+    if (fileTestAiff != NULL) return new AiffID3FileMetadata(fr, f, fileTestAiff);
 
-  TagLib::RIFF::WAV::File* fileTestWav = dynamic_cast<TagLib::RIFF::WAV::File*>(f);
-  if (fileTestWav != NULL) return new WavID3FileMetadata(fr, f, fileTestWav);
+    TagLib::RIFF::WAV::File* fileTestWav = dynamic_cast<TagLib::RIFF::WAV::File*>(f);
+    if (fileTestWav != NULL) return new WavID3FileMetadata(fr, f, fileTestWav);
 
-  TagLib::MP4::File* fileTestMp4 = dynamic_cast<TagLib::MP4::File*>(f);
-  if (fileTestMp4 != NULL) return new Mp4FileMetadata(fr, f, fileTestMp4);
+    TagLib::MP4::File* fileTestMp4 = dynamic_cast<TagLib::MP4::File*>(f);
+    if (fileTestMp4 != NULL) return new Mp4FileMetadata(fr, f, fileTestMp4);
 
-  TagLib::ASF::File* fileTestAsf = dynamic_cast<TagLib::ASF::File*>(f);
-  if (fileTestAsf != NULL) return new AsfFileMetadata(fr, f, fileTestAsf);
+    TagLib::ASF::File* fileTestAsf = dynamic_cast<TagLib::ASF::File*>(f);
+    if (fileTestAsf != NULL) return new AsfFileMetadata(fr, f, fileTestAsf);
 
-  return new AVFileMetadata(fr, f);
+    return new AVFileMetadata(fr, f);
 }
