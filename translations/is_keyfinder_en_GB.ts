@@ -16,9 +16,15 @@
         <translation>Copyright %1</translation>
     </message>
     <message>
-        <location filename="../source/guiabout.cpp" line="37"/>
+        <location filename="../source/guiabout.cpp" line="40"/>
+        <source>The %1 icon was designed by %2.</source>
+        <extracomment>Icon citation on the About window; includes the app name at %1 and the designer name at %2</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../source/guiabout.cpp" line="46"/>
         <source>%1 includes library code from:</source>
-        <extracomment>The middle section of the About window; includes the app name at %1</extracomment>
+        <extracomment>Library list header on the About window; includes the app name at %1</extracomment>
         <translation>%1 includes library code from:</translation>
     </message>
 </context>

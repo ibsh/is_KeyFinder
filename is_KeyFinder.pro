@@ -68,6 +68,7 @@ unix|macx {
   LIBS += -lavformat
   LIBS += -lavutil
   LIBS += -ltag
+  LIBS += -lz
 }
 
 macx {
