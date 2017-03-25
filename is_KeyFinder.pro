@@ -21,7 +21,7 @@
 
 # CURRENT DEPENDENCIES:
 # qt               5.4.1
-# libkeyfinder     2.1.1
+# libkeyfinder     2.2.1
 #  \-> fftw        3.3.4
 # libav            0.7.7
 # taglib           1.10
