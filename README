@@ -19,5 +19,11 @@ KeyFinder is copyright 2011-2013 by Ibrahim Sha'ath. While the project may not b
 
 For any questions, issues, or feedback, feel free to [contact the developer](https://www.ibrahimshaath.co.uk/contact). (View the FAQ beforehand)
 
+## Guide
+Feel free to make improvements on this source project. A couple of rules for pull requests:
+      [] Ensure that the title is clear enough so that it is understandable on what you are working on.
+      [] Provide a good explanation.
+      [] Before getting started on an issue, read over current open issues to ensure no one else is working on it.
+      [] Read FAQ documentation.
 ## License
 KeyFinder is licensed under the GPL version 3, and is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
