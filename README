@@ -1,13 +1,29 @@
-KeyFinder is a tool for estimating the musical key of digital recordings, to
-aid DJs in harmonic mixing. It's primarily developed as Mac software but I
-try to maintain compatibility with Windows. Some users have reported success
-in building for Linux.
+# KeyFinder
 
-KeyFinder began as my final project submission during an MSc in Computer Science
-at Birkbeck, University of London. My project report, which documents its
-algorithms in detail, is available along with a binary download at
-www.ibrahimshaath.co.uk/keyfinder
+KeyFinder is a tool designed to estimate the musical key of digital recordings, primarily to assist DJs in harmonic mixing. It is developed for Mac but aims to maintain compatibility with Windows. Some users have reported success in building it for Linux by downloading Mixxx, which uses the KeyFinder algorithm.
+The goal is to estimate the musical key of digital audio recordings and can also aid DJs in harmonic mixing for seamless transitions between tracks. This is meant to be a fast work tool that avoids downloading any external libraries, which ensures efficiency and ease of use. 
 
-Localisations are hosted at https://www.transifex.com/projects/p/is_keyfinder/
+KeyFinder began as my final project submission during an MSc in Computer Science at Birkbeck, University of London. My project report, which documents its algorithms in detail, is available along with a binary download at www.ibrahimshaath.co.uk/keyfinder
 
-KeyFinder copyright 2011-2013 Ibrahim Sha'ath
+## Installation
+To download and install KeyFinder, visit the [official website](https://www.ibrahimshaath.co.uk/keyfinder). Follow the installation instructions provided there for your specific platform.
+
+## Documentation
+For detailed information about KeyFinder's algorithms and usage, refer to the [project report](https://www.ibrahimshaath.co.uk/keyfinder).
+
+## Localizations
+Translations for KeyFinder are hosted on [Transifex](https://www.transifex.com/projects/p/is_keyfinder/). You can contribute to localization efforts to make KeyFinder more accessible to users worldwide.
+
+## Development
+KeyFinder is copyright 2011-2013 by Ibrahim Sha'ath. While the project may not be actively developed, it is still available for users who find it useful.
+
+For any questions, issues, or feedback, feel free to [contact the developer](https://www.ibrahimshaath.co.uk/contact). (View the FAQ beforehand)
+
+## Guide
+Feel free to make improvements on this source project. A couple of rules for pull requests:
+      [] Ensure that the title is clear enough so that it is understandable on what you are working on.
+      [] Provide a good explanation.
+      [] Before getting started on an issue, read over current open issues to ensure no one else is working on it.
+      [] Read FAQ documentation.
+## License
+KeyFinder is licensed under the GPL version 3, and is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
