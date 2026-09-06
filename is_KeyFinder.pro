@@ -55,7 +55,7 @@ CONFIG(test) {
   UI_DIR = ui
 }
 
-OTHER_FILES += README
+OTHER_FILES += README.md
 
 QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS # for libav
 
